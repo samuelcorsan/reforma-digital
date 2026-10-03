@@ -69,6 +69,17 @@ describe('Jurisdiction precedes similarity', () => {
     expect(understandQuery('¿Dónde saco mi vida laboral?').jurisdiction).toBeUndefined());
   it('asks for a municipality', () =>
     expect(understandQuery('¿Cómo me empadrono?').clarification).toBeTruthy());
+  it('asks for a municipality for the IBI', () =>
+    expect(understandQuery('¿Cómo pago el IBI?').clarification).toContain('municipio'));
+  it.each([
+    'He recibido una carta de Hacienda, ¿qué hago?',
+    '¿Cuánto tiempo puedo percibir el paro?',
+    'Posibilidad de aplazar el pago del IRPF',
+  ])('does not mistake a word containing "ibi" for a municipal procedure: %s', (query) => {
+    const q = understandQuery(query);
+    expect(q.clarification).toBeUndefined();
+    expect(q.likelyOrganizations).not.toContain('ayuntamiento-madrid');
+  });
   it('does not confuse Alcobendas with Madrid capital', () =>
     expect(understandQuery('Padrón en Alcobendas, Madrid').jurisdiction).toBe('ES-MD-ALCOBENDAS'));
 });
@@ -127,6 +138,22 @@ describe('Real ingestion regressions', () => {
         'https://sede.agenciatributaria.gob.es/Sede/asturias',
       ),
     ).toBe('ES-AS'));
+  it('does not fail on a literal percent sign in a result title', () => {
+    expect(
+      documentJurisdiction(
+        sourceById('aeat'),
+        'Tipos impositivos del IVA: 21%, 10% y 4%',
+        'https://sede.agenciatributaria.gob.es/Sede/iva.html',
+      ),
+    ).toBe('ES');
+    expect(
+      documentJurisdiction(
+        sourceById('aeat'),
+        'Deducciones autonómicas del 15%',
+        'https://sede.agenciatributaria.gob.es/Sede/Andaluc%C3%ADa',
+      ),
+    ).toBe('ES-AN');
+  });
   it('recognizes a precise fiscal query without asking for the procedure again', () =>
     expect(understandQuery('Cómo cambio mi domicilio fiscal').clarification).toBeUndefined());
 });
