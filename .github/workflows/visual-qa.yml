@@ -1,0 +1,79 @@
+# Records 1280 and 390 px screenshots of the extension e2e tests and screenshots plus a scroll
+# video of the public apps/web pages, and uploads them as an artifact. No write permissions or
+# secrets: it runs the PR's code. visual-qa-comment.yml links the artifact from the PR.
+name: Visual QA
+on:
+  pull_request:
+    paths:
+      - 'apps/web/**'
+      - 'apps/extension/**'
+      - 'sites/**'
+      - 'packages/design/**'
+      - 'packages/runtime/**'
+      - 'tests/e2e/**'
+      - 'playwright.qa.config.ts'
+      - '.github/workflows/visual-qa*.yml'
+permissions:
+  contents: read
+concurrency:
+  group: visual-qa-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      # Record only what the PR touches: a site's own spec, the web pages, or everything when shared
+      # extension code changes. HEAD is the PR merge commit, so HEAD^1 is the base branch.
+      - id: scope
+        run: |
+          changed=$(git diff --name-only HEAD^1 HEAD)
+          specs=$(sed -nE 's#^sites/([^/]+)/.*#tests/e2e/\1.spec.ts#p; s#^(tests/e2e/[^/]+\.spec\.ts)$#\1#p' <<< "$changed" |
+            sed 's#/dni\.spec#/extension.spec#' | sort -u | while read -r f; do [ -e "$f" ] && echo "$f"; done)
+          if grep -qE '^(apps/extension/|packages/(design|runtime)/|tests/e2e/extension-fixture\.ts|\.github/workflows/visual-qa)' <<< "$changed"; then
+            specs=tests/e2e
+          fi
+          echo "specs=$(echo $specs)" >> "$GITHUB_OUTPUT"
+          if grep -qE '^(apps/web/|packages/design/|tests/e2e/web\.qa\.ts|playwright\.qa\.config\.ts|\.github/workflows/visual-qa)' <<< "$changed"; then
+            echo 'web=true' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - if: steps.scope.outputs.specs
+        run: pnpm test:e2e $SPECS
+        env:
+          SPECS: ${{ steps.scope.outputs.specs }}
+          VISUAL_QA: '1'
+      - if: ${{ !cancelled() && steps.scope.outputs.web }}
+        run: pnpm exec playwright test -c playwright.qa.config.ts
+      - name: Convert videos to mp4
+        if: ${{ !cancelled() }}
+        run: |
+          command -v ffmpeg || { sudo apt-get update && sudo apt-get install -y ffmpeg; }
+          find test-results -name '*.webm' -exec sh -c \
+            'ffmpeg -loglevel error -i "$1" -c:v libx264 -pix_fmt yuv420p -movflags +faststart "${1%.webm}.mp4" && rm "$1"' _ {} \;
+      - id: upload
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-qa-pr-${{ github.event.pull_request.number }}
+          path: |
+            test-results/**/*.png
+            test-results/**/*.mp4
+          retention-days: 14
+      - if: ${{ !cancelled() && steps.upload.outputs.artifact-url }}
+        run: |
+          {
+            echo '## Visual QA'
+            echo
+            echo "[Download screenshots and videos](${{ steps.upload.outputs.artifact-url }}) (expires in 14 days)"
+            echo
+            find test-results -name '*.png' -printf '%h\n' | sort -u | sed 's|^test-results/|- |'
+          } >> "$GITHUB_STEP_SUMMARY"
