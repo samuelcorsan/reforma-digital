@@ -1,5 +1,6 @@
+import { fileURLToPath } from 'node:url';
 import { config as loadEnv } from 'dotenv';
-loadEnv({ path: new URL('../../.env', import.meta.url).pathname, quiet: true });
+loadEnv({ path: fileURLToPath(new URL('../../.env', import.meta.url)), quiet: true });
 import type { NextConfig } from 'next';
 const config: NextConfig = {
   transpilePackages: [
