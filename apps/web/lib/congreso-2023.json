@@ -1,0 +1,3664 @@
+{
+  "parties": {
+    "000001": {
+      "acronym": "FO",
+      "name": "FRENTE OBRERO"
+    },
+    "000002": {
+      "acronym": "PSOE",
+      "name": "PARTIDO SOCIALISTA OBRERO ESPAÑOL"
+    },
+    "000003": {
+      "acronym": "PUM+J",
+      "name": "POR UN MUNDO MÁS JUSTO"
+    },
+    "000004": {
+      "acronym": "ALM",
+      "name": "ALMERIENSES - REGIONALISTAS PRO ALMERÍA"
+    },
+    "000005": {
+      "acronym": "PP",
+      "name": "PARTIDO POPULAR"
+    },
+    "000006": {
+      "acronym": "VOX",
+      "name": "VOX"
+    },
+    "000007": {
+      "acronym": "PACMA",
+      "name": "PARTIDO ANIMALISTA CON EL MEDIO AMBIENTE"
+    },
+    "000008": {
+      "acronym": "LB",
+      "name": "LIBRES"
+    },
+    "000009": {
+      "acronym": "RECORTES CERO",
+      "name": "RECORTES CERO"
+    },
+    "000010": {
+      "acronym": "SUMAR",
+      "name": "SUMAR"
+    },
+    "000011": {
+      "acronym": "SUMAR",
+      "name": "SUMAR ANDALUCÍA"
+    },
+    "000012": {
+      "acronym": "ADELANTE ANDALUCÍA",
+      "name": "ADELANTE ANDALUCÍA"
+    },
+    "000013": {
+      "acronym": "CJ",
+      "name": "CAMINANDO JUNTOS"
+    },
+    "000014": {
+      "acronym": "ESCAÑOS EN BLANCO",
+      "name": "ESCAÑOS EN BLANCO PARA DEJAR ESCAÑOS VACÍOS"
+    },
+    "000015": {
+      "acronym": "PCTE",
+      "name": "PARTIDO COMUNISTA DE LOS TRABAJADORES DE ESPAÑA"
+    },
+    "000016": {
+      "acronym": "JxG",
+      "name": "JUNTOS POR GRANADA"
+    },
+    "000017": {
+      "acronym": "XH",
+      "name": "POR HUELVA"
+    },
+    "000018": {
+      "acronym": "JM+",
+      "name": "JAÉN MERECE MÁS"
+    },
+    "000019": {
+      "acronym": "FE de las JONS",
+      "name": "FALANGE ESPAÑOLA DE LAS J.O.N.S."
+    },
+    "000020": {
+      "acronym": "F.I.A.",
+      "name": "FEDERACIÓN DE LOS INDEPENDIENTES DE ARAGÓN"
+    },
+    "000021": {
+      "acronym": "SUMAR ARAGÓN",
+      "name": "SUMAR ARAGÓN"
+    },
+    "000023": {
+      "acronym": "EXISTE",
+      "name": "ARAGÓN EXISTE - COALICIÓN EXISTE"
+    },
+    "000024": {
+      "acronym": "PAR",
+      "name": "PARTIDO ARAGONÉS"
+    },
+    "000025": {
+      "acronym": "EXISTE",
+      "name": "TERUEL EXISTE - COALICIÓN EXISTE"
+    },
+    "000026": {
+      "acronym": "PUEDE",
+      "name": "PARTIDO UNIONISTA ESTADO DE ESPAÑA"
+    },
+    "000027": {
+      "acronym": "ESPAÑA VACIADA",
+      "name": "ESPAÑA VACIADA"
+    },
+    "000028": {
+      "acronym": "ASTURIAS EXISTE EV",
+      "name": "ASTURIAS EXISTE-ESPAÑA VACIADA"
+    },
+    "000029": {
+      "acronym": "PSIB-PSOE",
+      "name": "PARTIDO SOCIALISTA DE ISLAS BALEARES-PSOE"
+    },
+    "000030": {
+      "acronym": "MÉS PER MALLORCA-MÉS PER MENORCA-SUMAR",
+      "name": "SUMAR MÉS"
+    },
+    "000031": {
+      "acronym": "CCa",
+      "name": "COALICIÓN CANARIA"
+    },
+    "000032": {
+      "acronym": "NC-bc",
+      "name": "NUEVA CANARIAS - BLOQUE CANARISTA"
+    },
+    "000033": {
+      "acronym": "SUMAR",
+      "name": "SUMAR CANARIAS"
+    },
+    "000034": {
+      "acronym": "AHORA CANARIAS-PCPC",
+      "name": "AHORA CANARIAS-PARTIDO COMUNISTA DEL PUEBLO CANARIO"
+    },
+    "000035": {
+      "acronym": "XAV",
+      "name": "POR ÁVILA"
+    },
+    "000036": {
+      "acronym": "VB",
+      "name": "VÍA BURGALESA"
+    },
+    "000037": {
+      "acronym": "EV-PCAS-TC",
+      "name": "ESPAÑA VACIADA-PARTIDO CASTELLANO-TIERRA COMUNERA"
+    },
+    "000038": {
+      "acronym": "PREPAL",
+      "name": "PARTIDO REGIONALISTA DEL PAÍS LEONÉS"
+    },
+    "000039": {
+      "acronym": "U.P.L.",
+      "name": "UNIÓN DEL PUEBLO LEONÉS"
+    },
+    "000040": {
+      "acronym": "VP",
+      "name": "VAMOS PALENCIA"
+    },
+    "000041": {
+      "acronym": "GITV",
+      "name": "GRUPO INDEPENDIENTE PALENCIA TIERRA VIVA"
+    },
+    "000042": {
+      "acronym": "3e",
+      "name": "TERCERA EDAD EN ACCIÓN"
+    },
+    "000043": {
+      "acronym": "SY",
+      "name": "SORIA ¡YA!"
+    },
+    "000044": {
+      "acronym": "Ud.Ca",
+      "name": "UNIDAD CASTELLANA"
+    },
+    "000045": {
+      "acronym": "FUERZA CÍVICA",
+      "name": "FUERZA CÍVICA"
+    },
+    "000046": {
+      "acronym": "Zsi",
+      "name": "ZAMORA SÍ"
+    },
+    "000047": {
+      "acronym": "PSC",
+      "name": "PARTIT DELS SOCIALISTES DE CATALUNYA (PSC-PSOE)"
+    },
+    "000048": {
+      "acronym": "PP",
+      "name": "PARTIDO POPULAR / PARTIT POPULAR"
+    },
+    "000050": {
+      "acronym": "ERC",
+      "name": "ESQUERRA REPUBLICANA DE CATALUNYA"
+    },
+    "000051": {
+      "acronym": "SUMAR - ECP",
+      "name": "SUMAR - EN COMÚ PODEM"
+    },
+    "000053": {
+      "acronym": "CUP-PR",
+      "name": "CANDIDATURA D'UNITAT POPULAR-PER LA RUPTURA"
+    },
+    "000054": {
+      "acronym": "PCTC",
+      "name": "PARTIT COMUNISTA DELS TREBALLADORS DE CATALUNYA"
+    },
+    "000055": {
+      "acronym": "PDeCAT-E-CiU",
+      "name": "PARTIT DEMÒCRATA EUROPEU CATALÀ-ESPAI CIU"
+    },
+    "000056": {
+      "acronym": "PP",
+      "name": "PARTIT POPULAR / PARTIDO POPULAR"
+    },
+    "000057": {
+      "acronym": "JxCAT - JUNTS",
+      "name": "JUNTS PER CATALUNYA - JUNTS"
+    },
+    "000058": {
+      "acronym": "PACMA",
+      "name": "PARTIT ANIMALISTA AMB EL MEDI AMBIENT"
+    },
+    "000059": {
+      "acronym": "ESCONS EN BLANC",
+      "name": "ESCONS EN BLANC"
+    },
+    "000060": {
+      "acronym": "EVC",
+      "name": "ENTRE VEÏNS CATALUNYA"
+    },
+    "000061": {
+      "acronym": "UNIDOS SI",
+      "name": "UNIDOS POR LA SOLIDARIDAD INTERNACIONAL"
+    },
+    "000062": {
+      "acronym": "BQEX",
+      "name": "BLOQUE EXTREMEÑO"
+    },
+    "000063": {
+      "acronym": "Somos Cc",
+      "name": "SOMOS CÁCERES"
+    },
+    "000064": {
+      "acronym": "PSdeG-PSOE",
+      "name": "PARTIDO DOS SOCIALISTAS DE GALICIA-PSOE"
+    },
+    "000065": {
+      "acronym": "B.N.G.",
+      "name": "BLOQUE NACIONALISTA GALEGO"
+    },
+    "000066": {
+      "acronym": "SUMAR",
+      "name": "SUMAR GALICIA"
+    },
+    "000067": {
+      "acronym": "PUM+J",
+      "name": "POR UN MUNDO MAIS XUSTO"
+    },
+    "000068": {
+      "acronym": "PCTG",
+      "name": "PARTIDO COMUNISTA DOS TRABALLADORES DE GALIZA"
+    },
+    "000069": {
+      "acronym": "CCD",
+      "name": "COALICIÓN DE CENTRO DEMOCRÁTICO"
+    },
+    "000070": {
+      "acronym": "PH",
+      "name": "PARTIDO HUMANISTA"
+    },
+    "000071": {
+      "acronym": "EH Bildu",
+      "name": "EUSKAL HERRIA BILDU"
+    },
+    "000072": {
+      "acronym": "PSN-PSOE",
+      "name": "PARTIDO SOCIALISTA DE NAVARRA-PSOE"
+    },
+    "000073": {
+      "acronym": "GBAI",
+      "name": "GEROA BAI"
+    },
+    "000074": {
+      "acronym": "U.P.N.",
+      "name": "UNION DEL PUEBLO NAVARRO"
+    },
+    "000075": {
+      "acronym": "EAJ-PNV",
+      "name": "EUZKO ALDERDI JELTZALEA-PARTIDO NACIONALISTA VASCO"
+    },
+    "000076": {
+      "acronym": "PSE-EE (PSOE)",
+      "name": "PARTIDO SOCIALISTA DE EUSKADI-EUSKADIKO EZKERRA (PSOE)"
+    },
+    "000077": {
+      "acronym": "PUM+J",
+      "name": "BIDEZKO MUNDURANTZ"
+    },
+    "000078": {
+      "acronym": "PCTE/ELAK",
+      "name": "PARTIDO COMUNISTA DE LOS TRABAJADORES DE EUSKADI/EUSKADIKO LANGILEEN ALDERDI KOMUNISTA"
+    },
+    "000079": {
+      "acronym": "+RDS+",
+      "name": "REFERÉNDUM SISTEMA DINERO"
+    },
+    "000080": {
+      "acronym": "POR MI REGIÓN",
+      "name": "POR MI REGIÓN"
+    },
+    "000081": {
+      "acronym": "PARTIDO AUTÓNOMOS",
+      "name": "PARTIDO AUTÓNOMOS"
+    },
+    "000082": {
+      "acronym": "SUMAR - COMPROMÍS",
+      "name": "COMPROMÍS - SUMAR: SUMEM PER GUANYAR"
+    },
+    "000083": {
+      "acronym": "EVB",
+      "name": "ESTAT VALENCIÀ DEL BENESTAR"
+    },
+    "000084": {
+      "acronym": "CpM",
+      "name": "COALICIÓN POR MELILLA"
+    },
+    "000096": {
+      "acronym": "CJ",
+      "name": "CAMINANDO JUNTOS"
+    },
+    "000097": {
+      "acronym": "FO",
+      "name": "FRENTE OBRERO"
+    },
+    "000098": {
+      "acronym": "PCTE",
+      "name": "PARTIDO COMUNISTA DE LOS TRABAJADORES DE ESPAÑA"
+    }
+  },
+  "constituencies": [
+    {
+      "id": "02",
+      "name": "Albacete",
+      "census": 307988,
+      "voters": 223917,
+      "blank": 1834,
+      "invalid": 2726,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 88299,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 76322,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 36750,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 15834,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1261,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 381,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 325,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 185,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "name": "Alicante/Alacant",
+      "census": 1306311,
+      "voters": 908842,
+      "blank": 6575,
+      "invalid": 9650,
+      "seats": 12,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 330293,
+          "seats": 5
+        },
+        {
+          "code": "000002",
+          "votes": 287737,
+          "seats": 4
+        },
+        {
+          "code": "000006",
+          "votes": 146133,
+          "seats": 2
+        },
+        {
+          "code": "000082",
+          "votes": 115787,
+          "seats": 1
+        },
+        {
+          "code": "000007",
+          "votes": 7335,
+          "seats": 0
+        },
+        {
+          "code": "000097",
+          "votes": 1724,
+          "seats": 0
+        },
+        {
+          "code": "000081",
+          "votes": 1446,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 1135,
+          "seats": 0
+        },
+        {
+          "code": "000013",
+          "votes": 1027,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "name": "Almería",
+      "census": 516114,
+      "voters": 324405,
+      "blank": 2464,
+      "invalid": 3163,
+      "seats": 6,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 131524,
+          "seats": 3
+        },
+        {
+          "code": "000002",
+          "votes": 93282,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 68364,
+          "seats": 1
+        },
+        {
+          "code": "000011",
+          "votes": 21485,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1962,
+          "seats": 0
+        },
+        {
+          "code": "000004",
+          "votes": 874,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 500,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 371,
+          "seats": 0
+        },
+        {
+          "code": "000008",
+          "votes": 210,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 206,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "01",
+      "name": "Araba/Álava",
+      "census": 260214,
+      "voters": 170538,
+      "blank": 722,
+      "invalid": 1431,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000076",
+          "votes": 46775,
+          "seats": 1
+        },
+        {
+          "code": "000071",
+          "votes": 32987,
+          "seats": 1
+        },
+        {
+          "code": "000005",
+          "votes": 30212,
+          "seats": 1
+        },
+        {
+          "code": "000075",
+          "votes": 28075,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 21561,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 6573,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 773,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 619,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 354,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 185,
+          "seats": 0
+        },
+        {
+          "code": "000098",
+          "votes": 165,
+          "seats": 0
+        },
+        {
+          "code": "000077",
+          "votes": 106,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "33",
+      "name": "Asturias",
+      "census": 959023,
+      "voters": 603183,
+      "blank": 6079,
+      "invalid": 6151,
+      "seats": 7,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 212816,
+          "seats": 3
+        },
+        {
+          "code": "000002",
+          "votes": 205049,
+          "seats": 2
+        },
+        {
+          "code": "000010",
+          "votes": 88630,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 74571,
+          "seats": 1
+        },
+        {
+          "code": "000007",
+          "votes": 3167,
+          "seats": 0
+        },
+        {
+          "code": "000028",
+          "votes": 2314,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 1598,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 1176,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 773,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 590,
+          "seats": 0
+        },
+        {
+          "code": "000026",
+          "votes": 269,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "name": "Ávila",
+      "census": 136669,
+      "voters": 99120,
+      "blank": 632,
+      "invalid": 1164,
+      "seats": 3,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 42369,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 26828,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 15068,
+          "seats": 0
+        },
+        {
+          "code": "000035",
+          "votes": 7362,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 5027,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 275,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 100,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 91,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 85,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 77,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 42,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "name": "Badajoz",
+      "census": 550702,
+      "voters": 398233,
+      "blank": 3225,
+      "invalid": 6772,
+      "seats": 5,
+      "candidatures": [
+        {
+          "code": "000002",
+          "votes": 153473,
+          "seats": 2
+        },
+        {
+          "code": "000005",
+          "votes": 148068,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 53492,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 26778,
+          "seats": 0
+        },
+        {
+          "code": "000062",
+          "votes": 3885,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1395,
+          "seats": 0
+        },
+        {
+          "code": "000097",
+          "votes": 477,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 464,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 204,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "name": "Balears (Illes)",
+      "census": 828755,
+      "voters": 508233,
+      "blank": 4704,
+      "invalid": 4953,
+      "seats": 8,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 179303,
+          "seats": 3
+        },
+        {
+          "code": "000029",
+          "votes": 151786,
+          "seats": 3
+        },
+        {
+          "code": "000030",
+          "votes": 83487,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 76547,
+          "seats": 1
+        },
+        {
+          "code": "000007",
+          "votes": 4969,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 1039,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 726,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 719,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "name": "Barcelona",
+      "census": 4243500,
+      "voters": 2688720,
+      "blank": 21059,
+      "invalid": 21242,
+      "seats": 32,
+      "candidatures": [
+        {
+          "code": "000047",
+          "votes": 952347,
+          "seats": 13
+        },
+        {
+          "code": "000051",
+          "votes": 405993,
+          "seats": 5
+        },
+        {
+          "code": "000048",
+          "votes": 367519,
+          "seats": 5
+        },
+        {
+          "code": "000050",
+          "votes": 328697,
+          "seats": 4
+        },
+        {
+          "code": "000057",
+          "votes": 258159,
+          "seats": 3
+        },
+        {
+          "code": "000006",
+          "votes": 201775,
+          "seats": 2
+        },
+        {
+          "code": "000053",
+          "votes": 67266,
+          "seats": 0
+        },
+        {
+          "code": "000058",
+          "votes": 28201,
+          "seats": 0
+        },
+        {
+          "code": "000055",
+          "votes": 24452,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 6048,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 3104,
+          "seats": 0
+        },
+        {
+          "code": "000054",
+          "votes": 2858,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "48",
+      "name": "Bizkaia",
+      "census": 942983,
+      "voters": 614944,
+      "blank": 3391,
+      "invalid": 5251,
+      "seats": 8,
+      "candidatures": [
+        {
+          "code": "000075",
+          "votes": 164188,
+          "seats": 2
+        },
+        {
+          "code": "000076",
+          "votes": 157448,
+          "seats": 2
+        },
+        {
+          "code": "000071",
+          "votes": 125867,
+          "seats": 2
+        },
+        {
+          "code": "000005",
+          "votes": 70533,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 66592,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 16069,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 2729,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 929,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 804,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 618,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 525,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "09",
+      "name": "Burgos",
+      "census": 296401,
+      "voters": 204886,
+      "blank": 1851,
+      "invalid": 2317,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 82329,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 69775,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 25858,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 17508,
+          "seats": 0
+        },
+        {
+          "code": "000036",
+          "votes": 1774,
+          "seats": 0
+        },
+        {
+          "code": "000037",
+          "votes": 1184,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 943,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 490,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 354,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 349,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 154,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "name": "Cáceres",
+      "census": 339491,
+      "voters": 239747,
+      "blank": 1721,
+      "invalid": 3896,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000002",
+          "votes": 91692,
+          "seats": 2
+        },
+        {
+          "code": "000005",
+          "votes": 89633,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 32076,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 16354,
+          "seats": 0
+        },
+        {
+          "code": "000062",
+          "votes": 1922,
+          "seats": 0
+        },
+        {
+          "code": "000063",
+          "votes": 963,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 814,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 316,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 249,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 111,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "name": "Cádiz",
+      "census": 1017958,
+      "voters": 644801,
+      "blank": 7103,
+      "invalid": 7703,
+      "seats": 9,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 221703,
+          "seats": 4
+        },
+        {
+          "code": "000002",
+          "votes": 211200,
+          "seats": 3
+        },
+        {
+          "code": "000006",
+          "votes": 96720,
+          "seats": 1
+        },
+        {
+          "code": "000011",
+          "votes": 82115,
+          "seats": 1
+        },
+        {
+          "code": "000012",
+          "votes": 9191,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 5937,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 1225,
+          "seats": 0
+        },
+        {
+          "code": "000013",
+          "votes": 745,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 673,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 486,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "39",
+      "name": "Cantabria",
+      "census": 507818,
+      "voters": 355145,
+      "blank": 3262,
+      "invalid": 4995,
+      "seats": 5,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 147326,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 116596,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 49243,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 29713,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 2089,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 790,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 598,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 533,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "12",
+      "name": "Castellón/Castelló",
+      "census": 430830,
+      "voters": 311581,
+      "blank": 2655,
+      "invalid": 3651,
+      "seats": 5,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 108302,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 100530,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 48913,
+          "seats": 1
+        },
+        {
+          "code": "000082",
+          "votes": 44187,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1968,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 721,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 493,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 161,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "13",
+      "name": "Ciudad Real",
+      "census": 391495,
+      "voters": 286895,
+      "blank": 2353,
+      "invalid": 3916,
+      "seats": 5,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 114709,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 100102,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 46046,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 17405,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1319,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 447,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 365,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 233,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "14",
+      "name": "Córdoba",
+      "census": 645288,
+      "voters": 455564,
+      "blank": 4348,
+      "invalid": 6962,
+      "seats": 6,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 169976,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 144080,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 62526,
+          "seats": 1
+        },
+        {
+          "code": "000011",
+          "votes": 61594,
+          "seats": 1
+        },
+        {
+          "code": "000007",
+          "votes": 2699,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 942,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 746,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 701,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 598,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 392,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "15",
+      "name": "Coruña (A)",
+      "census": 1085673,
+      "voters": 683187,
+      "blank": 5197,
+      "invalid": 5485,
+      "seats": 8,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 292272,
+          "seats": 4
+        },
+        {
+          "code": "000064",
+          "votes": 190897,
+          "seats": 2
+        },
+        {
+          "code": "000066",
+          "votes": 82618,
+          "seats": 1
+        },
+        {
+          "code": "000065",
+          "votes": 67653,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 34410,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 3096,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 1011,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 548,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "16",
+      "name": "Cuenca",
+      "census": 152694,
+      "voters": 115280,
+      "blank": 969,
+      "invalid": 1472,
+      "seats": 3,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 45255,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 42528,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 17700,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 6325,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 387,
+          "seats": 0
+        },
+        {
+          "code": "000097",
+          "votes": 207,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 168,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 111,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 100,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 58,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "20",
+      "name": "Gipuzkoa",
+      "census": 585873,
+      "voters": 378965,
+      "blank": 2005,
+      "invalid": 2344,
+      "seats": 6,
+      "candidatures": [
+        {
+          "code": "000071",
+          "votes": 117321,
+          "seats": 2
+        },
+        {
+          "code": "000076",
+          "votes": 87709,
+          "seats": 2
+        },
+        {
+          "code": "000075",
+          "votes": 85026,
+          "seats": 2
+        },
+        {
+          "code": "000010",
+          "votes": 40081,
+          "seats": 0
+        },
+        {
+          "code": "000005",
+          "votes": 32721,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 7877,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1568,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 933,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 530,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 442,
+          "seats": 0
+        },
+        {
+          "code": "000078",
+          "votes": 259,
+          "seats": 0
+        },
+        {
+          "code": "000077",
+          "votes": 149,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "17",
+      "name": "Girona",
+      "census": 546370,
+      "voters": 327159,
+      "blank": 2981,
+      "invalid": 4171,
+      "seats": 6,
+      "candidatures": [
+        {
+          "code": "000047",
+          "votes": 93448,
+          "seats": 2
+        },
+        {
+          "code": "000057",
+          "votes": 63251,
+          "seats": 2
+        },
+        {
+          "code": "000050",
+          "votes": 47531,
+          "seats": 1
+        },
+        {
+          "code": "000051",
+          "votes": 35344,
+          "seats": 1
+        },
+        {
+          "code": "000056",
+          "votes": 31341,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 22706,
+          "seats": 0
+        },
+        {
+          "code": "000053",
+          "votes": 18229,
+          "seats": 0
+        },
+        {
+          "code": "000058",
+          "votes": 3531,
+          "seats": 0
+        },
+        {
+          "code": "000055",
+          "votes": 3388,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 570,
+          "seats": 0
+        },
+        {
+          "code": "000054",
+          "votes": 420,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 248,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "18",
+      "name": "Granada",
+      "census": 765478,
+      "voters": 509486,
+      "blank": 4057,
+      "invalid": 6641,
+      "seats": 7,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 185996,
+          "seats": 3
+        },
+        {
+          "code": "000002",
+          "votes": 165862,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 81080,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 58567,
+          "seats": 1
+        },
+        {
+          "code": "000007",
+          "votes": 3143,
+          "seats": 0
+        },
+        {
+          "code": "000016",
+          "votes": 1218,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 765,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 695,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 658,
+          "seats": 0
+        },
+        {
+          "code": "000013",
+          "votes": 461,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 343,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "19",
+      "name": "Guadalajara",
+      "census": 196983,
+      "voters": 142744,
+      "blank": 1143,
+      "invalid": 1831,
+      "seats": 3,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 51195,
+          "seats": 1
+        },
+        {
+          "code": "000002",
+          "votes": 46479,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 27126,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 12907,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1039,
+          "seats": 0
+        },
+        {
+          "code": "000097",
+          "votes": 304,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 249,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 191,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 162,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 118,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "21",
+      "name": "Huelva",
+      "census": 402504,
+      "voters": 260861,
+      "blank": 2410,
+      "invalid": 4057,
+      "seats": 5,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 93565,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 92326,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 37572,
+          "seats": 1
+        },
+        {
+          "code": "000011",
+          "votes": 26752,
+          "seats": 0
+        },
+        {
+          "code": "000017",
+          "votes": 1931,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1663,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 368,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 217,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "22",
+      "name": "Huesca",
+      "census": 173391,
+      "voters": 121148,
+      "blank": 1217,
+      "invalid": 1253,
+      "seats": 3,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 45783,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 40307,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 15155,
+          "seats": 0
+        },
+        {
+          "code": "000021",
+          "votes": 13774,
+          "seats": 0
+        },
+        {
+          "code": "000023",
+          "votes": 1312,
+          "seats": 0
+        },
+        {
+          "code": "000024",
+          "votes": 717,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 498,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 475,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 258,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 137,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 114,
+          "seats": 0
+        },
+        {
+          "code": "000020",
+          "votes": 84,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 64,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "23",
+      "name": "Jaén",
+      "census": 518371,
+      "voters": 373657,
+      "blank": 2497,
+      "invalid": 4926,
+      "seats": 5,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 137617,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 133819,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 54400,
+          "seats": 1
+        },
+        {
+          "code": "000011",
+          "votes": 29461,
+          "seats": 0
+        },
+        {
+          "code": "000018",
+          "votes": 8293,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1671,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 410,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 360,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 203,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "24",
+      "name": "León",
+      "census": 422917,
+      "voters": 277726,
+      "blank": 1577,
+      "invalid": 2486,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 101605,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 92578,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 35451,
+          "seats": 0
+        },
+        {
+          "code": "000039",
+          "votes": 22675,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 18577,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 895,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 541,
+          "seats": 0
+        },
+        {
+          "code": "000027",
+          "votes": 486,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 319,
+          "seats": 0
+        },
+        {
+          "code": "000038",
+          "votes": 309,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 155,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 72,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "25",
+      "name": "Lleida",
+      "census": 317225,
+      "voters": 186929,
+      "blank": 2059,
+      "invalid": 2390,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000047",
+          "votes": 54414,
+          "seats": 2
+        },
+        {
+          "code": "000050",
+          "votes": 34331,
+          "seats": 1
+        },
+        {
+          "code": "000057",
+          "votes": 33228,
+          "seats": 1
+        },
+        {
+          "code": "000048",
+          "votes": 23699,
+          "seats": 0
+        },
+        {
+          "code": "000051",
+          "votes": 14561,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 12560,
+          "seats": 0
+        },
+        {
+          "code": "000053",
+          "votes": 5449,
+          "seats": 0
+        },
+        {
+          "code": "000055",
+          "votes": 1865,
+          "seats": 0
+        },
+        {
+          "code": "000058",
+          "votes": 1352,
+          "seats": 0
+        },
+        {
+          "code": "000059",
+          "votes": 462,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 247,
+          "seats": 0
+        },
+        {
+          "code": "000054",
+          "votes": 192,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 120,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "27",
+      "name": "Lugo",
+      "census": 337755,
+      "voters": 200709,
+      "blank": 1251,
+      "invalid": 2143,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 99769,
+          "seats": 3
+        },
+        {
+          "code": "000064",
+          "votes": 60163,
+          "seats": 1
+        },
+        {
+          "code": "000065",
+          "votes": 17197,
+          "seats": 0
+        },
+        {
+          "code": "000066",
+          "votes": 10287,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 8643,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 645,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 233,
+          "seats": 0
+        },
+        {
+          "code": "000067",
+          "votes": 149,
+          "seats": 0
+        },
+        {
+          "code": "000068",
+          "votes": 116,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 113,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "28",
+      "name": "Madrid",
+      "census": 5224561,
+      "voters": 3639500,
+      "blank": 28960,
+      "invalid": 30827,
+      "seats": 37,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 1463183,
+          "seats": 16
+        },
+        {
+          "code": "000002",
+          "votes": 1004599,
+          "seats": 10
+        },
+        {
+          "code": "000010",
+          "votes": 557780,
+          "seats": 6
+        },
+        {
+          "code": "000006",
+          "votes": 506164,
+          "seats": 5
+        },
+        {
+          "code": "000007",
+          "votes": 21742,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 7652,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 6749,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 3784,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 3407,
+          "seats": 0
+        },
+        {
+          "code": "000070",
+          "votes": 2902,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 1751,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "29",
+      "name": "Málaga",
+      "census": 1239846,
+      "voters": 798557,
+      "blank": 7509,
+      "invalid": 10219,
+      "seats": 11,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 302000,
+          "seats": 5
+        },
+        {
+          "code": "000002",
+          "votes": 239172,
+          "seats": 3
+        },
+        {
+          "code": "000006",
+          "votes": 129758,
+          "seats": 2
+        },
+        {
+          "code": "000011",
+          "votes": 96652,
+          "seats": 1
+        },
+        {
+          "code": "000007",
+          "votes": 8487,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 1662,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 1519,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 888,
+          "seats": 0
+        },
+        {
+          "code": "000096",
+          "votes": 691,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "30",
+      "name": "Murcia",
+      "census": 1099703,
+      "voters": 755255,
+      "blank": 5034,
+      "invalid": 7458,
+      "seats": 10,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 307972,
+          "seats": 4
+        },
+        {
+          "code": "000002",
+          "votes": 189210,
+          "seats": 3
+        },
+        {
+          "code": "000006",
+          "votes": 163124,
+          "seats": 2
+        },
+        {
+          "code": "000010",
+          "votes": 71578,
+          "seats": 1
+        },
+        {
+          "code": "000007",
+          "votes": 5063,
+          "seats": 0
+        },
+        {
+          "code": "000080",
+          "votes": 1698,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 1377,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 1201,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 546,
+          "seats": 0
+        },
+        {
+          "code": "000013",
+          "votes": 453,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 376,
+          "seats": 0
+        },
+        {
+          "code": "000079",
+          "votes": 165,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "31",
+      "name": "Navarra",
+      "census": 519918,
+      "voters": 345095,
+      "blank": 2890,
+      "invalid": 3251,
+      "seats": 5,
+      "candidatures": [
+        {
+          "code": "000072",
+          "votes": 93553,
+          "seats": 2
+        },
+        {
+          "code": "000071",
+          "votes": 58954,
+          "seats": 1
+        },
+        {
+          "code": "000005",
+          "votes": 57134,
+          "seats": 1
+        },
+        {
+          "code": "000074",
+          "votes": 52188,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 43922,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 19491,
+          "seats": 0
+        },
+        {
+          "code": "000073",
+          "votes": 9938,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1530,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 1002,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 679,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 311,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 252,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "32",
+      "name": "Ourense",
+      "census": 355765,
+      "voters": 188065,
+      "blank": 1109,
+      "invalid": 1794,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 93182,
+          "seats": 3
+        },
+        {
+          "code": "000064",
+          "votes": 56035,
+          "seats": 1
+        },
+        {
+          "code": "000065",
+          "votes": 15317,
+          "seats": 0
+        },
+        {
+          "code": "000066",
+          "votes": 10171,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 9080,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 700,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 182,
+          "seats": 0
+        },
+        {
+          "code": "000069",
+          "votes": 153,
+          "seats": 0
+        },
+        {
+          "code": "000067",
+          "votes": 144,
+          "seats": 0
+        },
+        {
+          "code": "000068",
+          "votes": 101,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 97,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "34",
+      "name": "Palencia",
+      "census": 137642,
+      "voters": 98079,
+      "blank": 833,
+      "invalid": 1117,
+      "seats": 3,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 40709,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 33613,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 12504,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 5877,
+          "seats": 0
+        },
+        {
+          "code": "000040",
+          "votes": 1917,
+          "seats": 0
+        },
+        {
+          "code": "000027",
+          "votes": 384,
+          "seats": 0
+        },
+        {
+          "code": "000041",
+          "votes": 366,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 295,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 139,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 99,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 80,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 71,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 42,
+          "seats": 0
+        },
+        {
+          "code": "000013",
+          "votes": 33,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "35",
+      "name": "Palmas (Las)",
+      "census": 898882,
+      "voters": 534912,
+      "blank": 3062,
+      "invalid": 5575,
+      "seats": 8,
+      "candidatures": [
+        {
+          "code": "000002",
+          "votes": 175671,
+          "seats": 3
+        },
+        {
+          "code": "000005",
+          "votes": 136857,
+          "seats": 3
+        },
+        {
+          "code": "000006",
+          "votes": 77343,
+          "seats": 1
+        },
+        {
+          "code": "000033",
+          "votes": 54369,
+          "seats": 1
+        },
+        {
+          "code": "000032",
+          "votes": 42430,
+          "seats": 0
+        },
+        {
+          "code": "000031",
+          "votes": 33558,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 3570,
+          "seats": 0
+        },
+        {
+          "code": "000034",
+          "votes": 883,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 635,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 563,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 396,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "36",
+      "name": "Pontevedra",
+      "census": 909434,
+      "voters": 579125,
+      "blank": 3865,
+      "invalid": 6001,
+      "seats": 7,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 227658,
+          "seats": 3
+        },
+        {
+          "code": "000064",
+          "votes": 179737,
+          "seats": 3
+        },
+        {
+          "code": "000066",
+          "votes": 75615,
+          "seats": 1
+        },
+        {
+          "code": "000065",
+          "votes": 53828,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 27539,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 3003,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 884,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 510,
+          "seats": 0
+        },
+        {
+          "code": "000068",
+          "votes": 485,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "26",
+      "name": "Rioja (La)",
+      "census": 252091,
+      "voters": 176945,
+      "blank": 1608,
+      "invalid": 2282,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 79715,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 62322,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 17056,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 11470,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 723,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 608,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 295,
+          "seats": 0
+        },
+        {
+          "code": "000042",
+          "votes": 286,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 232,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 224,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 124,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "37",
+      "name": "Salamanca",
+      "census": 300506,
+      "voters": 201419,
+      "blank": 1649,
+      "invalid": 2309,
+      "seats": 4,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 93318,
+          "seats": 3
+        },
+        {
+          "code": "000002",
+          "votes": 60718,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 29203,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 11012,
+          "seats": 0
+        },
+        {
+          "code": "000027",
+          "votes": 1062,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 631,
+          "seats": 0
+        },
+        {
+          "code": "000038",
+          "votes": 489,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 325,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 278,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 205,
+          "seats": 0
+        },
+        {
+          "code": "000013",
+          "votes": 140,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 80,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "38",
+      "name": "Santa Cruz de Tenerife",
+      "census": 881217,
+      "voters": 500777,
+      "blank": 5088,
+      "invalid": 6404,
+      "seats": 7,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 174770,
+          "seats": 3
+        },
+        {
+          "code": "000002",
+          "votes": 165590,
+          "seats": 3
+        },
+        {
+          "code": "000031",
+          "votes": 82805,
+          "seats": 1
+        },
+        {
+          "code": "000033",
+          "votes": 53632,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 6147,
+          "seats": 0
+        },
+        {
+          "code": "000032",
+          "votes": 3165,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 1619,
+          "seats": 0
+        },
+        {
+          "code": "000034",
+          "votes": 791,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 766,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "40",
+      "name": "Segovia",
+      "census": 119454,
+      "voters": 89945,
+      "blank": 875,
+      "invalid": 1332,
+      "seats": 3,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 39894,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 27113,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 12510,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 7137,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 307,
+          "seats": 0
+        },
+        {
+          "code": "000042",
+          "votes": 198,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 183,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 136,
+          "seats": 0
+        },
+        {
+          "code": "000013",
+          "votes": 102,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 94,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 64,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "41",
+      "name": "Sevilla",
+      "census": 1564082,
+      "voters": 1075133,
+      "blank": 10951,
+      "invalid": 15775,
+      "seats": 12,
+      "candidatures": [
+        {
+          "code": "000002",
+          "votes": 387760,
+          "seats": 5
+        },
+        {
+          "code": "000005",
+          "votes": 353663,
+          "seats": 4
+        },
+        {
+          "code": "000011",
+          "votes": 148745,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 141087,
+          "seats": 1
+        },
+        {
+          "code": "000007",
+          "votes": 9288,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 1950,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 1765,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 1522,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 1034,
+          "seats": 0
+        },
+        {
+          "code": "000013",
+          "votes": 912,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 681,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "42",
+      "name": "Soria",
+      "census": 75768,
+      "voters": 51157,
+      "blank": 285,
+      "invalid": 388,
+      "seats": 2,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 18895,
+          "seats": 1
+        },
+        {
+          "code": "000002",
+          "votes": 14966,
+          "seats": 1
+        },
+        {
+          "code": "000043",
+          "votes": 9697,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 4978,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 1711,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 94,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 68,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 43,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 23,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 9,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "43",
+      "name": "Tarragona",
+      "census": 596689,
+      "voters": 372426,
+      "blank": 3168,
+      "invalid": 4402,
+      "seats": 6,
+      "candidatures": [
+        {
+          "code": "000047",
+          "votes": 121126,
+          "seats": 2
+        },
+        {
+          "code": "000050",
+          "votes": 55461,
+          "seats": 1
+        },
+        {
+          "code": "000056",
+          "votes": 51061,
+          "seats": 1
+        },
+        {
+          "code": "000051",
+          "votes": 41719,
+          "seats": 1
+        },
+        {
+          "code": "000057",
+          "votes": 40791,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 38039,
+          "seats": 0
+        },
+        {
+          "code": "000053",
+          "votes": 8700,
+          "seats": 0
+        },
+        {
+          "code": "000058",
+          "votes": 3797,
+          "seats": 0
+        },
+        {
+          "code": "000055",
+          "votes": 2311,
+          "seats": 0
+        },
+        {
+          "code": "000097",
+          "votes": 661,
+          "seats": 0
+        },
+        {
+          "code": "000054",
+          "votes": 405,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 267,
+          "seats": 0
+        },
+        {
+          "code": "000060",
+          "votes": 265,
+          "seats": 0
+        },
+        {
+          "code": "000061",
+          "votes": 253,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "44",
+      "name": "Teruel",
+      "census": 106352,
+      "voters": 76561,
+      "blank": 410,
+      "invalid": 648,
+      "seats": 3,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 26586,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 22226,
+          "seats": 1
+        },
+        {
+          "code": "000025",
+          "votes": 11348,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 9932,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 4126,
+          "seats": 0
+        },
+        {
+          "code": "000024",
+          "votes": 711,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 172,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 135,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 94,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 60,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 49,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 36,
+          "seats": 0
+        },
+        {
+          "code": "000020",
+          "votes": 28,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "45",
+      "name": "Toledo",
+      "census": 542567,
+      "voters": 392988,
+      "blank": 2611,
+      "invalid": 5788,
+      "seats": 6,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 146533,
+          "seats": 3
+        },
+        {
+          "code": "000002",
+          "votes": 126072,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 76044,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 31876,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 2024,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 985,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 499,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 281,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 275,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "46",
+      "name": "Valencia/València",
+      "census": 1999340,
+      "voters": 1451187,
+      "blank": 10810,
+      "invalid": 14026,
+      "seats": 16,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 483469,
+          "seats": 6
+        },
+        {
+          "code": "000002",
+          "votes": 461353,
+          "seats": 5
+        },
+        {
+          "code": "000082",
+          "votes": 242839,
+          "seats": 3
+        },
+        {
+          "code": "000006",
+          "votes": 218657,
+          "seats": 2
+        },
+        {
+          "code": "000007",
+          "votes": 10334,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 2919,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 1778,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 1773,
+          "seats": 0
+        },
+        {
+          "code": "000083",
+          "votes": 1442,
+          "seats": 0
+        },
+        {
+          "code": "000013",
+          "votes": 1056,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 731,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "47",
+      "name": "Valladolid",
+      "census": 431381,
+      "voters": 319312,
+      "blank": 2419,
+      "invalid": 3003,
+      "seats": 5,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 129170,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 103596,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 47948,
+          "seats": 1
+        },
+        {
+          "code": "000010",
+          "votes": 28049,
+          "seats": 0
+        },
+        {
+          "code": "000027",
+          "votes": 1226,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 1105,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 601,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 583,
+          "seats": 0
+        },
+        {
+          "code": "000044",
+          "votes": 463,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 376,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 335,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 164,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 159,
+          "seats": 0
+        },
+        {
+          "code": "000045",
+          "votes": 115,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "49",
+      "name": "Zamora",
+      "census": 162998,
+      "voters": 104671,
+      "blank": 922,
+      "invalid": 1261,
+      "seats": 3,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 46196,
+          "seats": 2
+        },
+        {
+          "code": "000002",
+          "votes": 33601,
+          "seats": 1
+        },
+        {
+          "code": "000006",
+          "votes": 13652,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 5839,
+          "seats": 0
+        },
+        {
+          "code": "000046",
+          "votes": 1843,
+          "seats": 0
+        },
+        {
+          "code": "000039",
+          "votes": 526,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 313,
+          "seats": 0
+        },
+        {
+          "code": "000038",
+          "votes": 166,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 121,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 100,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 81,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 50,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "50",
+      "name": "Zaragoza",
+      "census": 740060,
+      "voters": 523410,
+      "blank": 4693,
+      "invalid": 4705,
+      "seats": 7,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 186776,
+          "seats": 3
+        },
+        {
+          "code": "000002",
+          "votes": 159858,
+          "seats": 2
+        },
+        {
+          "code": "000006",
+          "votes": 79376,
+          "seats": 1
+        },
+        {
+          "code": "000021",
+          "votes": 69925,
+          "seats": 1
+        },
+        {
+          "code": "000023",
+          "votes": 7780,
+          "seats": 0
+        },
+        {
+          "code": "000024",
+          "votes": 2745,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 2428,
+          "seats": 0
+        },
+        {
+          "code": "000014",
+          "votes": 2146,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 1026,
+          "seats": 0
+        },
+        {
+          "code": "000015",
+          "votes": 561,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 419,
+          "seats": 0
+        },
+        {
+          "code": "000020",
+          "votes": 394,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 306,
+          "seats": 0
+        },
+        {
+          "code": "000019",
+          "votes": 272,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "51",
+      "name": "Ceuta",
+      "census": 63310,
+      "voters": 33674,
+      "blank": 328,
+      "invalid": 353,
+      "seats": 1,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 12918,
+          "seats": 1
+        },
+        {
+          "code": "000002",
+          "votes": 11332,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 7752,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 821,
+          "seats": 0
+        },
+        {
+          "code": "000001",
+          "votes": 53,
+          "seats": 0
+        },
+        {
+          "code": "000008",
+          "votes": 53,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 33,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 31,
+          "seats": 0
+        }
+      ]
+    },
+    {
+      "id": "52",
+      "name": "Melilla",
+      "census": 61118,
+      "voters": 27649,
+      "blank": 253,
+      "invalid": 300,
+      "seats": 1,
+      "candidatures": [
+        {
+          "code": "000005",
+          "votes": 13446,
+          "seats": 1
+        },
+        {
+          "code": "000002",
+          "votes": 6943,
+          "seats": 0
+        },
+        {
+          "code": "000006",
+          "votes": 4359,
+          "seats": 0
+        },
+        {
+          "code": "000084",
+          "votes": 1298,
+          "seats": 0
+        },
+        {
+          "code": "000010",
+          "votes": 827,
+          "seats": 0
+        },
+        {
+          "code": "000007",
+          "votes": 160,
+          "seats": 0
+        },
+        {
+          "code": "000003",
+          "votes": 40,
+          "seats": 0
+        },
+        {
+          "code": "000009",
+          "votes": 23,
+          "seats": 0
+        }
+      ]
+    }
+  ]
+}

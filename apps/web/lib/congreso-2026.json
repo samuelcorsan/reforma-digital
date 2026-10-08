@@ -1,0 +1,314 @@
+[
+  {
+    "id": "02",
+    "name": "Albacete",
+    "population": 390406,
+    "seats": 4
+  },
+  {
+    "id": "03",
+    "name": "Alicante/Alacant",
+    "population": 2030037,
+    "seats": 12
+  },
+  {
+    "id": "04",
+    "name": "Almería",
+    "population": 773577,
+    "seats": 6
+  },
+  {
+    "id": "01",
+    "name": "Araba/Álava",
+    "population": 342161,
+    "seats": 4
+  },
+  {
+    "id": "33",
+    "name": "Asturias",
+    "population": 1013529,
+    "seats": 7
+  },
+  {
+    "id": "05",
+    "name": "Ávila",
+    "population": 159887,
+    "seats": 3
+  },
+  {
+    "id": "06",
+    "name": "Badajoz",
+    "population": 663886,
+    "seats": 5
+  },
+  {
+    "id": "07",
+    "name": "Balears (Illes)",
+    "population": 1237480,
+    "seats": 8
+  },
+  {
+    "id": "08",
+    "name": "Barcelona",
+    "population": 5983325,
+    "seats": 32
+  },
+  {
+    "id": "48",
+    "name": "Bizkaia",
+    "population": 1166816,
+    "seats": 8
+  },
+  {
+    "id": "09",
+    "name": "Burgos",
+    "population": 361556,
+    "seats": 4
+  },
+  {
+    "id": "10",
+    "name": "Cáceres",
+    "population": 387752,
+    "seats": 4
+  },
+  {
+    "id": "11",
+    "name": "Cádiz",
+    "population": 1257041,
+    "seats": 8
+  },
+  {
+    "id": "39",
+    "name": "Cantabria",
+    "population": 593964,
+    "seats": 5
+  },
+  {
+    "id": "12",
+    "name": "Castellón/Castelló",
+    "population": 627173,
+    "seats": 5
+  },
+  {
+    "id": "13",
+    "name": "Ciudad Real",
+    "population": 494407,
+    "seats": 5
+  },
+  {
+    "id": "14",
+    "name": "Córdoba",
+    "population": 772153,
+    "seats": 6
+  },
+  {
+    "id": "15",
+    "name": "Coruña (A)",
+    "population": 1135612,
+    "seats": 8
+  },
+  {
+    "id": "16",
+    "name": "Cuenca",
+    "population": 198216,
+    "seats": 3
+  },
+  {
+    "id": "20",
+    "name": "Gipuzkoa",
+    "population": 733365,
+    "seats": 6
+  },
+  {
+    "id": "17",
+    "name": "Girona",
+    "population": 832026,
+    "seats": 6
+  },
+  {
+    "id": "18",
+    "name": "Granada",
+    "population": 942618,
+    "seats": 7
+  },
+  {
+    "id": "19",
+    "name": "Guadalajara",
+    "population": 285390,
+    "seats": 3
+  },
+  {
+    "id": "21",
+    "name": "Huelva",
+    "population": 535703,
+    "seats": 5
+  },
+  {
+    "id": "22",
+    "name": "Huesca",
+    "population": 230624,
+    "seats": 3
+  },
+  {
+    "id": "23",
+    "name": "Jaén",
+    "population": 617604,
+    "seats": 5
+  },
+  {
+    "id": "24",
+    "name": "León",
+    "population": 446771,
+    "seats": 4
+  },
+  {
+    "id": "25",
+    "name": "Lleida",
+    "population": 456106,
+    "seats": 4
+  },
+  {
+    "id": "27",
+    "name": "Lugo",
+    "population": 325759,
+    "seats": 4
+  },
+  {
+    "id": "28",
+    "name": "Madrid",
+    "population": 7137031,
+    "seats": 38
+  },
+  {
+    "id": "29",
+    "name": "Málaga",
+    "population": 1791092,
+    "seats": 11
+  },
+  {
+    "id": "30",
+    "name": "Murcia",
+    "population": 1589138,
+    "seats": 10
+  },
+  {
+    "id": "31",
+    "name": "Navarra",
+    "population": 683500,
+    "seats": 5
+  },
+  {
+    "id": "32",
+    "name": "Ourense",
+    "population": 305573,
+    "seats": 4
+  },
+  {
+    "id": "34",
+    "name": "Palencia",
+    "population": 158687,
+    "seats": 3
+  },
+  {
+    "id": "35",
+    "name": "Palmas (Las)",
+    "population": 1167555,
+    "seats": 8
+  },
+  {
+    "id": "36",
+    "name": "Pontevedra",
+    "population": 946225,
+    "seats": 7
+  },
+  {
+    "id": "26",
+    "name": "Rioja (La)",
+    "population": 327286,
+    "seats": 4
+  },
+  {
+    "id": "37",
+    "name": "Salamanca",
+    "population": 328779,
+    "seats": 4
+  },
+  {
+    "id": "38",
+    "name": "Santa Cruz de Tenerife",
+    "population": 1082421,
+    "seats": 7
+  },
+  {
+    "id": "40",
+    "name": "Segovia",
+    "population": 158470,
+    "seats": 3
+  },
+  {
+    "id": "41",
+    "name": "Sevilla",
+    "population": 1976624,
+    "seats": 12
+  },
+  {
+    "id": "42",
+    "name": "Soria",
+    "population": 90234,
+    "seats": 2
+  },
+  {
+    "id": "43",
+    "name": "Tarragona",
+    "population": 874808,
+    "seats": 6
+  },
+  {
+    "id": "44",
+    "name": "Teruel",
+    "population": 136197,
+    "seats": 3
+  },
+  {
+    "id": "45",
+    "name": "Toledo",
+    "population": 750815,
+    "seats": 6
+  },
+  {
+    "id": "46",
+    "name": "Valencia/València",
+    "population": 2758633,
+    "seats": 16
+  },
+  {
+    "id": "47",
+    "name": "Valladolid",
+    "population": 528841,
+    "seats": 5
+  },
+  {
+    "id": "49",
+    "name": "Zamora",
+    "population": 165275,
+    "seats": 3
+  },
+  {
+    "id": "50",
+    "name": "Zaragoza",
+    "population": 991991,
+    "seats": 7
+  },
+  {
+    "id": "51",
+    "name": "Ceuta",
+    "population": 83595,
+    "seats": 1
+  },
+  {
+    "id": "52",
+    "name": "Melilla",
+    "population": 86780,
+    "seats": 1
+  }
+]
