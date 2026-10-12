@@ -1,0 +1,11 @@
+{
+  "source": "Ministerio del Interior, Infoelectoral: resultados del Congreso de los Diputados de julio de 2023, totales por circunscripción",
+  "sourceUrl": "https://infoelectoral.interior.gob.es/estaticos/docxl/apliextr/02202307_TOTA.zip",
+  "retrieved": "2026-10-06",
+  "sourceSha256": "8df0344c9d314d1d36cd837e7ab8962f2d2705224e88fdcc75e77b54e67bece0",
+  "sourceFiles": "03022307.DAT (candidaturas), 07022307.DAT (totales por circunscripción) y 08022307.DAT (votos y escaños por candidatura), con fecha 2023-11-04 a 2023-11-10 y marcados como datos oficiales",
+  "attribution": "Origen de los datos: Ministerio del Interior",
+  "license": "Reutilización libre conforme a la Ley 37/2007 y el Real Decreto 1495/2011, citando la fuente y sin desnaturalizar la información",
+  "licenseUrl": "https://infoelectoral.interior.gob.es/es/aviso-legal/",
+  "adaptation": "Se conservan las 52 circunscripciones (código INE de provincia, distrito 9). census es el censo de escrutinio, que incluye a los residentes ausentes (CERA); voters es la suma de votos en blanco, nulos y a candidaturas. Los votos a candidaturas suman el total oficial de cada circunscripción. Las candidaturas se ordenan por votos y parties guarda sus siglas y denominación del fichero 03."
+}

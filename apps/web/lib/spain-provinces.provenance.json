@@ -1,0 +1,12 @@
+{
+  "source": "geoBoundaries gbOpen ESP ADM2",
+  "sourceUrl": "https://github.com/wmgeolab/geoBoundaries/blob/9469f09/releaseData/gbOpen/ESP/ADM2/geoBoundaries-ESP-ADM2_simplified.geojson",
+  "sourceCommit": "9469f09",
+  "sourceSha256": "40a12d32651a352b59bc88447432421ab80e2d950deb6f552efbae907f7232c2",
+  "boundaryID": "ESP-ADM2-93216281",
+  "boundaryYear": "2018",
+  "attribution": "Instituto Nacional de Estadística (INE); geoBoundaries (William & Mary geoLab)",
+  "license": "INE reuse terms, declared by geoBoundaries as \"National Institute of Statistics (INE) Data License\"; geoBoundaries derivative works under Creative Commons Attribution 4.0 International (CC BY 4.0)",
+  "licenseUrl": "https://www.ine.es/ss/Satellite?L=0&c=Page&cid=1254735849170&p=1254735849170&pagename=Ayuda%2FINELayout",
+  "adaptation": "SVG paths derived from the simplified GeoJSON with the same pipeline as spain-regions.json, which it reproduces exactly from ESP ADM1. Equirectangular projection with longitude scaled by cos(40°) (x = 50·cos40°·(lon + 10) + 10, y = 50·(44 − lat) + 10), Canarias inset for Las Palmas and Santa Cruz de Tenerife (x = 32·lon + 604.4, y = 1385.6 − 32·lat), Douglas–Peucker simplification at 0.2 SVG units, rings that would drop below three vertices kept unsimplified, and coordinates rounded to 0.1 units. geoBoundaries shapeName values mapped by an explicit table to two-digit INE province codes; display names taken from congreso-2026.json."
+}

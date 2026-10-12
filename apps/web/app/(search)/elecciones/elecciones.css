@@ -1,0 +1,753 @@
+/* «¿Cuánto vale tu voto?». La cabecera y la ficha siguen al chat (pregunta como titular, tarjetas
+   de datos de sol/chat.css); el mapa va en una .caja-plana. */
+
+/* Tonos neutros por habitantes por escaño: sin colores que recuerden a un partido. */
+.el-mapa [data-band='0'] {
+  fill: color-mix(in srgb, var(--tinta) 12%, var(--blanco));
+  background: color-mix(in srgb, var(--tinta) 12%, var(--blanco));
+}
+.el-mapa [data-band='1'] {
+  fill: color-mix(in srgb, var(--tinta) 35%, var(--blanco));
+  background: color-mix(in srgb, var(--tinta) 35%, var(--blanco));
+}
+.el-mapa [data-band='2'] {
+  fill: color-mix(in srgb, var(--tinta) 68%, var(--blanco));
+  background: color-mix(in srgb, var(--tinta) 68%, var(--blanco));
+}
+.el-mapa [data-band='3'] {
+  fill: color-mix(in srgb, var(--tinta) 90%, var(--blanco));
+  background: color-mix(in srgb, var(--tinta) 90%, var(--blanco));
+}
+
+.info-pagina > .chat-question {
+  margin-bottom: var(--e-16);
+}
+.el-entradilla {
+  max-width: 56ch;
+  margin-bottom: var(--e-40);
+}
+
+/* ─── Disposición ──────────────────────────────────────────────────────────── */
+
+/* Escritorio: mapa a la izquierda; desplegable y ficha a la derecha, a la altura del mapa. */
+.el-mapa {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'mapa elige'
+    'mapa ficha';
+  align-items: start;
+  gap: var(--e-24) var(--e-40);
+}
+.info-pagina .el-elige {
+  grid-area: elige;
+  display: grid;
+  gap: var(--e-8);
+  margin: 0;
+}
+.el-lienzo {
+  grid-area: mapa;
+}
+.el-ficha {
+  grid-area: ficha;
+}
+
+/* ─── Elegir provincia: el compositor del chat ─────────────────────────────── */
+
+:is(.el-elige, .el-control) label {
+  color: var(--tinta-2);
+  font-size: 14px;
+  font-weight: 500;
+}
+/* Iconos sobre el campo; la flecha nativa no se separa del borde con el relleno. */
+:is(.el-elige-campo, .el-desplegable, .el-con-icono) {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+:is(.el-elige-campo, .el-desplegable, .el-con-icono) .icono {
+  position: absolute;
+  pointer-events: none;
+}
+.el-elige-campo select {
+  width: 100%;
+  min-height: 60px;
+  padding: 0 52px;
+  appearance: none;
+  border: 1px solid var(--linea);
+  border-radius: var(--r-pildora);
+  background: var(--blanco);
+  box-shadow: var(--sombra-suave);
+  color: var(--tinta);
+  font-size: 17px;
+  cursor: pointer;
+}
+.el-elige-campo select:focus {
+  border-color: var(--tinta);
+}
+/* Sin provincia, el texto de la opción vacía se lee como un ejemplo. */
+.el-elige-campo select:invalid {
+  color: var(--tinta-3);
+}
+.el-elige-campo option {
+  color: var(--tinta);
+}
+.el-elige-campo .icono:first-child {
+  left: 22px;
+  color: var(--tinta-3);
+}
+.el-elige-campo .icono:last-child {
+  right: 26px;
+}
+
+/* ─── Mapa ─────────────────────────────────────────────────────────────────── */
+
+.el-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--e-16) var(--e-24);
+}
+
+/* Control segmentado: la pastilla blanca se desliza a la vista elegida. Cada enlace mide 36 px a
+   la vista y 44 de área táctil. */
+.el-vistas {
+  position: relative;
+  display: inline-grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  padding: var(--e-4);
+  border-radius: var(--r-pildora);
+  background: var(--superficie);
+}
+.el-vistas::before {
+  content: '';
+  position: absolute;
+  inset: var(--e-4) auto var(--e-4) var(--e-4);
+  width: calc(50% - var(--e-4));
+  border-radius: var(--r-pildora);
+  background: var(--blanco);
+  box-shadow: var(--sombra-suave);
+  transition: transform 240ms var(--curva-cajon);
+}
+.el-vistas:has(a:last-child[aria-current])::before {
+  transform: translateX(100%);
+}
+.el-vistas a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding-inline: var(--e-16);
+  border-radius: var(--r-pildora);
+  color: var(--tinta-2);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: transform var(--t-rapido) var(--curva-salida);
+}
+.el-vistas a::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
+}
+.el-vistas a[aria-current] {
+  color: var(--tinta);
+}
+.el-vistas a:active {
+  transform: scale(0.96);
+}
+
+/* Escala: cuatro tramos unidos en una barra redondeada, con los cortes centrados en cada unión. */
+.el-escala {
+  width: min(280px, 100%);
+}
+.el-escala p {
+  margin-bottom: var(--e-8);
+  color: var(--tinta-2);
+  font-size: 14px;
+  font-weight: 500;
+}
+.el-escala-barra {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--r-pildora);
+}
+.el-escala-cortes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 6px;
+  color: var(--tinta-3);
+  font-size: 14px;
+}
+.el-escala-cortes span {
+  justify-self: end;
+  transform: translateX(50%);
+}
+
+.el-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: var(--e-24);
+}
+.el-capa {
+  animation: el-fundido var(--t-medio) var(--curva-salida) both;
+}
+@keyframes el-fundido {
+  from {
+    opacity: 0;
+  }
+}
+/* Las provincias se separan con blanco, como las rejillas de Sol, no con bordes de tinta. */
+.el-provincia :is(path, circle) {
+  stroke: var(--blanco);
+  stroke-width: 1px;
+  transition: opacity var(--t-rapido) ease;
+}
+.el-provincia circle {
+  stroke-width: 1.5px;
+}
+/* La provincia elegida, en amarillo de Sol, como la tarjeta destacada de la ficha. */
+.el-mapa .el-provincia[aria-current] :is(path, circle) {
+  fill: var(--amarillo);
+}
+.el-mapa .el-provincia[aria-current] .el-cifra {
+  fill: var(--tinta);
+}
+.el-provincia:focus-visible {
+  outline: 2px solid var(--foco);
+  outline-offset: 2px;
+}
+/* En la vista de escaños, la silueta de España sitúa los círculos. */
+.el-silueta {
+  fill: var(--superficie);
+  stroke: var(--blanco);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+.el-recuadro {
+  fill: none;
+  stroke: var(--linea);
+  vector-effect: non-scaling-stroke;
+}
+/* Rótulos como .t-etiqueta; se agrandan en móvil para que el SVG reducido no baje de 12 px. */
+.el-rotulo {
+  fill: var(--tinta-3);
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* Sin el borde de la banda, que comparte data-band con el círculo. */
+.el-provincia .el-cifra {
+  stroke: none;
+  font: 500 13px var(--font-mono);
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+.el-mapa .el-cifra:is([data-band='0'], [data-band='1']) {
+  fill: var(--tinta);
+}
+.el-mapa .el-cifra:is([data-band='2'], [data-band='3']) {
+  fill: var(--blanco);
+}
+.el-credito {
+  margin-top: var(--e-16);
+  color: var(--tinta-3);
+  font-size: 14px;
+}
+.el-credito a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .el-provincia:hover :is(path, circle) {
+    opacity: 0.75;
+  }
+  .el-vistas a:not([aria-current]):hover {
+    color: var(--tinta);
+  }
+}
+
+/* ─── Ficha ────────────────────────────────────────────────────────────────── */
+
+/* El nombre entra como la pregunta del chat; cambiar de provincia vuelve a montar la ficha. */
+.el-ficha-titulo {
+  margin: 0;
+  font-family: var(--font-texto);
+  font-size: clamp(32px, 3.4vw, 44px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  animation: chat-enter 420ms var(--curva-salida) both;
+}
+.el-ficha-resumen {
+  margin: var(--e-8) 0 var(--e-20);
+  color: var(--tinta-2);
+  font-size: 15px;
+  animation: chat-enter 360ms 60ms var(--curva-salida) both;
+}
+/* La rejilla es el bloque de referencia del globo de la «i», que ocupa todo su ancho. Dos columnas
+   también en móvil, para que las cuatro cifras se vean juntas. */
+.el-ficha .chat-details {
+  position: relative;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+/* Solo hacia atrás: al acabar, la tarjeta no conserva un transform que recortaría el globo. */
+.el-ficha .chat-detail {
+  animation-fill-mode: backwards;
+}
+.el-ficha .chat-detail:nth-child(2) {
+  animation-delay: 30ms;
+}
+.el-ficha .chat-detail:nth-child(3) {
+  animation-delay: 60ms;
+}
+.el-ficha .chat-detail:nth-child(4) {
+  animation-delay: 90ms;
+}
+.el-ficha .chat-detail-figure {
+  font-size: clamp(28px, 2.6vw, 34px);
+}
+.el-ficha-texto {
+  margin-top: var(--e-24);
+  color: var(--tinta-2);
+  font-size: 14px;
+  font-weight: 500;
+}
+.el-ejemplos.chat-followups {
+  margin-top: var(--e-8);
+}
+
+.el-info-boton {
+  width: 36px;
+  height: 36px;
+  margin: -10px -8px -10px -4px;
+  vertical-align: middle;
+}
+.el-info {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  display: block;
+  padding-top: var(--e-8);
+  color: var(--tinta);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.el-info[hidden] {
+  display: none;
+}
+.el-info > span {
+  display: block;
+  padding: var(--e-16);
+  border-radius: var(--r-16);
+  transform-origin: top center;
+  animation: el-globo 160ms var(--curva-salida) both;
+}
+@keyframes el-globo {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+/* ─── Simulador de D'Hondt ─────────────────────────────────────────────────── */
+
+.el-reparto {
+  margin-top: var(--e-64);
+}
+.el-reparto h2 {
+  max-width: 28ch;
+  margin-bottom: var(--e-12);
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.2;
+}
+.el-reparto > p {
+  max-width: 65ch;
+  margin-bottom: var(--e-24);
+  color: var(--tinta-2);
+}
+/* Escritorio: controles a la izquierda y resultado a la derecha. */
+.el-sim {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    'escanos resultado'
+    'filas resultado';
+  align-items: start;
+  gap: var(--e-24) var(--e-48);
+}
+.el-sim-escanos {
+  grid-area: escanos;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-8) var(--e-16);
+}
+.el-sim-escanos > span:first-child,
+.el-sim-subtitulo {
+  color: var(--tinta-2);
+  font-size: 14px;
+  font-weight: 500;
+}
+.el-sim-paso {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--r-pildora);
+  background: var(--superficie);
+}
+.el-sim-paso output {
+  min-width: 40px;
+  font-size: 20px;
+  text-align: center;
+}
+.el-sim-nota {
+  color: var(--tinta-3);
+  font-size: 14px;
+}
+
+.el-sim-filas {
+  grid-area: filas;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.el-sim-fila {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 150px 64px;
+  grid-template-areas: 'letra rango votos ganados';
+  align-items: center;
+  gap: 0 var(--e-16);
+  min-height: 64px;
+  border-bottom: 1px solid var(--linea);
+}
+.el-sim-letra {
+  grid-area: letra;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--tinta);
+  color: var(--blanco);
+  font-weight: 500;
+}
+.el-sim-fila input {
+  grid-area: rango;
+}
+.el-sim-votos {
+  grid-area: votos;
+  display: grid;
+  color: var(--tinta-2);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.el-sim-votos .t-dato {
+  color: var(--tinta);
+  font-size: 15px;
+}
+.el-sim-ganados {
+  grid-area: ganados;
+  display: grid;
+  justify-items: end;
+  color: var(--tinta-2);
+  font-size: 14px;
+  line-height: 1.2;
+}
+.el-sim-ganados strong {
+  color: var(--tinta);
+  font-size: 22px;
+  font-weight: 500;
+}
+/* Por debajo del 3 %: apagada, con el motivo escrito junto a sus votos. */
+.el-sim-fila[data-fuera] .el-sim-letra {
+  background: var(--apagado);
+  color: var(--apagado-texto);
+}
+.el-sim-fila[data-fuera] :is(.el-sim-votos, .el-sim-ganados strong) {
+  color: var(--tinta-3);
+}
+
+/* Deslizador de Sol: pista rellena en tinta hasta el valor y botón blanco que crece al pulsarlo. */
+.el-sim input[type='range'] {
+  --pista: linear-gradient(to right, var(--tinta) var(--pct), var(--apagado) var(--pct));
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  appearance: none;
+  background: none;
+  cursor: pointer;
+}
+.el-sim input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: var(--r-pildora);
+  background: var(--pista);
+}
+.el-sim input[type='range']::-moz-range-track {
+  height: 6px;
+  border-radius: var(--r-pildora);
+  background: var(--pista);
+}
+.el-sim input[type='range']::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  appearance: none;
+  border: 0;
+  border-radius: 50%;
+  background: var(--blanco);
+  box-shadow: var(--sombra-flota);
+  transition: transform var(--t-rapido) var(--curva-salida);
+}
+.el-sim input[type='range']::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--blanco);
+  box-shadow: var(--sombra-flota);
+  transition: transform var(--t-rapido) var(--curva-salida);
+}
+.el-sim input[type='range']:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.el-sim input[type='range']:active::-moz-range-thumb {
+  transform: scale(1.15);
+}
+
+.el-sim-resultado {
+  grid-area: resultado;
+  min-width: 0;
+}
+.el-sim-subtitulo {
+  margin-bottom: var(--e-8);
+}
+.el-sim-orden {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 var(--e-24);
+  padding: 0;
+  list-style: none;
+}
+.el-sim-orden li {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--superficie);
+  font: 500 14px var(--font-mono);
+}
+.info-pagina .el-sim-tabla {
+  width: auto;
+  min-width: 60%;
+  margin: 0;
+}
+.info-pagina .el-sim-tabla :is(th, td) {
+  padding: var(--e-8) var(--e-12);
+  text-align: right;
+  white-space: nowrap;
+}
+.info-pagina .el-sim-tabla :is(thead th, tbody th) {
+  color: var(--tinta-2);
+  font-weight: 500;
+}
+.info-pagina .el-sim-tabla tbody th {
+  text-align: left;
+}
+/* Los cocientes que ganan escaño, en el amarillo de la tarjeta destacada. */
+.el-sim-tabla td[data-gana] {
+  background: var(--amarillo);
+  color: var(--tinta);
+  font-weight: 500;
+}
+.el-sim-tabla tr[data-fuera] {
+  color: var(--tinta-3);
+}
+.el-sim-aviso {
+  margin: 0;
+  font-size: 15px;
+}
+
+/* ─── Fuentes ──────────────────────────────────────────────────────────────── */
+
+.el-fuentes {
+  margin-top: var(--e-24);
+}
+.el-fuentes h3 {
+  margin: 0 0 var(--e-8);
+  color: var(--tinta-2);
+  font-size: 13px;
+  font-weight: 400;
+}
+.el-fuentes .chat-source-meta {
+  margin: 0;
+}
+.el-fuentes a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-4);
+}
+
+/* ─── Tabla ────────────────────────────────────────────────────────────────── */
+
+.el-tabla {
+  margin-top: var(--e-48);
+  border-block: 1px solid var(--linea);
+}
+.el-tabla summary {
+  display: flex;
+  align-items: center;
+  gap: var(--e-12);
+  min-height: 64px;
+  font-size: 18px;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+.el-tabla summary::-webkit-details-marker {
+  display: none;
+}
+.el-tabla summary .icono {
+  transition: transform var(--t-medio) var(--curva-salida);
+}
+.el-tabla[open] summary .icono {
+  transform: rotate(90deg);
+}
+.el-tabla-contenido {
+  padding-bottom: var(--e-24);
+  animation: chat-enter 360ms var(--curva-salida) both;
+}
+.el-controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--e-16);
+}
+.el-control {
+  display: grid;
+  gap: var(--e-8);
+}
+.el-control-buscar {
+  flex: 1 1 260px;
+  max-width: 360px;
+}
+.el-con-icono .campo {
+  width: 100%;
+  padding-left: 40px;
+}
+.el-con-icono .icono {
+  left: 14px;
+  color: var(--tinta-3);
+}
+/* El aspa nativa de Chrome y Safari es azul; borrar el texto basta para ver todas. */
+.el-con-icono .campo::-webkit-search-cancel-button {
+  appearance: none;
+}
+.el-desplegable .campo {
+  padding-right: 40px;
+  appearance: none;
+  cursor: pointer;
+}
+.el-desplegable .icono {
+  right: 16px;
+}
+.el-recuento {
+  min-height: 1.5em;
+  margin-top: var(--e-12);
+  color: var(--tinta-2);
+  font-size: 14px;
+}
+
+/* ─── Pantallas estrechas ──────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .el-sim {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'escanos' 'filas' 'resultado';
+  }
+  .el-mapa {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas: 'elige' 'mapa' 'ficha';
+    gap: var(--e-24);
+  }
+}
+@media (max-width: 640px) {
+  .el-control-buscar {
+    max-width: none;
+    flex-basis: 100%;
+  }
+  .el-vistas {
+    display: grid;
+    width: 100%;
+  }
+  .el-escala {
+    width: 100%;
+  }
+  .el-rotulo {
+    font-size: 24px;
+  }
+  .el-ficha .chat-details {
+    gap: var(--e-8);
+  }
+  .el-ficha .chat-detail {
+    --caja-pad: var(--e-16);
+  }
+  .el-ficha .chat-detail-figure {
+    font-size: 24px;
+  }
+  /* El porcentaje baja bajo el deslizador para que este conserve el ancho. */
+  .el-sim-fila {
+    grid-template-columns: 32px minmax(0, 1fr) 56px;
+    grid-template-areas:
+      'letra rango ganados'
+      'letra votos ganados';
+    padding-block: var(--e-8);
+  }
+  .el-sim-votos {
+    display: flex;
+    gap: var(--e-8);
+    margin-top: -6px;
+  }
+  /* A este ancho la cifra quedaría por debajo de 14 px; los escaños siguen en la ficha y la tabla. */
+  .el-cifra {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .el-vistas::before,
+  .el-tabla summary .icono,
+  .el-provincia :is(path, circle) {
+    transition: none;
+  }
+  .el-vistas a:active {
+    transform: none;
+  }
+  /* Separadas: un pseudoelemento desconocido invalida toda la regla en ese navegador. */
+  .el-sim input[type='range']:active::-webkit-slider-thumb {
+    transform: none;
+  }
+  .el-sim input[type='range']:active::-moz-range-thumb {
+    transform: none;
+  }
+  @keyframes el-globo {
+    from {
+      opacity: 0;
+    }
+  }
+}

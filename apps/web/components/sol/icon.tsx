@@ -86,12 +86,18 @@ const iconos = {
 
 const pixelTurn = { derecha: 0, abajo: 90, izquierda: 180, enviar: -90 } as const;
 
-export type IconName = keyof typeof iconos | keyof typeof pixelTurn | 'mas';
+// «Más»: cinco puntos en cruz; girado 45° hace de cierre. «Menos»: los tres de la fila central.
+const pixelSigno = {
+  mas: 'M6 0h3v3H6zM0 6h3v3H0zM6 6h3v3H6zM12 6h3v3h-3zM6 12h3v3H6z',
+  menos: 'M0 6h3v3H0zM6 6h3v3H6zM12 6h3v3h-3z',
+} as const;
+
+export type IconName = keyof typeof iconos | keyof typeof pixelTurn | keyof typeof pixelSigno;
 const isPixel = (name: IconName): name is keyof typeof pixelTurn => name in pixelTurn;
+const isSigno = (name: IconName): name is keyof typeof pixelSigno => name in pixelSigno;
 
 export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
-  // «Más»: cinco puntos en cruz; girado 45° hace de cierre.
-  if (name === 'mas') {
+  if (isSigno(name)) {
     return (
       <svg
         className="icono"
@@ -102,7 +108,7 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
         shapeRendering="crispEdges"
         aria-hidden="true"
       >
-        <path d="M6 0h3v3H6zM0 6h3v3H0zM6 6h3v3H6zM12 6h3v3h-3zM6 12h3v3H6z" />
+        <path d={pixelSigno[name]} />
       </svg>
     );
   }

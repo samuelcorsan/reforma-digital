@@ -222,7 +222,7 @@ export function DetailCard({
   highlight = false,
   children,
 }: {
-  label: string;
+  label: ReactNode;
   figure?: string | undefined;
   highlight?: boolean;
   children: ReactNode;

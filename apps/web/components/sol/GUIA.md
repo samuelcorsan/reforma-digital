@@ -161,9 +161,9 @@ El compositor del chat es composición de la app (`app/(search)/chat/chat-view.c
 
 ## Iconos
 
-`<Icon name="…" size={14–20} />` (por defecto 18). Los chevrons (`derecha`, `izquierda`, `abajo`, `enviar`) y `mas` (cinco puntos en cruz, que girado 45° cierra el menú) son pixelados; no uses los chevrons de Nucleo. Las flechas rectas `arrowUp` y `arrowUpRight` están dibujadas en la rejilla de Nucleo (18, trazo 1,5); el resto usa Nucleo UI Essential outline 18. Los iconos son decorativos (`aria-hidden`); el nombre lo da el texto o el `aria-label` del control.
+`<Icon name="…" size={14–20} />` (por defecto 18). Los chevrons (`derecha`, `izquierda`, `abajo`, `enviar`), `mas` (cinco puntos en cruz, que girado 45° cierra el menú) y `menos` (los tres de la fila central) son pixelados; no uses los chevrons de Nucleo. Las flechas rectas `arrowUp` y `arrowUpRight` están dibujadas en la rejilla de Nucleo (18, trazo 1,5); el resto usa Nucleo UI Essential outline 18. Los iconos son decorativos (`aria-hidden`); el nombre lo da el texto o el `aria-label` del control.
 
-Nombres: enviar, detener, copiar, util, noUtil, reintentar, nueva · cerrar, abajo, derecha, izquierda, mas, arrowUp, arrowUpRight, paperclip · buscar, fuentes, contacto, externo, descargar · protegido, info, error, nunca, hecho, candado · calendario, documento, ubicacion, usuario, tarjeta, telefono. Solo los que se usan: si necesitas otro, añádelo desde la misma familia.
+Nombres: enviar, detener, copiar, util, noUtil, reintentar, nueva · cerrar, abajo, derecha, izquierda, mas, menos, arrowUp, arrowUpRight, paperclip · buscar, fuentes, contacto, externo, descargar · protegido, info, error, nunca, hecho, candado · calendario, documento, ubicacion, usuario, tarjeta, telefono. Solo los que se usan: si necesitas otro, añádelo desde la misma familia.
 
 Sustituciones: `detener` es un cuadrado redondeado propio; `noUtil`, el pulgar de `util` girado 180°; `nunca`, la equis; `externo`, el eslabón.
 

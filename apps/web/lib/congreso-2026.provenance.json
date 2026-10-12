@@ -1,0 +1,26 @@
+{
+  "sources": [
+    {
+      "field": "seats",
+      "source": "Real Decreto 806/2026, de 5 de octubre, de disolución del Congreso de los Diputados y del Senado y de convocatoria de elecciones (anexo)",
+      "boeId": "BOE-A-2026-20742",
+      "published": "2026-10-06",
+      "sourceUrl": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2026-20742",
+      "retrieved": "2026-10-06",
+      "sourceSha256": "9f937aab7dcfdba5f7d157e54b8e98e4006d0c93c5bdd05b2e04e8c6a9585453"
+    },
+    {
+      "field": "population",
+      "source": "Real Decreto 1117/2025, de 3 de diciembre, por el que se declaran oficiales las cifras de población resultantes de la revisión del Padrón municipal referidas al 1 de enero de 2025 (anexo, tabla de provincias y ciudades autónomas)",
+      "boeId": "BOE-A-2025-25362",
+      "published": "2025-12-11",
+      "sourceUrl": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2025-25362",
+      "retrieved": "2026-10-06",
+      "sourceSha256": "c557f3932692291d19956e05748ca5f0aeaeeb5947bf56eeacc361bd11ae3d69"
+    }
+  ],
+  "attribution": "Basado en datos de la Agencia Estatal Boletín Oficial del Estado (https://www.boe.es)",
+  "license": "Condiciones de reutilización de la Agencia Estatal BOE (Ley 37/2007 y Resolución de 27 de junio de 2024)",
+  "licenseUrl": "https://www.boe.es/informacion/aviso_legal/index.php",
+  "adaptation": "El Real Decreto 806/2026 publica solo los diputados, en letra; se convierten a número. La población es la cifra oficial vigente al convocar, porque las cifras referidas al 1 de enero de 2026 no se declaran hasta diciembre de 2026. Las circunscripciones se identifican por su código INE de provincia y conservan el nombre del Real Decreto 806/2026. La comprobación de que esta población reproduce los escaños por el art. 162 LOREG está en tests/congreso.test.ts."
+}

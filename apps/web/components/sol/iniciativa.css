@@ -133,26 +133,13 @@
   flex-wrap: wrap;
   gap: var(--e-8) var(--e-24);
 }
-.in-proximo {
-  padding: var(--e-8) var(--e-12);
-  border-radius: var(--r-pildora);
-  background: var(--ambar-claro);
-  color: var(--ambar-texto);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.4;
-}
-/* Móvil: etiqueta, título, texto, acción y escena comparten el borde izquierdo; la de «Coming
-   soon» queda pegada a la etiqueta. */
+/* Móvil: etiqueta, título, texto, acción y escena comparten el borde izquierdo. */
 @media (max-width: 959px) {
   .in-proyectos .rc-paso-texto {
     gap: var(--e-12);
   }
   .in-proyectos .rc-paso-texto > p + * {
     margin-top: var(--e-8);
-  }
-  .in-proyectos .rc-paso-texto > .in-acciones:first-child {
-    column-gap: var(--e-12);
   }
 }
 .in-elecciones {
