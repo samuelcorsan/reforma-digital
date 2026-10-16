@@ -27,11 +27,13 @@ import {
   findTopic,
   findVote,
   interventions,
+  lawFacets,
   laws,
   sessions,
   topics,
   votes,
 } from '../../lib/congreso/queries';
+import type { LawFilter } from '../../lib/congreso/queries';
 import type { CongressIndex, Intervention, LawCard } from '../../lib/congreso/schema';
 import {
   Intro,
@@ -44,6 +46,7 @@ import {
   VoteCount,
   Sessions,
   Filters,
+  FilterSelect,
   Pagination,
   Hemicycle,
   date,
@@ -161,6 +164,7 @@ export async function Activity({
   period,
   query,
   page,
+  lawFilter,
 }: {
   section: string;
   detail?: string;
@@ -168,6 +172,7 @@ export async function Activity({
   period: string;
   query: string;
   page: number;
+  lawFilter: Required<Pick<LawFilter, 'status' | 'type' | 'year' | 'order'>>;
 }) {
   if (section === 'preguntas') {
     const summary = await getQuestions();
@@ -267,12 +272,66 @@ export async function Activity({
     );
   }
   if (section === 'leyes') {
-    const [found, approved] = await Promise.all([laws({ q: query }, page), approvedLaws()]);
+    const { status, type, year, order } = lawFilter;
+    const [found, approved, facets] = await Promise.all([
+      laws({ q: query, ...lawFilter }, page),
+      approvedLaws(),
+      lawFacets(),
+    ]);
+    const all = (values: string[], label: string) => [
+      { value: '', label },
+      ...values.map((value) => ({ value, label: value })),
+    ];
+    const filtered = query || status || type || year || order !== 'recientes';
     return (
       <>
-        <Filters action={href('leyes')} query={query} />
+        <Filters action={href('leyes')} query={query} reset={filtered ? href('leyes') : undefined}>
+          <label>
+            Estado
+            <FilterSelect
+              name="estado"
+              label="Estado"
+              defaultValue={status}
+              options={all(facets.estados, 'Todos')}
+            />
+          </label>
+          <label>
+            Tipo
+            <FilterSelect
+              name="tipo"
+              label="Tipo"
+              defaultValue={type}
+              options={all(facets.tipos, 'Todos')}
+            />
+          </label>
+          <label>
+            Año
+            <FilterSelect
+              name="anio"
+              label="Año de presentación"
+              defaultValue={year}
+              options={all(facets.anios, 'Todos')}
+            />
+          </label>
+          <label>
+            Orden
+            <FilterSelect
+              name="orden"
+              label="Orden"
+              defaultValue={order}
+              options={[
+                { value: 'recientes', label: 'Más recientes' },
+                { value: 'antiguas', label: 'Más antiguas' },
+              ]}
+            />
+          </label>
+        </Filters>
         <Laws laws={found.rows} legislature={index.meta.legislatura} />
-        <Pagination page={page} total={found.total} params={{ q: query }} />
+        <Pagination
+          page={page}
+          total={found.total}
+          params={{ q: query, estado: status, tipo: type, anio: year, orden: order }}
+        />
         <Section title="Leyes publicadas">
           <div
             className={

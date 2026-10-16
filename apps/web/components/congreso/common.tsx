@@ -438,6 +438,8 @@ export function Filters({
   province,
   index,
   period,
+  reset,
+  children,
 }: {
   action: string;
   query: string;
@@ -445,6 +447,8 @@ export function Filters({
   province?: string;
   index?: CongressIndex;
   period?: string;
+  reset?: string;
+  children?: ReactNode;
 }) {
   return (
     <form
@@ -497,9 +501,20 @@ export function Filters({
           />
         </label>
       )}
+      {children}
       <Button type="submit" variant="outline">
         Buscar <Icon name="buscar" size={16} />
       </Button>
+      {reset && (
+        <Link
+          href={reset}
+          data-slot="button"
+          data-variant="ghost"
+          className={cn(buttonVariants({ variant: 'ghost' }))}
+        >
+          Limpiar filtros
+        </Link>
+      )}
     </form>
   );
 }

@@ -231,12 +231,24 @@ export async function deputyExtra(name: string) {
 }
 
 const lawSchema = lawsSchema.shape.iniciativas.element;
+export type LawFilter = {
+  q?: string;
+  exps?: string[];
+  status?: string;
+  type?: string;
+  year?: string;
+  order?: 'recientes' | 'antiguas';
+};
 export async function laws(
-  { q = '', exps }: { q?: string; exps?: string[] },
+  { q = '', exps, status, type, year, order }: LawFilter,
   page = 1,
   limit: Limit = PAGE_SIZE,
 ) {
   const { sql, current } = await scope();
+  const sort = {
+    recientes: sql`l.law->>'presentada' DESC, l.n DESC`,
+    antiguas: sql`l.law->>'presentada', l.n`,
+  };
   return paged(
     lawCardSchema,
     await sql`SELECT ${fields(sql, lawCardSchema, sql`l.law`)} AS content, count(*) OVER ()::int AS total
@@ -244,8 +256,31 @@ export async function laws(
       WHERE congreso_publication(${current}) AND d.path = 'leyes.json'
         ${q ? sql`AND concat_ws(' ', l.law->>'titulo', l.law->>'estado') ILIKE ${like(q)}` : sql``}
         ${exps ? sql`AND l.law->>'exp' = ANY(${exps})` : sql``}
-      ORDER BY l.n LIMIT ${limit} OFFSET ${offset(page, limit)}`,
+        ${status ? sql`AND l.law->>'estado' = ${status}` : sql``}
+        ${type ? sql`AND l.law->>'tipo' = ${type}` : sql``}
+        ${year ? sql`AND left(l.law->>'presentada', 4) = ${year}` : sql``}
+      ORDER BY ${order ? sort[order] : sql`l.n`} LIMIT ${limit} OFFSET ${offset(page, limit)}`,
   );
+}
+// Valores presentes en `leyes.json` para ofrecerlos como filtros.
+export async function lawFacets() {
+  const { sql, current } = await scope();
+  const list = z.array(z.string()).nullable();
+  const row = z.object({ estados: list, tipos: list, anios: list }).parse(
+    (
+      await sql`SELECT array_agg(DISTINCT l.law->>'estado' ORDER BY l.law->>'estado') AS estados,
+          array_agg(DISTINCT l.law->>'tipo' ORDER BY l.law->>'tipo') AS tipos,
+          array_agg(DISTINCT left(l.law->>'presentada', 4) ORDER BY left(l.law->>'presentada', 4) DESC)
+            AS anios
+        FROM congreso_datasets d, jsonb_array_elements(d.content->'iniciativas') AS l(law)
+        WHERE congreso_publication(${current}) AND d.path = 'leyes.json'`
+    )[0],
+  );
+  return {
+    estados: row.estados ?? [],
+    tipos: row.tipos ?? [],
+    anios: (row.anios ?? []).filter(Boolean),
+  };
 }
 // La URL sustituye la primera barra del expediente por un guion.
 export async function findLaw(slug: string) {

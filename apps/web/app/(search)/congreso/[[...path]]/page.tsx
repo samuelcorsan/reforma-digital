@@ -58,6 +58,10 @@ const querySchema = z.object({
   periodo: z.string().max(10).default('reciente'),
   pagina: z.coerce.number().int().min(1).max(100000).default(1),
   vista: z.string().max(30).default('citas'),
+  estado: z.string().max(30).default(''),
+  tipo: z.string().max(30).default(''),
+  anio: z.union([z.literal(''), z.string().regex(/^\d{4}$/)]).default(''),
+  orden: z.enum(['recientes', 'antiguas']).default('recientes'),
 });
 export default async function Page({ params, searchParams }: Props) {
   const route = congressRoute((await params).path);
@@ -126,7 +130,7 @@ async function Data({
   route: NonNullable<ReturnType<typeof congressRoute>>;
   query: z.infer<typeof querySchema>;
 }) {
-  const { q, grupo, provincia, periodo, pagina, vista } = query;
+  const { q, grupo, provincia, periodo, pagina, vista, estado, tipo, anio, orden } = query;
 
   const index = await getIndex();
   if (!['reciente', 'todo', ...index.meses.map((m) => m.mes)].includes(periodo)) notFound();
@@ -153,6 +157,7 @@ async function Data({
         period={periodo}
         query={q}
         page={pagina}
+        lawFilter={{ status: estado, type: tipo, year: anio, order: orden }}
       />
     );
   } else if (
