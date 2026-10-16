@@ -28,8 +28,12 @@ const blockRules = `Cada bloque se muestra con un componente según su kind:
 - deadline: plazo destacado. Rellena figure con el plazo copiado literalmente del texto (por ejemplo «30 días hábiles»).
 - warning: aviso que la persona debe leer antes de actuar (requisito excluyente, plazo improrrogable, consecuencia de no hacerlo). Como máximo uno por respuesta.
 - fact: párrafo para cualquier otro dato.
-figure solo se usa en cost y deadline, debe aparecer tal cual dentro de text y nunca resume ni redondea. En el resto de casos, o si no hay una cifra literal, figure es null.`;
+figure solo se usa en cost y deadline, debe aparecer tal cual dentro de text y nunca resume ni redondea. En el resto de casos, o si no hay una cifra literal, figure es null.
+No empieces text con números, viñetas ni guiones: la interfaz numera los pasos y compone las listas.`;
 export type AnswerSegment = z.infer<typeof segmentSchema>;
+
+/** Each block is one item that the interface numbers itself; a leading «1.» or «-» would repeat it. */
+const stripListMarker = (text: string) => text.replace(/^\s*(?:\d{1,2}[.)]|[-*•+])\s+/, '');
 
 /** Publish only a completed, structurally valid and independently supported claim. */
 export async function collectVerifiedClaims(
@@ -65,13 +69,18 @@ export async function collectVerifiedClaims(
       rejected = true;
       continue;
     }
+    const text = stripListMarker(segment.text);
+    if (!text) {
+      rejected = true;
+      continue;
+    }
     const id = `claim-${seen}`;
     const kind =
       segment.kind === 'warning' && answer.claims.some((c) => c.kind === 'warning')
         ? 'fact'
         : segment.kind;
-    const figure = verbatimFigure(kind, segment.text, segment.figure ?? undefined);
-    const claim = { id, kind, text: segment.text, ...(figure ? { figure } : {}) };
+    const figure = verbatimFigure(kind, text, segment.figure ?? undefined);
+    const claim = { id, kind, text, ...(figure ? { figure } : {}) };
     const citations = resolveCitationText(
       segment.citations.map((c) => ({ ...c, claimId: id })),
       evidence,

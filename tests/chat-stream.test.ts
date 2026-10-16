@@ -164,6 +164,29 @@ describe('Answer block rules', () => {
     );
     expect(answer.claims.map((c) => c.figure)).toEqual([undefined, '12,00 euros']);
   });
+  it('drops the numbers and bullets the model writes, since the interface numbers each step', async () => {
+    const answer = await collectVerifiedClaims(
+      elements([
+        { ...segment, text: '1. Solicita cita previa.' },
+        { ...segment, text: '2) Acude en persona.' },
+        { ...segment, kind: 'document', text: '- El DNI anterior.' },
+        { ...segment, kind: 'fact', text: '2026 es el último año.' },
+        { ...segment, kind: 'fact', text: '1.500 euros es el límite.' },
+        { ...segment, text: '3. ' },
+      ]),
+      [evidence],
+      query,
+      async () => true,
+    );
+    expect(answer.claims.map((c) => c.text)).toEqual([
+      'Solicita cita previa.',
+      'Acude en persona.',
+      'El DNI anterior.',
+      '2026 es el último año.',
+      '1.500 euros es el límite.',
+    ]);
+    expect(answer.incomplete).toBe(true);
+  });
   it('shows at most one warning; later ones become facts', async () => {
     const warning: AnswerSegment = { ...segment, kind: 'warning' };
     const answer = await collectVerifiedClaims(
