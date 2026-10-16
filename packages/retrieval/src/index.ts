@@ -19,6 +19,8 @@ const genericRequestWords = new Set([
     ' ',
   ),
 ]);
+// Whole words only: "ibi" also appears inside "recibido", "percibir" or "posibilidad".
+const municipalProcedure = /\b(?:padron|empadron|basura)|\bibi\b/;
 export function understandQuery(query: string, region?: Region | null): QueryUnderstanding {
   const q = normalizeText(query);
   const limitedCompany =
@@ -75,7 +77,7 @@ export function understandQuery(query: string, region?: Region | null): QueryUnd
     [/paro|desempleo|prestacion contributiva|subsidio|sepe/, 'sepe'],
     [/beca|mec|estudi/, 'educacion'],
     [/conduc|carnet|coche|vehiculo|multa|puntos/, 'dgt'],
-    [/padron|empadron|ibi|basura/, 'ayuntamiento-madrid'],
+    [municipalProcedure, 'ayuntamiento-madrid'],
     [
       /demanda(?:nte)? de empleo|inscrib.*demanda|renov.*demanda|sanitaria|familia numerosa|dependencia|discapacidad/,
       'comunidad-madrid',
@@ -93,7 +95,7 @@ export function understandQuery(query: string, region?: Region | null): QueryUnd
   if (!hasSubject)
     clarification =
       '¿Qué trámite o ayuda necesitas? Dime su nombre y, si depende de dónde vives, tu municipio o comunidad autónoma.';
-  if (/padron|empadron|ibi|basura/.test(q) && !jurisdiction)
+  if (municipalProcedure.test(q) && !jurisdiction)
     clarification =
       '¿En qué municipio quieres hacer el trámite? Los requisitos y el organismo dependen del ayuntamiento.';
   if (
