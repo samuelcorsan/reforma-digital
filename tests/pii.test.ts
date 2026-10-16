@@ -1,8 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { PiiLabel } from '../apps/web/node_modules/@nationaldesignstudio/rampart';
 
 const createGuard = vi.hoisted(() => vi.fn());
 // Path, not package name: Rampart is only a dependency of apps/web.
-vi.mock('../apps/web/node_modules/@nationaldesignstudio/rampart', () => ({ createGuard }));
+vi.mock('../apps/web/node_modules/@nationaldesignstudio/rampart', () => ({
+  createGuard,
+  loadNerClassifier: async () => ({}),
+  detectNer: async () => [],
+}));
 
 const guard = (protect: (text: string) => Promise<{ text: string }>) => ({ protect });
 
@@ -90,6 +95,35 @@ describe('pii protection', () => {
       await protectMessages(['Soy Ana, DNI 12345678Z'], new AbortController().signal),
     ).toMatchObject([{ text: 'Soy [GIVEN_NAME_1], DNI [DNI omitido]' }]);
     expect(seen).toEqual(['Soy Ana, DNI [DNI omitido]']);
+  });
+
+  it('keeps form numbers and Catalan "Com" that Rampart mistakes for an address or an email', async () => {
+    const { plausibleSpans } = await import('../apps/web/lib/pii');
+    const kept = (...spans: [string, PiiLabel][]) =>
+      plausibleSpans(
+        spans.map(([text, label]) => ({
+          start: 0,
+          end: text.length,
+          label,
+          score: 1,
+          source: 'ner' as const,
+          text,
+        })),
+      ).map((span) => span.text);
+    // "Com presento el model 303", "modelo 036 y modelo 130"
+    expect(kept(['Com', 'EMAIL'], ['303', 'BUILDING_NUMBER'])).toEqual([]);
+    expect(kept(['036', 'BUILDING_NUMBER'], ['130', 'SECONDARY_ADDRESS'])).toEqual([]);
+    // "Presento el 303 y me llamo Ana"
+    expect(kept(['303', 'BUILDING_NUMBER'], ['Ana', 'GIVEN_NAME'])).toEqual(['Ana']);
+    // "Avenida de América 45, piso 2"
+    expect(
+      kept(
+        ['Avenida de América', 'STREET_NAME'],
+        ['45', 'BUILDING_NUMBER'],
+        ['piso 2', 'SECONDARY_ADDRESS'],
+      ),
+    ).toEqual(['Avenida de América', '45', 'piso 2']);
+    expect(kept(['ana @ example . com', 'EMAIL'])).toEqual(['ana @ example . com']);
   });
 
   it('fails closed when Rampart cannot load, then retries', async () => {

@@ -1,4 +1,4 @@
-import type { ChatGuard } from '@nationaldesignstudio/rampart';
+import type { ChatGuard, Span } from '@nationaldesignstudio/rampart';
 import { redactQuery } from './redact';
 import { protectionDetails, type ProtectedText } from './pii-display';
 declare global {
@@ -17,7 +17,23 @@ export class ProtectionTimeoutError extends Error {
     this.name = 'ProtectionTimeoutError';
   }
 }
-const load = () => import('@nationaldesignstudio/rampart').then((m) => m.createGuard());
+// Rampart's model tags form numbers ("modelo 303") as street numbers and the Catalan "Com"
+// as an email. Address numbers stay only next to a street, and emails only with an @.
+export function plausibleSpans(spans: Span[]): Span[] {
+  const street = spans.some((span) => span.label === 'STREET_NAME');
+  return spans.filter((span) =>
+    span.label === 'EMAIL'
+      ? span.text.includes('@')
+      : street || (span.label !== 'BUILDING_NUMBER' && span.label !== 'SECONDARY_ADDRESS'),
+  );
+}
+const load = () =>
+  import('@nationaldesignstudio/rampart').then(async (m) => {
+    const classifier = await m.loadNerClassifier();
+    return m.createGuard({
+      ner: async (text) => plausibleSpans(await m.detectNer(text, classifier)),
+    });
+  });
 // Starts the model download while the question is being written. Failures surface on send.
 // With the browser's data saver on, the download waits for the send.
 export function warm(): void {
