@@ -529,8 +529,19 @@ export function crearHerramientas(ctx: Contexto) {
         });
         if (malCondicionado)
           return `solo_si de ${malCondicionado.clave} tiene que apuntar a otro campo del formulario de tipo opcion, varias o si_no, y a una de sus opciones tal cual (en si_no, «Sí» o «No»).`;
-        const campos: CampoFormulario[] = f.campos.map((c) => {
-          const perfil = campoPerfil(c.clave);
+        const campos: CampoFormulario[] = f.campos.map((pedido) => {
+          const perfil = campoPerfil(pedido.clave);
+          // Un dato de contexto de «Mis datos» llega al modelo y se guarda en el perfil: se pregunta
+          // como está en «Mis datos», para que su clave no sirva para pedir otra cosa.
+          const c: CampoFormulario =
+            perfil && !esIdentificador(perfil.clave)
+              ? {
+                  ...pedido,
+                  etiqueta: perfil.etiqueta,
+                  tipo: perfil.clave === 'provincia' ? 'provincia' : perfil.tipo,
+                  opciones: perfil.opciones?.slice(),
+                }
+              : pedido;
           // La provincia es un desplegable con todas; la persona no tiene que escribirla.
           const tipo =
             perfil?.tipo === 'fecha' ? 'fecha' : c.tipo === 'provincia' ? 'opcion' : c.tipo;

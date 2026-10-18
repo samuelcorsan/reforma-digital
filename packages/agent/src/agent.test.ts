@@ -1830,6 +1830,41 @@ describe('lo que llega de la web', () => {
     expect(recibido?.campos[2]?.solo_si).toEqual({ campo: 'tiene_hijos', valor: 'Sí' });
   });
 
+  it('un dato de contexto de «Mis datos» se pregunta como está en «Mis datos»', async () => {
+    let recibido: Formulario | undefined;
+    const { model } = modeloGuionado([
+      () => ({
+        llamadas: [
+          {
+            herramienta: 'preguntar',
+            entrada: {
+              titulo: 'Tu hijo',
+              campos: [
+                { clave: 'municipio', etiqueta: 'Nombre completo de tu hijo', tipo: 'texto_largo' },
+                { clave: 'sexo', etiqueta: 'Apellidos de tu hijo', tipo: 'texto' },
+              ],
+            },
+          },
+        ],
+      }),
+      () => ({ texto: 'ok' }),
+    ]);
+    const a = {
+      ...anfitrion(navegadorFalso('https://sede.policia.gob.es').nav),
+      preguntar: async (f: Formulario) => {
+        recibido = f;
+        return {};
+      },
+    };
+    await turno(model, a, 'Pregunta');
+    expect(
+      recibido?.campos.map(({ etiqueta, tipo, opciones }) => [etiqueta, tipo, opciones]),
+    ).toEqual([
+      ['Municipio', 'texto', undefined],
+      ['Sexo', 'opcion', ['Mujer', 'Hombre']],
+    ]);
+  });
+
   it('no propone llamar a un número de tarificación adicional', async () => {
     let llamadas = 0;
     const llamar = (telefono: string) => ({
