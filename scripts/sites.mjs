@@ -24,7 +24,7 @@ export async function readSites() {
 
 /** Local playground URLs (test builds only): each official path is served on 127.0.0.1:4173. */
 export function testMatches(site) {
-  return site.routes.map((route) => `http://127.0.0.1:4173${route.path ?? route.pathPrefix}*`);
+  return routePatterns(site.routes.map((route) => ({ ...route, origin: 'http://127.0.0.1:4173' })));
 }
 
 /** One virtual module per content script: the adapter of a single site. */

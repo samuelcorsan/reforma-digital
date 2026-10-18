@@ -22,16 +22,25 @@ for (const [index, site] of sites.entries()) {
   assert.deepEqual(entry.matches, site.matches);
 }
 assert.ok(!JSON.stringify(manifest).includes('127.0.0.1'));
+// Bare names, not calls: `fetch?.(u)`, `f = fetch` or `document['cookie']` must also fail.
+// Source-level aliases (globalThis[...], window.open) are covered by the lint rules.
 const forbidden = [
-  /\beval\s*\(/,
-  /new\s+Function\s*\(/,
-  /\bfetch\s*\(/,
+  /\beval\b/,
+  /\bFunction\s*\(/,
+  /\bfetch\b/,
   /\bXMLHttpRequest\b/,
   /\bWebSocket\b/,
-  /\bsendBeacon\s*\(/,
-  /\bdocument\.cookie\b/,
+  /\bEventSource\b/,
+  /\bRTCPeerConnection\b/,
+  /\bImage\b/,
+  /\bsendBeacon\b/,
+  // Portal styles target cookie banners (#cookie-law-info-bar); a bare `cookie` is the API.
+  /\bcookie\b(?!-)/,
+  /\bcookieStore\b/,
   /\blocalStorage\b/,
   /\bsessionStorage\b/,
+  /\bindexedDB\b/,
+  /\bcaches\b/,
 ];
 for (const file of await readdir('dist', { recursive: true })) {
   if (!/\.(js|html|css)$/.test(file)) continue;

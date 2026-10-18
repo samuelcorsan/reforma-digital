@@ -172,7 +172,13 @@ export class DomBridge {
     return false;
   }
   private actionShape(element: ActionElement): string {
+    // A submit button's destination is its formaction or, by default, its form's action.
+    const form =
+      element instanceof HTMLButtonElement || element instanceof HTMLInputElement
+        ? element.form
+        : null;
     return JSON.stringify([
+      form?.getAttribute('action'),
       element.tagName,
       element.getAttribute('type'),
       element.getAttribute('href'),
@@ -443,6 +449,18 @@ export function fieldByLabel(root: ParentNode, label: string): FieldElement | nu
       return names.some((name) => normalizedLabel(name) === normalizedLabel(label));
     });
   return matches.length === 1 ? matches[0]! : null;
+}
+
+/** The link's URL if it is HTTPS on `host` or one of its subdomains; otherwise null. */
+export function officialHref(link: HTMLAnchorElement, host: string): string | null {
+  let url: URL;
+  try {
+    url = new URL(link.href);
+  } catch {
+    return null;
+  }
+  const onHost = url.hostname === host || url.hostname.endsWith(`.${host}`);
+  return url.protocol === 'https:' && !url.username && !url.password && onHost ? url.href : null;
 }
 
 /** Visible text with collapsed whitespace. */

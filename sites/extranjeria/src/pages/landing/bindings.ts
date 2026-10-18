@@ -1,4 +1,4 @@
-import { requireElements, textOf } from '@reforma-digital/bridge';
+import { officialHref, requireElements, textOf } from '@reforma-digital/bridge';
 import config from '../../../site.config.json';
 import { linkText, type OfficialLink } from '../../components/official';
 
@@ -41,6 +41,7 @@ export function landingBindings(document: Document): LandingBindings | null {
   const technical = (sections.get('REQUISITOS TÉCNICOS DEL PROCEDIMIENTO') ?? [])
     .flatMap((el) => Array.from(el.querySelectorAll<HTMLAnchorElement>('a[href]')))
     .at(0);
+  const technicalHref = technical && officialHref(technical, 'administracionespublicas.gob.es');
   return {
     header: els.header,
     content: els.content,
@@ -60,7 +61,8 @@ export function landingBindings(document: Document): LandingBindings | null {
         };
       })
       .filter((item) => item.title || item.text),
-    technicalRequirements: technical ? { text: linkText(technical), href: technical.href } : null,
+    technicalRequirements:
+      technical && technicalHref ? { text: linkText(technical), href: technicalHref } : null,
   };
 }
 

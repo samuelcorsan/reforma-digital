@@ -1,4 +1,4 @@
-import { requireElements, textOf } from '@reforma-digital/bridge';
+import { officialHref, requireElements, textOf } from '@reforma-digital/bridge';
 import { linkText, type OfficialLink } from '../../components/official';
 
 /** Selectores de la información del trámite (<app>/acInfo), verificados el 2026-09-27. */
@@ -49,6 +49,7 @@ export function infoBindings(document: Document): InfoBindings | null {
   const withoutClave = option(WITHOUT_CLAVE, 'Presentación sin Cl@ve');
   if (!withClave && !withoutClave) return null;
   const clave = document.querySelector<HTMLAnchorElement>(CLAVE_INFO);
+  const claveHref = clave && officialHref(clave, 'clave.gob.es');
   const back = els.form.querySelector(BACK);
   return {
     header: els.header,
@@ -57,7 +58,7 @@ export function infoBindings(document: Document): InfoBindings | null {
     officialInfo: document.querySelector(OFFICIAL_INFO),
     withClave,
     withoutClave,
-    claveInfoLink: clave ? { text: linkText(clave), href: clave.href } : null,
+    claveInfoLink: clave && claveHref ? { text: linkText(clave), href: claveHref } : null,
     back: back instanceof HTMLInputElement ? back : null,
   };
 }

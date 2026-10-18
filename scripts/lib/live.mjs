@@ -156,19 +156,43 @@ export function flowContext(site, page, { prefix, fixtures, results }) {
     },
     async fixture(name) {
       if (!fixtures) return;
-      const html = await page.evaluate(() => {
-        const doc = document.documentElement.cloneNode(true);
-        doc
-          .querySelectorAll('script, noscript, iframe, [data-bg-host], [data-bg-notice]')
-          .forEach((n) => n.remove());
-        // No session tokens: hidden inputs (anti-CSRF tokens) are emptied.
-        doc.querySelectorAll('input[type="hidden"]').forEach((n) => n.setAttribute('value', ''));
-        return '<!DOCTYPE html>\n' + doc.outerHTML;
-      });
+      const html = await page.evaluate(fixtureHtml);
       writeFileSync(
         path.join(site.dir, 'fixtures', `${name}.html`),
         html.replace(/;jsessionid=[^"'?#\s]*/gi, ''),
       );
     },
   };
+}
+
+/**
+ * The page as a fixture: no scripts, comments or session tokens. Runs inside the page, so it uses
+ * no closures; `doc` lets the same rules re-clean saved fixtures.
+ */
+export function fixtureHtml(doc = document) {
+  const root = doc.documentElement.cloneNode(true);
+  root
+    .querySelectorAll('script, noscript, iframe, [data-bg-host], [data-bg-notice]')
+    .forEach((n) => n.remove());
+  // Comments keep disabled widgets with their session ids (e.g. a commented-out chat bot).
+  const walker = doc.createTreeWalker(root, 128 /* NodeFilter.SHOW_COMMENT */);
+  const comments = [];
+  while (walker.nextNode()) comments.push(walker.currentNode);
+  comments.forEach((n) => n.remove());
+  // Hidden inputs carry anti-CSRF tokens: values are emptied and per-page UUID names fixed.
+  root.querySelectorAll('input[type="hidden"]').forEach((n) => {
+    n.setAttribute('value', '');
+    if (/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(n.getAttribute('name') ?? ''))
+      n.setAttribute('name', '00000000-0000-0000-0000-000000000000');
+  });
+  // Session-bound URL parameters, in links, form actions and inline navigations alike.
+  for (const n of root.querySelectorAll('*'))
+    for (const { name, value } of Array.from(n.attributes)) {
+      const clean = value.replace(
+        /([?&](?:jsessionid|token|state|nonce|code_challenge)=)[^&#'"\s]*/gi,
+        '$1',
+      );
+      if (clean !== value) n.setAttribute(name, clean);
+    }
+  return '<!DOCTYPE html>\n' + root.outerHTML;
 }

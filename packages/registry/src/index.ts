@@ -93,10 +93,15 @@ export function siteRoutes(
   return (config.origins ?? []).map((origin) => ({ origin, pathPrefix: config.pathPrefix ?? '/' }));
 }
 
-/** Chrome match patterns for the manifest. The runtime still checks exact routes. */
+/**
+ * Chrome match patterns for the manifest. A pattern's path also covers the query, so an exact
+ * path is the path itself plus the path followed by "?". The runtime still checks exact routes.
+ */
 export function routePatterns(routes: readonly SiteRoute[]): string[] {
-  return routes.map((route) =>
-    'path' in route ? `${route.origin}${route.path}*` : `${route.origin}${route.pathPrefix}*`,
+  return routes.flatMap((route) =>
+    'path' in route
+      ? [`${route.origin}${route.path}`, `${route.origin}${route.path}?*`]
+      : [`${route.origin}${route.pathPrefix}*`],
   );
 }
 

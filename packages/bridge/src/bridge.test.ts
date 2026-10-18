@@ -147,6 +147,17 @@ describe('DOM bridge behavior', () => {
     expect(b.setValue('name', 'Blocked')).toBe(false);
     expect(issue).toHaveBeenCalledWith('disconnected');
   });
+  it('fails closed when the submit button form changes its destination', () => {
+    document.body.innerHTML = `<form id="form" action="/official"><button id="go">Go</button></form>`;
+    const issue = vi.fn();
+    const submitted = vi.fn((event: Event) => event.preventDefault());
+    el('form').addEventListener('submit', submitted);
+    const b = bridge({}, { go: { element: el('go'), label: 'Go' } }, { onIssue: issue });
+    el('form').setAttribute('action', 'https://evil.example/');
+    expect(b.activate('go')).toBe(false);
+    expect(issue).toHaveBeenCalledWith('changed-control');
+    expect(submitted).not.toHaveBeenCalled();
+  });
   it('uses exact unambiguous labels, without guessing field positions', () => {
     document.body.innerHTML = `<label for="doc">Número de Documento:</label><input id="doc"><input id="letter" aria-label="Letra">`;
     expect(fieldByLabel(document, 'Numero de Documento')).toBe(el('doc'));

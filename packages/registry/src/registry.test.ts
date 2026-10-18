@@ -52,7 +52,8 @@ it('matches multi-path routes and exact paths only on their own origin', () => {
   expect(matchesSite(adapter, new URL('https://app.example.test/app/paso'))).toBe(true);
   expect(matchesSite(adapter, new URL('https://app.example.test/servicio'))).toBe(false);
   expect(routePatterns(adapter.routes)).toEqual([
-    'https://info.example.test/servicio*',
+    'https://info.example.test/servicio',
+    'https://info.example.test/servicio?*',
     'https://app.example.test/app/*',
   ]);
 });

@@ -72,6 +72,9 @@ it('reads provinces, offices, trámite groups and access options', () => {
   expect(i.tramiteName).toMatch(/TOMA DE HUELLAS/);
   expect(i.withClave?.title).toBe('Presentación con Cl@ve');
   expect(i.withoutClave?.title).toBe('Presentación sin Cl@ve');
+  expect(i.claveInfoLink?.href).toBe('https://clave.gob.es/clave_Home/clave.html');
+  fixture('info', (h) => h.replace('https://clave.gob.es/', 'https://clave.gob.es.evil.test/'));
+  expect(infoBindings(document)?.claveInfoLink).toBeNull();
   expect(prepare(URLS.info)?.bridge.actionSpec('sinClave').custom).toBe(true);
 });
 

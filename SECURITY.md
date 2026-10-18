@@ -16,13 +16,13 @@ Esto no hace inocua cualquier modificación del DOM. Una extensión tiene acceso
 - Mensajes del popup aceptados solo desde la URL empaquetada del popup. No existe un puente de órdenes mediante `window.postMessage`.
 - Un content script por portal, inyectado solo en sus rutas exactas. Una ruta no puede cubrir un dominio entero.
 - Las acciones sobre elementos no nativos (`custom` en `DomBridge`) se declaran una a una tras revisarlas.
-- Las herramientas de la web real (`site:live`, `site:record`) recorren una vez páginas públicas, sin datos personales, y no eluden comprobaciones anti‑bot. Los fixtures se guardan sin scripts, tokens anti‑CSRF ni `jsessionid`; las grabaciones quedan en `.cache/`, fuera de git.
+- Las herramientas de la web real (`site:live`, `site:record`) recorren una vez páginas públicas, sin datos personales, y no eluden comprobaciones anti‑bot. Los fixtures se guardan sin scripts, comentarios HTML, tokens anti‑CSRF ni parámetros de sesión en las URL (`jsessionid`, `token`, `state`, `nonce`, `code_challenge`); las grabaciones quedan en `.cache/`, fuera de git.
 
 El Shadow DOM aísla estilos; no es una barrera de seguridad frente a la página. El aislamiento de JavaScript tampoco oculta el DOM a los scripts del portal.
 
 ## Qué se comprueba
 
-Las pruebas automatizadas usan datos ficticios. El chequeo del bundle detecta APIs de red y persistencia prohibidas y revisa el manifest. Es un control estático limitado, no una auditoría de seguridad.
+Las pruebas automatizadas usan datos ficticios. El lint prohíbe en el código que se empaqueta en la extensión las APIs de red, persistencia y código dinámico (`fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `Image`, `sendBeacon`, `document.cookie`, Web Storage, IndexedDB, Cache Storage, `RTCPeerConnection`, `eval`, `Function`, `window.open`) y el acceso a `globalThis` y `self`. El chequeo del bundle busca esos nombres en los archivos generados, dependencias incluidas, y revisa el manifest. Son controles estáticos limitados, no una auditoría de seguridad: no detectan cualquier acceso indirecto, como una propiedad calculada de `window`. La CSP `connect-src 'none'` del manifest solo cubre el popup; los content scripts funcionan bajo la CSP del portal.
 
 La compatibilidad con validaciones personalizadas, restricciones del navegador, certificados, firmas, iframes y estados autenticados requiere pruebas del portal concreto. Los cambios programáticos no tienen idéntico comportamiento a la escritura física para todas las restricciones nativas o frameworks. Mantén el control original cuando no puedas demostrar equivalencia.
 

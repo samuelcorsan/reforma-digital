@@ -1,4 +1,4 @@
-import { requireElements, textOf } from '@reforma-digital/bridge';
+import { officialHref, requireElements, textOf } from '@reforma-digital/bridge';
 
 /** Selectores de «Asistencia y Cita» en la Sede (GC29), verificados el 2026-09-27. */
 export const ASISTENCIA = {
@@ -38,12 +38,13 @@ export function asistenciaBindings(document: Document): AsistenciaBindings | nul
     const help = element.parentElement?.querySelector<HTMLAnchorElement>(
       'a.componente-enlace-ayuda',
     );
+    const helpHref = help && officialHref(help, 'agenciatributaria.gob.es');
     const access = element.dataset.acceso;
     return {
       element,
       label: textOf(element),
       access: access === 'SinCert' || access === 'Cert' ? access : null,
-      help: help ? { href: help.href, title: textOf(help) || 'Ayuda' } : null,
+      help: help && helpHref ? { href: helpHref, title: textOf(help) || 'Ayuda' } : null,
     } satisfies AsistenciaOption;
   });
   if (!options.length || options.some((o) => !o.label)) return null;
