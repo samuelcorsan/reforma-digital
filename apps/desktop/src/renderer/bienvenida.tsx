@@ -360,7 +360,7 @@ export function Bienvenida({ alTerminar }: { alTerminar: () => void }) {
           {paso === 1 && (
             <>
               <h1 ref={titulo} tabIndex={-1} className={h1}>
-                ¿Por qué no ChatGPT, Claude o Codex?
+                ¿Por qué no ChatGPT, Claude o Gemini?
               </h1>
               <p className={cn(entradilla, 'text-[var(--text-secondary)]')}>
                 Son muy buenos asistentes generales. Para un trámite, con tu DNI y tus datos, este
