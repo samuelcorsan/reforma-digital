@@ -146,6 +146,9 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
     }
     // COUNT y página pertenecen a la misma instantánea de la transacción.
     const result = await sql.begin('read only isolation level repeatable read', async (tx) => {
+      // Un filtro caro no ocupa Postgres más de 5 s. `SET LOCAL` vale con el pooler en modo
+      // transacción, que rechaza `statement_timeout` como parámetro de conexión.
+      await tx`SET LOCAL statement_timeout = '5s'`;
       if (path[0] === 'votaciones') {
         const filter = tx`legislature=${legislatura} AND title ILIKE ${like(q)}
           AND (${desde ?? null}::date IS NULL OR date>=${desde ?? null}::date)
@@ -172,11 +175,14 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
       const filter = tx`legislature=${legislatura}
         AND (${desde ?? null}::date IS NULL OR date>=${desde ?? null}::date)
         AND (${hasta ?? null}::date IS NULL OR date<=${hasta ?? null}::date)
-        AND content->>'organo' ILIKE ${like(q)}`;
+        ${q ? tx`AND content->>'organo' ILIKE ${like(q)}` : tx``}`;
       const count = await tx`SELECT count(*)::int AS total FROM congreso_sessions WHERE ${filter}`;
+      // `content` guarda la sesión entera: se lee solo en las filas de la página, no al ordenar.
       const rows =
         await tx`SELECT id,date,content->>'organo' AS organo,jsonb_array_length(content->'intervenciones') AS intervenciones
-        FROM congreso_sessions WHERE ${filter} ORDER BY date DESC NULLS LAST,id LIMIT ${limite} OFFSET ${offset}`;
+        FROM (SELECT id,date,content FROM congreso_sessions WHERE ${filter}
+          ORDER BY date DESC NULLS LAST,id LIMIT ${limite} OFFSET ${offset}) page
+        ORDER BY date DESC NULLS LAST,id`;
       return { total: z.number().parse(count[0]?.total), resultados: rows };
     });
     return Response.json({ pagina, limite, ...result }, { headers: cached });
