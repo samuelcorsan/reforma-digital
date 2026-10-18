@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { buscarConExa } from '@reforma-digital/agent/research';
-import { admitir, apuntarGasto, leerCuerpo } from '../../../../lib/escritorio';
+import { admitir, leerCuerpo, reservar } from '../../../../lib/escritorio';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -22,6 +22,9 @@ const peticionEsquema = z.object({
     .default([]),
 });
 
+/** Lo que se reserva por búsqueda y lo que cuenta si Exa no dice lo que ha costado. */
+const BUSQUEDA_CARA = 0.025;
+
 export async function POST(request: Request) {
   const clave = process.env.EXA_API_KEY;
   if (!clave) return Response.json({ error: 'El buscador no está configurado.' }, { status: 503 });
@@ -37,8 +40,10 @@ export async function POST(request: Request) {
   }
   const p = peticionEsquema.safeParse(json);
   if (!p.success) return Response.json({ error: 'Petición no válida' }, { status: 400 });
+  const ajustar = await reservar(quien, BUSQUEDA_CARA);
+  if (ajustar instanceof Response) return ajustar;
   const r = await buscarConExa(p.data.consulta, p.data.dominios, clave, 8, request.signal);
   // Exa suele decir lo que ha costado; si no, cuenta como una búsqueda cara.
-  await apuntarGasto(quien, r.costeUsd ?? 0.025);
+  await ajustar(r.costeUsd ?? BUSQUEDA_CARA);
   return Response.json(r);
 }

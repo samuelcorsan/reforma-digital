@@ -17,6 +17,8 @@ const peticion = (url: string, cuerpo: unknown, instalacion: string | null = ran
 const alModelo = (cuerpo: unknown, instalacion?: string | null) =>
   modelo(peticion('/api/escritorio/v1/chat/completions', cuerpo, instalacion));
 const mensajes = { messages: [{ role: 'user', content: 'Hola' }] };
+/** Una petición de un millón de bytes: su reserva pasa un poco de 0,03 $. */
+const enorme = { messages: [{ role: 'user', content: 'x'.repeat(1_000_000) }] };
 /** Tokens que cuestan `usd` dólares. */
 const tokens = (usd: number) => Math.ceil((usd / USD_POR_MILLON_DE_TOKENS) * 1e6);
 
@@ -129,6 +131,33 @@ describe('servidor de la app de escritorio', () => {
     expect(enviados[0]!.url).toBe('https://api.exa.ai/search');
     expect((await busqueda()).status).toBe(429);
     expect((await alModelo(mensajes, instalacion)).status).toBe(429);
+  });
+
+  it('cobra lo reservado a quien corta la respuesta antes de que llegue el uso', async () => {
+    const instalacion = randomUUID();
+    // Cada petición reserva algo más de 0,03 $; el uso que no llega costaría casi nada.
+    respuesta = () => streaming({ prompt_tokens: 1, completion_tokens: 1 });
+    let cortadas = 0;
+    for (let i = 0; i < 50; i++) {
+      const r = await alModelo({ ...enorme, stream: true }, instalacion);
+      if (r.status === 429) break;
+      const lector = r.body!.getReader();
+      await lector.read();
+      await lector.cancel();
+      cortadas++;
+    }
+    expect(cortadas).toBe(Math.floor(LIMITES.usdPorUsuario / 0.03));
+    expect(enviados).toHaveLength(cortadas);
+  });
+
+  it('no deja pasar a la vez más peticiones de las que caben en el límite', async () => {
+    const instalacion = randomUUID();
+    respuesta = () =>
+      Response.json({ choices: [], usage: { prompt_tokens: 1_000_000, completion_tokens: 0 } });
+    const r = await Promise.all(Array.from({ length: 40 }, () => alModelo(enorme, instalacion)));
+    const pasadas = r.filter((x) => x.status === 200).length;
+    expect(pasadas).toBe(Math.floor(LIMITES.usdPorUsuario / 0.03));
+    expect(r.filter((x) => x.status === 429)).toHaveLength(40 - pasadas);
   });
 
   it('corta también por IP, aunque se reinstale la app para tener otra instalación', async () => {

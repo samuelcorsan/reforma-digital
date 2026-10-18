@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import {
   admitir,
-  apuntarGasto,
   leerCuerpo,
+  reservar,
   USD_POR_MILLON_DE_TOKENS,
 } from '../../../../../../lib/escritorio';
 
@@ -33,7 +33,10 @@ const peticionEsquema = z.object({
 
 const usoEsquema = z.object({ prompt_tokens: z.number(), completion_tokens: z.number() });
 
-/** Deja pasar la respuesta en streaming tal cual y apunta lo que ha costado al terminar. */
+/**
+ * Deja pasar la respuesta en streaming tal cual y apunta lo que ha costado al terminar. Si la
+ * conexión se corta antes, `flush` no llega a ejecutarse y queda lo reservado.
+ */
 function contarUso(apuntar: (uso: unknown) => Promise<void>) {
   const texto = new TextDecoder();
   let pendiente = '';
@@ -80,22 +83,30 @@ export async function POST(request: Request) {
   }
   const p = peticionEsquema.safeParse(json);
   if (!p.success) return Response.json({ error: 'Petición no válida' }, { status: 400 });
+  const maxTokens = Math.min(p.data.max_tokens ?? MAX_TOKENS, MAX_TOKENS);
+  const peticion = JSON.stringify({
+    ...p.data,
+    model: MODELO,
+    max_tokens: maxTokens,
+    ...(p.data.stream ? { stream_options: { include_usage: true } } : {}),
+  });
+  // Lo más que puede costar: cada token de la petición ocupa al menos un byte del JSON, y la
+  // respuesta no pasa de `max_tokens`.
+  const ajustar = await reservar(
+    quien,
+    ((Buffer.byteLength(peticion) + maxTokens) / 1e6) * USD_POR_MILLON_DE_TOKENS,
+  );
+  if (ajustar instanceof Response) return ajustar;
   const res = await fetch(NAN, {
     method: 'POST',
     headers: { authorization: `Bearer ${clave}`, 'content-type': 'application/json' },
-    body: JSON.stringify({
-      ...p.data,
-      model: MODELO,
-      max_tokens: Math.min(p.data.max_tokens ?? MAX_TOKENS, MAX_TOKENS),
-      ...(p.data.stream ? { stream_options: { include_usage: true } } : {}),
-    }),
+    body: peticion,
     signal: request.signal,
   });
   const apuntar = async (uso: unknown) => {
     const u = usoEsquema.safeParse(uso);
     if (u.success)
-      await apuntarGasto(
-        quien,
+      await ajustar(
         ((u.data.prompt_tokens + u.data.completion_tokens) / 1e6) * USD_POR_MILLON_DE_TOKENS,
       );
   };
@@ -106,7 +117,7 @@ export async function POST(request: Request) {
       try {
         await apuntar((JSON.parse(cuerpo) as { usage?: unknown }).usage);
       } catch {
-        // Sin uso que leer no hay gasto que apuntar.
+        // Sin uso que leer queda lo reservado.
       }
     }
     return new Response(cuerpo, { status: res.status, headers: { 'content-type': tipo } });

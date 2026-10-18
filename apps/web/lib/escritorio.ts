@@ -22,28 +22,41 @@ export const LIMITES = {
 export const USD_POR_MILLON_DE_TOKENS = 0.03;
 
 const DIA = 86_400_000;
+const hoy = () => Math.floor(Date.now() / DIA);
 const memoria = new Map<string, { dia: number; cuenta: number }>();
 
 /**
  * Suma `cuanto` al contador del día (UTC) y devuelve el total: en Postgres si lo hay, si no (en
  * local) en memoria. El gasto se cuenta en millonésimas de dólar, porque el contador es un entero.
+ * `cuanto` es negativo al devolver lo reservado de más; un día nuevo no empieza por debajo de 0.
  */
 async function sumar(clave: string, cuanto: number): Promise<number> {
   if (databaseAvailable()) {
     const filas = await connection()`INSERT INTO request_buckets(key, window_start, count)
-      VALUES (${clave}, date_trunc('day', now()), ${cuanto})
+      VALUES (${clave}, date_trunc('day', now()), GREATEST(${cuanto}, 0))
       ON CONFLICT (key) DO UPDATE SET
         count = CASE WHEN request_buckets.window_start < date_trunc('day', now())
-          THEN ${cuanto} ELSE request_buckets.count + ${cuanto} END,
+          THEN GREATEST(${cuanto}, 0) ELSE request_buckets.count + ${cuanto} END,
         window_start = date_trunc('day', now())
       RETURNING count`;
     return Number(filas[0]?.count);
   }
-  const dia = Math.floor(Date.now() / DIA);
+  const dia = hoy();
   const fila = memoria.get(clave);
-  const cuenta = (fila?.dia === dia ? fila.cuenta : 0) + cuanto;
+  const cuenta = fila?.dia === dia ? fila.cuenta + cuanto : Math.max(cuanto, 0);
   memoria.set(clave, { dia, cuenta });
   return cuenta;
+}
+
+/** Lo que lleva hoy un contador, sin crearlo: lo que se rechaza no deja filas. */
+async function gastado(clave: string): Promise<number> {
+  if (databaseAvailable()) {
+    const filas = await connection()`SELECT count FROM request_buckets
+      WHERE key = ${clave} AND window_start = date_trunc('day', now())`;
+    return Number(filas[0]?.count ?? 0);
+  }
+  const fila = memoria.get(clave);
+  return fila?.dia === hoy() ? fila.cuenta : 0;
 }
 
 /**
@@ -60,8 +73,21 @@ export type Quien = { usuario: string; ip: string };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/** Los contadores de quien pide, cada uno con su límite en millonésimas de dólar. */
+const contadores = (quien: Quien) =>
+  [
+    [quien.usuario, LIMITES.usdPorUsuario * 1e6],
+    [quien.ip, LIMITES.usdPorIp * 1e6],
+  ] as const;
+
+const agotado = () =>
+  Response.json(
+    { error: 'Has llegado al límite de uso del asistente por hoy. Vuelve a intentarlo mañana.' },
+    { status: 429 },
+  );
+
 /**
- * Antes de pasar una petición: la instalación tiene que identificarse y no haber gastado su límite
+ * Antes de leer una petición: la instalación tiene que identificarse y no haber gastado su límite
  * del día, ni su IP el suyo. Devuelve quién es, o la respuesta de rechazo.
  */
 export async function admitir(request: Request): Promise<Quien | Response> {
@@ -73,23 +99,35 @@ export async function admitir(request: Request): Promise<Quien | Response> {
     ? (request.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ?? 'desconocida')
     : 'local';
   const quien = { usuario: contador('usuario', instalacion), ip: contador('ip', ip) };
-  if (
-    (await sumar(quien.usuario, 0)) >= LIMITES.usdPorUsuario * 1e6 ||
-    (await sumar(quien.ip, 0)) >= LIMITES.usdPorIp * 1e6
-  )
-    return Response.json(
-      { error: 'Has llegado al límite de uso del asistente por hoy. Vuelve a intentarlo mañana.' },
-      { status: 429 },
-    );
+  for (const [clave, limite] of contadores(quien))
+    if ((await gastado(clave)) >= limite) return agotado();
   return quien;
 }
 
-/** Apunta lo que ha costado una petición a su instalación y a su IP. */
-export async function apuntarGasto(quien: Quien, usd: number) {
-  const micro = Math.round(usd * 1e6);
-  if (micro <= 0) return;
-  await sumar(quien.usuario, micro);
-  await sumar(quien.ip, micro);
+/**
+ * Antes de llamar al proveedor, aparta en cada contador lo más que puede costar la petición. Así
+ * las peticiones en paralelo no pasan todas, y quien corte la conexión antes de saber el uso paga
+ * lo reservado. Si algún contador se pasaría de su límite, lo devuelve y responde el rechazo. Si
+ * no, devuelve con qué ajustar la reserva a lo que costó de verdad; sin ajuste, queda lo reservado.
+ */
+export async function reservar(
+  quien: Quien,
+  usd: number,
+): Promise<Response | ((real: number) => Promise<void>)> {
+  const micro = Math.ceil(usd * 1e6);
+  const lista = contadores(quien);
+  const sumarATodos = (cuanto: number) => Promise.all(lista.map(([clave]) => sumar(clave, cuanto)));
+  const pasados = await Promise.all(
+    lista.map(async ([clave, limite]) => (await sumar(clave, micro)) > limite),
+  );
+  if (pasados.includes(true)) {
+    await sumarATodos(-micro);
+    return agotado();
+  }
+  return async (real) => {
+    const diferencia = Math.round(real * 1e6) - micro;
+    if (diferencia) await sumarATodos(diferencia);
+  };
 }
 
 /** Lee el cuerpo sin pasar de `max` bytes; `null` si es más grande. */
