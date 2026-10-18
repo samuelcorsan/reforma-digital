@@ -16,7 +16,7 @@ El principio es este: **el modelo de IA no recibe datos personales, y lo que la 
 | Documentos descargados (justificantes, certificados)        | `~/Downloads/Reforma Digital/<trámite>/`                           | Sin cifrar: son documentos de la persona. La carpeta se nombra sin datos personales. Los de una web no oficial, solo si la persona los guarda.                                      |
 | Notificaciones del sistema                                  | Centro de notificaciones de macOS                                  | Sin datos personales: los marcadores se sustituyen por «…».                                                                                                                         |
 
-«Borrar todo» en Ajustes destruye primero la clave de datos: lo que quedase en disco ya no se puede descifrar.
+«Borrar todo» en Ajustes destruye primero la clave de datos: lo que quedase en disco ya no se puede descifrar. Al borrar un trámite o todo, también se borran sus sesiones de las webs, con la caché.
 
 ## Qué sale del ordenador y a quién
 
@@ -50,7 +50,7 @@ La app sustituye los marcadores por los valores reales en dos sitios: al escribi
 
 Las garantías que no dependen del prompt (códigos de confirmación de un solo uso ligados a la web, lectura sin acceso a la red local, contraseñas y CAPTCHA siempre en manos de la persona) están descritas en [el README de la app](README.md#garantías-que-no-dependen-del-prompt).
 
-El navegador de cada trámite solo carga por https y comprueba cada petición (páginas, marcos, scripts, imágenes, `fetch`, WebSocket…) para no llegar a la red local. La comprobación resuelve el nombre aparte, antes de que Chromium conecte: una web que cambie su DNS entre la comprobación y la conexión (_DNS rebinding_) podría llegar a la red local. No se ha encontrado en Electron 44 un mecanismo comprobado que lo impida: en una prueba, la comprobación de acceso a la red local de Chromium (_Local Network Access_) no bloqueó las peticiones de una página a `127.0.0.1`.
+El navegador de cada trámite solo carga por https y comprueba cada petición (páginas, marcos, scripts, imágenes, `fetch`, WebSocket…) para no llegar a la red local; WebRTC, que no pasa por esa comprobación, no usa UDP directo. La comprobación resuelve el nombre aparte, antes de que Chromium conecte: una web que cambie su DNS entre la comprobación y la conexión (_DNS rebinding_) podría llegar a la red local. No se ha encontrado en Electron 44 un mecanismo comprobado que lo impida: en una prueba, la comprobación de acceso a la red local de Chromium (_Local Network Access_) no bloqueó las peticiones de una página a `127.0.0.1`.
 
 La app empaquetada desactiva los fusibles `runAsNode`, `NODE_OPTIONS` e inspector, valida la integridad del ASAR y cifra las cookies. La ventana de la app y el navegador de cada trámite corren con `sandbox` y aislamiento de contexto, la interfaz tiene una CSP estricta y el proceso principal valida cada llamada de la interfaz y su origen.
 

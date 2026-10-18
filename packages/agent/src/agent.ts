@@ -111,6 +111,12 @@ const OFRECE =
 /** Herramientas cuyo resultado sale de la página del trámite: pasan por el detector. */
 const CON_DATOS = new Set([...HERRAMIENTAS_DE_PAGINA, 'leer_texto']);
 
+/** Las URL de un texto sin sus parámetros, que pueden llevar datos de la sesión o de la persona. */
+const urlsSinParametros = (t: string) =>
+  t.replace(/(https?:\/\/[^\s?#'"]+)([?#][^\s'"]*)/g, (_, base: string, resto: string) =>
+    resto.startsWith('?') ? `${base}?…` : base,
+  );
+
 type Salida = { type: string; value?: unknown };
 const textoDeSalida = (o: Salida) =>
   typeof o.value === 'string' ? o.value : JSON.stringify(o.value ?? '');
@@ -195,20 +201,20 @@ function supervisar(tools: ToolSet, ctx: Contexto, cortar: (e: Error) => void): 
             });
             return 'Ya has hecho exactamente esto dos veces sin avanzar. Cambia de estrategia: lee el texto de la página, prueba otra ruta o pide ayuda a la persona.';
           }
+          // Ningún resultado (tampoco un error) vuelve al modelo con un valor del perfil, venga de
+          // donde venga, y lo que sale de la página del trámite pasa además por el detector.
+          const proteger = async (texto: string) => {
+            ctx.privacidad.actualizar({ ...ctx.anfitrion.perfil(), ...ctx.datosTramite });
+            return CON_DATOS.has(nombre)
+              ? protegerPagina(ctx, texto)
+              : ctx.privacidad.limpiar(texto);
+          };
           ctx.evento({ tipo: 'actividad', id, herramienta: nombre, resumen, estado: 'inicio' });
           try {
             const r: unknown = await t.execute!(input, opts);
             ctx.evento({ tipo: 'actividad', id, herramienta: nombre, resumen, estado: 'fin' });
-            // Ningún resultado vuelve al modelo con un valor del perfil, venga de donde venga, y lo
-            // que sale de la página del trámite pasa además por el detector.
-            ctx.privacidad.actualizar({ ...ctx.anfitrion.perfil(), ...ctx.datosTramite });
             const texto = typeof r === 'string' ? sinInvisibles(r) : r;
-            const resultado =
-              typeof texto !== 'string'
-                ? texto
-                : CON_DATOS.has(nombre)
-                  ? await protegerPagina(ctx, texto)
-                  : ctx.privacidad.limpiar(texto);
+            const resultado = typeof texto !== 'string' ? texto : await proteger(texto);
             historial.push({
               clave,
               resultado: typeof resultado === 'string' ? resultado : JSON.stringify(resultado),
@@ -219,7 +225,8 @@ function supervisar(tools: ToolSet, ctx: Contexto, cortar: (e: Error) => void): 
               cortar(e);
               throw e;
             }
-            const detalle = e instanceof Error ? e.message : String(e);
+            // Un error de la página puede traer la URL a la que ha ido, con sus parámetros.
+            const detalle = urlsSinParametros(e instanceof Error ? e.message : String(e));
             ctx.evento({
               tipo: 'actividad',
               id,
@@ -230,7 +237,12 @@ function supervisar(tools: ToolSet, ctx: Contexto, cortar: (e: Error) => void): 
             });
             if (opts.abortSignal?.aborted) throw e;
             historial.push({ clave, resultado: detalle });
-            return `Error: ${detalle}`;
+            try {
+              return `Error: ${await proteger(sinInvisibles(detalle))}`;
+            } catch (e2) {
+              if (e2 instanceof ErrorDeProteccion) cortar(e2);
+              throw e2;
+            }
           }
         },
       },

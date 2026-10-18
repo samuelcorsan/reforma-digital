@@ -818,6 +818,41 @@ describe('datos que no están en Mis datos', () => {
     expect(durante.prompts).toHaveLength(1);
   });
 
+  it('un error de la página llega al modelo sin parámetros en las URL y por el detector', async () => {
+    const f = navegadorFalso('https://sede.policia.gob.es/cita');
+    f.nav.abrir = async () => {
+      throw new Error(
+        "Iker Arrieta: ERR_FAILED (-2) loading 'https://sede.policia.gob.es/vuelta?token=abc123'",
+      );
+    };
+    const { model, prompts } = modeloGuionado([
+      () => ({
+        llamadas: [{ herramienta: 'abrir', entrada: { url: 'https://sede.policia.gob.es/a' } }],
+      }),
+      (p) => {
+        expect(ultimoResultado(p)).toContain("'https://sede.policia.gob.es/vuelta?…'");
+        return { texto: 'ok' };
+      },
+    ]);
+    await turno(model, anfitrion(f.nav), 'Abre la sede');
+    expect(prompts).toHaveLength(2);
+    expect(JSON.stringify(prompts)).not.toMatch(/abc123|Iker|Arrieta/);
+  });
+
+  it('una página con parámetros leída con leer_texto no queda como fuente', async () => {
+    const leer = async (url: string) => {
+      const f = navegadorFalso(url);
+      f.estado.textos = ['Requisitos del trámite'];
+      const { model } = modeloGuionado([
+        () => ({ llamadas: [{ herramienta: 'leer_texto', entrada: {} }] }),
+        () => ({ texto: 'ok' }),
+      ]);
+      return (await turno(model, anfitrion(f.nav), 'Lee')).estado.fuentes;
+    };
+    expect(await leer('https://sede.policia.gob.es/tramite?sesion=abc123')).toHaveLength(0);
+    expect(await leer('https://sede.policia.gob.es/tramite')).toHaveLength(1);
+  });
+
   it('el modelo solo lee las respuestas que necesita para razonar', async () => {
     const a = {
       ...anfitrion(navegadorFalso('https://sede.policia.gob.es').nav),
