@@ -59,6 +59,8 @@ export type InfoElemento = {
   valor: string;
   /** La página parece un resumen o una confirmación final. */
   paginaConfirmacion: boolean;
+  /** Intro o Espacio irían a algo que no se ve (un marco de otra web, un shadow DOM cerrado): se trata como vinculante. */
+  incierto?: boolean;
 };
 
 const SCRIPT = String.raw`(function () {
@@ -347,13 +349,31 @@ const SCRIPT = String.raw`(function () {
   }
   /** Lo que activaría Intro o Espacio: el botón con el foco o el botón de envío de su formulario. */
   function destinoDeTecla() {
-    var el = document.activeElement;
-    if (!el || el === document.body) return null;
+    // El foco de verdad puede estar dentro de un marco o de un shadow DOM: se baja hasta él.
+    var el = document.activeElement, doc;
+    while (el) {
+      if (el.shadowRoot && el.shadowRoot.activeElement) el = el.shadowRoot.activeElement;
+      else if (el.tagName === 'IFRAME' || el.tagName === 'FRAME') {
+        try { doc = el.contentDocument; } catch (e) { doc = null; }
+        if (!doc || !doc.activeElement) return incierto(el);
+        el = doc.activeElement;
+      } else break;
+    }
+    if (!el || el === el.ownerDocument.body) return null;
     var r = rol(el);
+    // Un elemento que no puede tener el foco solo lo tiene si lo de dentro es un shadow DOM cerrado.
+    if (!r && el.tabIndex < 0 && !el.hasAttribute('tabindex')) return incierto(el);
     if (r !== 'textbox' && r !== 'select' && r !== 'checkbox' && r !== 'radio') return infoDe(el);
     var form = el.form || (el.closest && el.closest('form'));
     var envio = form && form.querySelector('button:not([type=button]):not([type=reset]), input[type=submit], input[type=image]');
     return envio ? infoDe(envio) : null;
+  }
+  /** Lo que tiene el foco no se ve (un marco de otra web, un shadow DOM cerrado): pide el código. */
+  function incierto(el) {
+    var i = infoDe(el);
+    i.nombre = i.nombre || 'lo que tiene el foco';
+    i.incierto = true;
+    return i;
   }
   function enfocar(id) {
     var el = elemento(id);
@@ -435,8 +455,9 @@ const INOFENSIVO =
 const CLICABLES = new Set(['button', 'link', 'menuitem', 'tab', 'option']);
 
 export const pareceIrreversible = (
-  i: Pick<InfoElemento, 'nombre' | 'rol' | 'paginaConfirmacion'>,
+  i: Pick<InfoElemento, 'nombre' | 'rol' | 'paginaConfirmacion' | 'incierto'>,
 ) =>
-  CLICABLES.has(i.rol) &&
-  !INOFENSIVO.test(i.nombre) &&
-  (FUERTES.test(i.nombre) || (i.paginaConfirmacion && DEBILES.test(i.nombre)));
+  i.incierto ||
+  (CLICABLES.has(i.rol) &&
+    !INOFENSIVO.test(i.nombre) &&
+    (FUERTES.test(i.nombre) || (i.paginaConfirmacion && DEBILES.test(i.nombre))));
