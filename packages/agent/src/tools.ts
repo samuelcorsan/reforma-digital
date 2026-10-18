@@ -669,9 +669,15 @@ export function crearHerramientas(ctx: Contexto) {
         const nav = await navegador();
         const { texto, total, titulo } = await leerTextoPagina(nav, desde, 10000);
         ctx.privacidad.actualizar(todosLosDatos(ctx));
-        // Una página oficial sin datos de la persona también sirve como fuente citable.
+        // Una página oficial sin datos de la persona también sirve como fuente citable. Sin
+        // parámetros: pueden ser de la sesión o de la persona, y leer_pagina la volvería a leer.
         let cabecera = '';
-        if (isOfficial(nav.url()) && !desde && !ctx.privacidad.contieneDatos(texto)) {
+        if (
+          isOfficial(nav.url()) &&
+          !URL.parse(nav.url())?.search &&
+          !desde &&
+          !ctx.privacidad.contieneDatos(texto)
+        ) {
           const f = ctx.fuentes.añadir(nav.url(), titulo, 'pagina');
           if (f) {
             cabecera = `[${f.id}] ${f.titulo} — ${host(f.url)} (fuente citable)\n`;

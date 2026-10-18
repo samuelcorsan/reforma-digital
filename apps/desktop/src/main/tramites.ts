@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { rm } from 'node:fs/promises';
 import path from 'node:path';
 import { app, Notification, session, type BrowserWindow } from 'electron';
 import {
@@ -689,8 +690,14 @@ export class Tramites {
     this.escritos.delete(id);
     this.desconfiadas.delete(id);
     await nav?.cerrar();
-    for (const persistente of [true, false])
-      await session.fromPartition(particion(id, persistente)).clearStorageData();
+    // Todo, también la caché de las páginas, y su carpeta en disco (si el sistema deja borrarla
+    // con la sesión abierta: en Windows puede que no, pero ya está vacía).
+    for (const persistente of [true, false]) {
+      const ses = session.fromPartition(particion(id, persistente));
+      await ses.clearData();
+      if (ses.storagePath)
+        await rm(ses.storagePath, { recursive: true, force: true }).catch(() => undefined);
+    }
     await this.escrituras.get(id)?.catch(() => undefined);
     this.escrituras.delete(id);
     await this.almacen.borrar(archivo(id));

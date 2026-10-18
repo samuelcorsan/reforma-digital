@@ -130,16 +130,21 @@ export async function leerConNavegador(url: string, signal: AbortSignal) {
   }
 }
 
-/** Pide confirmación antes de abrir AutoFirma desde una web. Otras apps no se abren. */
-async function abrirAutoFirma(ventana: BrowserWindow | null, url: string) {
+/**
+ * Pide confirmación antes de abrir AutoFirma desde una web (`desde`, la que lo pide). Otras apps
+ * no se abren.
+ */
+async function abrirAutoFirma(ventana: BrowserWindow | null, url: string, desde: string) {
   if (!/^afirma:/i.test(url)) return;
+  const oficial = isOfficial(desde);
   const opciones = {
-    type: 'question' as const,
+    type: oficial ? ('question' as const) : ('warning' as const),
     buttons: ['Abrir', 'Cancelar'],
-    defaultId: 0,
+    defaultId: oficial ? 0 : 1,
     cancelId: 1,
-    message: 'La web quiere abrir AutoFirma para firmar',
+    message: `${URL.parse(desde)?.host || 'Una web'} quiere abrir AutoFirma para firmar`,
     detail:
+      (oficial ? '' : 'No es una web oficial: ábrela solo si esperabas firmar aquí.\n\n') +
       'La firma la haces tú en AutoFirma, con tu certificado. Si no la tienes, descárgala de firmaelectronica.gob.es.',
   };
   const r = ventana
@@ -221,6 +226,8 @@ export class NavegadorTramite implements Navegador {
     // Las sedes están pensadas para pantallas anchas: al 80 % caben en el panel sin cortarse.
     this.view.webContents.on('did-finish-load', () => this.view.webContents.setZoomFactor(ZOOM));
     const wc = this.view.webContents;
+    // WebRTC no pasa por la comprobación de peticiones: sin UDP directo, no llega a la red local.
+    wc.setWebRTCIPHandlingPolicy('disable_non_proxied_udp');
     wc.on('did-navigate', () => this.opciones.alCambiar());
     wc.on('did-navigate-in-page', () => this.opciones.alCambiar());
     // Las ventanas nuevas se abren en la misma vista: el trámite sigue en un solo sitio. Un
@@ -236,13 +243,14 @@ export class NavegadorTramite implements Navegador {
             }),
           })
           .catch(() => undefined);
-      else void abrirAutoFirma(this.opciones.ventana(), url);
+      // ponytail: Electron no dice qué marco abre la ventana; se toma la página principal.
+      else void abrirAutoFirma(this.opciones.ventana(), url, wc.getURL());
       return { action: 'deny' };
     });
     wc.on('will-navigate', (e) => {
       if (EN_VISTA.test(e.url)) return;
       e.preventDefault();
-      void abrirAutoFirma(this.opciones.ventana(), e.url);
+      void abrirAutoFirma(this.opciones.ventana(), e.url, e.initiator?.url ?? wc.getURL());
     });
     // Si la página se cae con un diálogo abierto, ya no espera respuesta.
     wc.on('render-process-gone', () => this.pendiente?.contestar(false));
@@ -285,7 +293,8 @@ export class NavegadorTramite implements Navegador {
     this.opciones.alCambiar();
     const opciones = {
       type: d.tipo === 'alert' ? ('info' as const) : ('question' as const),
-      message: `${URL.parse(this.url())?.host || 'La web'} dice:`,
+      // El marco que lo abre, que puede ser de otra web que la página.
+      message: `${URL.parse(p.info.origen ?? '')?.host || 'La web'} dice:`,
       detail: d.mensaje,
       buttons: d.tipo === 'alert' ? ['Aceptar'] : ['Aceptar', 'Cancelar'],
       defaultId: 0,
@@ -334,7 +343,7 @@ export class NavegadorTramite implements Navegador {
     // una app externa. Se deniega y, si es AutoFirma, se abre tras preguntar.
     ses.setPermissionRequestHandler((_wc, permiso, responder, detalles) => {
       if (permiso === 'openExternal' && 'externalURL' in detalles && detalles.externalURL)
-        void abrirAutoFirma(this.opciones.ventana(), detalles.externalURL);
+        void abrirAutoFirma(this.opciones.ventana(), detalles.externalURL, detalles.requestingUrl);
       responder(false);
     });
     ses.on('will-download', (_e, item) => {
@@ -344,14 +353,15 @@ export class NavegadorTramite implements Navegador {
       let ruta = path.join(dir, nombre);
       for (let n = 2; existsSync(ruta); n++)
         ruta = path.join(dir, nombre.replace(/(\.[^.]*)?$/, ` (${n})$1`));
-      // Lo que descarga una web oficial se guarda solo. De otra web, la persona lo ve en el cuadro
-      // de guardar del sistema y decide; si lo cancela, no se guarda.
-      if (isOfficial(this.url())) item.setSavePath(ruta);
+      // Lo que descarga una web oficial, desde una web oficial, se guarda solo. Si no, la persona lo
+      // ve en el cuadro de guardar del sistema y decide; si lo cancela, no se guarda.
+      const urls = [this.url(), ...item.getURLChain()];
+      if (urls.every((u) => isOfficial(u.replace(/^blob:/i, '')))) item.setSavePath(ruta);
       else {
         const aviso = `${URL.parse(this.url())?.host || 'Una web'} quiere descargar «${nombre}»`;
         item.setSaveDialogOptions({
           title: aviso,
-          message: `${aviso}. No es una web oficial: guárdalo solo si lo esperabas.`,
+          message: `${aviso}. No viene de una web oficial: guárdalo solo si lo esperabas.`,
           defaultPath: ruta,
         });
       }
