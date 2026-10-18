@@ -9,6 +9,7 @@ const pages = [
   '/equipo',
   '/privacy',
   '/api',
+  '/escritorio',
   ...congressSections.flatMap(({ pages }) =>
     pages.map(([, path]) => `${congressBase}${path ? `/${path}` : ''}`),
   ),

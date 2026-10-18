@@ -8,8 +8,7 @@ import { MobileMenu } from './mobile-menu';
 
 export function Header({ current, className }: { current?: string; className?: string }) {
   const links = [
-    { href: '/#iniciativa', text: 'La iniciativa', current: false },
-    { href: '/#proyectos', text: 'Proyectos', current: false },
+    { href: '/escritorio', text: 'App', current: current === '/escritorio' },
     { href: '/congreso', text: 'El Congreso', current: current === '/congreso' },
     { href: '/elecciones', text: 'Elecciones', current: current === '/elecciones' },
     { href: '/api', text: 'API', current: current === '/api' },

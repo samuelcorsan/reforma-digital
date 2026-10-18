@@ -8,6 +8,7 @@ import { Icon } from '../../components/brand/icon';
 import { Header } from '../../components/brand/header';
 import { Footer } from '../../components/brand/footer';
 import { ProjectScene } from '../../components/brand/project-scene';
+import { DesktopScene } from '../../components/brand/desktop-scene';
 import { ProjectTour } from '../../components/brand/project-tour';
 import { links } from '../../lib/site';
 import { congressBase } from '../../lib/congreso/routes';
@@ -203,6 +204,48 @@ export default function HomePage() {
             }
             steps={[
               {
+                title: 'Tus trámites, con un asistente.',
+                label: (
+                  <span
+                    className={
+                      'in-proyecto-tipo [justify-self:start] [color:var(--brand)] [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
+                    }
+                  >
+                    01 · App de escritorio
+                  </span>
+                ),
+                text: (
+                  <>
+                    <p
+                      className={
+                        't-texto-l [font-family:var(--font-brand-text)] [font-size:clamp(17px,_1.4vw,_19px)] [line-height:1.6] text-pretty'
+                      }
+                    >
+                      Le dices qué necesitas: busca el trámite en las webs oficiales, te explica los
+                      pasos y rellena el formulario contigo. Tus datos personales no llegan a la IA.
+                    </p>
+                    <Link
+                      className={cn(buttonVariants({ variant: 'sunset' }))}
+                      data-slot="button"
+                      data-variant="sunset"
+                      href="/escritorio"
+                    >
+                      Ver la app <Icon name="derecha" size={16} />
+                    </Link>
+                  </>
+                ),
+                scene: (
+                  <div
+                    className={
+                      'rc-pieza absolute [inset:0] [padding:7cqi_7cqi_0] [background:radial-gradient(_100%_100%_at_100%_0%,_color-mix(in_oklch,_var(--brand-yellow),_var(--background)_60%)_0%,_transparent_70%_),_linear-gradient(_150deg,_var(--brand-yellow)_35%,_color-mix(in_oklch,_var(--brand-yellow),_var(--brand-orange)_55%)_100%_)]'
+                    }
+                    aria-hidden="true"
+                  >
+                    <DesktopScene height={850} />
+                  </div>
+                ),
+              },
+              {
                 title: 'La web oficial, más fácil de usar.',
                 label: (
                   <span
@@ -210,7 +253,7 @@ export default function HomePage() {
                       'in-proyecto-tipo [justify-self:start] [color:var(--brand)] [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
                     }
                   >
-                    01 · Extensión para Chrome
+                    02 · Extensión para Chrome
                   </span>
                 ),
                 text: (
@@ -253,7 +296,7 @@ export default function HomePage() {
                       'in-proyecto-tipo [justify-self:start] [color:var(--brand)] [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
                     }
                   >
-                    02 · El Congreso
+                    03 · El Congreso
                   </span>
                 ),
                 text: (
