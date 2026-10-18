@@ -12,6 +12,20 @@ const config: NextConfig = {
       new URL('https://avatars.githubusercontent.com/u/*?s=160'),
     ],
   },
+  // Para toda la web: nadie la mete en un iframe, el navegador no adivina tipos y los enlaces a
+  // otras webs solo llevan el origen. Las cabeceras de CORS de /api/congreso las pone su ruta.
+  headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+    ];
+  },
   redirects() {
     return [
       { source: '/explorar', destination: '/', permanent: true },

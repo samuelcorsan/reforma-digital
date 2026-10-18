@@ -27,7 +27,7 @@ import {
 export const PAGE_SIZE = 24;
 type Limit = number | null;
 
-const like = (query: string) => `%${query.replace(/[\\%_]/g, '\\$&')}%`;
+export const like = (query: string) => `%${query.replace(/[\\%_]/g, '\\$&')}%`;
 const offset = (page: number, limit: Limit) => (limit ? (page - 1) * limit : 0);
 async function scope() {
   return { sql: connection(), current: await publication() };

@@ -119,6 +119,55 @@ describe('servidor de la app de escritorio', () => {
     expect(enviados).toHaveLength(0);
   });
 
+  it('deja de leer un cuerpo sin Content-Length en cuanto pasa del máximo', async () => {
+    let leidos = 0;
+    const sinFin = new ReadableStream<Uint8Array>({
+      pull(c) {
+        leidos += 65_536;
+        c.enqueue(new Uint8Array(65_536));
+      },
+    });
+    const r = await modelo(
+      new Request('https://reforma-digital.es/api/escritorio/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'x-rd-instalacion': randomUUID() },
+        body: sinFin,
+        duplex: 'half',
+      }),
+    );
+    expect(r.status).toBe(413);
+    expect(leidos).toBeLessThan(2_200_000);
+    expect(enviados).toHaveLength(0);
+  });
+
+  it('en producción no pasa nada sin Postgres ni sin la IP que da Vercel', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    expect((await alModelo(mensajes)).status).toBe(503);
+    vi.stubEnv('DATABASE_URL', 'postgres://reforma@db.example/escritorio');
+    expect((await alModelo(mensajes)).status).toBe(503);
+    vi.stubEnv('VERCEL', '1');
+    expect((await alModelo(mensajes)).status).toBe(503);
+    expect((await buscar(peticion('/api/escritorio/buscar', { consulta: 'padrón' }))).status).toBe(
+      503,
+    );
+    vi.stubEnv('DATABASE_URL', '');
+    expect(await desde('192.0.2.1')).toBe(503);
+    expect(enviados).toHaveLength(0);
+  });
+
+  it('no pasa tal cual los errores de NaN Builders', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    respuesta = () =>
+      new Response('<html>detalle interno</html>', {
+        status: 400,
+        headers: { 'content-type': 'text/html' },
+      });
+    const r = await alModelo(mensajes);
+    expect(r.status).toBe(502);
+    expect(r.headers.get('content-type')).toBe('application/json');
+    expect(await r.text()).not.toContain('detalle interno');
+  });
+
   it('corta a cada persona al llegar a su gasto del día, también en streaming', async () => {
     const instalacion = randomUUID();
     // Cada respuesta cuesta medio límite: la tercera ya no pasa.

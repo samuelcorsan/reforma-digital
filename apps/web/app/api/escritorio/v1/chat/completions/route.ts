@@ -110,19 +110,22 @@ export async function POST(request: Request) {
         ((u.data.prompt_tokens + u.data.completion_tokens) / 1e6) * USD_POR_MILLON_DE_TOKENS,
       );
   };
-  const tipo = res.headers.get('content-type') ?? 'application/json';
-  if (!res.ok || !res.body || !p.data.stream) {
+  // El error del proveedor no pasa tal cual: solo se apunta su código, que no dice nada de nadie.
+  if (!res.ok) {
+    console.error(`NaN Builders respondió ${res.status}`);
+    await res.body?.cancel();
+    return Response.json({ error: 'El modelo no ha podido responder.' }, { status: 502 });
+  }
+  if (!res.body || !p.data.stream) {
     const cuerpo = await res.text();
-    if (res.ok) {
-      try {
-        await apuntar((JSON.parse(cuerpo) as { usage?: unknown }).usage);
-      } catch {
-        // Sin uso que leer queda lo reservado.
-      }
+    try {
+      await apuntar((JSON.parse(cuerpo) as { usage?: unknown }).usage);
+    } catch {
+      // Sin uso que leer queda lo reservado.
     }
-    return new Response(cuerpo, { status: res.status, headers: { 'content-type': tipo } });
+    return new Response(cuerpo, { headers: { 'content-type': 'application/json' } });
   }
   return new Response(res.body.pipeThrough(contarUso(apuntar)), {
-    headers: { 'content-type': tipo, 'cache-control': 'no-store' },
+    headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-store' },
   });
 }

@@ -74,6 +74,13 @@ async function gastado(clave: string): Promise<number> {
   return fila?.dia === hoy() ? fila.cuenta : 0;
 }
 
+/** Borra los contadores del escritorio de días anteriores: ya no se leen. */
+async function limpiar() {
+  if (databaseAvailable())
+    await connection()`DELETE FROM request_buckets
+      WHERE key LIKE 'escritorio:%' AND window_start < date_trunc('day', now())`;
+}
+
 /**
  * El contador de algo sin guardarlo tal cual (ni la IP ni el identificador de la instalación). La
  * clave del proveedor hace de secreto: está siempre que el servidor funciona y no sale de él.
@@ -140,16 +147,23 @@ const agotado = () =>
  * del día, ni su IP el suyo, ni entre todos el del servicio. Devuelve quién es, o el rechazo.
  */
 export async function admitir(request: Request, servicio: Servicio): Promise<Quien | Response> {
+  // La cabecera de IP solo es fiable en Vercel; fuera, en desarrollo, todas cuentan juntas.
+  const ip = process.env.VERCEL
+    ? request.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim()
+    : 'local';
+  // En producción no pasa nada sin Postgres (cada función contaría por su cuenta) ni sin la IP que
+  // da Vercel (todas contarían juntas).
+  if (process.env.NODE_ENV === 'production' && (!databaseAvailable() || !process.env.VERCEL || !ip))
+    return Response.json(
+      { error: 'El servidor del asistente no está configurado.' },
+      { status: 503 },
+    );
   const instalacion = request.headers.get(CABECERA_INSTALACION) ?? '';
   if (!UUID.test(instalacion))
     return Response.json({ error: 'Falta la instalación de la app.' }, { status: 400 });
-  // La cabecera de IP solo es fiable en Vercel; fuera, todas cuentan juntas.
-  const ip = process.env.VERCEL
-    ? (request.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ?? 'desconocida')
-    : 'local';
   const quien = {
     usuario: contador('usuario', instalacion),
-    ip: contador('ip', red(ip)),
+    ip: contador('ip', red(ip || 'desconocida')),
     servicio,
   };
   for (const [clave, limite] of contadores(quien))
@@ -171,7 +185,13 @@ export async function reservar(
   const lista = contadores(quien);
   const sumarATodos = (cuanto: number) => Promise.all(lista.map(([clave]) => sumar(clave, cuanto)));
   const pasados = await Promise.all(
-    lista.map(async ([clave, limite]) => (await sumar(clave, micro)) > limite),
+    lista.map(async ([clave, limite]) => {
+      const total = await sumar(clave, micro);
+      // La primera reserva del día entre todos borra los contadores de días anteriores: así la
+      // tabla no crece sin fin, sin borrar en cada petición.
+      if (clave.startsWith('escritorio:global:') && total === micro) await limpiar();
+      return total > limite;
+    }),
   );
   if (pasados.includes(true)) {
     await sumarATodos(-micro);
@@ -183,9 +203,15 @@ export async function reservar(
   };
 }
 
-/** Lee el cuerpo sin pasar de `max` bytes; `null` si es más grande. */
+/** Lee el cuerpo sin pasar de `max` bytes; `null` si es más grande, sin leer el resto. */
 export async function leerCuerpo(request: Request, max: number) {
   if (Number(request.headers.get('content-length') ?? 0) > max) return null;
-  const texto = await request.text();
-  return Buffer.byteLength(texto) > max ? null : texto;
+  const trozos: Uint8Array[] = [];
+  let bytes = 0;
+  for await (const trozo of request.body ?? []) {
+    bytes += trozo.byteLength;
+    if (bytes > max) return null;
+    trozos.push(trozo);
+  }
+  return new TextDecoder().decode(Buffer.concat(trozos));
 }
