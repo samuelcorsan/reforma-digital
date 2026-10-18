@@ -360,7 +360,7 @@ export function crearHerramientas(ctx: Contexto) {
   /** Un paso vinculante necesita un código aprobado para esta misma web. */
   type Permiso = { ok: true; codigo?: string; accion?: string } | { ok: false; error: string };
   const codigoValido = (
-    info: Pick<InfoElemento, 'nombre' | 'rol' | 'paginaConfirmacion'>,
+    info: Pick<InfoElemento, 'nombre' | 'rol' | 'paginaConfirmacion' | 'incierto'>,
     codigo: string | undefined,
     url: string,
   ): Permiso => {
