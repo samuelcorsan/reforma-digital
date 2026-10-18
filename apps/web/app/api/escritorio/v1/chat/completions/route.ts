@@ -111,10 +111,15 @@ export async function POST(request: Request) {
       );
   };
   // El error del proveedor no pasa tal cual: solo se apunta su código, que no dice nada de nadie.
+  // Sin respuesta no hay gasto, y una petición mal hecha o un límite no se reintentan como un 502.
   if (!res.ok) {
     console.error(`NaN Builders respondió ${res.status}`);
     await res.body?.cancel();
-    return Response.json({ error: 'El modelo no ha podido responder.' }, { status: 502 });
+    await ajustar(0);
+    return Response.json(
+      { error: 'El modelo no ha podido responder.' },
+      { status: res.status === 400 || res.status === 429 ? res.status : 502 },
+    );
   }
   if (!res.body || !p.data.stream) {
     const cuerpo = await res.text();

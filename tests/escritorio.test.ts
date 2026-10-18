@@ -163,9 +163,22 @@ describe('servidor de la app de escritorio', () => {
         headers: { 'content-type': 'text/html' },
       });
     const r = await alModelo(mensajes);
-    expect(r.status).toBe(502);
+    expect(r.status).toBe(400);
     expect(r.headers.get('content-type')).toBe('application/json');
     expect(await r.text()).not.toContain('detalle interno');
+    respuesta = () => new Response('detalle interno', { status: 500 });
+    expect((await alModelo(mensajes)).status).toBe(502);
+  });
+
+  it('devuelve lo reservado cuando NaN Builders no responde', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const instalacion = randomUUID();
+    respuesta = () => new Response('', { status: 500 });
+    // Sin devolverlo, la reserva de 0,03 $ de cada una agotaría el límite antes de la vigésima.
+    for (let i = 0; i < 20; i++) expect((await alModelo(enorme, instalacion)).status).toBe(502);
+    respuesta = () =>
+      Response.json({ choices: [], usage: { prompt_tokens: 1, completion_tokens: 1 } });
+    expect((await alModelo(enorme, instalacion)).status).toBe(200);
   });
 
   it('corta a cada persona al llegar a su gasto del día, también en streaming', async () => {
