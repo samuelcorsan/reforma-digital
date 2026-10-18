@@ -4,7 +4,8 @@ import { links, siteUrl } from './site';
 export const siteName = 'Reforma Digital';
 
 // Imágenes de public/og/, generadas con `pnpm landing:og` a partir de og/template.html.
-type OgImage = 'portada' | 'equipo' | 'privacidad';
+type OgImage =
+  'portada' | 'equipo' | 'privacidad' | 'escritorio' | 'api' | 'congreso' | 'elecciones';
 
 export function pageMetadata({
   title,

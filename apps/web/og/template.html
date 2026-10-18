@@ -132,6 +132,9 @@
         align-items: center;
         gap: 10px;
         margin-bottom: 26px;
+        font-size: 18px;
+        letter-spacing: 0.02em;
+        text-transform: none;
         color: rgba(255, 255, 255, 0.86);
       }
       .etiqueta::before {
@@ -150,7 +153,7 @@
       }
       .texto {
         margin-top: 22px;
-        font-size: 23px;
+        font-size: 26px;
         line-height: 1.42;
         text-wrap: pretty;
         color: rgba(255, 255, 255, 0.9);
@@ -227,7 +230,7 @@
       [data-escena='portada'] .texto {
         max-width: 44ch;
         margin-top: 24px;
-        font-size: 27px;
+        font-size: 30px;
         line-height: 1.4;
         text-wrap: balance;
       }
@@ -279,6 +282,46 @@
         top: 232px;
         transform: translate(-50%, -50%);
       }
+      /* El Congreso y Elecciones (DESIGN.md §8.7): página blanca y el sol pixelado, nunca bajo texto. */
+      [data-escena='horizonte'] {
+        color: var(--tinta);
+      }
+      [data-escena='horizonte'] main {
+        background: var(--blanco);
+      }
+      [data-escena='horizonte'] :is(.sol, .resplandor, .halos, footer) {
+        display: none;
+      }
+      [data-escena='horizonte'] .etiqueta {
+        color: var(--rojo);
+      }
+      [data-escena='horizonte'] .texto {
+        max-width: 46ch;
+        color: var(--tinta-3);
+        text-wrap: balance;
+      }
+      [data-escena='horizonte'] .horizonte {
+        display: block;
+        left: 50%;
+        bottom: 0;
+        width: calc(360 * 6px);
+        height: calc(32 * 6px);
+        transform: translateX(-50%);
+        image-rendering: pixelated;
+      }
+      [data-escena='horizonte'] .copia {
+        left: 0;
+        right: 0;
+        top: 150px;
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      [data-escena='horizonte'] h1 {
+        max-width: 960px;
+      }
     </style>
   </head>
   <body data-escena="portada">
@@ -326,6 +369,8 @@
         <rect x="96" y="48" width="48" height="48" fill="var(--blanco)" />
         <rect x="96" y="144" width="48" height="48" fill="var(--blanco)" />
       </svg>
+
+      <img class="escena horizonte" src="../public/congreso/sol-horizonte.png" alt="" />
 
       <footer class="dato">
         <span>Código abierto</span>

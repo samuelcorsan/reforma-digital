@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description:
       'Qué se dijo, cómo se votó y quién te representa. Actividad parlamentaria con datos oficiales, fuentes y análisis identificados como IA.',
     path: href(path.map(encodeURIComponent).join('/')),
-    og: 'portada',
+    og: 'congreso',
   });
 }
 const querySchema = z.object({

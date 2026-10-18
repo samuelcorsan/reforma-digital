@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
 
@@ -24,6 +24,37 @@ const pages = [
     etiqueta: 'Privacidad',
     titular: 'Navega sin identificarte.',
     texto: 'Sin cuenta y sin cookies publicitarias. Esta web no te pide datos personales.',
+  },
+  {
+    slug: 'escritorio',
+    escena: 'marca',
+    etiqueta: 'App de escritorio',
+    titular: 'Tus trámites, con un asistente.',
+    texto: 'Para macOS, Windows y Linux. Te guía en la web oficial y tus datos no llegan a la IA.',
+  },
+  {
+    slug: 'api',
+    escena: 'marca',
+    etiqueta: 'API abierta',
+    titular: 'Los datos del Congreso, para reutilizar.',
+    texto:
+      'Votaciones, preguntas y Diarios de Sesiones en JSON, sin registro y con licencia CC BY 4.0.',
+  },
+  {
+    slug: 'congreso',
+    escena: 'horizonte',
+    etiqueta: 'Un proyecto de Reforma Digital',
+    titular: 'Lo que pasa en el Congreso, contado para cualquiera.',
+    texto:
+      'Cada pleno resumido, cada votación y cada ley, con datos oficiales y en lenguaje claro.',
+  },
+  {
+    slug: 'elecciones',
+    escena: 'horizonte',
+    etiqueta: 'Elecciones generales · 29N',
+    titular: 'Todo lo que hay que saber antes del 29N.',
+    texto:
+      'Lo que deja la legislatura, cómo se reparten los 350 escaños, cuarenta y nueve años de elecciones y las encuestas.',
   },
 ];
 
@@ -84,8 +115,9 @@ try {
     viewport: { width: 1200, height: 630 },
     deviceScaleFactor: 2,
   });
-  // Geist se descarga de Google Fonts: hace falta red para generar las imágenes.
-  await page.setContent(readFileSync(new URL('../og/template.html', import.meta.url), 'utf8'), {
+  // Geist se descarga de Google Fonts: hace falta red para generar las imágenes. Se abre como
+  // archivo para que la plantilla cargue el sol pixelado de public/.
+  await page.goto(new URL('../og/template.html', import.meta.url).href, {
     waitUntil: 'networkidle',
   });
   await page.evaluate(() => document.fonts.ready);

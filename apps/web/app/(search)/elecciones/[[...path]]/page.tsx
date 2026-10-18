@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       page?.text ??
       'Lo que deja la legislatura, cómo se reparten los 350 escaños, cuarenta y nueve años de elecciones y las encuestas, con datos oficiales.',
     path: electionsHref(path?.join('/')),
-    og: 'portada',
+    og: 'elecciones',
   });
 }
 

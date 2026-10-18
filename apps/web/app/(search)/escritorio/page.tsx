@@ -21,7 +21,7 @@ export const metadata: Metadata = pageMetadata({
   title,
   description,
   path: '/escritorio',
-  og: 'portada',
+  og: 'escritorio',
 });
 
 const graph = [
