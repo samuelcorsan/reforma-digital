@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const querySchema = z.object({
   q: z.string().max(200).default(''),
-  pagina: z.coerce.number().int().min(1).max(100000).default(1),
+  pagina: z.coerce.number().int().min(1).max(10000).default(1),
 });
 
 export default async function Page({ params, searchParams }: Props) {

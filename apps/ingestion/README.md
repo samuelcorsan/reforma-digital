@@ -9,7 +9,7 @@ Recolector Python adaptado de [Escaño Abierto](https://github.com/jorgegarcelan
 - Un **Vercel Blob privado**: originales descargados por hash, checkpoint de procesamiento y archivo descargable. La API de Next autentica las descargas; el navegador nunca recibe la clave de escritura.
 - Directorio `CONGRESS_WORKDIR` (por defecto `apps/ingestion/.cache`): trabajo temporal, ignorado por Git.
 
-`CONGRESS_DATABASE_URL` en `.env` y GitHub Secrets debe apuntar a un rol de escritura del Postgres de Congreso. El runner la utiliza si está configurada; en su ausencia usa `DATABASE_URL`. La web usa `DATABASE_URL` con permisos de lectura en estas tablas. Se puede usar Neon o cualquier Postgres estándar; no requiere extensiones ni otro servicio de consultas. Para migrar, usa un rol propietario y el comando existente `pnpm db:migrate`; con Neon, utiliza la conexión directa para los trabajos largos y la conexión agrupada para Next.js.
+`CONGRESS_DATABASE_URL` en `.env` y GitHub Secrets debe apuntar a un rol de escritura del Postgres de Congreso. El runner la utiliza si está configurada; en su ausencia usa `DATABASE_URL`. La web usa `DATABASE_URL` con permisos de lectura en estas tablas; limita sus consultas con `ALTER ROLE <rol de lectura> SET statement_timeout = '5s'`, porque el pooler de Neon rechaza ese parámetro en la URL. Se puede usar Neon o cualquier Postgres estándar; solo requiere la extensión `pg_trgm`, incluida en Postgres, y ningún otro servicio de consultas. Para migrar, usa un rol propietario y el comando existente `pnpm db:migrate`; con Neon, utiliza la conexión directa para los trabajos largos y la conexión agrupada para Next.js.
 
 ## Configuración real
 
