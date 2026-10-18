@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       { error: 'El servidor del asistente no está configurado.' },
       { status: 503 },
     );
-  const quien = await admitir(request);
+  const quien = await admitir(request, 'modelo');
   if (quien instanceof Response) return quien;
   const texto = await leerCuerpo(request, MAX_BYTES);
   if (texto === null) return Response.json({ error: 'Petición demasiado grande' }, { status: 413 });

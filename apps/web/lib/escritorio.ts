@@ -1,18 +1,33 @@
 import { createHmac } from 'node:crypto';
+import { isIPv6 } from 'node:net';
 import { connection, databaseAvailable } from '@reforma-digital/db';
 import { CABECERA_INSTALACION } from '@reforma-digital/agent/models';
 
 /**
  * El servidor de la app de escritorio guarda las claves del modelo (NaN Builders) y del buscador
- * (Exa): una app que se reparte no puede guardar secretos. Lo que impide el abuso es un gasto
- * máximo al día por persona (cada instalación de la app) y por IP.
+ * (Exa): una app que se reparte no puede guardar secretos. Lo que acota el abuso es un gasto
+ * máximo al día por IP y, entre todos, por servicio. El de cada instalación es solo una cortesía
+ * para repartir: el identificador lo elige la app y basta con cambiarlo para empezar de cero.
  */
 export const LIMITES = {
   /** Dólares al día por instalación. */
   usdPorUsuario: 0.5,
-  /** Dólares al día por IP: quien reinstale la app para empezar de cero sigue contando aquí. */
+  /** Dólares al día por IP (las IPv6, por su /64): no se salta con otra instalación. */
   usdPorIp: 2.5,
+  /** Dólares al día entre todas las peticiones, por servicio, que se paga aparte. */
+  usdEntreTodos: {
+    /**
+     * La parte de un día de la cuota de NaN Builders (3.000 millones de tokens al mes, ver
+     * `USD_POR_MILLON_DE_TOKENS`): 100 millones de tokens, para que no se acabe antes de fin de mes.
+     */
+    modelo: 3,
+    /** Exa cobra cada búsqueda aparte. */
+    busqueda: 3,
+  },
 };
+
+/** Lo que se paga aparte: el modelo (NaN Builders) y el buscador (Exa). */
+type Servicio = keyof typeof LIMITES.usdEntreTodos;
 
 /**
  * Lo que vale un millón de tokens de NaN Builders. No cobra por token: la suscripción cuesta
@@ -68,8 +83,41 @@ const contador = (tipo: string, valor: string) =>
     .update(valor)
     .digest('hex')}`;
 
-/** Quien hace la petición: su instalación y su IP, ya como contadores. */
-export type Quien = { usuario: string; ip: string };
+/**
+ * La red de una IP para su límite: una IPv6 cuenta por su /64, que es lo que suele tener cada
+ * conexión; una IPv4, tal cual, también si llega como IPv6 (`::ffff:192.0.2.1`).
+ */
+function red(ip: string) {
+  if (!isIPv6(ip)) return ip;
+  // Los 16 bits de cada grupo; una IPv4 al final son dos.
+  const grupos = (parte = '') =>
+    parte
+      .split(':')
+      .filter(Boolean)
+      .flatMap((g) => {
+        if (!g.includes('.')) return [parseInt(g, 16)];
+        const [a = 0, b = 0, c = 0, d = 0] = g.split('.').map(Number);
+        return [a * 256 + b, c * 256 + d];
+      });
+  const [cabeza, cola] = ip.split('::');
+  const delante = grupos(cabeza);
+  const detras = grupos(cola);
+  const todos = [
+    ...delante,
+    ...Array<number>(8 - delante.length - detras.length).fill(0),
+    ...detras,
+  ];
+  const [, , , , , mapeada, alto = 0, bajo = 0] = todos;
+  if (mapeada === 0xffff && todos.slice(0, 5).every((g) => g === 0))
+    return [alto >> 8, alto & 255, bajo >> 8, bajo & 255].join('.');
+  return `${todos
+    .slice(0, 4)
+    .map((g) => g.toString(16))
+    .join(':')}::/64`;
+}
+
+/** Quien hace la petición: su instalación y su IP, ya como contadores, y el servicio que pide. */
+export type Quien = { usuario: string; ip: string; servicio: Servicio };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -78,6 +126,7 @@ const contadores = (quien: Quien) =>
   [
     [quien.usuario, LIMITES.usdPorUsuario * 1e6],
     [quien.ip, LIMITES.usdPorIp * 1e6],
+    [`escritorio:global:${quien.servicio}`, LIMITES.usdEntreTodos[quien.servicio] * 1e6],
   ] as const;
 
 const agotado = () =>
@@ -88,9 +137,9 @@ const agotado = () =>
 
 /**
  * Antes de leer una petición: la instalación tiene que identificarse y no haber gastado su límite
- * del día, ni su IP el suyo. Devuelve quién es, o la respuesta de rechazo.
+ * del día, ni su IP el suyo, ni entre todos el del servicio. Devuelve quién es, o el rechazo.
  */
-export async function admitir(request: Request): Promise<Quien | Response> {
+export async function admitir(request: Request, servicio: Servicio): Promise<Quien | Response> {
   const instalacion = request.headers.get(CABECERA_INSTALACION) ?? '';
   if (!UUID.test(instalacion))
     return Response.json({ error: 'Falta la instalación de la app.' }, { status: 400 });
@@ -98,7 +147,11 @@ export async function admitir(request: Request): Promise<Quien | Response> {
   const ip = process.env.VERCEL
     ? (request.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ?? 'desconocida')
     : 'local';
-  const quien = { usuario: contador('usuario', instalacion), ip: contador('ip', ip) };
+  const quien = {
+    usuario: contador('usuario', instalacion),
+    ip: contador('ip', red(ip)),
+    servicio,
+  };
   for (const [clave, limite] of contadores(quien))
     if ((await gastado(clave)) >= limite) return agotado();
   return quien;

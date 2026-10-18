@@ -28,7 +28,7 @@ const BUSQUEDA_CARA = 0.025;
 export async function POST(request: Request) {
   const clave = process.env.EXA_API_KEY;
   if (!clave) return Response.json({ error: 'El buscador no está configurado.' }, { status: 503 });
-  const quien = await admitir(request);
+  const quien = await admitir(request, 'busqueda');
   if (quien instanceof Response) return quien;
   const texto = await leerCuerpo(request, 4000);
   if (texto === null) return Response.json({ error: 'Petición demasiado grande' }, { status: 413 });

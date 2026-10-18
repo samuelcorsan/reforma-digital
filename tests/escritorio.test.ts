@@ -5,12 +5,18 @@ import { POST as buscar } from '../apps/web/app/api/escritorio/buscar/route';
 import { LIMITES, USD_POR_MILLON_DE_TOKENS } from '../apps/web/lib/escritorio';
 
 /** Las rutas del servidor de la app de escritorio, con NaN Builders y Exa simulados. */
-const peticion = (url: string, cuerpo: unknown, instalacion: string | null = randomUUID()) =>
+const peticion = (
+  url: string,
+  cuerpo: unknown,
+  instalacion: string | null = randomUUID(),
+  ip?: string,
+) =>
   new Request(`https://reforma-digital.es${url}`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
       ...(instalacion ? { 'x-rd-instalacion': instalacion } : {}),
+      ...(ip ? { 'x-vercel-forwarded-for': ip } : {}),
     },
     body: typeof cuerpo === 'string' ? cuerpo : JSON.stringify(cuerpo),
   });
@@ -19,6 +25,14 @@ const alModelo = (cuerpo: unknown, instalacion?: string | null) =>
 const mensajes = { messages: [{ role: 'user', content: 'Hola' }] };
 /** Una petición de un millón de bytes: su reserva pasa un poco de 0,03 $. */
 const enorme = { messages: [{ role: 'user', content: 'x'.repeat(1_000_000) }] };
+/** Una petición de otra instalación desde `ip`, como la da Vercel: al modelo o al buscador. */
+const desde = async (ip: string, alBuscador = false) => {
+  vi.stubEnv('VERCEL', '1');
+  const r = alBuscador
+    ? await buscar(peticion('/api/escritorio/buscar', { consulta: 'padrón Getafe' }, undefined, ip))
+    : await modelo(peticion('/api/escritorio/v1/chat/completions', mensajes, undefined, ip));
+  return r.status;
+};
 /** Tokens que cuestan `usd` dólares. */
 const tokens = (usd: number) => Math.ceil((usd / USD_POR_MILLON_DE_TOKENS) * 1e6);
 
@@ -169,5 +183,46 @@ describe('servidor de la app de escritorio', () => {
     for (let i = 0; i < LIMITES.usdPorIp / LIMITES.usdPorUsuario; i++)
       expect((await alModelo(mensajes)).status).toBe(200);
     expect((await alModelo(mensajes)).status).toBe(429);
+  });
+
+  it('cuenta por IP toda una red IPv6 /64', async () => {
+    respuesta = () =>
+      Response.json({
+        choices: [],
+        usage: { prompt_tokens: tokens(LIMITES.usdPorUsuario), completion_tokens: 0 },
+      });
+    for (let i = 0; i < LIMITES.usdPorIp / LIMITES.usdPorUsuario; i++)
+      expect(await desde(`2001:db8:1:2:${i + 1}::1`)).toBe(200);
+    expect(await desde('2001:0db8:0001:0002:ffff:ffff:ffff:ffff')).toBe(429);
+    expect(await desde('2001:db8:1:3::1')).toBe(200);
+  });
+
+  it('cuenta una IPv4 igual aunque llegue como IPv6', async () => {
+    respuesta = () =>
+      Response.json({
+        choices: [],
+        usage: { prompt_tokens: tokens(LIMITES.usdPorUsuario), completion_tokens: 0 },
+      });
+    for (let i = 0; i < LIMITES.usdPorIp / LIMITES.usdPorUsuario; i++)
+      expect(await desde('192.0.2.1')).toBe(200);
+    expect(await desde('::ffff:192.0.2.1')).toBe(429);
+    expect(await desde('::ffff:c000:201')).toBe(429);
+    expect(await desde('192.0.2.2')).toBe(200);
+  });
+
+  it('corta a todos al llegar al gasto del día de cada servicio, aunque cambien de IP', async () => {
+    respuesta = () =>
+      Response.json({
+        choices: [],
+        usage: { prompt_tokens: tokens(LIMITES.usdPorUsuario), completion_tokens: 0 },
+      });
+    for (let i = 0; i < LIMITES.usdEntreTodos.modelo / LIMITES.usdPorUsuario; i++)
+      expect(await desde(`192.0.2.${i}`)).toBe(200);
+    expect(await desde('198.51.100.1')).toBe(429);
+    // Exa se paga aparte: el buscador tiene su propio tope.
+    respuesta = () => Response.json({ results: [], costDollars: { total: LIMITES.usdPorUsuario } });
+    for (let i = 0; i < LIMITES.usdEntreTodos.busqueda / LIMITES.usdPorUsuario; i++)
+      expect(await desde(`198.51.100.${i}`, true)).toBe(200);
+    expect(await desde('203.0.113.1', true)).toBe(429);
   });
 });
