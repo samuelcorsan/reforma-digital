@@ -111,6 +111,20 @@ it('waits for official content that renders late', async () => {
   await vi.waitFor(() => expect(controller!.state()).toBe('active'));
 });
 
+it('stops waiting for late content once the page URL changes', async () => {
+  const start = location.href;
+  controller = startAdapter(adapter, { url: new URL(URLS.tramites) });
+  history.pushState(null, '', '/otra-pantalla');
+  try {
+    fixture('tramites');
+    await new Promise((resolve) => setTimeout(resolve));
+    expect(controller.state()).toBe('unsupported');
+    expect(hosts()).toHaveLength(0);
+  } finally {
+    history.replaceState(null, '', start);
+  }
+});
+
 it('shows a dismissible notice when an expected screen never matches', async () => {
   vi.useFakeTimers();
   document.body.innerHTML = '<h1>Página bloqueada</h1>';

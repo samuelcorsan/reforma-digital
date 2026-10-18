@@ -57,5 +57,23 @@ export default defineConfig({
       },
     },
   ],
-  server: { host: '127.0.0.1', port: 4173, strictPort: true, fs: { allow: [path.resolve('.')] } },
+  server: {
+    host: '127.0.0.1',
+    port: 4173,
+    strictPort: true,
+    fs: {
+      allow: [path.resolve('.')],
+      // Vite's defaults (replaced, not merged) plus site:record captures, which hold real cookies.
+      deny: [
+        '.env',
+        '.env.*',
+        '*.{crt,pem,key,p12,pfx,cer,der}',
+        '.npmrc',
+        '.yarnrc.yml',
+        '**/.git/**',
+        '**/.cache/**',
+        '*.har',
+      ],
+    },
+  },
 });

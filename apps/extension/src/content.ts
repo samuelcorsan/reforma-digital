@@ -15,17 +15,21 @@ function officialURL(local: URL, sites: readonly SiteAdapter[]): URL {
   return local;
 }
 
+/** Read on every mount: the page may have changed its URL with history.pushState since injection. */
+function currentURL(): URL {
+  const url = new URL(location.href);
+  return __BG_TEST__ && url.origin === 'http://127.0.0.1:4173' ? officialURL(url, adapters) : url;
+}
+
 async function start() {
-  let url = new URL(location.href);
-  if (__BG_TEST__ && url.origin === 'http://127.0.0.1:4173') url = officialURL(url, adapters);
-  const adapter = adapters.find((item) => matchesSite(item, url));
+  const adapter = adapters.find((item) => matchesSite(item, currentURL()));
   if (!adapter) return;
   let controller: RuntimeController | undefined;
   let disabled = false;
   try {
     const saved = await chrome.storage.local.get('disabledSites');
     disabled = Array.isArray(saved.disabledSites) && saved.disabledSites.includes(adapter.id);
-    if (!disabled) controller = startAdapter(adapter, { url, demo: __BG_TEST__ });
+    if (!disabled) controller = startAdapter(adapter, { url: currentURL(), demo: __BG_TEST__ });
   } catch {
     return;
   }
@@ -53,7 +57,7 @@ async function start() {
     }
     if (message.type === 'enable' && !disabled) {
       controller?.dispose();
-      controller = startAdapter(adapter, { url, demo: __BG_TEST__ });
+      controller = startAdapter(adapter, { url: currentURL(), demo: __BG_TEST__ });
       sendResponse({ state: controller.state() });
     }
   });

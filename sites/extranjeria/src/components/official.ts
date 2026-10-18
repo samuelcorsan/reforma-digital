@@ -15,14 +15,14 @@ export function linkText(a: HTMLAnchorElement): string {
   return textOf(clone);
 }
 
-/** Enlaces externos (http/https) de un bloque oficial, sin duplicados. */
+/** Enlaces HTTPS sin credenciales de un bloque oficial, sin duplicados (criterio de officialHref). */
 export function officialLinks(root: Element | null): OfficialLink[] {
   if (!root) return [];
   const seen = new Set<string>();
   const links: OfficialLink[] = [];
   for (const a of Array.from(root.querySelectorAll<HTMLAnchorElement>('a[href]'))) {
     const text = linkText(a);
-    if (!text || !/^https?:/.test(a.href) || seen.has(a.href)) continue;
+    if (!text || a.protocol !== 'https:' || a.username || a.password || seen.has(a.href)) continue;
     seen.add(a.href);
     links.push({ text, href: a.href });
   }
