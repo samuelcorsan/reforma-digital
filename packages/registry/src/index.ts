@@ -153,6 +153,15 @@ export function validateSiteConfig(config: unknown, folder?: string): string[] {
         `A route cannot cover a whole origin (${route.origin}); declare the service paths`,
       );
   }
+  // The popup links to the homepage, so it must be one of the site's own HTTPS routes.
+  let homepage: URL | null = null;
+  try {
+    homepage = new URL(c.homepage ?? '');
+  } catch {
+    /* reported below */
+  }
+  if (!homepage || !matchesSite({ routes }, homepage))
+    errors.push(`homepage must be an HTTPS URL on a declared route (${c.homepage})`);
   return errors;
 }
 

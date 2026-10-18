@@ -317,6 +317,7 @@ export function startAdapter(
   options: { url?: URL; demo?: boolean; onState?: (state: RuntimeState) => void } = {},
 ): RuntimeController {
   const url = options.url ?? new URL(location.href);
+  const startHref = location.href;
   let current = mountAdapter(adapter, options);
   let observer: MutationObserver | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -328,6 +329,8 @@ export function startAdapter(
   };
   if (current.state() === 'unsupported' && adapter.expects(url)) {
     observer = new MutationObserver(() => {
+      // `url` describes the page this started on; after history navigation it no longer applies.
+      if (location.href !== startHref) return stop();
       const next = mountAdapter(adapter, options);
       if (next.state() === 'active') {
         stop();

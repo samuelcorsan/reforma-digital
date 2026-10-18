@@ -4,11 +4,24 @@ import path from 'node:path';
 import { readSites } from './sites.mjs';
 const manifest = JSON.parse(await readFile('dist/manifest.json', 'utf8'));
 assert.equal(manifest.manifest_version, 3);
+// Allow-list: any other key (optional permissions, host permissions, background, sandbox,
+// externally_connectable, web_accessible_resources...) must be reviewed before it ships.
+assert.deepEqual(Object.keys(manifest).sort(), [
+  'action',
+  'content_scripts',
+  'content_security_policy',
+  'description',
+  'manifest_version',
+  'minimum_chrome_version',
+  'name',
+  'permissions',
+  'version',
+]);
 assert.deepEqual(manifest.permissions, ['storage']);
-assert.equal(manifest.background, undefined);
-assert.equal(manifest.externally_connectable, undefined);
-assert.equal(manifest.web_accessible_resources, undefined);
-assert.equal(manifest.host_permissions, undefined);
+assert.deepEqual(manifest.content_security_policy, {
+  extension_pages:
+    "default-src 'none'; script-src 'self'; style-src 'self'; object-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'",
+});
 const sites = await readSites();
 // One isolated content script per enabled site, injected only on that site's exact routes.
 assert.deepEqual(

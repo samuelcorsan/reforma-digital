@@ -16,7 +16,7 @@ Esto no hace inocua cualquier modificación del DOM. Una extensión tiene acceso
 - Mensajes del popup aceptados solo desde la URL empaquetada del popup. No existe un puente de órdenes mediante `window.postMessage`.
 - Un content script por portal, inyectado solo en sus rutas exactas. Una ruta no puede cubrir un dominio entero.
 - Las acciones sobre elementos no nativos (`custom` en `DomBridge`) se declaran una a una tras revisarlas.
-- Las herramientas de la web real (`site:live`, `site:record`) recorren una vez páginas públicas, sin datos personales, y no eluden comprobaciones anti‑bot. Los fixtures se guardan sin scripts, comentarios HTML, tokens anti‑CSRF ni parámetros de sesión en las URL (`jsessionid`, `token`, `state`, `nonce`, `code_challenge`); las grabaciones quedan en `.cache/`, fuera de git.
+- Las herramientas de la web real (`site:live`, `site:record`) recorren una vez páginas públicas, sin datos personales, y no eluden comprobaciones anti‑bot. Los fixtures se guardan sin scripts, contenido incrustado (`iframe`, `frame`, `object`, `embed`), comentarios HTML, tokens anti‑CSRF o de sesión (en campos ocultos, `<meta>`, atributos y `<template>`), texto rellenado en campos editables ni parámetros de sesión en las URL (`jsessionid`, `token`, `state`, `nonce`, `code`, `p_auth`, `csrf`, `sid`, `ticket`, `SAMLRequest`, `RelayState`, `access_token`…); conservan los manejadores en línea (`onclick`, `javascript:`) porque los adaptadores los leen. Las grabaciones quedan en `.cache/`, fuera de git.
 
 El Shadow DOM aísla estilos; no es una barrera de seguridad frente a la página. El aislamiento de JavaScript tampoco oculta el DOM a los scripts del portal.
 

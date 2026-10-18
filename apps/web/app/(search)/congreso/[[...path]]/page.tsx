@@ -56,7 +56,7 @@ const querySchema = z.object({
   grupo: z.string().max(30).default(''),
   provincia: z.string().max(80).default(''),
   periodo: z.string().max(10).default('reciente'),
-  pagina: z.coerce.number().int().min(1).max(100000).default(1),
+  pagina: z.coerce.number().int().min(1).max(10000).default(1),
   vista: z.string().max(30).default('citas'),
   estado: z.string().max(30).default(''),
   tipo: z.string().max(30).default(''),
