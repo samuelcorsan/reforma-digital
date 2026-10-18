@@ -836,12 +836,19 @@ export function crearHerramientas(ctx: Contexto) {
         // Se busca el texto real: si el modelo escribe un marcador, el valor que se ve en la página.
         const resuelto = resolver(buscado);
         if ('error' in resuelto) return resuelto.error;
+        // Buscar un dato oculto revela si la web lo muestra, y cuándo: pide el mismo permiso que
+        // escribirlo y se deja de buscar si la página se va a otra web.
+        const sinPermiso = await sinPermisoParaDatos(() => nav.url(), buscado, signalDe(o));
+        if (sinPermiso) return sinPermiso;
+        const web = Privacidad.marcadores(buscado).length ? host(nav.url()) : undefined;
+        const enLaWeb = () => web === undefined || host(nav.url()) === web;
         const objetivo = comparable(resuelto.texto);
         const inicio = Date.now();
         let cumplido = false;
-        while (!cumplido && Date.now() - inicio < limite && !nav.dialogo?.()) {
+        while (!cumplido && Date.now() - inicio < limite && !nav.dialogo?.() && enLaWeb()) {
           const t = await leerTextoPagina(nav, 0, 1_000_000).catch(() => null);
-          cumplido = t !== null && comparable(t.texto).includes(objetivo) === Boolean(aparece);
+          cumplido =
+            t !== null && enLaWeb() && comparable(t.texto).includes(objetivo) === Boolean(aparece);
           if (!cumplido)
             await dormir(500, undefined, o.abortSignal ? { signal: o.abortSignal } : {});
         }
