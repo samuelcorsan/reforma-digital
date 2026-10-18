@@ -81,6 +81,8 @@ it('validates site.config.json', () => {
   );
   expect(validateSiteConfig({ ...config, routes: [] }).join()).toMatch(/either routes/);
   expect(validateSiteConfig({ ...config, verifiedAt: '27/09/2026' }).join()).toMatch(/verifiedAt/);
+  for (const homepage of ['http://example.test/form/', 'https://example.test/other', 'nope'])
+    expect(validateSiteConfig({ ...config, homepage }).join()).toMatch(/homepage/);
   // Disabled placeholders may keep an empty configuration.
   expect(validateSiteConfig({ ...config, enabled: false, origins: [], pathPrefix: '/' })).toEqual(
     [],

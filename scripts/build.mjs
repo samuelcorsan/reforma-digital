@@ -90,7 +90,7 @@ await writeFile(
       })),
       content_security_policy: {
         extension_pages:
-          "script-src 'self'; object-src 'none'; connect-src 'none'; base-uri 'none'",
+          "default-src 'none'; script-src 'self'; style-src 'self'; object-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'",
       },
     },
     null,

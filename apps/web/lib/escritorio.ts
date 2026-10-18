@@ -6,14 +6,18 @@ import { CABECERA_INSTALACION } from '@reforma-digital/agent/models';
 /**
  * El servidor de la app de escritorio guarda las claves del modelo (NaN Builders) y del buscador
  * (Exa): una app que se reparte no puede guardar secretos. Lo que acota el abuso es un gasto
- * máximo al día por IP y, entre todos, por servicio. El de cada instalación es solo una cortesía
- * para repartir: el identificador lo elige la app y basta con cambiarlo para empezar de cero.
+ * máximo al día por IP y, entre todos, por servicio. El de cada instalación es solo una cortesía:
+ * el identificador lo elige la app y basta con cambiarlo para empezar de cero.
  */
 export const LIMITES = {
   /** Dólares al día por instalación. */
   usdPorUsuario: 0.5,
-  /** Dólares al día por IP (las IPv6, por su /64): no se salta con otra instalación. */
-  usdPorIp: 2.5,
+  /**
+   * Dólares al día por IP (las IPv6, por su /48): no se salta con otra instalación. Da para decenas
+   * de trámites (la evaluación del agente gasta 0,03 $ en diez y 0,13 $ en ocho investigaciones) y
+   * una sola red no pasa de la sexta parte del tope entre todos.
+   */
+  usdPorIp: 0.5,
   /** Dólares al día entre todas las peticiones, por servicio, que se paga aparte. */
   usdEntreTodos: {
     /**
@@ -43,7 +47,7 @@ const memoria = new Map<string, { dia: number; cuenta: number }>();
 /**
  * Suma `cuanto` al contador del día (UTC) y devuelve el total: en Postgres si lo hay, si no (en
  * local) en memoria. El gasto se cuenta en millonésimas de dólar, porque el contador es un entero.
- * `cuanto` es negativo al devolver lo reservado de más; un día nuevo no empieza por debajo de 0.
+ * `cuanto` es negativo al devolver lo reservado de más; ningún contador baja de 0.
  */
 async function sumar(clave: string, cuanto: number): Promise<number> {
   if (databaseAvailable()) {
@@ -51,7 +55,7 @@ async function sumar(clave: string, cuanto: number): Promise<number> {
       VALUES (${clave}, date_trunc('day', now()), GREATEST(${cuanto}, 0))
       ON CONFLICT (key) DO UPDATE SET
         count = CASE WHEN request_buckets.window_start < date_trunc('day', now())
-          THEN GREATEST(${cuanto}, 0) ELSE request_buckets.count + ${cuanto} END,
+          THEN GREATEST(${cuanto}, 0) ELSE GREATEST(request_buckets.count + ${cuanto}, 0) END,
         window_start = date_trunc('day', now())
       RETURNING count`;
     return Number(filas[0]?.count);
@@ -83,7 +87,7 @@ async function limpiar() {
 
 /**
  * El contador de algo sin guardarlo tal cual (ni la IP ni el identificador de la instalación). La
- * clave del proveedor hace de secreto: está siempre que el servidor funciona y no sale de él.
+ * clave del proveedor hace de secreto: no sale del servidor, y sin ella `admitir` no deja pasar.
  */
 const contador = (tipo: string, valor: string) =>
   `escritorio:${tipo}:${createHmac('sha256', process.env.NAN_API_KEY ?? '')
@@ -91,8 +95,9 @@ const contador = (tipo: string, valor: string) =>
     .digest('hex')}`;
 
 /**
- * La red de una IP para su límite: una IPv6 cuenta por su /64, que es lo que suele tener cada
- * conexión; una IPv4, tal cual, también si llega como IPv6 (`::ffff:192.0.2.1`).
+ * La red de una IP para su límite: una IPv6 cuenta por su /48, porque una conexión puede tener una
+ * /56 o una /48 entera y cambiar de /64 dentro de ella; una IPv4, tal cual, también si llega como
+ * IPv6 (`::ffff:192.0.2.1`).
  */
 function red(ip: string) {
   if (!isIPv6(ip)) return ip;
@@ -118,9 +123,9 @@ function red(ip: string) {
   if (mapeada === 0xffff && todos.slice(0, 5).every((g) => g === 0))
     return [alto >> 8, alto & 255, bajo >> 8, bajo & 255].join('.');
   return `${todos
-    .slice(0, 4)
+    .slice(0, 3)
     .map((g) => g.toString(16))
-    .join(':')}::/64`;
+    .join(':')}::/48`;
 }
 
 /** Quien hace la petición: su instalación y su IP, ya como contadores, y el servicio que pide. */
@@ -151,9 +156,12 @@ export async function admitir(request: Request, servicio: Servicio): Promise<Qui
   const ip = process.env.VERCEL
     ? request.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim()
     : 'local';
-  // En producción no pasa nada sin Postgres (cada función contaría por su cuenta) ni sin la IP que
-  // da Vercel (todas contarían juntas).
-  if (process.env.NODE_ENV === 'production' && (!databaseAvailable() || !process.env.VERCEL || !ip))
+  // Sin la clave del modelo no hay secreto para los contadores. En producción tampoco pasa nada sin
+  // Postgres (cada función contaría por su cuenta) ni sin la IP que da Vercel (todas contarían juntas).
+  if (
+    !process.env.NAN_API_KEY ||
+    (process.env.NODE_ENV === 'production' && (!databaseAvailable() || !process.env.VERCEL || !ip))
+  )
     return Response.json(
       { error: 'El servidor del asistente no está configurado.' },
       { status: 503 },
@@ -183,7 +191,12 @@ export async function reservar(
 ): Promise<Response | ((real: number) => Promise<void>)> {
   const micro = Math.ceil(usd * 1e6);
   const lista = contadores(quien);
-  const sumarATodos = (cuanto: number) => Promise.all(lista.map(([clave]) => sumar(clave, cuanto)));
+  const dia = hoy();
+  const sumarATodos = async (cuanto: number) => {
+    // Lo reservado ayer no se devuelve del contador de hoy, que no lo tiene.
+    if (cuanto < 0 && hoy() !== dia) return;
+    await Promise.all(lista.map(([clave]) => sumar(clave, cuanto)));
+  };
   const pasados = await Promise.all(
     lista.map(async ([clave, limite]) => {
       const total = await sumar(clave, micro);

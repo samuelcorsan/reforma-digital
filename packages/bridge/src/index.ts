@@ -297,7 +297,11 @@ export class DomBridge {
       if (!element.multiple && values.length !== 1) return false;
       const options = snapshot(element).options;
       if (values.some((v) => !options.some((o) => o.value === v && !o.disabled))) return false;
-      for (const option of element.options) option.selected = values.includes(option.value);
+      // Only the first enabled option per value: a disabled duplicate must never end up selected.
+      const pending = new Set(values);
+      Array.from(element.options).forEach((option, index) => {
+        option.selected = options[index]?.disabled === false && pending.delete(option.value);
+      });
     } else {
       if (typeof value !== 'string') return false;
       const prototype =

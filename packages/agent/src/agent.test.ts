@@ -1763,6 +1763,25 @@ describe('lo que llega de la web', () => {
     expect(Date.now() - inicio).toBeLessThan(5000);
   });
 
+  it('esperar no busca un dato oculto en una web en la que la persona no confía', async () => {
+    const { model } = modeloGuionado([
+      () => ({
+        llamadas: [
+          { herramienta: 'esperar', entrada: { aparece: '{{documento_numero}}', segundos: 1 } },
+        ],
+      }),
+      (p) => {
+        expect(ultimoResultado(p)).toMatch(/no quiere que cita-dni\.example reciba sus datos/);
+        return { texto: 'ok' };
+      },
+    ]);
+    const { nav, estado } = navegadorFalso('https://cita-dni.example/form');
+    estado.textos = ['DNI 12345678Z'];
+    const a = anfitrion(nav);
+    expect((await turno(model, a, 'Espera')).fin).toBe('respondido');
+    expect(a.preguntadas).toEqual(['cita-dni.example']);
+  });
+
   it('la provincia es un desplegable con todas y solo_si apunta a una pregunta con opciones', async () => {
     let recibido: Formulario | undefined;
     const { model } = modeloGuionado([

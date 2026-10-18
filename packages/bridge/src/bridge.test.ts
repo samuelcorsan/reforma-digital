@@ -114,6 +114,12 @@ describe('DOM bridge behavior', () => {
     expect(b.setValue('s', ['c'])).toBe(false);
     expect(b.getField('s').values).toEqual(['a', 'b']);
   });
+  it('selects only the first enabled option when values repeat', () => {
+    document.body.innerHTML = `<select id="s"><option value="">-</option><option value="a" id="ok">A</option><option value="a" disabled>A</option></select>`;
+    const b = bridge({ s: { element: el<HTMLSelectElement>('s'), label: 'Select' } });
+    expect(b.setValue('s', 'a')).toBe(true);
+    expect(el<HTMLSelectElement>('s').selectedOptions[0]?.id).toBe('ok');
+  });
   it('does not bind secrets, hidden inputs, files or browser-controlled widgets', () => {
     for (const type of [
       'hidden',

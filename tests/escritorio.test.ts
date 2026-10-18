@@ -112,6 +112,10 @@ describe('servidor de la app de escritorio', () => {
     expect((await alModelo('{')).status).toBe(400);
     vi.stubEnv('NAN_API_KEY', '');
     expect((await alModelo(mensajes)).status).toBe(503);
+    // Sin la clave del modelo el buscador tampoco: es el secreto de los contadores.
+    expect((await buscar(peticion('/api/escritorio/buscar', { consulta: 'padrón' }))).status).toBe(
+      503,
+    );
     vi.stubEnv('EXA_API_KEY', '');
     expect((await buscar(peticion('/api/escritorio/buscar', { consulta: 'padrón' }))).status).toBe(
       503,
@@ -194,8 +198,8 @@ describe('servidor de la app de escritorio', () => {
     );
     expect((await alModelo({ ...mensajes, stream: true }, instalacion)).status).toBe(429);
     expect(enviados).toHaveLength(2);
-    // Otra persona sigue pudiendo.
-    expect((await alModelo(mensajes)).status).toBe(200);
+    // Otra persona, desde otra IP, sigue pudiendo.
+    expect(await desde('192.0.2.1')).toBe(200);
   });
 
   it('cuenta las búsquedas con lo que cobra Exa', async () => {
@@ -226,6 +230,22 @@ describe('servidor de la app de escritorio', () => {
     expect(enviados).toHaveLength(cortadas);
   });
 
+  it('no resta del día nuevo lo que devuelve una petición del anterior', async () => {
+    const instalacion = randomUUID();
+    respuesta = () => streaming({ prompt_tokens: 1, completion_tokens: 1 });
+    // Reserva algo más de 0,03 $ hoy y termina mañana, cuando ya ha gastado todo su límite.
+    const tardia = await alModelo({ ...enorme, stream: true }, instalacion);
+    vi.setSystemTime(new Date(Date.UTC(2030, 0, 1 + dia++)));
+    respuesta = () =>
+      Response.json({
+        choices: [],
+        usage: { prompt_tokens: tokens(LIMITES.usdPorUsuario), completion_tokens: 0 },
+      });
+    expect((await alModelo(mensajes, instalacion)).status).toBe(200);
+    await tardia.text();
+    expect((await alModelo(mensajes, instalacion)).status).toBe(429);
+  });
+
   it('no deja pasar a la vez más peticiones de las que caben en el límite', async () => {
     const instalacion = randomUUID();
     respuesta = () =>
@@ -247,16 +267,16 @@ describe('servidor de la app de escritorio', () => {
     expect((await alModelo(mensajes)).status).toBe(429);
   });
 
-  it('cuenta por IP toda una red IPv6 /64', async () => {
+  it('cuenta por IP toda una red IPv6 /48', async () => {
     respuesta = () =>
       Response.json({
         choices: [],
         usage: { prompt_tokens: tokens(LIMITES.usdPorUsuario), completion_tokens: 0 },
       });
     for (let i = 0; i < LIMITES.usdPorIp / LIMITES.usdPorUsuario; i++)
-      expect(await desde(`2001:db8:1:2:${i + 1}::1`)).toBe(200);
-    expect(await desde('2001:0db8:0001:0002:ffff:ffff:ffff:ffff')).toBe(429);
-    expect(await desde('2001:db8:1:3::1')).toBe(200);
+      expect(await desde(`2001:db8:1:${i + 1}::1`)).toBe(200);
+    expect(await desde('2001:0db8:0001:ffff:ffff:ffff:ffff:ffff')).toBe(429);
+    expect(await desde('2001:db8:2::1')).toBe(200);
   });
 
   it('cuenta una IPv4 igual aunque llegue como IPv6', async () => {
