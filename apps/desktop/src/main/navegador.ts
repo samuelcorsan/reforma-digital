@@ -31,8 +31,11 @@ export const particion = (tramite: string, persistente: boolean) =>
   `${persistente ? 'persist:' : ''}tramite-${tramite}`;
 const sesionLectura = () => session.fromPartition('lectura');
 export const esLectura = (ses: Session) => ses === sesionLectura();
-/** Lo que se abre dentro del navegador del trámite; AutoFirma se abre fuera y el resto se ignora. */
-const EN_VISTA = /^(https?|blob):/i;
+/**
+ * Lo que se abre dentro del navegador del trámite, solo por https; AutoFirma se abre fuera y el
+ * resto (también http) se ignora.
+ */
+const EN_VISTA = /^(https|blob):/i;
 
 /** Si el host es, o resuelve a, una dirección de la red local (router, impresora, localhost…). */
 async function enRedLocal(ses: Session, host: string) {
@@ -320,10 +323,12 @@ export class NavegadorTramite implements Navegador {
     if (configuradas.has(ses)) return;
     configuradas.add(ses);
     prepararSesion(ses);
-    // Ni el asistente ni una web pueden llevar el navegador del trámite a la red local.
+    // Nada sin cifrar (tampoco una redirección a http) y nada de la red local, en ninguna petición:
+    // ni el asistente ni una web pueden llevar el navegador del trámite allí.
     ses.webRequest.onBeforeRequest((d, responder) => {
-      if (d.resourceType !== 'mainFrame' && d.resourceType !== 'subFrame') return responder({});
-      void enRedLocal(ses, new URL(d.url).hostname).then((cancel) => responder({ cancel }));
+      const url = new URL(d.url);
+      if (url.protocol === 'http:' || url.protocol === 'ws:') return responder({ cancel: true });
+      void enRedLocal(ses, url.hostname).then((cancel) => responder({ cancel }));
     });
     // AutoFirma lanzada desde un iframe no pasa por will-navigate: llega como permiso para abrir
     // una app externa. Se deniega y, si es AutoFirma, se abre tras preguntar.
@@ -339,9 +344,21 @@ export class NavegadorTramite implements Navegador {
       let ruta = path.join(dir, nombre);
       for (let n = 2; existsSync(ruta); n++)
         ruta = path.join(dir, nombre.replace(/(\.[^.]*)?$/, ` (${n})$1`));
-      item.setSavePath(ruta);
+      // Lo que descarga una web oficial se guarda solo. De otra web, la persona lo ve en el cuadro
+      // de guardar del sistema y decide; si lo cancela, no se guarda.
+      if (isOfficial(this.url())) item.setSavePath(ruta);
+      else {
+        const aviso = `${URL.parse(this.url())?.host || 'Una web'} quiere descargar «${nombre}»`;
+        item.setSaveDialogOptions({
+          title: aviso,
+          message: `${aviso}. No es una web oficial: guárdalo solo si lo esperabas.`,
+          defaultPath: ruta,
+        });
+      }
       item.once('done', (_ev, estado) => {
         if (estado !== 'completed') return;
+        // La persona puede haberlo guardado en otra carpeta o con otro nombre.
+        ruta = item.getSavePath();
         this.nuevas.push(path.basename(ruta));
         this.opciones.alDescargar({
           nombre: path.basename(ruta),

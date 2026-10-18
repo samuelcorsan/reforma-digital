@@ -31,7 +31,9 @@ export function MisDatos({ verPrivacidad }: { verPrivacidad: () => void }) {
   const vista = new Map(app.perfil.map((d) => [d.clave, d]));
   const editar = async () => {
     const valores = await window.rd.revelarPerfil();
-    if (!valores) return setAviso('No se ha podido comprobar tu identidad con Touch ID.');
+    // Sin Touch ID, no mostrarlos es lo que la persona ha elegido en el cuadro: no hay error.
+    if (!valores)
+      return setAviso(app.touchId ? 'No se ha podido comprobar tu identidad con Touch ID.' : '');
     setAviso('');
     setEdicion(valores);
   };

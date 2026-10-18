@@ -140,6 +140,24 @@ async function verificar(motivo: string, exigir: boolean) {
   );
 }
 
+/** Mostrar «Mis datos» pide Touch ID o, si el equipo no lo tiene, que la persona lo acepte. */
+async function permitirVerDatos() {
+  if (touchId()) return verificar('mostrar tus datos', true);
+  const opciones = {
+    type: 'question' as const,
+    buttons: ['Mostrar', 'Cancelar'],
+    defaultId: 0,
+    cancelId: 1,
+    message: '¿Mostrar tus datos?',
+    detail:
+      'Se verán en pantalla tu documento, tu IBAN y el resto de «Mis datos». Comprueba que nadie más está mirando.',
+  };
+  const r = ventana
+    ? await dialog.showMessageBox(ventana, opciones)
+    : await dialog.showMessageBox(opciones);
+  return r.response === 0;
+}
+
 /** Vista del perfil sin identificadores: solo «guardado» y una pista mínima. */
 function perfilVista() {
   return camposPerfil.map((c) => {
@@ -307,8 +325,7 @@ const metodos: { [K in Exclude<keyof ApiRd, 'on'>]: (...args: unknown[]) => Retu
         .parse(u);
       await tramites.navegador(id.parse(t)).abrir(url);
     },
-    revelarPerfil: async () =>
-      (await verificar('mostrar tus datos', true)) ? { ...perfil } : null,
+    revelarPerfil: async () => ((await permitirVerDatos()) ? { ...perfil } : null),
     guardarPerfil: async (entrada) => {
       const valores = z
         .record(z.string().regex(/^[a-z0-9_]{2,40}$/), z.string().max(300))
