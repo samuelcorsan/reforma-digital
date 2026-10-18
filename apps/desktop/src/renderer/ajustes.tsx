@@ -275,6 +275,33 @@ export function Ajustes({ privacidad }: { privacidad: boolean }) {
             </p>
           )}
         </section>
+        <section className="mb-3 rounded-[24px] bg-background p-6">
+          <h2 className="mt-0 mb-1 text-[15px] font-medium">
+            Webs no oficiales que pueden recibir tus datos
+          </h2>
+          <p className="mt-0 mb-3 text-sm leading-relaxed text-muted-foreground">
+            En las webs oficiales la app escribe tus datos sin preguntar. En cualquier otra, antes
+            te pregunta si confías en ella. Estas son las que has aceptado.
+          </p>
+          {app.websConfiadas.length ? (
+            <ul className="m-0 list-none divide-y divide-border p-0">
+              {app.websConfiadas.map((web) => (
+                <li key={web} className="flex items-center justify-between gap-3 py-2">
+                  <span className="min-w-0 truncate text-[15px]">{web}</span>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => void window.rd.dejarDeConfiar(web)}
+                  >
+                    Dejar de confiar
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="m-0 text-[15px] text-[var(--text-secondary)]">Ninguna todavía.</p>
+          )}
+        </section>
         <section
           ref={seccion}
           id="privacidad"
@@ -307,7 +334,10 @@ export function Ajustes({ privacidad }: { privacidad: boolean }) {
               y en las webs, también de otras personas, y los cambia por marcadores. Si ese modelo
               falla, no se envía nada.
             </li>
-            <li>La app pone el dato real solo al escribirlo en la web del trámite.</li>
+            <li>
+              La app pone el dato real solo al escribirlo en la web del trámite: en una web oficial
+              o en otra si confías en ella.
+            </li>
             <li>Nada se envía, reserva, paga ni firma sin tu aprobación.</li>
             <li>Contraseñas, CAPTCHA, certificados, firmas y pagos los haces tú.</li>
             <li>

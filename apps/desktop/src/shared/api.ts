@@ -52,7 +52,9 @@ export type Pregunta =
   | { tipo: 'formulario'; formulario: Formulario }
   | { tipo: 'confirmacion'; confirmacion: Confirmacion }
   | { tipo: 'ayuda'; ayuda: Ayuda }
-  | { tipo: 'llamada'; llamada: Llamada };
+  | { tipo: 'llamada'; llamada: Llamada }
+  /** Si una web que no es oficial puede recibir sus datos. */
+  | { tipo: 'confianza'; web: string };
 
 export type ItemConversacion =
   | {
@@ -140,6 +142,8 @@ export type EstadoApp = {
   recordatorios: { texto: string; sugerencia: string }[];
   /** Qué claves del otro proveedor hay guardadas (nunca su valor). */
   clavesPropias: { proveedor: boolean; exa: boolean };
+  /** Webs que no son oficiales en las que la persona confía para recibir sus datos (hosts). */
+  websConfiadas: string[];
 };
 
 export type Rect = { x: number; y: number; width: number; height: number };
@@ -194,6 +198,7 @@ export type ApiRd = {
   revelarPerfil(): Promise<Record<string, string> | null>;
   guardarPerfil(valores: Record<string, string>): Promise<Record<string, string>>;
   borrarDatos(que: 'perfil' | 'todo'): Promise<void>;
+  dejarDeConfiar(web: string): Promise<void>;
   abrirEnlace(url: string): Promise<void>;
   mostrarArchivo(ruta: string): Promise<void>;
   on(listener: (e: EventoApp) => void): () => void;

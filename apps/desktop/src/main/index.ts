@@ -99,8 +99,16 @@ const claveGuardadaPara = (url: string) =>
 
 /** Las claves del otro proveedor: cifradas con lo demás y nunca enviadas a la interfaz. */
 type Claves = { proveedor?: string; exa?: string };
-/** `instalacion`: identificador aleatorio de esta instalación para el servidor; no dice nada de la persona. */
-type Secretos = { ajustes: Ajustes; claves?: Claves; instalacion: string };
+/**
+ * `instalacion`: identificador aleatorio de esta instalación para el servidor; no dice nada de la
+ * persona. `websConfiadas`: las webs que no son oficiales en las que confía para recibir sus datos.
+ */
+type Secretos = {
+  ajustes: Ajustes;
+  claves?: Claves;
+  instalacion: string;
+  websConfiadas?: string[];
+};
 const AJUSTES_INICIALES: Ajustes = {
   touchIdEnConfirmaciones: true,
   cerrarSesiones: false,
@@ -180,6 +188,7 @@ function estadoApp(): EstadoApp {
     plataforma: process.platform,
     desarrollo: !app.isPackaged,
     recordatorios: recordatorios(),
+    websConfiadas: secretos.websConfiadas ?? [],
   };
 }
 
@@ -331,6 +340,10 @@ const metodos: { [K in Exclude<keyof ApiRd, 'on'>]: (...args: unknown[]) => Retu
         app.exit(0);
       }
     },
+    dejarDeConfiar: async (w) => {
+      const web = z.string().max(300).parse(w);
+      await guardarWebsConfiadas((secretos.websConfiadas ?? []).filter((x) => x !== web));
+    },
     abrirEnlace: async (u) => {
       const url = new URL(z.string().parse(u));
       // tel: abre la app de llamadas del sistema, para la llamada guiada.
@@ -342,6 +355,12 @@ const metodos: { [K in Exclude<keyof ApiRd, 'on'>]: (...args: unknown[]) => Retu
       if (tramites.esDescarga(r)) shell.showItemInFolder(r);
     },
   };
+
+async function guardarWebsConfiadas(websConfiadas: string[]) {
+  secretos = { ...secretos, websConfiadas };
+  await almacen.escribir('secretos.bin', secretos);
+  emitir({ tipo: 'estado', estado: estadoApp() });
+}
 
 async function guardarPerfil(nuevo: Perfil) {
   perfil = nuevo;
@@ -513,6 +532,9 @@ app
       proveedor: configProveedor,
       sesionesGuardadas: () => !secretos.ajustes.cerrarSesiones,
       verificarIdentidad: (motivo) => verificar(motivo, secretos.ajustes.touchIdEnConfirmaciones),
+      confiaEn: (web) => Boolean(secretos.websConfiadas?.includes(web)),
+      confiar: (web) =>
+        guardarWebsConfiadas([...new Set([...(secretos.websConfiadas ?? []), web])]),
       detector: cargarDetector,
       ventana: () => ventana,
       emitir,

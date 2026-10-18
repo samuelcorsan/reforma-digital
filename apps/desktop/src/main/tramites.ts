@@ -48,6 +48,9 @@ export type Entorno = {
   verificarIdentidad(motivo: string): Promise<boolean>;
   /** Detector local de datos personales; falla si el modelo no se puede cargar. */
   detector(): Promise<Detector>;
+  /** Si la persona confía en que esa web, que no es oficial, reciba sus datos. */
+  confiaEn(web: string): boolean;
+  confiar(web: string): Promise<void>;
   /** Si las sesiones de las webs se guardan al cerrar la app. */
   sesionesGuardadas(): boolean;
   ventana(): BrowserWindow | null;
@@ -61,6 +64,7 @@ const RESULTADOS: Record<Pregunta['tipo'], [string, string]> = {
   confirmacion: ['Aprobado', 'No aprobado'],
   ayuda: ['Hecho', 'No has podido'],
   llamada: ['Has llamado', 'No has llamado'],
+  confianza: ['Aprobado', 'No aprobado'],
 };
 
 /** Al cerrar la app, lo que espera a la persona sigue pendiente: se retoma al volver a abrirla. */
@@ -101,6 +105,8 @@ export class Tramites {
   private navegadores = new Map<string, NavegadorTramite>();
   /** Lo que el agente ha escrito en cada navegador; vive en memoria, como sus sesiones. */
   private escritos = new Map<string, Map<string, string>>();
+  /** Las webs a las que la persona no ha querido dar sus datos en cada trámite: no se repregunta. */
+  private desconfiadas = new Map<string, Set<string>>();
   private pendienteEmitir = new Set<string>();
   /** Última escritura de cada trámite: se encadenan para que una antigua no pise a otra nueva. */
   private escrituras = new Map<string, Promise<void>>();
@@ -429,7 +435,9 @@ export class Tramites {
           ? `Pide tu permiso: ${p.confirmacion.accion}`
           : p.tipo === 'llamada'
             ? `Te pide que llames a ${p.llamada.organismo}`
-            : p.ayuda.instrucciones,
+            : p.tipo === 'confianza'
+              ? `Pide tu permiso para dar tus datos a ${p.web}`
+              : p.ayuda.instrucciones,
     );
   }
 
@@ -531,6 +539,16 @@ export class Tramites {
         return v && typeof v === 'object'
           ? { hecho: true, ...(v.notas ? { notas: v.notas } : {}) }
           : { hecho: false };
+      },
+      confiarEn: async (web, signal) => {
+        if (this.entorno.confiaEn(web)) return true;
+        const no = this.desconfiadas.get(r.id) ?? new Set<string>();
+        this.desconfiadas.set(r.id, no);
+        if (no.has(web)) return false;
+        const si = (await esperar({ tipo: 'confianza', web }, signal)) === true;
+        if (si) await this.entorno.confiar(web);
+        else no.add(web);
+        return si;
       },
       navegador: async () => this.navegador(r.id),
       leerConNavegador,
@@ -669,6 +687,7 @@ export class Tramites {
     const nav = this.navegadores.get(id);
     this.navegadores.delete(id);
     this.escritos.delete(id);
+    this.desconfiadas.delete(id);
     await nav?.cerrar();
     for (const persistente of [true, false])
       await session.fromPartition(particion(id, persistente)).clearStorageData();

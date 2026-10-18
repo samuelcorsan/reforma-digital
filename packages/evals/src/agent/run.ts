@@ -170,6 +170,8 @@ export async function ejecutarEscenario(
       traza.confirmaciones++;
       return !esc.denegar;
     },
+    // La sede de pruebas hace de web oficial: la persona solo confía en ella.
+    confiarEn: async (host) => host === new URL(ORIGEN_PUBLICO).host,
     pedirAyuda: async (a) => {
       traza.ayudas.push(a.motivo);
       const page = nav.page;
@@ -347,6 +349,7 @@ export async function ejecutarInvestigacion(id: string, cfg: Config, transcripci
       return null;
     },
     confirmar: async () => false,
+    confiarEn: async () => false,
     pedirAyuda: async () => ({ hecho: false }),
     navegador: async () => {
       throw new Error('En esta evaluación solo se investiga: no hay navegador.');

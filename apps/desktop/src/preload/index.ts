@@ -22,6 +22,7 @@ const metodos = [
   'revelarPerfil',
   'guardarPerfil',
   'borrarDatos',
+  'dejarDeConfiar',
   'abrirEnlace',
   'mostrarArchivo',
 ] as const satisfies readonly Exclude<keyof ApiRd, 'on'>[];

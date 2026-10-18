@@ -341,15 +341,29 @@ function navegadorFalso(url: string, elementos: Record<number, Elemento> = ELEME
   return { nav, escrito, clics, teclas, estado, valores };
 }
 
-function anfitrion(nav: Navegador, aprobar = true): Anfitrion & { confirmaciones: number } {
+/**
+ * `confiadas`: las webs que no son oficiales en las que la persona ya confía. Por las demás se le
+ * pregunta (queda en `preguntadas`) y dice que no.
+ */
+function anfitrion(
+  nav: Navegador,
+  aprobar = true,
+  confiadas: string[] = [],
+): Anfitrion & { confirmaciones: number; preguntadas: string[] } {
   const a = {
     confirmaciones: 0,
+    preguntadas: [] as string[],
     perfil: () => perfil,
     guardarPerfil: async () => {},
     preguntar: async () => ({}),
     confirmar: async () => {
       a.confirmaciones++;
       return aprobar;
+    },
+    confiarEn: async (host: string) => {
+      if (confiadas.includes(host)) return true;
+      a.preguntadas.push(host);
+      return false;
     },
     pedirAyuda: async () => ({ hecho: true }),
     navegador: async () => nav,
@@ -450,31 +464,47 @@ describe('agente', () => {
     expect(clics).toEqual([10]);
   });
 
-  it('escribe datos personales en cualquier web y los devuelve como marcador', async () => {
-    const pasos = (esperado: RegExp) =>
-      modeloGuionado([
-        () => ({
-          llamadas: [
-            { herramienta: 'escribir', entrada: { ref: 2, texto: '{{documento_numero}}' } },
-          ],
-        }),
-        (p) => {
-          expect(ultimoResultado(p)).toMatch(esperado);
-          expect(ultimoResultado(p)).not.toContain('12345678Z');
-          return { texto: 'ok' };
-        },
-      ]);
-    const oficial = navegadorFalso('https://sede.policia.gob.es/cita');
-    await turno(
-      pasos(/"DNI" = "\{\{documento_numero\}\}"/).model,
-      anfitrion(oficial.nav),
+  const escribirDni = (esperado: RegExp) =>
+    modeloGuionado([
+      () => ({
+        llamadas: [{ herramienta: 'escribir', entrada: { ref: 2, texto: '{{documento_numero}}' } }],
+      }),
+      (p) => {
+        expect(ultimoResultado(p)).toMatch(esperado);
+        expect(ultimoResultado(p)).not.toContain('12345678Z');
+        return { texto: 'ok' };
+      },
+    ]).model;
+
+  it('escribe datos personales en una web oficial sin preguntar y los devuelve como marcador', async () => {
+    const f = navegadorFalso('https://sede.policia.gob.es/cita');
+    const a = anfitrion(f.nav);
+    const r = await turno(escribirDni(/"DNI" = "\{\{documento_numero\}\}"/), a, 'Rellena');
+    expect(r.fin).toBe('respondido');
+    expect(f.escrito).toEqual(['12345678Z']);
+    expect(a.preguntadas).toEqual([]);
+  });
+
+  it('en una web que no es oficial pregunta antes y, si la persona no confía, no escribe nada', async () => {
+    const f = navegadorFalso('https://cita-dni.example/form');
+    const a = anfitrion(f.nav);
+    const r = await turno(
+      escribirDni(/no quiere que cita-dni\.example reciba sus datos/),
+      a,
       'Rellena',
     );
-    expect(oficial.escrito).toEqual(['12345678Z']);
+    expect(r.fin).toBe('respondido');
+    expect(a.preguntadas).toEqual(['cita-dni.example']);
+    expect(f.escrito).toEqual([]);
+  });
 
-    const otra = navegadorFalso('https://citas.clinica-ejemplo.es/form');
-    await turno(pasos(/"DNI" = "\{\{documento_numero\}\}"/).model, anfitrion(otra.nav), 'Rellena');
-    expect(otra.escrito).toEqual(['12345678Z']);
+  it('en una web no oficial en la que la persona confía, escribe sin volver a preguntar', async () => {
+    const f = navegadorFalso('https://citas.clinica-ejemplo.es/form');
+    const a = anfitrion(f.nav, true, ['citas.clinica-ejemplo.es']);
+    const r = await turno(escribirDni(/"DNI" = "\{\{documento_numero\}\}"/), a, 'Rellena');
+    expect(r.fin).toBe('respondido');
+    expect(f.escrito).toEqual(['12345678Z']);
+    expect(a.preguntadas).toEqual([]);
   });
 
   it('hace de una en una, en orden, las acciones que el modelo pide a la vez', async () => {

@@ -137,6 +137,11 @@ export interface Anfitrion {
   pedirAyuda(a: Ayuda, signal: AbortSignal): Promise<{ hecho: boolean; nota?: string }>;
   /** La persona llama por teléfono y apunta lo que le dicen. Sin él, el agente no puede pedírselo. */
   pedirLlamada?(l: Llamada, signal: AbortSignal): Promise<{ hecho: boolean; notas?: string }>;
+  /**
+   * Si la persona confía en que una web que no es oficial (`host`) reciba sus datos. Quien lo
+   * implementa lo pregunta la primera vez y recuerda la respuesta.
+   */
+  confiarEn(host: string, signal: AbortSignal): Promise<boolean>;
   navegador(): Promise<Navegador>;
   /**
    * Lee una página oficial con un navegador real y aparte (sin sesiones del trámite), para webs
@@ -328,6 +333,24 @@ export function crearHerramientas(ctx: Contexto) {
         error: `Faltan datos sin guardar: ${datos.faltan.join(', ')}. Pídelos con preguntar.`,
       };
     return { texto: datos.texto };
+  };
+  /**
+   * Los datos de la persona (un marcador o un dato suyo escrito tal cual) solo se escriben en una
+   * web oficial o en una en la que ella confía. `url` es la de la página o el marco que los
+   * recibe, leída justo antes de escribir. Devuelve por qué no, o `null`.
+   */
+  const sinPermisoParaDatos = async (url: () => string, texto: string, signal: AbortSignal) => {
+    ctx.privacidad.actualizar(todosLosDatos(ctx));
+    if (!Privacidad.marcadores(texto).length && !ctx.privacidad.contieneDatos(texto)) return null;
+    const antes = url();
+    if (isOfficial(antes)) return null;
+    const web = host(antes);
+    if (!antes.startsWith('https://'))
+      return `${web || 'Esta página'} no usa https: ahí no se escriben datos de la persona.`;
+    if (!(await ctx.anfitrion.confiarEn(web, signal)))
+      return `La persona no quiere que ${web} reciba sus datos: no se ha escrito nada. No lo intentes otra vez en esta web; díselo y, si el trámite es de una administración, busca su web oficial.`;
+    // Mientras ella respondía, la página ha podido irse a otra web.
+    return host(url()) === web ? null : 'La página ha cambiado de web. Vuelve a verla con ver.';
   };
   const ref = z
     .number()
@@ -678,7 +701,7 @@ export function crearHerramientas(ctx: Contexto) {
       description:
         'Escribe en un campo de texto, sustituyendo lo que tenga. Para datos de la persona usa marcadores: {{documento_numero}}, {{nombre}}, {{fecha_nacimiento}} (dd/mm/aaaa), {{fecha_nacimiento:iso}}, {{fecha_nacimiento:dia}}/:mes/:anio, {{documento_numero:numero}} y :letra. Para enviar el formulario, pulsa su botón.',
       inputSchema: z.object({ ref, texto: z.string().max(2000) }),
-      execute: enOrden(async ({ ref: r, texto }) => {
+      execute: enOrden(async ({ ref: r, texto }, o) => {
         const nav = await navegador();
         const info = await infoElemento(nav, r);
         if (!info) return 'Ese elemento ya no está en la página. Vuelve a verla con ver.';
@@ -691,6 +714,8 @@ export function crearHerramientas(ctx: Contexto) {
         const p = await puntoElemento(nav, r);
         if (p && !p.invisible && !p.tapado) await nav.clic(p.x, p.y);
         if (!(await enfocarElemento(nav, r))) return 'No puedo escribir en ese campo.';
+        const sinPermiso = await sinPermisoParaDatos(() => nav.url(), texto, signalDe(o));
+        if (sinPermiso) return sinPermiso;
         await nav.insertarTexto(resuelto.texto);
         ctx.escritos.set(normalizarValor(resuelto.texto), texto);
         const despues = await infoElemento(nav, r);
@@ -707,10 +732,12 @@ export function crearHerramientas(ctx: Contexto) {
       description:
         'Elige una opción de un desplegable por su texto (admite marcadores de «Mis datos»).',
       inputSchema: z.object({ ref, opcion: z.string().max(200) }),
-      execute: enOrden(async ({ ref: r, opcion }) => {
+      execute: enOrden(async ({ ref: r, opcion }, o) => {
         const nav = await navegador();
         const resuelto = resolver(opcion);
         if ('error' in resuelto) return resuelto.error;
+        const sinPermiso = await sinPermisoParaDatos(() => nav.url(), opcion, signalDe(o));
+        if (sinPermiso) return sinPermiso;
         // Con marcadores, el modelo solo ve el marcador, nunca la opción resuelta.
         const conMarcas = Privacidad.marcadores(opcion).length > 0;
         const res = await elegirOpcion(nav, r, resuelto.texto);
@@ -841,7 +868,7 @@ export function crearHerramientas(ctx: Contexto) {
           .describe('En un prompt, lo que se escribe (admite marcadores)'),
         confirmacion: z.string().optional(),
       }),
-      execute: enOrden(async ({ aceptar, texto, confirmacion }) => {
+      execute: enOrden(async ({ aceptar, texto, confirmacion }, o) => {
         const nav = await navegador();
         const d = nav.dialogo?.();
         if (!d || !nav.responderDialogo)
@@ -864,6 +891,12 @@ export function crearHerramientas(ctx: Contexto) {
         }
         const resuelto = texto ? resolver(texto) : { texto: undefined };
         if ('error' in resuelto) return resuelto.error;
+        // El texto lo recibe el marco que abrió el diálogo, que puede ser de otra web.
+        const sinPermiso =
+          aceptar && texto
+            ? await sinPermisoParaDatos(() => d.origen ?? nav.url(), texto, signalDe(o))
+            : null;
+        if (sinPermiso) return sinPermiso;
         await nav.responderDialogo(aceptar, resuelto.texto);
         gastar(v);
         await nav.esperar();

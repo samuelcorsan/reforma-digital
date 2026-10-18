@@ -33,6 +33,8 @@ export type Dialogo = {
   tipo: 'alert' | 'confirm' | 'prompt' | 'beforeunload';
   mensaje: string;
   porDefecto?: string;
+  /** El origen del marco que lo ha abierto, si se sabe (puede ser de otra web que la página). */
+  origen?: string;
 };
 
 export type Instantanea = {

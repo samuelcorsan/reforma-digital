@@ -262,6 +262,7 @@ export class NavegadorTramite implements Navegador {
         tipo: d.tipo,
         mensaje: d.mensaje,
         ...(d.porDefecto ? { porDefecto: d.porDefecto } : {}),
+        ...(e.senderFrame ? { origen: e.senderFrame.origin } : {}),
       },
       contestar: (aceptar, texto) => {
         if (this.pendiente !== p) return;

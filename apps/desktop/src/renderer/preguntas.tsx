@@ -506,6 +506,37 @@ function Confirmacion({ tramite, item }: { tramite: string; item: ItemPregunta }
   );
 }
 
+/** Antes de dar los datos de la persona a una web que no es oficial. */
+function Confianza({ tramite, item }: { tramite: string; item: ItemPregunta }) {
+  const { enviando, responder } = useResponder(tramite, item);
+  if (item.pregunta.tipo !== 'confianza') return null;
+  const web = item.pregunta.web;
+  return (
+    <Tarjeta
+      icono={<Icono nombre="web" />}
+      titulo="¿Confías en esta web?"
+      descripcion={`${web} no está en la lista de webs oficiales`}
+    >
+      <div className="px-5 pb-5">
+        <p className="mt-0 mb-4 text-[15px] leading-relaxed text-[var(--text-secondary)]">
+          El asistente quiere escribir tus datos personales en{' '}
+          <strong className="font-medium text-foreground">{web}</strong>. Hazlo solo si es la web
+          donde quieres hacer el trámite. Si confías en ella, no se te volverá a preguntar; puedes
+          quitarla en Ajustes.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="sunset" size="lg" disabled={enviando} onClick={() => responder(true)}>
+            Confiar en {web}
+          </Button>
+          <Button variant="outline" size="lg" disabled={enviando} onClick={() => responder(false)}>
+            No
+          </Button>
+        </div>
+      </div>
+    </Tarjeta>
+  );
+}
+
 const MOTIVOS: Record<Ayuda['motivo'], { icono: NombreIcono; titulo: string }> = {
   iniciar_sesion: { icono: 'candado', titulo: 'Inicia sesión tú' },
   captcha: { icono: 'mano', titulo: 'Resuelve la comprobación' },
@@ -650,7 +681,9 @@ export function Pregunta({
           ? item.pregunta.confirmacion.accion
           : item.pregunta.tipo === 'llamada'
             ? `Llamar a ${item.pregunta.llamada.organismo}`
-            : item.pregunta.ayuda.instrucciones;
+            : item.pregunta.tipo === 'confianza'
+              ? `Dar tus datos a ${item.pregunta.web}`
+              : item.pregunta.ayuda.instrucciones;
     return (
       <p className="my-3 flex items-center gap-2 text-sm text-muted-foreground">
         <Icono
@@ -668,5 +701,6 @@ export function Pregunta({
   if (item.pregunta.tipo === 'formulario') return <Formulario tramite={tramite} item={item} />;
   if (item.pregunta.tipo === 'confirmacion') return <Confirmacion tramite={tramite} item={item} />;
   if (item.pregunta.tipo === 'llamada') return <Llamada tramite={tramite} item={item} />;
+  if (item.pregunta.tipo === 'confianza') return <Confianza tramite={tramite} item={item} />;
   return <Ayuda tramite={tramite} item={item} verNavegador={verNavegador} />;
 }
