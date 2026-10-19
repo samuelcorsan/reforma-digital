@@ -1,0 +1,85 @@
+/* Reforma Digital — design tokens for the launch film.
+   Source of truth: PR #156 (packages/design/styles/theme.css, desktop.css, DESIGN.md §8–§9). */
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('fonts/geist-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('fonts/geist-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('fonts/geist-mono-latin-wght-normal.woff2') format('woff2-variations');
+}
+/* Headlines in the app fall back to Georgia (FFF Tool Serif is not bundled; Georgia's licence forbids
+   redistributing the file, so the system copy that ships with macOS is used). */
+@font-face {
+  font-family: 'Georgia';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Georgia');
+}
+
+:root {
+  /* Surfaces */
+  --ink: #141414; /* dark acts background (brand ink) */
+  --ink-2: #1c1c1c; /* raised surface on dark */
+  --ink-3: #2a2a2a; /* borders / chips on dark */
+  --canvas: #f5f5f5; /* app window canvas (--muted) */
+  --surface: #ffffff;
+  --sidebar: #ededed; /* foreground at 2.5 % over canvas */
+
+  /* Text */
+  --fg: #0a0a0a;
+  --fg-secondary: #4d4d4d;
+  --fg-muted: #737373;
+  --on-dark: #f5f5f5;
+  --on-dark-muted: #9a9a9a;
+
+  /* Lines */
+  --border: #e5e5e5;
+
+  /* Brand */
+  --brand: #df1717;
+  --brand-dark: #a50e0e;
+  --brand-orange: #ff7a1a;
+  --brand-yellow: #ffbe0b;
+  --warning: #fff3d1;
+  --warning-fg: #6b4a00;
+  --done-blue: #3b82f6;
+
+  --brand-gradient: radial-gradient(
+      90% 55% at 50% 118%,
+      #ffd34d 0%,
+      var(--brand-yellow) 20%,
+      var(--brand-orange) 45%,
+      rgba(223, 23, 23, 0) 78%
+    ),
+    var(--brand);
+  --brand-sun: radial-gradient(
+    ellipse 60% 65% at 50% 110%,
+    var(--brand-yellow) 0%,
+    var(--brand-orange) 38%,
+    rgb(223 23 23 / 0.9) 68%,
+    rgb(223 23 23 / 0) 100%
+  );
+
+  --ease-brand: cubic-bezier(0.23, 1, 0.32, 1);
+
+  --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-serif: 'Georgia', serif;
+  --font-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+}

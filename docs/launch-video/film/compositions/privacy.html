@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es"><head><meta charset="UTF-8" /></head><body><template>
+<link rel="stylesheet" href="../assets/tokens.css" />
+<style>
+  #root { position: absolute; inset: 0; overflow: hidden; background: var(--surface); color: var(--fg); font-family: var(--font-sans); font-weight: 500; letter-spacing: -0.03em; line-height: 1.1; }
+  #root .privacy-line { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: baseline; gap: 0.25em; font-size: 88px; white-space: nowrap; }
+  #root .privacy-w { display: inline-block; opacity: 0; }
+  #root .privacy-accent { color: var(--brand); }
+  #privacy-l1 { top: 492px; }
+  #privacy-lock { display: block; transform-origin: 50% 60%; }
+  #privacy-l1c { align-self: center; padding-top: 4px; }
+  #privacy-l2 { top: 252px; }
+  #privacy-l3, #privacy-l4 { top: 330px; }
+
+  /* Beat 2 — laptop line drawing */
+  #privacy-laptop { position: absolute; left: 480px; top: 410px; width: 960px; height: 520px; opacity: 0; }
+  #privacy-laptop svg { display: block; }
+  #root .privacy-stroke { fill: none; stroke: var(--fg); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #privacy-app { opacity: 0; }
+  #root .privacy-f-canvas { fill: var(--canvas); }
+  #root .privacy-f-sidebar { fill: var(--sidebar); }
+  #root .privacy-f-line { fill: var(--border); }
+  #root .privacy-f-card { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; }
+
+  /* Beat 3 — composer card: typed request, data locked into placeholders */
+  #privacy-card { position: absolute; box-sizing: border-box; left: 385px; top: 480px; width: 1150px; height: 194px; padding: 32px 40px; border: 2px solid var(--border); border-radius: 28px; background: var(--surface); font-size: 42px; font-weight: 400; letter-spacing: -0.01em; line-height: 63px; white-space: normal; opacity: 0; }
+  #root .privacy-pair { white-space: nowrap; }
+  #root .privacy-data { display: inline-block; padding: 0 3px; border-radius: 8px; background-color: rgba(223, 23, 23, 0); color: var(--fg); }
+  #root .privacy-data.privacy-mono { font-family: var(--font-mono); font-size: 38px; letter-spacing: 0; }
+  #root .privacy-key { display: none; margin-right: 6px; color: var(--brand); vertical-align: -3px; }
+  #root .privacy-key svg { display: block; }
+  #privacy-caret { display: inline-block; width: 3px; height: 46px; margin-left: 2px; vertical-align: -9px; background: var(--fg); }
+  #privacy-note { position: absolute; left: 0; right: 0; top: 712px; display: flex; justify-content: center; align-items: center; gap: 14px; font-size: 28px; font-weight: 500; letter-spacing: -0.01em; color: var(--fg-secondary); opacity: 0; }
+  #privacy-note svg { display: block; color: var(--brand); }
+</style>
+<div data-hf-id="hf-w9f5" id="root" data-composition-id="privacy" data-width="1920" data-height="1080">
+  <!-- Beat 1 -->
+  <div data-hf-id="hf-bfj0" class="privacy-line" id="privacy-l1" data-layout-allow-overflow><span data-hf-id="hf-lray" class="privacy-w" id="privacy-l1a">Todo</span> <span data-hf-id="hf-6pz9" class="privacy-w" id="privacy-l1b">es</span> <span data-hf-id="hf-4z80" class="privacy-w" id="privacy-l1c"><svg data-hf-id="hf-m98v" id="privacy-lock" width="76" height="76" viewBox="0 0 18 18" aria-hidden="true"><path data-hf-id="hf-mzkq" d="M5.75,8.25v-3.25c0-1.795,1.455-3.25,3.25-3.25h0c1.795,0,3.25,1.455,3.25,3.25v3.25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><line data-hf-id="hf-5ono" x1="9" y1="11.75" x2="9" y2="12.75" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></line><rect data-hf-id="hf-n7h6" x="3.25" y="8.25" width="11.5" height="8" rx="2" ry="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></rect></svg></span> <span data-hf-id="hf-zda1" class="privacy-w privacy-accent" id="privacy-l1d">privado.</span></div>
+
+  <!-- Beat 2 -->
+  <div data-hf-id="hf-i91j" class="privacy-line" id="privacy-l2" data-layout-allow-overflow><span data-hf-id="hf-wdet" class="privacy-w" id="privacy-l2a">Tus</span> <span data-hf-id="hf-lwxl" class="privacy-w" id="privacy-l2b">datos,</span> <span data-hf-id="hf-6est" class="privacy-w privacy-accent" id="privacy-l2c">cifrados</span> <span data-hf-id="hf-26gx" class="privacy-w" id="privacy-l2d">en</span> <span data-hf-id="hf-6ukg" class="privacy-w" id="privacy-l2e">tu</span> <span data-hf-id="hf-0pkv" class="privacy-w" id="privacy-l2f">Mac.</span></div>
+  <div data-hf-id="hf-2f54" id="privacy-laptop">
+    <svg data-hf-id="hf-vu5x" width="960" height="520" viewBox="0 0 960 520" aria-hidden="true">
+      <defs data-hf-id="hf-mh0t"><clipPath data-hf-id="hf-nnx3" id="privacy-screen-clip"><rect data-hf-id="hf-wjr5" x="124" y="26" width="712" height="422" rx="10" /></clipPath></defs>
+      <g data-hf-id="hf-3ltf" id="privacy-app" clip-path="url(#privacy-screen-clip)">
+        <rect data-hf-id="hf-b3wg" class="privacy-f-canvas" x="124" y="26" width="712" height="422" />
+        <rect data-hf-id="hf-m5g8" class="privacy-f-sidebar" x="124" y="26" width="156" height="422" />
+        <rect data-hf-id="hf-sbo2" class="privacy-f-line" x="144" y="56" width="96" height="12" rx="6" />
+        <rect data-hf-id="hf-c5aq" class="privacy-f-line" x="144" y="86" width="116" height="12" rx="6" />
+        <rect data-hf-id="hf-lmfw" class="privacy-f-line" x="144" y="116" width="80" height="12" rx="6" />
+        <rect data-hf-id="hf-6xyq" class="privacy-f-line" x="144" y="146" width="104" height="12" rx="6" />
+        <rect data-hf-id="hf-9egt" class="privacy-f-line" x="438" y="128" width="244" height="20" rx="10" />
+        <rect data-hf-id="hf-uey6" class="privacy-f-card" x="340" y="176" width="440" height="78" rx="20" />
+        <rect data-hf-id="hf-j4n9" class="privacy-f-card" x="340" y="286" width="136" height="104" rx="14" />
+        <rect data-hf-id="hf-56uz" class="privacy-f-card" x="492" y="286" width="136" height="104" rx="14" />
+        <rect data-hf-id="hf-ytjs" class="privacy-f-card" x="644" y="286" width="136" height="104" rx="14" />
+      </g>
+      <rect data-hf-id="hf-f5ym" class="privacy-stroke" id="privacy-screen" x="100" y="2" width="760" height="470" rx="18" />
+      <path data-hf-id="hf-y0dt" class="privacy-stroke" id="privacy-base" d="M20 482H940V488Q940 504 920 504H40Q20 504 20 488Z" />
+      <path data-hf-id="hf-gsko" class="privacy-stroke" id="privacy-notch" d="M410 482Q410 492 420 492H540Q550 492 550 482" />
+    </svg>
+  </div>
+
+  <!-- Beat 3 -->
+  <div data-hf-id="hf-c3bq" class="privacy-line" id="privacy-l3" data-layout-allow-overflow><span data-hf-id="hf-iloq" class="privacy-w" id="privacy-l3a">Tú</span><span data-hf-id="hf-qtnl" class="privacy-w" id="privacy-l3b">escribes</span><span data-hf-id="hf-lfhu" class="privacy-w" id="privacy-l3c">tus</span><span data-hf-id="hf-zxvm" class="privacy-w" id="privacy-l3d">datos.</span></div>
+  <div data-hf-id="hf-mytd" class="privacy-line" id="privacy-l4" data-layout-allow-overflow><span data-hf-id="hf-giby" class="privacy-w" id="privacy-l4a">La</span><span data-hf-id="hf-hhlg" class="privacy-w" id="privacy-l4b">IA</span><span data-hf-id="hf-5728" class="privacy-w" id="privacy-l4c">solo</span><span data-hf-id="hf-t8i5" class="privacy-w" id="privacy-l4d">ve</span><span data-hf-id="hf-v3ov" class="privacy-w privacy-accent" id="privacy-l4e">marcadores.</span></div>
+  <div data-hf-id="hf-wj9y" id="privacy-card">
+    <span data-hf-id="hf-p36z" id="privacy-s1"></span><span data-hf-id="hf-n7gg" class="privacy-pair"><span data-hf-id="hf-tbbe" class="privacy-key" id="privacy-k1"><svg data-hf-id="hf-byh1" width="30" height="30" viewBox="0 0 18 18" aria-hidden="true"><path data-hf-id="hf-lx32" d="M5.75,8.25v-3.25c0-1.795,1.455-3.25,3.25-3.25h0c1.795,0,3.25,1.455,3.25,3.25v3.25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><line data-hf-id="hf-so4s" x1="9" y1="11.75" x2="9" y2="12.75" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></line><rect data-hf-id="hf-kcla" x="3.25" y="8.25" width="11.5" height="8" rx="2" ry="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></rect></svg></span><span data-hf-id="hf-g9rq" class="privacy-data" id="privacy-d1"></span></span><span data-hf-id="hf-e7pc" id="privacy-s2"></span><span data-hf-id="hf-h6yx" id="privacy-s3"></span><span data-hf-id="hf-w12w" class="privacy-pair"><span data-hf-id="hf-pd7d" class="privacy-key" id="privacy-k2"><svg data-hf-id="hf-slg9" width="30" height="30" viewBox="0 0 18 18" aria-hidden="true"><path data-hf-id="hf-mbe3" d="M5.75,8.25v-3.25c0-1.795,1.455-3.25,3.25-3.25h0c1.795,0,3.25,1.455,3.25,3.25v3.25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><line data-hf-id="hf-rh7p" x1="9" y1="11.75" x2="9" y2="12.75" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></line><rect data-hf-id="hf-kqwb" x="3.25" y="8.25" width="11.5" height="8" rx="2" ry="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></rect></svg></span><span data-hf-id="hf-622t" class="privacy-data" id="privacy-d2"></span></span><span data-hf-id="hf-6bha" id="privacy-s4"></span>
+    <span data-hf-id="hf-5wm8" id="privacy-caret"></span>
+  </div>
+  <div data-hf-id="hf-ohyo" id="privacy-note"><svg data-hf-id="hf-x4q1" width="32" height="32" viewBox="0 0 18 18" aria-hidden="true"><path data-hf-id="hf-a482" d="M9.305,1.848l5.25,1.68c.414,.133,.695,.518,.695,.952v6.52c0,3.03-4.684,4.748-5.942,5.155-.203,.066-.413,.066-.616,0-1.258-.407-5.942-2.125-5.942-5.155V4.48c0-.435,.281-.82,.695-.952l5.25-1.68c.198-.063,.411-.063,.61,0Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><polyline data-hf-id="hf-5gsm" points="6.497 9.75 8.106 11.25 11.503 6.75" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></polyline></svg><span data-hf-id="hf-b0to">2 datos bloqueados antes de enviar</span></div>
+</div>
+<script>
+  const tl = gsap.timeline({ paused: true });
+  const q = (s) => document.querySelector(s);
+  const wordIn = (el, t) =>
+    tl.fromTo(el, { opacity: 0, y: 14, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.36, ease: "power3.out" }, t);
+  const exitAll = (els, t) =>
+    tl.fromTo(els, { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -16, filter: "blur(8px)", duration: 0.25, ease: "power2.in", stagger: 0.015, immediateRender: false }, t);
+
+  // Word widths from canvas text metrics: the slot is not laid out when the timeline is built.
+  const ctx = document.createElement("canvas").getContext("2d");
+  function wordW(el, px) {
+    const svg = el.querySelector("svg");
+    if (svg) return Number(svg.getAttribute("width"));
+    ctx.font = `500 ${px}px "Geist"`;
+    ctx.letterSpacing = `${-0.03 * px}px`;
+    return ctx.measureText(el.textContent).width;
+  }
+  // x offset that keeps words 0..i centred while the full line is laid out centred (flex, gap 0.25em).
+  function centredShifts(words, px) {
+    const gap = 0.25 * px;
+    const ws = words.map((w) => wordW(w, px));
+    const total = ws.reduce((a, b) => a + b, 0) + gap * (ws.length - 1);
+    let right = -gap;
+    return ws.map((w) => {
+      right += gap + w;
+      return (total - right) / 2;
+    });
+  }
+  // A centred line whose visible words stay centred as each new word arrives.
+  function centredLine(lineSel, ids, times) {
+    const words = ids.map(q);
+    const shift = centredShifts(words, 88);
+    tl.set(lineSel, { x: shift[0] }, 0);
+    words.forEach((w, i) => {
+      wordIn(w, times[i]);
+      if (i > 0) tl.fromTo(lineSel, { x: shift[i - 1] }, { x: shift[i], duration: 0.42, ease: "power3.out", immediateRender: false }, times[i]);
+    });
+  }
+
+  // Composer state is computed from tl.time() only (typing, caret, locks, scramble), so any seek is exact.
+  const SIGNOS = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#$%&*+=?";
+  const PASOS = 16;
+  const TYPE0 = 4.15;
+  const PER_CHAR = 0.0235;
+  const SCRAMBLE = 0.8;
+  const SEGS = [
+    { el: q("#privacy-s1"), t: "Soy " },
+    { el: q("#privacy-d1"), t: "Lucía Martín", m: "{{nombre}}", s0: 6.05, key: q("#privacy-k1"), k0: 5.78 },
+    { el: q("#privacy-s2"), t: ", " },
+    { el: q("#privacy-s3"), t: "con DNI " },
+    { el: q("#privacy-d2"), t: "12345678Z", m: "{{documento_numero}}", s0: 6.2, key: q("#privacy-k2"), k0: 5.93 },
+    { el: q("#privacy-s4"), t: ". Renuévame el DNI." },
+  ];
+  const TOTAL = SEGS.reduce((n, s) => n + s.t.length, 0);
+  const TYPE1 = TYPE0 + TOTAL * PER_CHAR;
+  const caret = q("#privacy-caret");
+
+  function scrambleText(de, a, paso) {
+    const largo = Math.round(de.length + ((a.length - de.length) * paso) / PASOS);
+    const fijas = Math.floor((a.length * paso) / PASOS);
+    let out = "";
+    for (let i = 0; i < largo; i++) out += i < fijas ? a[i] : SIGNOS[((Math.imul(i + 1, 0x9e3779b1) ^ Math.imul(paso + 1, 0x85ebca77)) >>> 0) % SIGNOS.length];
+    return out;
+  }
+  function renderComposer() {
+    const t = tl.time();
+    let quedan = Math.max(0, Math.min(TOTAL, Math.floor((t - TYPE0) / PER_CHAR)));
+    let caretAfter = SEGS[0].el;
+    for (const s of SEGS) {
+      const visible = s.t.slice(0, Math.max(0, quedan));
+      if (quedan > 0) caretAfter = s.el;
+      quedan -= s.t.length;
+      let txt = visible;
+      if (s.m) {
+        const paso = Math.floor(((t - s.s0) / SCRAMBLE) * PASOS);
+        const scrambling = t >= s.s0;
+        if (scrambling) txt = paso >= PASOS ? s.m : paso <= 0 ? s.t : scrambleText(s.t, s.m, paso);
+        s.el.classList.toggle("privacy-mono", scrambling);
+        s.key.style.display = t >= s.k0 ? "inline-block" : "none";
+      }
+      if (s.el.textContent !== txt) s.el.textContent = txt;
+    }
+    if (caret.previousSibling !== caretAfter) caretAfter.after(caret);
+    const typing = t < TYPE1 + 0.25;
+    caret.style.opacity = typing && Math.floor((t - TYPE0) / 0.26) % 2 === 0 ? "1" : "0";
+  }
+
+  function build() {
+    // Beat 1 — «Todo es [candado] privado.»
+    centredLine("#privacy-l1", ["#privacy-l1a", "#privacy-l1b", "#privacy-l1c", "#privacy-l1d"], [0.1, 0.26, 0.44, 0.56]);
+    tl.fromTo("#privacy-lock", { scale: 0.6 }, { scale: 1, duration: 0.45, ease: "back.out(2)" }, 0.44);
+    exitAll(["#privacy-l1a", "#privacy-l1b", "#privacy-l1c", "#privacy-l1d"], 1.4);
+
+    // Beat 2 — «Tus datos, cifrados en tu Mac.» + laptop drawing
+    centredLine("#privacy-l2", ["#privacy-l2a", "#privacy-l2b", "#privacy-l2c", "#privacy-l2d", "#privacy-l2e", "#privacy-l2f"], [1.7, 1.84, 1.98, 2.12, 2.26, 2.4]);
+    tl.fromTo("#privacy-laptop", { opacity: 0, y: 90 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 1.95);
+    ["#privacy-screen", "#privacy-base", "#privacy-notch"].forEach((sel, i) => {
+      const len = q(sel).getTotalLength() * 1.02;
+      tl.fromTo(sel, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: i === 0 ? 0.8 : 0.5, ease: "power2.out" }, 2.0 + i * 0.35);
+    });
+    tl.fromTo("#privacy-app", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 2.75);
+    exitAll(["#privacy-l2a", "#privacy-l2b", "#privacy-l2c", "#privacy-l2d", "#privacy-l2e", "#privacy-l2f", "#privacy-laptop"], 3.4);
+
+    // Beat 3 — «Tú escribes tus datos.», composer types, data locks into placeholders, headline swaps.
+    const l3 = ["#privacy-l3a", "#privacy-l3b", "#privacy-l3c", "#privacy-l3d"];
+    const l4 = ["#privacy-l4a", "#privacy-l4b", "#privacy-l4c", "#privacy-l4d", "#privacy-l4e"];
+    centredLine("#privacy-l3", l3, [3.7, 3.82, 3.94, 4.06]);
+    tl.fromTo("#privacy-card", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 3.85);
+    SEGS.filter((s) => s.m).forEach((s) => {
+      tl.fromTo(s.key, { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2.2)" }, s.k0);
+      tl.fromTo(s.el, { backgroundColor: "rgba(223, 23, 23, 0)", color: "#0a0a0a" }, { backgroundColor: "rgba(223, 23, 23, 0.10)", color: "#df1717", duration: 0.2, ease: "power1.out" }, s.k0 + 0.04);
+      tl.fromTo(s.el, { backgroundColor: "rgba(223, 23, 23, 0.10)", color: "#df1717" }, { backgroundColor: "rgba(255, 190, 11, 0.25)", color: "#0a0a0a", duration: 0.25, ease: "power1.out", immediateRender: false }, s.s0 + SCRAMBLE);
+    });
+    tl.fromTo("#privacy-note", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 6.95);
+    tl.fromTo(l3, { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -12, filter: "blur(8px)", duration: 0.16, ease: "power2.in", immediateRender: false }, 6.95);
+    tl.fromTo(l4, { opacity: 0, y: 12, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power3.out", stagger: 0.05 }, 7.08);
+    exitAll([...l4, "#privacy-card", "#privacy-note"], 9.1);
+
+    tl.eventCallback("onUpdate", renderComposer);
+    renderComposer();
+    window.__timelines["privacy"] = tl;
+    if (window.__hfForceTimelineRebind) window.__hfForceTimelineRebind();
+  }
+
+  Promise.all([document.fonts.load('500 88px "Geist"'), document.fonts.load('400 42px "Geist"'), document.fonts.load('400 38px "Geist Mono"'), document.fonts.ready]).then(build);
+</script>
+</template></body></html>

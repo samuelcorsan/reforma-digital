@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="es"><head><meta charset="UTF-8" /></head><body><template>
+<link rel="stylesheet" href="../assets/tokens.css" />
+<style>
+  #root { position: absolute; inset: 0; overflow: hidden; background: var(--ink); color: var(--on-dark); font-family: var(--font-sans); font-weight: 500; letter-spacing: -0.03em; }
+  #root * { box-sizing: border-box; }
+
+  /* Centered kinetic lines: the row centers the line; the line's x keeps the visible words centered. */
+  .hook-row { position: absolute; left: 0; right: 0; display: flex; justify-content: center; }
+  .hook-line { position: relative; display: block; white-space: nowrap; font-size: 88px; line-height: 1.1; }
+  .hook-line.hook-sm { font-size: 80px; }
+  .hook-w { display: inline-block; opacity: 0; }
+  .hook-accent { color: var(--brand-yellow); }
+  .hook-tint { display: inline-block; padding: 0 0.16em; border-radius: 14px; background: rgba(255, 190, 11, 0.16); color: var(--brand-yellow); }
+
+  /* Beat 1–3: the composer, authored at its zoomed (native) size inside a camera layer.
+     Native pill 2600×290 (text 130 px); the camera starts at scale 0.2 (≈520×58 apparent). */
+  #hook-cam { position: absolute; inset: 0; transform-origin: 960px 540px; }
+  #hook-pill { position: absolute; left: -340px; top: 395px; width: 2600px; height: 290px; border-radius: 145px; background: var(--ink-2); box-shadow: 0 0 0 4px var(--ink-3), 0 0 60px rgba(255, 255, 255, 0.05); display: flex; align-items: center; padding: 0 40px 0 100px; opacity: 0; }
+  #hook-ring { position: absolute; inset: 0; border-radius: 145px; box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.12), 0 0 120px rgba(255, 255, 255, 0.07); opacity: 0; }
+  #hook-placeholder { position: absolute; left: 100px; top: 0; bottom: 0; display: flex; align-items: center; font-size: 130px; letter-spacing: -0.02em; color: var(--on-dark-muted); white-space: nowrap; }
+  #hook-typed { flex: none; font-size: 130px; line-height: 1.2; white-space: pre; }
+  #hook-measure { position: absolute; left: 100px; top: 0; font-size: 130px; line-height: 1.2; white-space: pre; visibility: hidden; }
+  #hook-caret { flex: none; display: block; width: 8px; height: 112px; margin-left: 6px; border-radius: 4px; background: var(--on-dark); opacity: 0; }
+  #hook-apps { flex: none; display: flex; gap: 28px; margin-left: 56px; }
+  .hook-app { flex: none; display: grid; place-items: center; width: 230px; height: 230px; border-radius: 22.5%; color: var(--surface); }
+  .hook-app-chatgpt { background: #ffffff; color: #0a0a0a; }
+  .hook-app-claude { background: #D97757; color: #ffffff; }
+  .hook-app-grok { background: #000000; color: #ffffff; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.14); }
+  .hook-app-gemini { background: #ffffff; }
+  #hook-apps .hook-app { opacity: 0; }
+  .hook-send { flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--on-dark); color: var(--ink); }
+  #hook-send { width: 200px; height: 200px; margin-left: auto; }
+  #hook-ibeam { position: absolute; left: 715px; top: 516px; width: 40px; height: 48px; }
+  #hook-head { position: relative; display: block; white-space: pre; font-size: 88px; line-height: 1.1; transform-origin: 0% 50%; opacity: 0; }
+  #hook-minis .hook-pos .hook-app { opacity: 0; }
+
+  /* Beat 6: step chips */
+  .hook-pos { position: absolute; width: 0; height: 0; display: flex; align-items: center; justify-content: center; }
+  .hook-chip { flex: none; display: flex; align-items: center; gap: 16px; padding: 12px 30px 12px 14px; border-radius: 999px; background: var(--ink-2); border: 2px solid var(--ink-3); font-size: 30px; line-height: 1.2; letter-spacing: -0.01em; white-space: nowrap; opacity: 0; }
+  .hook-badge { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--ink-3); display: grid; place-items: center; font-size: 24px; line-height: 1; letter-spacing: 0; }
+
+  /* Beat 7: chat card */
+  #hook-card { position: absolute; left: 510px; top: 380px; width: 900px; padding: 36px; border-radius: 28px; background: var(--ink-2); letter-spacing: -0.01em; opacity: 0; }
+  #hook-ask-row { display: flex; justify-content: flex-end; }
+  #hook-ask { display: block; padding: 16px 26px; border-radius: 24px; background: var(--ink-3); font-size: 30px; line-height: 1.3; opacity: 0; }
+  #hook-replies { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; }
+  .hook-reply { display: block; font-size: 30px; line-height: 1.35; color: var(--on-dark-muted); opacity: 0; }
+  #hook-composer { margin-top: 32px; height: 76px; border-radius: 38px; border: 2px solid var(--ink-3); display: flex; align-items: center; padding: 0 12px 0 28px; }
+  #hook-composer-ph { flex: 1; font-size: 26px; color: var(--on-dark-muted); }
+  #hook-send-sm { width: 48px; height: 48px; }
+</style>
+
+<div data-hf-id="hf-ktv8" id="root" data-composition-id="hook" data-width="1920" data-height="1080">
+  <!-- Beat 1–3: camera + giant composer -->
+  <div data-hf-id="hf-kxnb" id="hook-cam" data-layout-allow-overflow>
+    <div data-hf-id="hf-9g7n" id="hook-pill" data-layout-allow-overflow>
+      <div data-hf-id="hf-tra3" id="hook-ring"></div>
+      <div data-hf-id="hf-d5gs" id="hook-placeholder">Pregúntale a un asistente</div>
+      <span data-hf-id="hf-fmwc" id="hook-measure">Los asistentes de IA</span>
+      <span data-hf-id="hf-wpil" id="hook-typed" data-layout-allow-overflow></span><span data-hf-id="hf-nonh" id="hook-caret"></span>
+      <div data-hf-id="hf-en2h" id="hook-apps"><div data-hf-id="hf-u9z8" class="hook-app hook-app-chatgpt"><svg data-hf-id="hf-ki62" width="133" height="135" viewBox="0 0 256 260"><path data-hf-id="hf-93l2" d="M239.184 106.203a64.716 64.716 0 0 0-5.576-53.103C219.452 28.459 191 15.784 163.213 21.74A65.586 65.586 0 0 0 52.096 45.22a64.716 64.716 0 0 0-43.23 31.36c-14.31 24.602-11.061 55.634 8.033 76.74a64.665 64.665 0 0 0 5.525 53.102c14.174 24.65 42.644 37.324 70.446 31.36a64.72 64.72 0 0 0 48.754 21.744c28.481.025 53.714-18.361 62.414-45.481a64.767 64.767 0 0 0 43.229-31.36c14.137-24.558 10.875-55.423-8.083-76.483Zm-97.56 136.338a48.397 48.397 0 0 1-31.105-11.255l1.535-.87 51.67-29.825a8.595 8.595 0 0 0 4.247-7.367v-72.85l21.845 12.636c.218.111.37.32.409.563v60.367c-.056 26.818-21.783 48.545-48.601 48.601Zm-104.466-44.61a48.345 48.345 0 0 1-5.781-32.589l1.534.921 51.722 29.826a8.339 8.339 0 0 0 8.441 0l63.181-36.425v25.221a.87.87 0 0 1-.358.665l-52.335 30.184c-23.257 13.398-52.97 5.431-66.404-17.803ZM23.549 85.38a48.499 48.499 0 0 1 25.58-21.333v61.39a8.288 8.288 0 0 0 4.195 7.316l62.874 36.272-21.845 12.636a.819.819 0 0 1-.767 0L41.353 151.53c-23.211-13.454-31.171-43.144-17.804-66.405v.256Zm179.466 41.695-63.08-36.63L161.73 77.86a.819.819 0 0 1 .768 0l52.233 30.184a48.6 48.6 0 0 1-7.316 87.635v-61.391a8.544 8.544 0 0 0-4.4-7.213Zm21.742-32.69-1.535-.922-51.619-30.081a8.39 8.39 0 0 0-8.492 0L99.98 99.808V74.587a.716.716 0 0 1 .307-.665l52.233-30.133a48.652 48.652 0 0 1 72.236 50.391v.205ZM88.061 139.097l-21.845-12.585a.87.87 0 0 1-.41-.614V65.685a48.652 48.652 0 0 1 79.757-37.346l-1.535.87-51.67 29.825a8.595 8.595 0 0 0-4.246 7.367l-.051 72.697Zm11.868-25.58 28.138-16.217 28.188 16.218v32.434l-28.086 16.218-28.188-16.218-.052-32.434Z" fill="currentColor" /></svg></div><div data-hf-id="hf-2xv3" class="hook-app hook-app-claude"><svg data-hf-id="hf-94ta" width="138" height="138" viewBox="0 0 24 24"><path data-hf-id="hf-kaqo" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z" fill="currentColor" /></svg></div><div data-hf-id="hf-yzr2" class="hook-app hook-app-grok"><svg data-hf-id="hf-9j4b" width="120" height="120" viewBox="0 0 24 24"><path data-hf-id="hf-kqnm" d="M6.469 8.776L16.512 23h-4.464L2.005 8.776H6.47zm-.004 7.9l2.233 3.164L6.467 23H2l4.465-6.324zM22 2.582V23h-3.659V7.764L22 2.582zM22 1l-9.952 14.095-2.233-3.163L17.533 1H22z" fill="currentColor" fill-rule="evenodd" /></svg></div><div class="hook-app hook-app-gemini"><svg width="138" height="138" viewBox="0 0 24 24"><defs><linearGradient id="hook-gem-big" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4796E3" /><stop offset="0.5" stop-color="#9177C7" /><stop offset="1" stop-color="#CA6673" /></linearGradient></defs><path d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81" fill="url(#hook-gem-big)" /></svg></div></div>
+      <div data-hf-id="hf-pz8u" id="hook-send" class="hook-send">
+        <svg data-hf-id="hf-t4jw" width="88" height="88" viewBox="0 0 18 18" fill="none"><path data-hf-id="hf-sk4s" d="M9 15V3.5M4 8.25 9 3.25l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </div>
+    </div>
+  </div>
+  <svg data-hf-id="hf-rwuw" id="hook-ibeam" viewBox="0 0 20 24" overflow="visible"><path data-hf-id="hf-1jtn" d="M5 2.5c2 0 3.6.6 5 2 1.4-1.4 3-2 5-2M5 21.5c2 0 3.6-.6 5-2 1.4 1.4 3 2 5 2M10 4.5v15" fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round" /><path data-hf-id="hf-jql0" d="M5 2.5c2 0 3.6.6 5 2 1.4-1.4 3-2 5-2M5 21.5c2 0 3.6-.6 5-2 1.4 1.4 3 2 5 2M10 4.5v15" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" /></svg>
+
+  <!-- Beat 3–4 hand-off: small app tiles above the headline -->
+  <div data-hf-id="hf-gpgr" id="hook-minis">
+    <div data-hf-id=" hf-sb9e" class="hook-pos" style="left: 843px; top: 352px"><div data-hf-id="hf-ss3g" class="hook-app hook-app-chatgpt"><svg data-hf-id="hf-9xfc" width="133" height="135" viewBox="0 0 256 260"><path data-hf-id="hf-xk2y" d="M239.184 106.203a64.716 64.716 0 0 0-5.576-53.103C219.452 28.459 191 15.784 163.213 21.74A65.586 65.586 0 0 0 52.096 45.22a64.716 64.716 0 0 0-43.23 31.36c-14.31 24.602-11.061 55.634 8.033 76.74a64.665 64.665 0 0 0 5.525 53.102c14.174 24.65 42.644 37.324 70.446 31.36a64.72 64.72 0 0 0 48.754 21.744c28.481.025 53.714-18.361 62.414-45.481a64.767 64.767 0 0 0 43.229-31.36c14.137-24.558 10.875-55.423-8.083-76.483Zm-97.56 136.338a48.397 48.397 0 0 1-31.105-11.255l1.535-.87 51.67-29.825a8.595 8.595 0 0 0 4.247-7.367v-72.85l21.845 12.636c.218.111.37.32.409.563v60.367c-.056 26.818-21.783 48.545-48.601 48.601Zm-104.466-44.61a48.345 48.345 0 0 1-5.781-32.589l1.534.921 51.722 29.826a8.339 8.339 0 0 0 8.441 0l63.181-36.425v25.221a.87.87 0 0 1-.358.665l-52.335 30.184c-23.257 13.398-52.97 5.431-66.404-17.803ZM23.549 85.38a48.499 48.499 0 0 1 25.58-21.333v61.39a8.288 8.288 0 0 0 4.195 7.316l62.874 36.272-21.845 12.636a.819.819 0 0 1-.767 0L41.353 151.53c-23.211-13.454-31.171-43.144-17.804-66.405v.256Zm179.466 41.695-63.08-36.63L161.73 77.86a.819.819 0 0 1 .768 0l52.233 30.184a48.6 48.6 0 0 1-7.316 87.635v-61.391a8.544 8.544 0 0 0-4.4-7.213Zm21.742-32.69-1.535-.922-51.619-30.081a8.39 8.39 0 0 0-8.492 0L99.98 99.808V74.587a.716.716 0 0 1 .307-.665l52.233-30.133a48.652 48.652 0 0 1 72.236 50.391v.205ZM88.061 139.097l-21.845-12.585a.87.87 0 0 1-.41-.614V65.685a48.652 48.652 0 0 1 79.757-37.346l-1.535.87-51.67 29.825a8.595 8.595 0 0 0-4.246 7.367l-.051 72.697Zm11.868-25.58 28.138-16.217 28.188 16.218v32.434l-28.086 16.218-28.188-16.218-.052-32.434Z" fill="currentColor" /></svg></div></div>
+    <div data-hf-id=" hf-3rla" class="hook-pos" style="left: 921px; top: 352px"><div data-hf-id="hf-slcf" class="hook-app hook-app-claude"><svg data-hf-id="hf-75a5" width="138" height="138" viewBox="0 0 24 24"><path data-hf-id="hf-8cwo" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z" fill="currentColor" /></svg></div></div>
+    <div data-hf-id=" hf-d9js" class="hook-pos" style="left: 999px; top: 352px"><div data-hf-id="hf-akbm" class="hook-app hook-app-grok"><svg data-hf-id="hf-7jl6" width="120" height="120" viewBox="0 0 24 24"><path data-hf-id="hf-c8ty" d="M6.469 8.776L16.512 23h-4.464L2.005 8.776H6.47zm-.004 7.9l2.233 3.164L6.467 23H2l4.465-6.324zM22 2.582V23h-3.659V7.764L22 2.582zM22 1l-9.952 14.095-2.233-3.163L17.533 1H22z" fill="currentColor" fill-rule="evenodd" /></svg></div></div>
+    <div class="hook-pos" style="left: 1077px; top: 352px"><div class="hook-app hook-app-gemini"><svg width="138" height="138" viewBox="0 0 24 24"><defs><linearGradient id="hook-gem-mini" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4796E3" /><stop offset="0.5" stop-color="#9177C7" /><stop offset="1" stop-color="#CA6673" /></linearGradient></defs><path d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81" fill="url(#hook-gem-mini)" /></svg></div></div>
+  </div>
+  <div data-hf-id="hf-7gjl" class="hook-row" style="top: 451.6px"><div data-hf-id="hf-d6r7" id="hook-head">Los asistentes de IA</div></div>
+
+  <!-- Beat 4 -->
+  <div data-hf-id="hf-a6rz" class="hook-row" style="top: 557.6px">
+    <div data-hf-id="hf-8ys2" id="hook-l2" class="hook-line"><span data-hf-id="hf-37it" class="hook-w">prometían</span> <span data-hf-id="hf-fffr" class="hook-w">hacer</span> <span data-hf-id="hf-h9pc" class="hook-w">tus</span> <span data-hf-id="hf-99le" class="hook-w"><span data-hf-id="hf-9lre" class="hook-accent">trámites</span>.</span></div>
+  </div>
+
+  <!-- Beat 6 -->
+  <div data-hf-id="hf-kdu4" class="hook-row" style="top: 256px">
+    <div data-hf-id="hf-7h9o" id="hook-l6" class="hook-line hook-sm"><span data-hf-id="hf-b9ob" class="hook-w hook-accent">En</span> <span data-hf-id="hf-fgzl" class="hook-w hook-accent">cambio,</span> <span data-hf-id="hf-c877" class="hook-w">te</span> <span data-hf-id="hf-ihxf" class="hook-w">dan</span> <span data-hf-id="hf-06ou" class="hook-w">una</span> <span data-hf-id="hf-5jvn" class="hook-w">lista</span> <span data-hf-id="hf-62sz" class="hook-w">de</span> <span data-hf-id="hf-wn1g" class="hook-w">pasos.</span></div>
+  </div>
+  <div data-hf-id="hf-33wm" id="hook-chips">
+    <div data-hf-id="hf-gqmg" class="hook-pos" style="left: 640px; top: 548px"><div data-hf-id="hf-ifyp" class="hook-chip"><span data-hf-id="hf-kwzd" class="hook-badge">1</span>Busca la sede correcta</div></div>
+    <div data-hf-id="hf-ytcx" class="hook-pos" style="left: 1262px; top: 522px"><div data-hf-id="hf-th1z" class="hook-chip"><span data-hf-id="hf-m3wg" class="hook-badge">2</span>Consigue Cl@ve</div></div>
+    <div data-hf-id="hf-nz5g" class="hook-pos" style="left: 936px; top: 618px"><div data-hf-id="hf-xsai" class="hook-chip"><span data-hf-id="hf-lplf" class="hook-badge">3</span>Pide cita previa</div></div>
+    <div data-hf-id="hf-m8ic" class="hook-pos" style="left: 1338px; top: 664px"><div data-hf-id="hf-6sou" class="hook-chip"><span data-hf-id="hf-jq2a" class="hook-badge">4</span>Rellena el formulario</div></div>
+    <div data-hf-id="hf-9d0g" class="hook-pos" style="left: 590px; top: 706px"><div data-hf-id="hf-ellk" class="hook-chip"><span data-hf-id="hf-jbr9" class="hook-badge">5</span>Adjunta el PDF</div></div>
+    <div data-hf-id="hf-eez9" class="hook-pos" style="left: 1004px; top: 748px"><div data-hf-id="hf-3hme" class="hook-chip"><span data-hf-id="hf-kioc" class="hook-badge">6</span>Firma con certificado</div></div>
+    <div data-hf-id="hf-sidk" class="hook-pos" style="left: 690px; top: 842px"><div data-hf-id="hf-w2rd" class="hook-chip"><span data-hf-id="hf-k4db" class="hook-badge">7</span>Paga la tasa</div></div>
+    <div data-hf-id="hf-yamm" class="hook-pos" style="left: 1286px; top: 826px"><div data-hf-id="hf-icpm" class="hook-chip"><span data-hf-id="hf-i4u6" class="hook-badge">8</span>Guarda el justificante</div></div>
+    <div data-hf-id="hf-wxmi" class="hook-pos" style="left: 966px; top: 912px"><div data-hf-id="hf-yrjm" class="hook-chip"><span data-hf-id="hf-hqj5" class="hook-badge">9</span>Vuelve a intentarlo</div></div>
+  </div>
+
+  <!-- Beat 7 -->
+  <div data-hf-id="hf-81in" class="hook-row" style="top: 206px">
+    <div data-hf-id="hf-88xh" id="hook-l7" class="hook-line hook-sm"><span data-hf-id="hf-s6f7" class="hook-w">Y</span> <span data-hf-id="hf-lsi4" class="hook-w">se</span> <span data-hf-id="hf-aoww" class="hook-w">paran</span> <span data-hf-id="hf-d6sm" class="hook-w hook-accent">cuando</span> <span data-hf-id="hf-hzlx" class="hook-w hook-accent">toca</span> <span data-hf-id="hf-pbbn" class="hook-w hook-accent">de</span> <span data-hf-id="hf-5st2" class="hook-w"><span data-hf-id="hf-ttd5" class="hook-accent">verdad</span>.</span></div>
+  </div>
+  <div data-hf-id="hf-v2mz" id="hook-card">
+    <div data-hf-id="hf-uepb" id="hook-ask-row"><div data-hf-id="hf-i46i" id="hook-ask">¿Por qué te paras?</div></div>
+    <div data-hf-id="hf-4yen" id="hook-replies">
+      <div data-hf-id="hf-fbsy" class="hook-reply">No puedo entrar en la sede electrónica.</div>
+      <div data-hf-id="hf-65jo" class="hook-reply">No puedo pedir la cita por ti.</div>
+      <div data-hf-id="hf-f1ss" class="hook-reply">Tendrás que rellenar el formulario tú.</div>
+    </div>
+    <div data-hf-id="hf-xd4z" id="hook-composer">
+      <div data-hf-id="hf-8q38" id="hook-composer-ph">Pregúntale a un asistente</div>
+      <div data-hf-id="hf-jfuf" id="hook-send-sm" class="hook-send">
+        <svg data-hf-id="hf-2tck" width="22" height="22" viewBox="0 0 18 18" fill="none"><path data-hf-id="hf-peh0" d="M9 15V3.5M4 8.25 9 3.25l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Beat 8 -->
+  <div data-hf-id="hf-igr9" class="hook-row" style="top: 491.6px">
+    <div data-hf-id="hf-alsw" id="hook-l8" class="hook-line"><span data-hf-id="hf-oagz" class="hook-w">Y</span> <span data-hf-id="hf-byby" class="hook-w">para</span> <span data-hf-id="hf-42id" class="hook-w">ayudarte,</span> <span data-hf-id="hf-tdag" class="hook-w">les</span> <span data-hf-id="hf-khgk" class="hook-w">das</span> <span data-hf-id="hf-il3n" class="hook-w">tus</span> <span data-hf-id="hf-6743" class="hook-w"><span data-hf-id="hf-ta49" class="hook-tint">datos</span>.</span></div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const tl = gsap.timeline({ paused: true });
+    const byId = (id) => document.getElementById(id);
+    const r = (i) => (((Math.sin(i * 12.9898) * 43758.5453) % 1) + 1) % 1;
+    const seq = (t0, gap, n) => Array.from({ length: n }, (_, i) => t0 + i * gap);
+
+    // Word entrance / exit (storyboard grammar)
+    const wordIn = (el, t) =>
+      tl.fromTo(el, { opacity: 0, y: 14, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.36, ease: "power3.out" }, t);
+    const out = (els, t) =>
+      tl.fromTo(els, { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -16, filter: "blur(8px)", duration: 0.28, ease: "power2.in", immediateRender: false }, t);
+
+    // Word-by-word line that stays centered: x = half the width of the words not yet shown.
+    // Widths are read lazily (function values) so they use the loaded font.
+    const wordLine = (lineId, times) => {
+      const line = byId(lineId);
+      const words = Array.from(line.querySelectorAll(".hook-w"));
+      const shift = (k) => () => (line.offsetWidth - (words[k].offsetLeft + words[k].offsetWidth)) / 2;
+      words.forEach((w, i) => {
+        wordIn(w, times[i]);
+        if (i === 0) tl.set(line, { x: shift(0) }, times[0]);
+        else tl.fromTo(line, { x: shift(i - 1) }, { x: shift(i), duration: 0.45, ease: "power3.out", immediateRender: false }, times[i]);
+      });
+    };
+
+    // ---- Beat 1: tiny composer + I-beam click (0.0–0.8)
+    const cam = byId("hook-cam");
+    tl.fromTo("#hook-pill", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power2.out" }, 0.05);
+    tl.fromTo("#hook-ibeam", { x: 420, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power2.inOut" }, 0.25);
+    tl.fromTo("#hook-ibeam", { y: 260 }, { y: 0, duration: 0.5, ease: "power3.inOut" }, 0.25);
+    tl.fromTo("#hook-ibeam", { scale: 1 }, { scale: 0.86, duration: 0.06, ease: "power2.in" }, 0.76);
+    tl.fromTo("#hook-ibeam", { scale: 0.86 }, { scale: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, 0.82);
+    tl.fromTo("#hook-ring", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.8);
+
+    // ---- Beat 2: hard camera zoom into the input's left part (0.85–1.45)
+    const PILL_L = -340, PAD = 100, ZOOM_X = 390;
+    const measure = byId("hook-measure");
+    const textEnd = () => PILL_L + PAD + measure.offsetWidth; // native x of the caret when typing is done
+    const xType = () => Math.min(ZOOM_X, 1300 - textEnd());
+    const appX = (k) => textEnd() + 14 + 56 + k * 258 + 115; // native centre of app tile k
+    const xApps = () => 1800 - (appX(3) + 115); // 4th tile right edge at ~x 1800
+    tl.fromTo("#hook-ibeam", { scale: 1, filter: "blur(0px)" }, { scale: 2.4, x: -260, opacity: 0, filter: "blur(6px)", duration: 0.3, ease: "power2.in", immediateRender: false }, 0.92);
+    tl.fromTo(cam, { scale: 0.2, x: 0 }, { scale: 1, x: ZOOM_X, duration: 0.6, ease: "expo.inOut" }, 0.85);
+
+    // ---- typing «Los asistentes de IA» at giant size (1.5–2.72), camera follows the caret
+    const TXT = "Los asistentes de IA";
+    const raw = [];
+    let acc = 0;
+    for (let i = 0; i < TXT.length; i++) {
+      acc += 0.07 + 0.05 * r(i + 1) + (TXT[i - 1] === " " ? 0.06 : 0);
+      raw.push(acc);
+    }
+    const K0 = 1.5, K1 = 2.72;
+    const keyTimes = raw.map((v) => K0 + ((v - raw[0]) * (K1 - K0)) / (raw[raw.length - 1] - raw[0]));
+    const typedEl = byId("hook-typed");
+    const caretEl = byId("hook-caret");
+    const drv = { t: 0 };
+    tl.fromTo(drv, { t: 0 }, {
+      t: 3.0, duration: 3.0, ease: "none",
+      onUpdate: () => {
+        const t = drv.t;
+        let n = 0;
+        while (n < keyTimes.length && t >= keyTimes[n]) n++;
+        typedEl.textContent = TXT.slice(0, n);
+        const typing = t >= K0 && t < K1 + 0.06;
+        const on = t >= 0.8 && t < 2.82 && (typing || Math.floor((t - 0.8) / 0.3) % 2 === 0);
+        caretEl.style.opacity = on ? "1" : "0";
+      },
+    }, 0);
+    tl.set("#hook-placeholder", { opacity: 0 }, K0);
+    tl.fromTo(cam, { x: ZOOM_X }, { x: xType, duration: K1 - K0 + 0.05, ease: "power1.inOut", immediateRender: false }, K0);
+
+    // ---- four assistant tiles pop in after the text (2.82–3.52), camera pans to show them
+    const bigApps = Array.from(document.querySelectorAll("#hook-apps .hook-app"));
+    const popT = [2.82, 2.96, 3.1, 3.24];
+    tl.fromTo(cam, { x: xType }, { x: xApps, duration: 0.72, ease: "power3.inOut", immediateRender: false }, 2.78);
+    bigApps.forEach((a, k) => {
+      tl.fromTo(a, { scale: 0.4, y: 30 }, { scale: 1, y: 0, duration: 0.28, ease: "back.out(1.7)" }, popT[k]);
+      tl.fromTo(a, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power2.out" }, popT[k]);
+    });
+
+    // ---- Beat 3: hard pull-back (3.56–4.21). The pill shrinks away; tiles and text hand off to
+    // screen-space twins that fly from the exact zoomed positions to the headline layout.
+    const PB = 3.56;
+    tl.fromTo(cam, { scale: 1, x: xApps }, { scale: 0.42, x: 0, duration: 0.65, ease: "expo.inOut", immediateRender: false }, PB);
+    tl.fromTo("#hook-pill", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, PB + 0.05);
+    tl.set(bigApps, { opacity: 0 }, PB);
+    tl.set(typedEl, { opacity: 0 }, PB);
+    const minis = Array.from(document.querySelectorAll("#hook-minis .hook-app"));
+    const miniX = [843, 921, 999, 1077], miniRot = [-7, -2, 3, 8];
+    minis.forEach((m, k) => {
+      tl.set(m, { opacity: 1 }, PB);
+      tl.fromTo(m,
+        { x: () => appX(k) + xApps() - miniX[k], y: 540 - 352, scale: 1, rotation: 0 },
+        { x: 0, y: 0, scale: 64 / 230, rotation: miniRot[k], duration: 0.65, ease: "expo.inOut", immediateRender: false },
+        PB);
+    });
+    const head = byId("hook-head");
+    tl.set(head, { opacity: 1 }, PB);
+    tl.fromTo(head,
+      { x: () => PILL_L + PAD + xApps() - head.offsetLeft, y: 40, scale: 130 / 88 },
+      { x: 0, y: 0, scale: 1, duration: 0.65, ease: "expo.inOut", immediateRender: false },
+      PB);
+
+    // ---- Beat 4: «prometían hacer tus trámites.»
+    wordLine("hook-l2", [4.05, 4.21, 4.37, 4.56]);
+
+    // ---- Beat 5: exit
+    out(["#hook-head", "#hook-l2", "#hook-minis"], 5.2);
+
+    // ---- Beat 6: «En cambio, te dan una lista de pasos.» + 9 chips piling up
+    wordLine("hook-l6", seq(5.55, 0.11, 8));
+    const chips = Array.from(document.querySelectorAll("#hook-chips .hook-chip"));
+    const gaps = [0.22, 0.2, 0.19, 0.17, 0.15, 0.14, 0.13, 0.12];
+    const chipT = [6.1];
+    gaps.forEach((g) => chipT.push(chipT[chipT.length - 1] + g));
+    const rot = chips.map((_, i) => (r(i + 21) * 2 - 1) * 4);
+    const dimBlur = chips.map((_, i) => (i < 7 ? 1.5 + 3 * r(i + 41) : 0));
+    const dimOp = chips.map((_, i) => (i < 7 ? 0.5 + 0.25 * r(i + 61) : 1));
+    chips.forEach((c, i) => {
+      // pop (back.out) on transforms only; focus/opacity on a non-overshooting ease (blur must never go negative)
+      tl.fromTo(c,
+        { scale: 0.82, y: 36, rotation: rot[i] * 2.5 },
+        { scale: 1, y: 0, rotation: rot[i], duration: 0.42, ease: "back.out(1.5)" },
+        chipT[i]);
+      tl.fromTo(c, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, chipT[i]);
+      if (i < 6) {
+        // depth-of-field: older steps drift out of focus as new ones land on top
+        tl.fromTo(c, { opacity: 1, filter: "blur(0px)" }, { opacity: dimOp[i], filter: `blur(${dimBlur[i]}px)`, duration: 0.25, ease: "power2.out", immediateRender: false }, chipT[i + 2]);
+      }
+    });
+    // chip 9 «Vuelve a intentarlo» gets its own beat: the pile dims, it stays sharp and grows slightly
+    const EMPH = 7.65;
+    const emphOp = chips.map((_, i) => (i < 8 ? 0.45 : 1));
+    const emphBlur = chips.map((_, i) => (i < 7 ? dimBlur[i] : i === 7 ? 2 : 0));
+    const pile = chips.slice(0, 8);
+    tl.fromTo(pile,
+      { opacity: (i) => (i < 6 ? dimOp[i] : 1), filter: (i) => `blur(${i < 6 ? dimBlur[i] : 0}px)` },
+      { opacity: (i) => emphOp[i], filter: (i) => `blur(${emphBlur[i]}px)`, duration: 0.35, ease: "power2.out", immediateRender: false },
+      EMPH);
+    tl.fromTo(document.querySelectorAll("#hook-chips .hook-pos")[8], { scale: 1 }, { scale: 1.04, duration: 0.35, ease: "power2.out" }, EMPH);
+    out("#hook-l6", 8.3);
+    tl.fromTo(chips,
+      { opacity: (i) => emphOp[i], y: 0, filter: (i) => `blur(${emphBlur[i]}px)` },
+      { opacity: 0, y: -16, filter: "blur(12px)", duration: 0.26, ease: "power2.in", stagger: 0.005, immediateRender: false },
+      8.3);
+
+    // ---- Beat 7: «Y se paran cuando toca de verdad.» + chat card
+    wordLine("hook-l7", seq(8.6, 0.12, 7));
+    tl.fromTo("#hook-card", { opacity: 0, y: 40, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 9.25);
+    tl.fromTo("#hook-ask", { opacity: 0, y: 16, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.36, ease: "power3.out" }, 9.65);
+    document.querySelectorAll("#hook-replies .hook-reply").forEach((el, i) => {
+      tl.fromTo(el, { opacity: 0, y: 10, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.34, ease: "power3.out" }, 10.05 + i * 0.4);
+    });
+    out(["#hook-l7", "#hook-card"], 11.35);
+
+    // ---- Beat 8: «Y para ayudarte, les das tus datos.» — fully visible ~12.63, held ≥2.0 s to 14.65
+    const l8T = seq(11.55, 0.12, 7);
+    wordLine("hook-l8", l8T);
+    tl.fromTo("#hook-l8 .hook-tint", { scale: 0.88 }, { scale: 1, duration: 0.45, ease: "back.out(2.2)" }, l8T[6]);
+    out("#hook-l8", 14.65);
+
+    window.__timelines["hook"] = tl;
+  })();
+</script>
+</template></body></html>

@@ -12,3 +12,5 @@ sites/dni/fixtures/real-*.html
 sites/hacienda/fixtures/*.html
 sites/registro-asociaciones/fixtures/*.html
 .astro
+# Proyecto HyperFrames del vídeo de lanzamiento: se conserva tal cual lo genera la herramienta
+docs/launch-video/film

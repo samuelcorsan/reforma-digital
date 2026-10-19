@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es"><head><meta charset="UTF-8" /></head><body><template>
+<link rel="stylesheet" href="../assets/tokens.css" />
+<style>
+  #root { position: absolute; inset: 0; overflow: hidden; background: var(--ink); color: var(--on-dark); font-family: var(--font-sans); font-weight: 500; letter-spacing: -0.03em; line-height: 1.1; }
+  #close-brand { position: absolute; left: 0; right: 0; top: 294px; display: flex; align-items: center; justify-content: center; gap: 22px; height: 72px; }
+  #close-logo { display: block; width: 48px; height: 64px; opacity: 0; }
+  #close-name { display: block; font-size: 56px; opacity: 0; }
+  #close-head { position: absolute; left: 0; right: 0; top: 492px; display: flex; justify-content: center; align-items: baseline; gap: 0.25em; font-size: 88px; white-space: nowrap; }
+  #root .close-w { display: inline-block; opacity: 0; }
+  #close-accent { color: var(--brand-yellow); }
+  #close-url { position: absolute; left: 0; right: 0; top: 592px; display: flex; justify-content: center; }
+  #close-url-text { display: block; font-size: 44px; letter-spacing: -0.02em; white-space: nowrap; opacity: 0; }
+  #close-black { position: absolute; inset: 0; background: #000; opacity: 0; }
+</style>
+<div data-hf-id="hf-4xhx" id="root" data-composition-id="close" data-width="1920" data-height="1080">
+  <div data-hf-id="hf-jeqc" id="close-brand" data-layout-allow-overflow>
+    <svg data-hf-id="hf-lc5f" id="close-logo" viewBox="0 0 144 192" aria-hidden="true">
+      <path data-hf-id="hf-11ua" fill="#df1717" d="M48 0H96V48H48V96H96V144H48V192H0V48H48Z" />
+      <path data-hf-id="hf-nya4" fill="#a50e0e" d="M0 48L48 0V48Z" />
+      <rect data-hf-id="hf-ilz0" x="96" y="48" width="48" height="48" fill="#df1717" />
+      <rect data-hf-id="hf-exqx" x="96" y="144" width="48" height="48" fill="#df1717" />
+    </svg>
+    <span data-hf-id="hf-h1ao" id="close-name">Reforma Digital</span>
+  </div>
+  <div data-hf-id="hf-o1gz" id="close-head" data-layout-allow-overflow><span data-hf-id="hf-0x5c" class="close-w" id="close-w1">Tus</span><span data-hf-id="hf-47q6" class="close-w" id="close-w2">trámites,</span><span data-hf-id="hf-qatw" class="close-w" id="close-w3">hechos</span><span data-hf-id="hf-oufv" class="close-w" id="close-accent">contigo.</span></div>
+  <div data-hf-id="hf-q5wr" id="close-url"><span data-hf-id="hf-pm4e" id="close-url-text">github.com/samuelcorsan/reforma-digital</span></div>
+  <div data-hf-id="hf-t455" id="close-black"></div>
+</div>
+<script>
+  const tl = gsap.timeline({ paused: true });
+  const q = (s) => document.querySelector(s);
+  const wordIn = (el, t) =>
+    tl.fromTo(el, { opacity: 0, y: 14, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.38, ease: "power3.out" }, t);
+
+  // Word widths from canvas text metrics: the slot is not laid out when the timeline is built.
+  const ctx = document.createElement("canvas").getContext("2d");
+  function centredShifts(words, px) {
+    ctx.font = `500 ${px}px "Geist"`;
+    ctx.letterSpacing = `${-0.03 * px}px`;
+    const gap = 0.25 * px;
+    const ws = words.map((w) => ctx.measureText(w.textContent).width);
+    const total = ws.reduce((a, b) => a + b, 0) + gap * (ws.length - 1);
+    let right = -gap;
+    return ws.map((w) => {
+      right += gap + w;
+      return (total - right) / 2;
+    });
+  }
+
+  function build() {
+    // Beat 1 — logo + wordmark row at the top.
+    tl.fromTo("#close-logo", { opacity: 0, scale: 0.8, filter: "blur(8px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.05);
+    wordIn("#close-name", 0.2);
+
+    // Beat 2 — slogan word by word, visible words stay centred; hold ~1.6 s.
+    const words = ["#close-w1", "#close-w2", "#close-w3", "#close-accent"].map(q);
+    const times = [0.5, 0.63, 0.76, 0.92];
+    const shift = centredShifts(words, 88);
+    tl.set("#close-head", { x: shift[0] }, 0);
+    words.forEach((w, i) => {
+      wordIn(w, times[i]);
+      if (i > 0) tl.fromTo("#close-head", { x: shift[i - 1] }, { x: shift[i], duration: 0.42, ease: "power3.out", immediateRender: false }, times[i]);
+    });
+    tl.fromTo(words, { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -16, filter: "blur(8px)", duration: 0.24, ease: "power2.in", stagger: 0.02, immediateRender: false }, 2.88);
+
+    // Beat 3 — the row travels to centre and scales 1.6×; URL and licence line reveal under it.
+    tl.fromTo("#close-brand", { y: 0, scale: 1 }, { y: 175, scale: 1.6, duration: 0.7, ease: "power3.inOut" }, 3.05);
+    tl.fromTo(
+      "#close-url-text",
+      { opacity: 0, y: 12, filter: "blur(10px)", clipPath: "inset(-20% 100% -20% 0%)" },
+      { opacity: 1, y: 0, filter: "blur(0px)", clipPath: "inset(-20% 0% -20% 0%)", duration: 0.42, ease: "power3.out" },
+      3.55,
+    );
+
+    // Beat 4 — hold the lockup (≥ 2.2 s), fade to black over the last 0.5 s.
+    tl.fromTo("#close-black", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.inOut" }, 6.3);
+
+    window.__timelines["close"] = tl;
+    if (window.__hfForceTimelineRebind) window.__hfForceTimelineRebind();
+  }
+
+  Promise.all([document.fonts.load('500 88px "Geist"'), document.fonts.ready]).then(build);
+</script>
+</template></body></html>

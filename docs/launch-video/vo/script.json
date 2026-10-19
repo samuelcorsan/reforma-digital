@@ -1,0 +1,116 @@
+[
+  {
+    "id": "01",
+    "at": 1.35,
+    "until": 5.45,
+    "text": "Los asistentes de IA prometían hacer tus trámites."
+  },
+  {
+    "id": "02",
+    "at": 5.5,
+    "until": 8.55,
+    "text": "En cambio, te dan una lista de pasos."
+  },
+  {
+    "id": "03",
+    "at": 8.6,
+    "until": 11.35,
+    "text": "Y se paran cuando toca de verdad."
+  },
+  {
+    "id": "04",
+    "at": 11.45,
+    "until": 15.05,
+    "text": "Y para ayudarte, les das tus datos."
+  },
+  {
+    "id": "05",
+    "at": 15.1,
+    "until": 19.5,
+    "text": "Presentamos la app de Reforma Digital."
+  },
+  {
+    "id": "06",
+    "at": 19.55,
+    "until": 21.6,
+    "text": "Un asistente que hace tus trámites."
+  },
+  {
+    "id": "06b",
+    "at": 22.6,
+    "until": 27.3,
+    "text": "En las webs oficiales, con tus datos y con tu permiso."
+  },
+  {
+    "id": "07",
+    "at": 28.25,
+    "until": 31.3,
+    "text": "Le cuentas qué necesitas."
+  },
+  {
+    "id": "08",
+    "at": 31.4,
+    "until": 34.6,
+    "text": "Busca en las webs oficiales."
+  },
+  {
+    "id": "09",
+    "at": 34.8,
+    "until": 39.1,
+    "text": "Te lo explica paso a paso."
+  },
+  {
+    "id": "10",
+    "at": 39.3,
+    "until": 42.2,
+    "text": "Y si quieres, lo hace por ti."
+  },
+  {
+    "id": "11",
+    "at": 42.25,
+    "until": 45.15,
+    "text": "Antes de reservar, te pide permiso."
+  },
+  {
+    "id": "12",
+    "at": 45.2,
+    "until": 48.7,
+    "text": "Hecho. Cita reservada."
+  },
+  {
+    "id": "13",
+    "at": 49.1,
+    "until": 50.6,
+    "text": "Todo es privado."
+  },
+  {
+    "id": "14",
+    "at": 50.65,
+    "until": 53.15,
+    "text": "Tus datos, cifrados en tu Mac."
+  },
+  {
+    "id": "15",
+    "at": 53.3,
+    "until": 56.0,
+    "text": "Tu nombre y tu DNI se bloquean."
+  },
+  {
+    "id": "16",
+    "at": 56.08,
+    "until": 58.8,
+    "text": "La IA solo ve marcadores."
+  },
+  {
+    "id": "17",
+    "at": 58.9,
+    "until": 62.1,
+    "text": "Tus trámites, hechos contigo."
+  },
+  {
+    "id": "18",
+    "at": 62.2,
+    "until": 64.8,
+    "text": "Es de código abierto."
+  }
+]

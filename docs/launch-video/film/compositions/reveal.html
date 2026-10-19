@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es"><head><meta charset="UTF-8" /></head><body><template>
+<link rel="stylesheet" href="../assets/tokens.css" />
+<style>
+  #root { position: absolute; inset: 0; overflow: hidden; background: var(--ink); color: var(--on-dark); font-family: var(--font-sans); font-weight: 500; letter-spacing: -0.03em; }
+  #root * { box-sizing: border-box; }
+
+  .reveal-row { position: absolute; left: 0; right: 0; display: flex; justify-content: center; }
+  #reveal-intro { display: block; font-size: 80px; line-height: 1.1; white-space: nowrap; opacity: 0; }
+
+  /* macOS-style dock. Slots are absolutely placed (base layout below); JS adds x shift + magnification. */
+  #reveal-dock { position: absolute; left: 0; top: 640px; width: 1920px; height: 118px; opacity: 0; }
+  #reveal-bar { position: absolute; left: 361px; top: 0; width: 1211px; height: 118px; border-radius: 30px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.18); backdrop-filter: blur(24px) saturate(1.6); -webkit-backdrop-filter: blur(24px) saturate(1.6); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45); }
+  .reveal-slot { position: absolute; top: 0; width: 96px; height: 118px; }
+  .reveal-mag { position: absolute; left: 0; top: 11px; width: 96px; height: 96px; transform-origin: 50% 100%; }
+  .reveal-tile { position: relative; display: block; width: 96px; height: 96px; border-radius: 22.5%; overflow: hidden; box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4); }
+  .reveal-tile svg { display: block; width: 96px; height: 96px; }
+  .reveal-tile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0) 42%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.06); pointer-events: none; }
+  .reveal-tile.reveal-trash { overflow: visible; box-shadow: none; }
+  .reveal-tile.reveal-trash::after { display: none; }
+  #reveal-app { display: block; width: 96px; height: 96px; border-radius: 22.5%; box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4); }
+  .reveal-dot { position: absolute; left: 46px; bottom: 2px; width: 5px; height: 5px; border-radius: 50%; background: rgba(255, 255, 255, 0.7); }
+  #reveal-app-dot { opacity: 0; }
+  .reveal-sep { position: absolute; top: 21px; width: 1px; height: 76px; background: rgba(255, 255, 255, 0.24); }
+
+  #reveal-ripple { position: absolute; left: 890px; top: 607px; width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--on-dark); opacity: 0; }
+  #reveal-cursor { position: absolute; left: 958px; top: 675px; width: 30px; height: 44px; transform-origin: 2px 2px; }
+
+  #reveal-flood { position: absolute; inset: 0; overflow: hidden; background: var(--brand-gradient); clip-path: circle(0px at 960px 677px); }
+  #reveal-sun { position: absolute; inset: 0; background: var(--brand-sun); transform-origin: 50% 100%; opacity: 0.4; }
+
+  #reveal-lockup { position: absolute; left: 0; right: 0; top: 322px; display: flex; flex-direction: column; align-items: center; color: var(--surface); }
+  #reveal-logo { display: block; width: 90px; height: 120px; margin-bottom: 36px; opacity: 0; }
+  #reveal-word { display: block; font-size: 190px; font-weight: 600; line-height: 1; letter-spacing: -0.04em; white-space: pre; }
+  .reveal-ch { display: inline-block; opacity: 0; }
+  #reveal-mac { display: block; margin-top: 28px; font-size: 52px; line-height: 1.2; white-space: nowrap; color: rgba(255, 255, 255, 0.85); }
+  .reveal-w { display: inline-block; opacity: 0; }
+</style>
+
+<div data-hf-id="hf-yqoq" id="root" data-composition-id="reveal" data-width="1920" data-height="1080">
+  <div data-hf-id="hf-ir1j" class="reveal-row" style="top: 356px"><div data-hf-id="hf-qh1q" id="reveal-intro">Presentamos</div></div>
+
+  <div data-hf-id="hf-bkku" id="reveal-dock" data-layout-allow-overflow>
+    <div id="reveal-bar"></div>
+    <!-- Finder-like -->
+    <div class="reveal-slot" style="left: 372px"><div class="reveal-mag"><div class="reveal-tile"><svg viewBox="0 0 96 96"><defs><linearGradient id="rv-fin-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ac8fa" /><stop offset="1" stop-color="#0a6cf0" /></linearGradient><linearGradient id="rv-fin-r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4faff" /><stop offset="1" stop-color="#bfdcf7" /></linearGradient></defs><rect width="96" height="96" fill="url(#rv-fin-r)" /><path d="M0 0H55C51 14 45 27 45 40C45 45 50 48 53 52C49 54 45 56 45 61C45 71 50 83 52 96H0Z" fill="url(#rv-fin-l)" /><rect x="27" y="26" width="6" height="16" rx="3" fill="#0f2240" /><rect x="63" y="26" width="6" height="16" rx="3" fill="#0f2240" /><path d="M22 64C34 76 62 76 74 64" fill="none" stroke="#0f2240" stroke-width="4" stroke-linecap="round" /></svg></div></div><div class="reveal-dot"></div></div>
+    <!-- Safari-like -->
+    <div class="reveal-slot" style="left: 480px"><div class="reveal-mag"><div class="reveal-tile"><svg viewBox="0 0 96 96"><defs><linearGradient id="rv-saf-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" /><stop offset="1" stop-color="#e3e3e8" /></linearGradient><linearGradient id="rv-saf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3fd0ff" /><stop offset="1" stop-color="#0a5ce6" /></linearGradient></defs><rect width="96" height="96" fill="url(#rv-saf-bg)" /><circle cx="48" cy="48" r="38" fill="url(#rv-saf)" /><circle cx="48" cy="48" r="32" fill="none" stroke="#ffffff" stroke-width="5" stroke-dasharray="1.3 7.08" opacity="0.9" /><path d="M66.4 29.6 51.5 51.5 44.5 44.5Z" fill="#ff3b30" /><path d="M29.6 66.4 51.5 51.5 44.5 44.5Z" fill="#ffffff" /></svg></div></div><div class="reveal-dot"></div></div>
+    <!-- Mail -->
+    <div class="reveal-slot" style="left: 588px"><div class="reveal-mag"><div class="reveal-tile"><svg viewBox="0 0 96 96"><defs><linearGradient id="rv-mail" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2fb4ff" /><stop offset="1" stop-color="#0a5fe3" /></linearGradient></defs><rect width="96" height="96" fill="url(#rv-mail)" /><rect x="18" y="28" width="60" height="40" rx="5" fill="#ffffff" /><path d="M20 31 48 52 76 31" fill="none" stroke="#1b74e6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" /></svg></div></div><div class="reveal-dot"></div></div>
+    <!-- Messages -->
+    <div class="reveal-slot" style="left: 696px"><div class="reveal-mag"><div class="reveal-tile"><svg viewBox="0 0 96 96"><defs><linearGradient id="rv-msg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ef886" /><stop offset="1" stop-color="#0dbd2c" /></linearGradient></defs><rect width="96" height="96" fill="url(#rv-msg)" /><ellipse cx="48" cy="45" rx="28" ry="22" fill="#ffffff" /><path d="M31 58Q30 69 22 74Q36 73 42 64Z" fill="#ffffff" /></svg></div></div></div>
+    <!-- Calendar -->
+    <div class="reveal-slot" style="left: 804px"><div class="reveal-mag"><div class="reveal-tile"><svg viewBox="0 0 96 96"><rect width="96" height="96" fill="#ffffff" /><rect width="96" height="27" fill="#f53b30" /><text x="48" y="20" text-anchor="middle" font-family="Geist, sans-serif" font-size="15" font-weight="700" letter-spacing="1" fill="#ffffff">OCT</text><text x="48" y="79" text-anchor="middle" font-family="Geist, sans-serif" font-size="50" font-weight="400" letter-spacing="-2" fill="#1c1c1e">18</text></svg></div></div></div>
+    <!-- Reforma Digital (ours, middle) -->
+    <div class="reveal-slot" style="left: 912px"><div class="reveal-mag"><div><img data-hf-id="hf-npl7" id="reveal-app" src="../assets/app-icon.png" alt="" /></div></div><div id="reveal-app-dot" class="reveal-dot"></div></div>
+    <!-- Notes -->
+    <div class="reveal-slot" style="left: 1020px"><div class="reveal-mag"><div class="reveal-tile"><svg viewBox="0 0 96 96"><defs><linearGradient id="rv-notes" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe066" /><stop offset="1" stop-color="#fcc419" /></linearGradient></defs><rect width="96" height="96" fill="#fbfbf8" /><rect width="96" height="27" fill="url(#rv-notes)" /><path d="M14 45H82M14 58H82M14 71H82M14 84H60" stroke="#d4d4d0" stroke-width="2" /></svg></div></div></div>
+    <!-- Music -->
+    <div class="reveal-slot" style="left: 1128px"><div class="reveal-mag"><div class="reveal-tile"><svg viewBox="0 0 96 96"><defs><linearGradient id="rv-music" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6b81" /><stop offset="1" stop-color="#f2243e" /></linearGradient></defs><rect width="96" height="96" fill="url(#rv-music)" /><path d="M40 64V32M68 58V26" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" /><path d="M38 29 70 22V31L38 38Z" fill="#ffffff" /><ellipse cx="33" cy="65" rx="9" ry="6.8" transform="rotate(-20 33 65)" fill="#ffffff" /><ellipse cx="61" cy="59" rx="9" ry="6.8" transform="rotate(-20 61 59)" fill="#ffffff" /></svg></div></div><div class="reveal-dot"></div></div>
+    <!-- Photos-like -->
+    <div class="reveal-slot" style="left: 1236px"><div class="reveal-mag"><div class="reveal-tile"><svg viewBox="0 0 96 96"><rect width="96" height="96" fill="#ffffff" /><g opacity="0.85" style="mix-blend-mode: multiply"><ellipse cx="48" cy="31" rx="10" ry="17" fill="#f9a12e" /><ellipse cx="48" cy="31" rx="10" ry="17" fill="#fbd535" transform="rotate(45 48 48)" /><ellipse cx="48" cy="31" rx="10" ry="17" fill="#a3d64a" transform="rotate(90 48 48)" /><ellipse cx="48" cy="31" rx="10" ry="17" fill="#3cbf6a" transform="rotate(135 48 48)" /><ellipse cx="48" cy="31" rx="10" ry="17" fill="#2fb3c6" transform="rotate(180 48 48)" /><ellipse cx="48" cy="31" rx="10" ry="17" fill="#4a7ff0" transform="rotate(225 48 48)" /><ellipse cx="48" cy="31" rx="10" ry="17" fill="#9b5de5" transform="rotate(270 48 48)" /><ellipse cx="48" cy="31" rx="10" ry="17" fill="#f0447a" transform="rotate(315 48 48)" /></g></svg></div></div></div>
+    <!-- System Settings -->
+    <div class="reveal-slot" style="left: 1344px"><div class="reveal-mag"><div class="reveal-tile"><svg viewBox="0 0 96 96"><defs><linearGradient id="rv-set" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9d9de" /><stop offset="1" stop-color="#8e8e94" /></linearGradient></defs><rect width="96" height="96" fill="url(#rv-set)" /><circle cx="48" cy="48" r="30" fill="none" stroke="#45454a" stroke-width="10" stroke-dasharray="8 7.71" /><circle cx="48" cy="48" r="24" fill="#45454a" /><circle cx="48" cy="48" r="15" fill="#c9c9ce" /><circle cx="48" cy="48" r="6" fill="#45454a" /></svg></div></div></div>
+    <div class="reveal-sep" style="left: 1452px"></div>
+    <!-- Trash -->
+    <div class="reveal-slot" style="left: 1465px"><div class="reveal-mag"><div class="reveal-tile reveal-trash"><svg viewBox="0 0 96 96"><path d="M26 31H70L66 84Q65.5 89 60.5 89H35.5Q30.5 89 30 84Z" fill="rgba(225, 230, 238, 0.28)" stroke="rgba(255, 255, 255, 0.6)" stroke-width="2" stroke-linejoin="round" /><path d="M38 38 39.5 82M48 38V82M58 38 56.5 82" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2" stroke-linecap="round" /><rect x="21" y="24" width="54" height="8" rx="4" fill="rgba(235, 238, 244, 0.65)" /></svg></div></div></div>
+  </div>
+
+  <div data-hf-id="hf-7tul" id="reveal-ripple"></div>
+  <svg data-hf-id="hf-pey6" id="reveal-cursor" viewBox="0 0 24 35" overflow="visible"><path data-hf-id="hf-3rjn" d="M2 2 L2 27.5 L8.4 21.6 L12.6 31.6 L17 29.7 L12.9 19.9 L21.4 19.9 Z" fill="#ffffff" stroke="#000000" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke" /></svg>
+
+  <div data-hf-id="hf-eych" id="reveal-flood"><div data-hf-id="hf-xjj6" id="reveal-sun" data-layout-allow-overflow></div></div>
+
+  <div data-hf-id="hf-9bql" id="reveal-lockup">
+    <svg data-hf-id="hf-5l0f" id="reveal-logo" viewBox="0 0 144 192"><path data-hf-id="hf-d3wk" fill="#ffffff" d="M48 0H96V48H48V96H96V144H48V192H0V48H48Z" /><path data-hf-id="hf-eh4m" fill="rgba(0,0,0,0.22)" d="M0 48L48 0V48Z" /><rect data-hf-id="hf-rr4u" x="96" y="48" width="48" height="48" fill="#ffffff" /><rect data-hf-id="hf-h6if" x="96" y="144" width="48" height="48" fill="#ffffff" /></svg>
+    <div data-hf-id="hf-2wzr" id="reveal-word"><span data-hf-id="hf-8i20" class="reveal-ch">R</span><span data-hf-id="hf-osm5" class="reveal-ch">e</span><span data-hf-id="hf-pzj8" class="reveal-ch">f</span><span data-hf-id="hf-srof" class="reveal-ch">o</span><span data-hf-id="hf-l7uw" class="reveal-ch">r</span><span data-hf-id="hf-rz2d" class="reveal-ch">m</span><span data-hf-id="hf-qdu9" class="reveal-ch">a</span><span data-hf-id="hf-0cyy" class="reveal-ch"> </span><span data-hf-id="hf-ch4a" class="reveal-ch">D</span><span data-hf-id="hf-tkah" class="reveal-ch">i</span><span data-hf-id="hf-pl87" class="reveal-ch">g</span><span data-hf-id="hf-duj1" class="reveal-ch">i</span><span data-hf-id="hf-iu0q" class="reveal-ch">t</span><span data-hf-id="hf-k9ol" class="reveal-ch">a</span><span data-hf-id="hf-sdde" class="reveal-ch">l</span></div>
+    <div data-hf-id="hf-kpmg" id="reveal-mac"><span data-hf-id="hf-fngs" class="reveal-w">La</span> <span data-hf-id="hf-oqtx" class="reveal-w">aplicación</span></div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const tl = gsap.timeline({ paused: true });
+    const wordIn = (el, t, d = 0.4) =>
+      tl.fromTo(el, { opacity: 0, y: 14, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: d, ease: "power3.out" }, t);
+
+    // ---- Beat 1: «Presentamos»
+    wordIn("#reveal-intro", 0.05, 0.45);
+
+    // ---- Beat 2: dock rises (0.2–0.7)
+    tl.fromTo("#reveal-dock", { opacity: 0, y: 70, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.2);
+    tl.fromTo("#reveal-dock .reveal-mag > *", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.03 }, 0.26);
+
+    // ---- Beat 3: cursor glides to the app icon (0.6–1.22) with dock magnification, presses at 1.22, clicks at 1.3
+    const GLIDE = 0.6, GLIDE_D = 0.62, CX = 960, CY = 677; // cursor tip lands on the magnified icon centre
+    const exX = gsap.parseEase("power2.inOut"), exY = gsap.parseEase("power3.inOut");
+    tl.fromTo("#reveal-cursor", { x: 700 }, { x: 0, duration: GLIDE_D, ease: exX }, GLIDE);
+    tl.fromTo("#reveal-cursor", { y: 480 }, { y: 0, duration: GLIDE_D, ease: exY }, GLIDE);
+
+    // Magnification, seek-safe: pure function of the glide progress (same eases as the cursor tweens).
+    const slots = Array.from(document.querySelectorAll("#reveal-dock .reveal-slot, #reveal-dock .reveal-sep"));
+    const items = slots.map((el) => ({ el, w: el.classList.contains("reveal-sep") ? 1 : 96, mag: el.querySelector(".reveal-mag") }));
+    const GAP = 12, OURS = 5, bar = document.getElementById("reveal-bar");
+    let base = 960 - 48 - OURS * (96 + GAP);
+    items.forEach((it) => { it.c = base + it.w / 2; base += it.w + GAP; });
+    const layout = (p) => {
+      const cx = CX + 700 * (1 - exX(p));
+      const cy = CY + 480 * (1 - exY(p));
+      const hover = gsap.utils.clamp(0, 1, (830 - cy) / 70); // only while the pointer is over the dock
+      const s = items.map((it) => (it.mag ? 1 + 0.45 * hover * Math.exp(-Math.pow(Math.abs(cx - it.c) / 126.9, 1.3)) : 1));
+      const w = items.map((it, i) => it.w * s[i]);
+      const left = [];
+      left[OURS] = 960 - w[OURS] / 2; // the dock grows around our icon, which stays put
+      for (let i = OURS - 1; i >= 0; i--) left[i] = left[i + 1] - GAP - w[i];
+      for (let i = OURS + 1; i < items.length; i++) left[i] = left[i - 1] + w[i - 1] + GAP;
+      items.forEach((it, i) => {
+        it.el.style.transform = `translateX(${left[i] + w[i] / 2 - it.c}px)`;
+        if (it.mag) it.mag.style.transform = `scale(${s[i]})`;
+      });
+      const last = items.length - 1;
+      bar.style.left = `${left[0] - 11}px`;
+      bar.style.width = `${left[last] + w[last] - left[0] + 22}px`;
+    };
+    layout(0);
+    const glide = { p: 0 };
+    tl.fromTo(glide, { p: 0 }, { p: 1, duration: GLIDE_D, ease: "none", onUpdate: () => layout(glide.p) }, GLIDE);
+
+    tl.fromTo("#reveal-cursor", { scale: 1 }, { scale: 0.85, duration: 0.08, ease: "power2.in" }, 1.22);
+    tl.fromTo("#reveal-cursor", { scale: 0.85 }, { scale: 1, duration: 0.16, ease: "power2.out", immediateRender: false }, 1.3);
+    tl.fromTo("#reveal-app", { scale: 1 }, { scale: 0.9, duration: 0.08, ease: "power2.in" }, 1.22);
+    tl.fromTo("#reveal-app", { scale: 0.9 }, { scale: 1, duration: 0.24, ease: "back.out(2)", immediateRender: false }, 1.3);
+    tl.fromTo("#reveal-ripple", { opacity: 0.8, scale: 1 }, { opacity: 0, scale: 2.8, duration: 0.6, ease: "power2.out", immediateRender: false }, 1.3);
+    // macOS launch bounce: ~40 px on screen (the icon sits inside the 1.45× magnifier) and down, 0.45 s; the running dot appears
+    const BOUNCE = 1.32;
+    tl.fromTo("#reveal-app", { y: 0 }, { y: -40 / 1.45, duration: 0.2, ease: "power2.out", immediateRender: false }, BOUNCE);
+    tl.fromTo("#reveal-app", { y: -40 / 1.45 }, { y: 0, duration: 0.25, ease: "power2.in", immediateRender: false }, BOUNCE + 0.2);
+    tl.fromTo("#reveal-app-dot", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, BOUNCE + 0.1);
+
+    // ---- Beat 4: sunset floods from the icon's center (1.55–2.15)
+    tl.fromTo("#reveal-flood", { clipPath: "circle(0px at 960px 677px)" }, { clipPath: "circle(1250px at 960px 677px)", duration: 0.6, ease: "power3.inOut" }, 1.55);
+    tl.set(["#reveal-intro", "#reveal-dock", "#reveal-cursor"], { opacity: 0 }, 2.15);
+
+    // ---- Beat 5: logo + wordmark tracking reveal (1.9–3.2)
+    tl.fromTo("#reveal-logo", { opacity: 0, scale: 0.8, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.9, ease: "expo.out" }, 1.9);
+    // tracking 0.35em → −0.04em, done with per-letter x offsets (transform only)
+    const chars = Array.from(document.querySelectorAll("#reveal-word .reveal-ch"));
+    const track = (0.35 + 0.04) * 190;
+    const mid = (chars.length - 1) / 2;
+    chars.forEach((c, i) => {
+      tl.fromTo(c, { opacity: 0, x: (i - mid) * track, filter: "blur(16px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 1.3, ease: "expo.out" }, 1.92);
+    });
+
+    // ---- Beat 6: «La aplicación» (3.0–3.5)
+    document.querySelectorAll("#reveal-mac .reveal-w").forEach((w, i) => wordIn(w, 3.0 + i * 0.14, 0.36));
+
+    // ---- Beat 7: sun glow rises / breathes (1.9–4.5)
+    tl.fromTo("#reveal-sun", { opacity: 0.4, scale: 1, y: 60 }, { opacity: 0.9, scale: 1.06, y: 0, duration: 2.6, ease: "sine.inOut" }, 1.9);
+
+    window.__timelines["reveal"] = tl;
+  })();
+</script>
+</template></body></html>

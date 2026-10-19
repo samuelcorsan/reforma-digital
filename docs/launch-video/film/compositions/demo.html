@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="es"><head><meta charset="UTF-8" /></head><body><template>
+<link rel="stylesheet" href="../assets/tokens.css" />
+<style>
+  #root { --fg-muted: #6b6b6b; position: absolute; inset: 0; background: #ffffff; font-family: var(--font-sans); color: var(--fg); overflow: hidden; -webkit-font-smoothing: antialiased; }
+  #demo-stage { position: absolute; inset: 0; }
+  /* The app window, at native CSS size; the camera scales it. */
+  #demo-world { position: absolute; left: 320px; top: 160px; width: 1280px; height: 760px; transform-origin: 0 0; }
+  #demo-win { position: absolute; inset: 0; border-radius: 16px; background: var(--canvas); overflow: hidden; outline: 1px solid rgba(0,0,0,0.12); }
+  .ic { display: inline-flex; flex-shrink: 0; }
+  .ic svg { width: 100%; height: 100%; display: block; }
+
+  /* Sidebar (DESIGN.md §9: 260 px, foreground at 2.5 %) */
+  #demo-side { position: absolute; left: 0; top: 0; width: 260px; height: 760px; background: var(--sidebar); border-right: 1px solid var(--border); }
+  .demo-lights { position: absolute; left: 20px; top: 20px; display: flex; gap: 8px; }
+  .demo-lights span { width: 12px; height: 12px; border-radius: 50%; display: block; }
+  .demo-side-top { position: absolute; left: 10px; right: 10px; top: 52px; }
+  .demo-row { height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 10px; border-radius: 8px; font-size: 15px; color: var(--fg); }
+  .demo-row .ic { width: 18px; height: 18px; }
+  .demo-row kbd { margin-left: auto; font-family: var(--font-sans); font-size: 14px; color: var(--fg-muted); }
+  .demo-side-h { margin: 24px 10px 4px; font-size: 14px; color: var(--fg-muted); }
+  #demo-list { position: relative; height: 200px; }
+  .demo-trow { position: absolute; left: 0; right: 0; height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 8px 0 10px; border-radius: 8px; font-size: 15px; }
+  .demo-trow .t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .demo-trow .ago { font-size: 14px; color: var(--fg-muted); }
+  #demo-new { background: rgba(10,10,10,0.07); font-weight: 500; }
+  .demo-st { position: absolute; right: 8px; top: 10px; width: 16px; height: 16px; display: grid; place-items: center; border-radius: 50%; font-size: 11px; font-weight: 600; line-height: 1; }
+  #demo-st-dot span { width: 6px; height: 6px; border-radius: 50%; background: rgba(10,10,10,0.5); display: block; }
+  #demo-st-yellow { background: var(--brand-yellow); color: var(--fg); }
+  #demo-st-red { background: var(--brand); color: #fff; }
+  #demo-st-blue { background: var(--done-blue); color: #fff; }
+  #demo-st-blue .ic { width: 10px; height: 10px; }
+  .demo-side-foot { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; padding: 0 16px; font-size: 15px; }
+  .demo-side-foot .gear { margin-left: auto; width: 40px; height: 40px; display: grid; place-items: center; color: var(--fg); }
+  .demo-side-foot .gear .ic { width: 18px; height: 18px; }
+
+  /* Main area */
+  #demo-main { position: absolute; left: 260px; top: 0; width: 1020px; height: 760px; }
+  .demo-layer { position: absolute; inset: 0; }
+  /* Home (inicio.tsx) */
+  #demo-home-glow { position: absolute; left: 0; right: 0; bottom: 0; height: 256px; background: radial-gradient(60% 100% at 50% 100%, rgba(255,190,11,0.16), transparent); }
+  #demo-home-col { position: absolute; left: 170px; width: 680px; top: 262px; }
+  #demo-home-h1 { margin: 0 0 32px; text-align: center; font-family: var(--font-serif); font-size: 40px; line-height: 1.1; font-weight: 400; letter-spacing: -0.02em; }
+  .demo-comp { background: #fff; border-radius: 28px; position: relative; }
+  .demo-comp-text { min-height: 60px; padding: 16px 20px 0; font-size: 16px; line-height: 24px; color: var(--fg); white-space: pre-wrap; }
+  .demo-comp-ph { color: var(--fg-muted); }
+  .demo-comp-row { display: flex; align-items: center; gap: 4px; padding: 4px 10px 10px; }
+  .demo-sel { height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 10px; font-size: 14px; color: var(--fg-muted); }
+  .demo-sel .ic { width: 14px; height: 14px; }
+  .demo-send { margin-left: auto; width: 40px; height: 40px; border-radius: 50%; background: #171717; color: #fff; display: grid; place-items: center; }
+  .demo-send svg { width: 18px; height: 18px; }
+  .demo-caret { display: inline-block; width: 1px; height: 18px; background: var(--fg); vertical-align: -3px; margin-left: 1px; }
+  .demo-pills { margin-top: 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .demo-pill { height: 40px; display: flex; align-items: center; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-size: 15px; }
+
+  /* Conversation (tramite.tsx) */
+  .demo-head { position: absolute; left: 0; right: 0; top: 0; height: 52px; display: flex; align-items: center; gap: 8px; padding: 0 24px; }
+  .demo-head h1 { margin: 0; font-size: 15px; font-weight: 500; }
+  .demo-ghost { height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 10px; font-size: 14px; font-weight: 500; }
+  .demo-ghost .ic, .demo-iconbtn .ic { width: 18px; height: 18px; }
+  .demo-iconbtn { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; }
+  .demo-col { position: absolute; top: 68px; }
+  .demo-user { margin: 0; border-radius: 20px; background: #fff; padding: 14px 20px; font-size: 16px; line-height: 1.625; }
+  .demo-trig { position: relative; display: flex; align-items: center; gap: 6px; height: 30px; font-size: 15px; color: var(--fg-muted); }
+  .demo-trig .ic { width: 16px; height: 16px; }
+  .demo-trig .secs { margin-left: 4px; color: rgba(10,10,10,0.6); font-variant-numeric: tabular-nums; }
+  .sh { color: transparent; background-image: linear-gradient(90deg, transparent calc(50% - 28px), var(--fg), transparent calc(50% + 28px)), linear-gradient(var(--fg-muted), var(--fg-muted)); background-size: 250% 100%, auto; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; background-position: 100% 0px, 0px 0px; }
+  .demo-steps { position: absolute; left: 0; right: 0; font-size: 15px; }
+  .demo-step { position: relative; display: grid; grid-template-columns: 18px 1fr; column-gap: 12px; padding-bottom: 10px; }
+  .demo-step .mk { height: 24px; display: flex; align-items: center; justify-content: center; color: var(--fg-muted); }
+  .demo-step .mk .ic { width: 16px; height: 16px; }
+  .demo-step .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(10,10,10,0.25); display: block; }
+  .demo-step .dot.on { background: var(--fg); }
+  .demo-step .line { position: absolute; left: 8.5px; top: 22px; bottom: -4px; width: 1px; background: rgba(10,10,10,0.1); }
+  .demo-step .lbl { line-height: 24px; color: var(--fg-muted); }
+  .demo-chips { margin: 8px 0 4px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .demo-chip { height: 32px; display: inline-flex; align-items: center; gap: 8px; padding: 0 10px; border-radius: 8px; background: rgba(10,10,10,0.05); font-size: 14px; color: var(--fg); }
+  .demo-fav { width: 16px; height: 16px; border-radius: 4px; display: grid; place-items: center; color: #fff; font-size: 10px; font-weight: 700; }
+  .demo-more { font-size: 14px; color: var(--fg-muted); padding: 0 4px; }
+  .demo-ph { display: inline-block; font-family: var(--font-mono); font-size: 13px; line-height: 24px; padding: 0 6px; border-radius: 6px; background: rgba(255,190,11,0.25); color: var(--fg); }
+  .demo-answer { font-size: 16px; line-height: 1.65; }
+  .demo-answer p { margin: 0; }
+  .demo-answer ol { margin: 10px 0 0; padding-left: 26px; }
+  .demo-answer li::marker { color: var(--fg-muted); }
+  .demo-answer strong { font-weight: 600; }
+  .demo-card { background: #fff; border-radius: 24px; }
+  .demo-card-head { display: flex; align-items: center; gap: 12px; padding: 20px; }
+  .demo-card-head .tt { font-size: 17px; font-weight: 500; line-height: 1.35; }
+  .demo-card-head .dd { font-size: 15px; color: var(--fg-muted); line-height: 1.45; margin-top: 2px; }
+  .demo-card-ic { width: 40px; height: 40px; border-radius: 12px; background: rgba(223,23,23,0.08); color: var(--brand); display: grid; place-items: center; flex-shrink: 0; }
+  .demo-card-ic .ic { width: 18px; height: 18px; }
+  .demo-btn { height: 40px; display: inline-flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 10px; font-size: 15px; font-weight: 500; white-space: nowrap; }
+  .demo-btn .ic { width: 18px; height: 18px; }
+  .demo-btn-sun { background: #171717; color: #fff; position: relative; overflow: hidden; }
+  .demo-btn-sun .sun { position: absolute; inset: 0; background: var(--brand-sun); opacity: 0; }
+  .demo-btn-sun .lab { position: relative; display: inline-flex; align-items: center; gap: 8px; }
+  .demo-btn-out { border: 1px solid var(--border); background: #fff; color: var(--fg); }
+  .demo-btn-ghost { color: var(--fg); }
+  .demo-fade { position: absolute; left: 0; right: 0; height: 32px; background: linear-gradient(to bottom, rgba(245,245,245,0), var(--canvas)); }
+  .demo-fade-top { position: absolute; left: 0; right: 0; height: 40px; background: linear-gradient(to top, rgba(245,245,245,0), var(--canvas)); }
+
+  /* Browser panel */
+  #demo-browser { position: absolute; left: 400px; top: 0; width: 620px; height: 760px; background: #fff; border-left: 1px solid var(--border); }
+  .demo-bhead { height: 52px; display: flex; align-items: center; padding: 0 16px; font-size: 15px; font-weight: 500; }
+  .demo-bhead .x { margin-left: auto; width: 36px; height: 36px; display: grid; place-items: center; }
+  .demo-bhead .x .ic { width: 18px; height: 18px; }
+  .demo-bbar { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .demo-bbar .b { width: 36px; height: 36px; display: grid; place-items: center; color: var(--fg-muted); }
+  .demo-bbar .b .ic { width: 18px; height: 18px; }
+  .demo-url { flex: 1; display: flex; align-items: center; gap: 8px; border-radius: 8px; background: var(--canvas); padding: 6px 12px; font-size: 14px; }
+  .demo-url .ic { width: 16px; height: 16px; color: var(--fg-muted); }
+  #demo-load { position: absolute; left: 0; top: 105px; height: 2px; width: 620px; background: var(--fg); transform-origin: 0 0; }
+  #demo-page { position: absolute; left: 0; right: 0; top: 106px; bottom: 0; background: #fff; overflow: hidden; }
+  .demo-pg-top { height: 56px; background: #1f2a44; color: #fff; display: flex; align-items: center; padding: 0 28px; font-size: 15px; font-weight: 600; letter-spacing: 0.01em; }
+  .demo-pg-top span { opacity: 0.7; font-weight: 400; margin-left: 10px; }
+  .demo-pg-body { padding: 26px 28px; }
+  .demo-pg-step { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5b6170; }
+  .demo-pg-h { margin: 6px 0 20px; font-size: 24px; font-weight: 600; color: #1f2a44; }
+  .demo-f { margin-bottom: 14px; }
+  .demo-f label { display: block; font-size: 14px; font-weight: 500; color: #30364a; margin-bottom: 6px; }
+  .demo-in { height: 44px; border: 1px solid #9aa0ac; border-radius: 6px; padding: 0 12px; display: flex; align-items: center; font-size: 16px; color: #141414; position: relative; }
+  .demo-in .focus { position: absolute; inset: -3px; border: 2px solid #1f2a44; border-radius: 8px; opacity: 0; }
+  .demo-in .chev { margin-left: auto; width: 16px; height: 16px; color: #5b6170; }
+  .demo-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .demo-pg-btn { margin-top: 8px; height: 44px; display: inline-flex; align-items: center; padding: 0 22px; border-radius: 6px; background: #1f2a44; color: #fff; font-size: 15px; font-weight: 600; }
+  #demo-pg-ok { position: absolute; left: 28px; right: 28px; top: 82px; border-radius: 10px; background: #ecfdf3; border: 1px solid #a6f4c5; padding: 22px 24px; color: #05603a; }
+  #demo-pg-ok .t { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  #demo-pg-ok .t .ic { width: 22px; height: 22px; }
+  #demo-pg-ok .d { margin-top: 8px; font-size: 16px; color: #14532d; }
+
+  /* Big captions over the demo (reference grammar) */
+  #demo-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 380px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.92) 55%, #fff); }
+  .demo-cap { position: absolute; left: 0; right: 0; bottom: 92px; text-align: center; font-size: 76px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.1; color: var(--fg); }
+  .demo-cap b { font-weight: 500; color: var(--brand); }
+  .demo-cap { display: flex; justify-content: center; gap: 0 0.26em; }
+  .demo-cap span { display: inline-block; }
+
+  /* Cursor */
+  #demo-cursor { position: absolute; left: 0; top: 0; width: 22px; height: 30px; }
+  #demo-ripple { position: absolute; left: 0; top: 0; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; border: 2px solid rgba(10,10,10,0.35); }
+  #demo-ripple2 { position: absolute; left: 0; top: 0; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; border: 2px solid rgba(223,23,23,0.5); }
+</style>
+
+<div data-hf-id="hf-j1wo" id="root" data-composition-id="demo" data-width="1920" data-height="1080">
+  <div data-hf-id="hf-doid" id="demo-stage">
+    <div data-hf-id="hf-tjb2" id="demo-world" data-layout-allow-overflow>
+      <div data-hf-id="hf-6qpd" id="demo-win">
+        <!-- Sidebar -->
+        <nav data-hf-id="hf-trqa" id="demo-side">
+          <div data-hf-id="hf-bkm9" class="demo-lights"><span data-hf-id="hf-jom8" style="background:#ff5f57"></span><span data-hf-id="hf-oqkk" style="background:#febc2e"></span><span data-hf-id="hf-xvva" style="background:#28c840"></span></div>
+          <div data-hf-id="hf-hk09" class="demo-side-top">
+            <div data-hf-id="hf-p4px" class="demo-row"><i data-hf-id="hf-tmx2" class="ic" data-i="mas"></i>Nuevo trámite<kbd data-hf-id="hf-ilp2">⌘N</kbd></div>
+            <div data-hf-id="hf-scdm" class="demo-row"><i data-hf-id="hf-atfv" class="ic" data-i="persona"></i>Mis datos</div>
+            <div data-hf-id="hf-pahx" class="demo-side-h">Trámites</div>
+            <div data-hf-id="hf-oipt" id="demo-list">
+              <div data-hf-id="hf-jxpn" class="demo-trow" id="demo-new" style="top:0">
+                <span data-hf-id="hf-feld" class="t">Renovar el DNI en Sevilla</span>
+                <span data-hf-id="hf-9xsj" class="demo-st" id="demo-st-dot"><span data-hf-id="hf-uckh"></span></span>
+                <span data-hf-id="hf-2b7p" class="demo-st" id="demo-st-yellow">!</span>
+                <span data-hf-id="hf-011y" class="demo-st" id="demo-st-red">!</span>
+                <span data-hf-id="hf-vx3q" class="demo-st" id="demo-st-blue"><i data-hf-id="hf-x4w3" class="ic" data-i="check"></i></span>
+              </div>
+              <div data-hf-id="hf-lois" id="demo-old">
+                <div data-hf-id="hf-u4zl" class="demo-trow" style="top:0"><span data-hf-id="hf-2s9a" class="t">Descargar mi vida laboral</span><span data-hf-id="hf-8a71" class="ago">3 d</span></div>
+                <div data-hf-id="hf-a3fa" class="demo-trow" style="top:38px"><span data-hf-id="hf-lz0p" class="t">Ayuda al alquiler</span><span data-hf-id="hf-ke5j" class="ago">12 d</span></div>
+                <div data-hf-id="hf-z95w" class="demo-trow" style="top:76px"><span data-hf-id="hf-euwg" class="t">Empadronamiento</span><span data-hf-id="hf-ojtt" class="ago">21 d</span></div>
+              </div>
+            </div>
+          </div>
+          <div data-hf-id="hf-fy9w" class="demo-side-foot">
+            <svg data-hf-id="hf-xp34" width="13.5" height="18" viewBox="0 0 144 192" aria-hidden="true"><path data-hf-id="hf-11ua" fill="#df1717" d="M48 0H96V48H48V96H96V144H48V192H0V48H48Z"/><path data-hf-id="hf-nya4" fill="#a50e0e" d="M0 48L48 0V48Z"/><rect data-hf-id="hf-ilz0" x="96" y="48" width="48" height="48" fill="#df1717"/><rect data-hf-id="hf-exqx" x="96" y="144" width="48" height="48" fill="#df1717"/></svg>
+            <span data-hf-id="hf-nu0p">Reforma Digital</span>
+            <span data-hf-id="hf-i1e8" class="gear"><i data-hf-id="hf-f190" class="ic" data-i="ajustes"></i></span>
+          </div>
+        </nav>
+
+        <main data-hf-id="hf-bzcm" id="demo-main">
+          <!-- Home -->
+          <div data-hf-id="hf-w51u" class="demo-layer" id="demo-home">
+            <div data-hf-id="hf-dc66" id="demo-home-glow"></div>
+            <div data-hf-id="hf-edn9" id="demo-home-col">
+              <h1 data-hf-id="hf-jxve" id="demo-home-h1">¿Qué trámite quieres hacer?</h1>
+              <div data-hf-id="hf-65a8" class="demo-comp" id="demo-home-comp">
+                <div data-hf-id="hf-hmsl" class="demo-comp-text"><span data-hf-id="hf-ctqo" id="demo-type"></span><span data-hf-id="hf-e95r" class="demo-caret" id="demo-caret"></span><span data-hf-id="hf-3nie" class="demo-comp-ph" id="demo-home-ph">Por ejemplo: quiero pedir cita para renovar el DNI en Sevilla</span></div>
+                <div data-hf-id="hf-xtd8" class="demo-comp-row">
+                  <span data-hf-id="hf-zcoi" class="demo-sel">Equilibrado <i data-hf-id="hf-we1g" class="ic" data-i="abajo"></i></span>
+                  <span data-hf-id="hf-sq9z" class="demo-send" id="demo-home-send"><svg data-hf-id="hf-pok3" viewBox="0 0 18 18"><path data-hf-id="hf-mm6o" d="M9 15V3.5M4 8.25 9 3.25l5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+              </div>
+              <div data-hf-id="hf-74xm" class="demo-pills">
+                <span data-hf-id="hf-suv1" class="demo-pill">Renovar el DNI</span><span data-hf-id="hf-oi1n" class="demo-pill">Empadronarme</span><span data-hf-id="hf-n8qr" class="demo-pill">Descargar mi vida laboral</span><span data-hf-id="hf-6dnl" class="demo-pill">Pedir el paro</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conversation, full width -->
+          <div data-hf-id="hf-f8v2" class="demo-layer" id="demo-wide">
+            <header data-hf-id="hf-jgcg" class="demo-head">
+              <h1 data-hf-id="hf-bem6">Renovar el DNI en Sevilla</h1>
+              <span data-hf-id="hf-dkbu" class="demo-ghost" style="margin-left:auto"><i data-hf-id="hf-8tyl" class="ic" data-i="web"></i>Navegador</span>
+              <span data-hf-id="hf-a4bu" class="demo-iconbtn"><i data-hf-id="hf-pxen" class="ic" data-i="papelera"></i></span>
+            </header>
+            <div data-hf-id="hf-ft53" class="demo-col" style="left:182px; width:656px;">
+              <p data-hf-id="hf-ry8i" class="demo-user" id="demo-w-user">Necesito renovar el DNI en Sevilla. Me caduca el mes que viene.</p>
+              <div data-hf-id="hf-lij8" style="position:relative; margin-top:24px;">
+                <div data-hf-id="hf-x8se" class="demo-trig" id="demo-w-trig">
+                  <i data-hf-id="hf-a3js" class="ic" data-i="abajo" id="demo-w-chev"></i>
+                  <span data-hf-id="hf-416s" id="demo-w-trig-a"><span data-hf-id="hf-qfgo" class="sh" id="demo-sh1">Pensando</span><span data-hf-id="hf-cwzj" class="secs" id="demo-w-secs">1 s</span></span>
+                  <span data-hf-id="hf-we23" id="demo-w-trig-b" style="position:absolute; left:22px;">Ha trabajado 9 s</span>
+                </div>
+                <div data-hf-id="hf-ais9" class="demo-steps" id="demo-w-steps" style="top:38px;">
+                  <div data-hf-id="hf-6f0c" class="demo-step" id="demo-w-s1">
+                    <span data-hf-id="hf-6c9z" class="line"></span>
+                    <span data-hf-id="hf-ic85" class="mk"><i data-hf-id="hf-izet" class="ic" data-i="buscar"></i></span>
+                    <div data-hf-id="hf-yeow">
+                      <span data-hf-id="hf-5va8" class="lbl" id="demo-w-s1a"><span data-hf-id="hf-ydtc" class="sh" id="demo-sh2">Buscando</span></span><span data-hf-id="hf-3n3h" class="lbl" id="demo-w-s1b" style="position:absolute; left:30px; top:0;">Ha buscado</span>
+                      <div data-hf-id="hf-fhyn" class="demo-chips">
+                        <span data-hf-id="hf-azqr" class="demo-chip demo-c"><span data-hf-id="hf-3y4d" class="demo-fav" style="background:#1f2a44">P</span>Cita previa DNI</span>
+                        <span data-hf-id="hf-a13i" class="demo-chip demo-c"><span data-hf-id="hf-wrkh" class="demo-fav" style="background:#1f2a44">P</span>Renovación del DNI</span>
+                        <span data-hf-id="hf-6l35" class="demo-chip demo-c"><span data-hf-id="hf-qkli" class="demo-fav" style="background:#b4232a">S</span>Oficinas en Sevilla</span>
+                        <span data-hf-id="hf-t059" class="demo-more demo-c">+2 más</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-hf-id="hf-hahz" class="demo-step" id="demo-w-s2">
+                    <span data-hf-id="hf-4trt" class="mk"><span data-hf-id="hf-sil2" class="dot" id="demo-w-s2dot"></span></span>
+                    <span data-hf-id="hf-oom9" class="lbl" id="demo-w-s2a"><span data-hf-id="hf-p6c2" class="sh" id="demo-sh3">Leyendo 3 páginas</span></span>
+                  </div>
+                </div>
+                <div data-hf-id="hf-3wly" id="demo-w-after" style="padding-top:16px;">
+                  <div data-hf-id="hf-yoq8" class="demo-answer">
+                    <p data-hf-id="hf-e2ik" class="demo-a">Para renovar el DNI necesitas cita previa en una oficina de expedición. En Sevilla:</p>
+                    <ol data-hf-id="hf-eaxy">
+                      <li data-hf-id="hf-gwr1" class="demo-a">Pide cita en la web de cita previa del DNI.</li>
+                      <li data-hf-id="hf-jrqz" class="demo-a">Lleva tu DNI actual y una fotografía reciente.</li>
+                      <li data-hf-id="hf-k1is" class="demo-a">Paga la tasa en la oficina: 12 €.</li>
+                    </ol>
+                  </div>
+                  <section data-hf-id="hf-bup5" class="demo-card" id="demo-w-card" style="margin-top:20px;">
+                    <div data-hf-id="hf-2jvn" class="demo-card-head">
+                      <svg data-hf-id="hf-8cgi" width="21" height="28" viewBox="0 0 144 192" aria-hidden="true" style="flex-shrink:0"><path data-hf-id="hf-zzrq" fill="#df1717" d="M48 0H96V48H48V96H96V144H48V192H0V48H48Z"/><path data-hf-id="hf-c1us" fill="#a50e0e" d="M0 48L48 0V48Z"/><rect data-hf-id="hf-iat0" x="96" y="48" width="48" height="48" fill="#df1717"/><rect data-hf-id="hf-tlil" x="96" y="144" width="48" height="48" fill="#df1717"/></svg>
+                      <div data-hf-id="hf-5q9y" style="min-width:0">
+                        <div data-hf-id="hf-kthu" class="tt">El asistente puede hacerlo por ti</div>
+                        <div data-hf-id="hf-yhap" class="dd">Pedir cita para renovar el DNI en Sevilla</div>
+                      </div>
+                      <div data-hf-id="hf-sl1m" style="margin-left:auto; display:flex; gap:8px;">
+                        <span data-hf-id="hf-u2rr" class="demo-btn demo-btn-ghost">Ahora no</span>
+                        <span data-hf-id="hf-3jsn" class="demo-btn demo-btn-sun" id="demo-offer-btn"><span data-hf-id="hf-uonq" class="sun" id="demo-offer-sun"></span><span data-hf-id="hf-qei7" class="lab">Pedir la cita por mí</span></span>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+            <div data-hf-id="hf-imv7" style="position:absolute; left:150px; width:720px; bottom:0; padding:8px 32px 24px;">
+              <div data-hf-id="hf-kk9f" class="demo-fade" style="top:-24px;"></div>
+              <div data-hf-id="hf-4w7z" class="demo-comp">
+                <div data-hf-id="hf-91x5" class="demo-comp-text"><span data-hf-id="hf-la5c" class="demo-comp-ph" id="demo-w-ph">Añade otra petición para cuando termine</span></div>
+                <div data-hf-id="hf-k9l0" class="demo-comp-row"><span data-hf-id="hf-ntfa" class="demo-sel">Equilibrado <i data-hf-id="hf-enn0" class="ic" data-i="abajo"></i></span><span data-hf-id="hf-78c7" class="demo-send"><svg data-hf-id="hf-uinn" viewBox="0 0 18 18"><rect data-hf-id="hf-1er5" x="4.5" y="4.5" width="9" height="9" rx="2" fill="currentColor"/></svg></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conversation, narrow (browser open) -->
+          <div data-hf-id="hf-jd5j" class="demo-layer" id="demo-narrow" style="width:400px;">
+            <header data-hf-id="hf-m7p4" class="demo-head"><h1 data-hf-id="hf-iyle">Renovar el DNI en Sevilla</h1><span data-hf-id="hf-3mql" class="demo-iconbtn" style="margin-left:auto"><i data-hf-id="hf-p5un" class="ic" data-i="papelera"></i></span></header>
+            <div data-hf-id="hf-m12f" class="demo-col" style="left:24px; width:352px;">
+              <div data-hf-id="hf-kn1n" class="demo-answer" style="opacity:0.55">
+                <ol data-hf-id="hf-98nv" start="3" style="margin:0"><li data-hf-id="hf-eeol">Paga la tasa en la oficina: 12 €.</li></ol>
+              </div>
+              <div data-hf-id="hf-nm7t" style="position:relative; margin-top:16px;">
+                <div data-hf-id="hf-3aq8" class="demo-trig">
+                  <i data-hf-id="hf-ef4b" class="ic" data-i="abajo" id="demo-n-chev"></i>
+                  <span data-hf-id="hf-rvmj" id="demo-n-trig-a"><span data-hf-id="hf-5gfp" class="sh" id="demo-sh4">Pensando</span><span data-hf-id="hf-117u" class="secs" id="demo-n-secs">1 s</span></span>
+                  <span data-hf-id="hf-drfh" id="demo-n-trig-b" style="position:absolute; left:22px;">Ha trabajado 6 s</span>
+                </div>
+                <div data-hf-id="hf-845w" class="demo-steps" id="demo-n-steps" style="top:38px;">
+                  <div data-hf-id="hf-bgnr" class="demo-step" id="demo-n-s1"><span data-hf-id="hf-tvt3" class="line"></span><span data-hf-id="hf-60ow" class="mk"><span data-hf-id="hf-xczu" class="dot" id="demo-n-s1dot"></span></span>
+                    <span data-hf-id="hf-27xx" class="lbl"><span data-hf-id="hf-yjew" id="demo-n-s1a"><span data-hf-id="hf-0ku0" class="sh" id="demo-sh5">Abriendo la web de cita previa</span></span><span data-hf-id="hf-dt4z" id="demo-n-s1b" style="position:absolute; left:30px; top:0;">Abriendo la web de cita previa</span></span></div>
+                  <div data-hf-id="hf-0l64" class="demo-step" id="demo-n-s2"><span data-hf-id="hf-sc83" class="line" id="demo-n-s2line"></span><span data-hf-id="hf-5mdv" class="mk"><span data-hf-id="hf-vm9j" class="dot" id="demo-n-s2dot"></span></span>
+                    <div data-hf-id="hf-y7yw">
+                      <span data-hf-id="hf-zwk0" class="lbl" id="demo-n-s2a"><span data-hf-id="hf-bx2p" class="sh" id="demo-sh6">Escribiendo en 3 campos</span></span><span data-hf-id="hf-cvs9" class="lbl" id="demo-n-s2b" style="position:absolute; left:30px; top:0;">Escribiendo en 3 campos</span>
+                      <div data-hf-id="hf-0uih" class="demo-chips" style="gap:6px; margin-top:6px;">
+                        <span data-hf-id="hf-nx2s" class="demo-ph demo-p">{{nombre}}</span><span data-hf-id="hf-ny1u" class="demo-ph demo-p">{{documento_numero}}</span><span data-hf-id="hf-v51l" class="demo-ph demo-p">{{telefono}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-hf-id="hf-1ctx" class="demo-step" id="demo-n-s3"><span data-hf-id="hf-3muq" class="mk"><span data-hf-id="hf-ho8c" class="dot" id="demo-n-s3dot"></span></span>
+                    <span data-hf-id="hf-gnop" class="lbl"><span data-hf-id="hf-notm" id="demo-n-s3a"><span data-hf-id="hf-g05a" class="sh" id="demo-sh7">Eligiendo 2 opciones</span></span><span data-hf-id="hf-wtjp" id="demo-n-s3b" style="position:absolute; left:30px; top:0;">Eligiendo 2 opciones</span></span></div>
+                </div>
+                <div data-hf-id="hf-qbwb" id="demo-n-after" style="padding-top:16px;">
+                  <section data-hf-id="hf-9ga5" class="demo-card" id="demo-n-card">
+                    <div data-hf-id="hf-fi5g" class="demo-card-head" style="align-items:flex-start;">
+                      <span data-hf-id="hf-a8u8" class="demo-card-ic"><i data-hf-id="hf-f4we" class="ic" data-i="huella"></i></span>
+                      <div data-hf-id="hf-c9qi" style="min-width:0">
+                        <div data-hf-id="hf-q2rg" class="tt">Necesito tu permiso</div>
+                        <div data-hf-id="hf-mn7z" class="dd">Reservar la cita para renovar el DNI</div>
+                      </div>
+                    </div>
+                    <div data-hf-id="hf-laih" style="padding:0 20px 20px;">
+                      <ul data-hf-id="hf-630j" style="margin:0 0 14px; padding-left:20px; font-size:15px; line-height:1.6;">
+                        <li data-hf-id="hf-djlc">Martes 21 de octubre, 10:30</li>
+                        <li data-hf-id="hf-7xap">Oficina de expedición de Sevilla</li>
+                        <li data-hf-id="hf-urch">A nombre de <span data-hf-id="hf-wdy0" class="demo-ph">{{nombre}}</span></li>
+                      </ul>
+                      <p data-hf-id="hf-7wv3" style="margin:0 0 14px; font-size:14px; color:var(--fg-muted);">En sede.policia.gob.es</p>
+                      <div data-hf-id="hf-2p49" style="display:flex; gap:12px;">
+                        <span data-hf-id="hf-3orb" class="demo-btn demo-btn-sun" id="demo-ok-btn"><span data-hf-id="hf-ve3o" class="sun" id="demo-ok-sun"></span><span data-hf-id="hf-30dl" class="lab"><i data-hf-id="hf-rxci" class="ic" data-i="huella"></i>Aprobar</span></span>
+                        <span data-hf-id="hf-giyj" class="demo-btn demo-btn-out">No</span>
+                      </div>
+                    </div>
+                  </section>
+                  <div data-hf-id="hf-byoe" style="position:relative; margin-top:16px;" id="demo-n-act2">
+                    <div data-hf-id="hf-wpns" class="demo-trig">
+                      <i data-hf-id="hf-8gvt" class="ic" data-i="abajo" id="demo-n2-chev"></i>
+                      <span data-hf-id="hf-49qh" id="demo-n2-trig-a"><span data-hf-id="hf-0tzd" class="sh" id="demo-sh8">Pensando</span><span data-hf-id="hf-n0qb" class="secs">1 s</span></span>
+                      <span data-hf-id="hf-mgzz" id="demo-n2-trig-b" style="position:absolute; left:22px;">Ha trabajado 2 s</span>
+                    </div>
+                    <div data-hf-id="hf-7vcs" class="demo-steps" id="demo-n2-steps" style="top:38px;">
+                      <div data-hf-id="hf-6ynw" class="demo-step"><span data-hf-id="hf-38jp" class="mk"><span data-hf-id="hf-kpmd" class="dot on"></span></span><span data-hf-id="hf-huls" class="lbl"><span data-hf-id="hf-15r7" class="sh" id="demo-sh9">Reservando la cita</span></span></div>
+                    </div>
+                    <div data-hf-id="hf-4smq" class="demo-answer" id="demo-n-final" style="padding-top:16px;">
+                      <p data-hf-id="hf-xhnx">Hecho. Tienes cita el <strong data-hf-id="hf-3mu3">martes 21 de octubre a las 10:30</strong> en Sevilla.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div data-hf-id="hf-yyg5" class="demo-fade-top" style="top:52px;"></div>
+            <div data-hf-id="hf-l4f5" style="position:absolute; left:0; width:400px; bottom:0; padding:8px 24px 24px;">
+              <div data-hf-id="hf-3qb7" class="demo-fade" style="top:-24px;"></div>
+              <div data-hf-id="hf-ln6n" class="demo-comp">
+                <div data-hf-id="hf-0w6o" class="demo-comp-text" style="position:relative"><span data-hf-id="hf-54ay" class="demo-comp-ph" id="demo-n-ph1">Añade otra petición para cuando termine</span><span data-hf-id="hf-1yhp" class="demo-comp-ph" id="demo-n-ph2" style="position:absolute; left:20px; top:16px; opacity:0">Escribe al asistente</span></div>
+                <div data-hf-id="hf-j2nx" class="demo-comp-row"><span data-hf-id="hf-o7qb" class="demo-sel">Equilibrado <i data-hf-id="hf-dgpx" class="ic" data-i="abajo"></i></span><span data-hf-id="hf-36qy" class="demo-send" style="position:relative"><svg data-hf-id="hf-arqp" id="demo-n-stop" viewBox="0 0 18 18" style="position:absolute; inset:11px; width:18px; height:18px"><rect data-hf-id="hf-vlr9" x="4.5" y="4.5" width="9" height="9" rx="2" fill="currentColor"/></svg><svg data-hf-id="hf-b128" id="demo-n-arrow" viewBox="0 0 18 18" style="opacity:0"><path data-hf-id="hf-rxrc" d="M9 15V3.5M4 8.25 9 3.25l5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Browser of the trámite (mock portal, invented content) -->
+          <aside data-hf-id="hf-pdie" id="demo-browser">
+            <div data-hf-id="hf-wfhr" class="demo-bhead">Navegador<span data-hf-id="hf-i5qn" class="x"><i data-hf-id="hf-0zgk" class="ic" data-i="cerrar"></i></span></div>
+            <div data-hf-id="hf-z5bn" class="demo-bbar">
+              <span data-hf-id="hf-itx1" class="b"><i data-hf-id="hf-hh3s" class="ic" data-i="atras"></i></span><span data-hf-id="hf-c8q1" class="b"><i data-hf-id="hf-wh4m" class="ic" data-i="recargar"></i></span>
+              <span data-hf-id="hf-qfqs" class="demo-url"><i data-hf-id="hf-phep" class="ic" data-i="web"></i>sede.policia.gob.es</span>
+            </div>
+            <div data-hf-id="hf-en8x" id="demo-load"></div>
+            <div data-hf-id="hf-5hwo" id="demo-page">
+              <div data-hf-id="hf-ilcr" class="demo-pg-top">Cita previa<span data-hf-id="hf-2q2q">DNI y pasaporte</span></div>
+              <div data-hf-id="hf-268s" class="demo-pg-body" id="demo-pg-form">
+                <div data-hf-id="hf-05l5" class="demo-pg-step">Paso 2 de 3 · Tus datos</div>
+                <div data-hf-id="hf-wixk" class="demo-pg-h">Renovación del DNI</div>
+                <div data-hf-id="hf-fcp4" class="demo-f"><label data-hf-id="hf-3tz8">Nombre y apellidos</label><div data-hf-id="hf-5r6z" class="demo-in"><span data-hf-id="hf-4mrv" id="demo-f1"></span><span data-hf-id="hf-d0s4" class="focus" id="demo-f1f"></span></div></div>
+                <div data-hf-id="hf-ya5s" class="demo-row2">
+                  <div data-hf-id="hf-8ups" class="demo-f"><label data-hf-id="hf-t4k2">Número de DNI</label><div data-hf-id="hf-c2x7" class="demo-in"><span data-hf-id="hf-tra8" id="demo-f2"></span><span data-hf-id="hf-f59l" class="focus" id="demo-f2f"></span></div></div>
+                  <div data-hf-id="hf-7nsp" class="demo-f"><label data-hf-id="hf-6kgd">Teléfono</label><div data-hf-id="hf-bom6" class="demo-in"><span data-hf-id="hf-uiy1" id="demo-f3"></span><span data-hf-id="hf-67sa" class="focus" id="demo-f3f"></span></div></div>
+                </div>
+                <div data-hf-id="hf-wjwo" class="demo-row2">
+                  <div data-hf-id="hf-823q" class="demo-f"><label data-hf-id="hf-gngy">Oficina</label><div data-hf-id="hf-bab5" class="demo-in"><span data-hf-id="hf-6lzs" id="demo-f4" style="color:#5b6170">Elige una oficina</span><i data-hf-id="hf-d7jc" class="ic chev" data-i="abajo"></i><span data-hf-id="hf-leyn" class="focus" id="demo-f4f"></span></div></div>
+                  <div data-hf-id="hf-6v6n" class="demo-f"><label data-hf-id="hf-se27">Fecha y hora</label><div data-hf-id="hf-aw04" class="demo-in"><span data-hf-id="hf-7elb" id="demo-f5" style="color:#5b6170">Elige un hueco</span><i data-hf-id="hf-biow" class="ic chev" data-i="abajo"></i><span data-hf-id="hf-e3wg" class="focus" id="demo-f5f"></span></div></div>
+                </div>
+                <span data-hf-id="hf-5d9a" class="demo-pg-btn">Continuar</span>
+              </div>
+              <div data-hf-id="hf-pi9h" id="demo-pg-ok">
+                <div data-hf-id="hf-akx1" class="t"><i data-hf-id="hf-y9hf" class="ic" data-i="check"></i>Cita confirmada</div>
+                <div data-hf-id="hf-jgqu" class="d">Martes 21 de octubre, 10:30 · Oficina de expedición de Sevilla</div>
+              </div>
+            </div>
+          </aside>
+        </main>
+      </div>
+      <div data-hf-id="hf-8a23" id="demo-ripple"></div>
+      <div data-hf-id="hf-1it7" id="demo-ripple2"></div>
+      <svg data-hf-id="hf-9ie5" id="demo-cursor" viewBox="0 0 22 30" aria-hidden="true"><path data-hf-id="hf-pevh" d="M2 2 L2 24 L7.5 18.5 L11.5 27.5 L15 26 L11 17 L19 17 Z" fill="#fff" stroke="#0a0a0a" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    </div>
+    <div data-hf-id="hf-4v2d" id="demo-scrim"></div>
+    <div data-hf-id="hf-4qkn" class="demo-cap" id="demo-cap1"><span data-hf-id="hf-6i6x">Busca</span><span data-hf-id="hf-fx3a">en</span><span data-hf-id="hf-vzcz">las</span><span data-hf-id="hf-l73p"><b data-hf-id="hf-9gx2">webs</b></span><span data-hf-id="hf-me0s"><b data-hf-id="hf-mcgu">oficiales</b></span></div>
+    <div data-hf-id="hf-w2os" class="demo-cap" id="demo-cap2"><span data-hf-id="hf-1if2">Te</span><span data-hf-id="hf-xe2w">lo</span><span data-hf-id="hf-lzpr"><b data-hf-id="hf-ia8f">explica</b></span></div>
+    <div data-hf-id="hf-wucl" class="demo-cap" id="demo-cap3"><span data-hf-id="hf-d8tk">Y</span><span data-hf-id="hf-czcd">si</span><span data-hf-id="hf-679r">quieres,</span><span data-hf-id="hf-eww0">lo</span><span data-hf-id="hf-n6mu"><b data-hf-id="hf-kao2">hace</b></span><span data-hf-id="hf-msbt"><b data-hf-id="hf-oh3q">por</b></span><span data-hf-id="hf-nz8w"><b data-hf-id="hf-nwny">ti</b></span></div>
+    <div data-hf-id="hf-degi" class="demo-cap" id="demo-cap4"><span data-hf-id="hf-pocf">Con</span><span data-hf-id="hf-r7im">tu</span><span data-hf-id="hf-nkxv"><b data-hf-id="hf-cvi8">permiso</b></span></div>
+  </div>
+</div>
+
+<script>
+  const ICONS = {
+    mas: '<svg viewBox="0 0 18 18"><line x1="9" y1="3.25" x2="9" y2="14.75" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"/><line x1="3.25" y1="9" x2="14.75" y2="9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"/></svg>',
+    persona: '<svg viewBox="0 0 18 18"><circle cx="9" cy="4.5" r="2.75" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13.762,15.516c.86-.271,1.312-1.221,.947-2.045-.97-2.191-3.159-3.721-5.709-3.721s-4.739,1.53-5.709,3.721c-.365,.825,.087,1.774,.947,2.045,1.225,.386,2.846,.734,4.762,.734s3.537-.348,4.762-.734Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>',
+    ajustes: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><line x1="6.25" y1="4.237" x2="9" y2="9"/><line x1="6.25" y1="13.764" x2="9" y2="9"/><line x1="14.5" y1="9" x2="9" y2="9"/><circle cx="9" cy="9" r="5.5"/><line x1="9" y1="1.75" x2="9" y2="3.5"/><line x1="2.721" y1="5.375" x2="4.237" y2="6.25"/><line x1="1.75" y1="9" x2="3.5" y2="9"/><line x1="16.25" y1="9" x2="14.5" y2="9"/><line x1="2.721" y1="12.625" x2="4.237" y2="11.75"/><line x1="9" y1="16.25" x2="9" y2="14.5"/><line x1="12.625" y1="15.279" x2="11.75" y2="13.763"/><line x1="5.375" y1="15.279" x2="6.25" y2="13.763"/><line x1="15.279" y1="12.625" x2="13.763" y2="11.75"/><line x1="15.279" y1="5.375" x2="13.763" y2="6.25"/><line x1="12.625" y1="2.721" x2="11.75" y2="4.237"/><line x1="5.375" y1="2.721" x2="6.25" y2="4.237"/></svg>',
+    web: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.42389 16.1918C9.12129 16.2302 8.8129 16.25 8.5 16.25C4.496 16.25 1.25 13.004 1.25 9C1.25 4.996 4.496 1.75 8.5 1.75C12.504 1.75 15.75 4.996 15.75 9C15.75 9.0876 15.7485 9.1748 15.7454 9.2616"/><path d="M11.126 10.768L17.066 12.938C17.316 13.029 17.309 13.386 17.055 13.467L14.336 14.337L13.466 17.056C13.385 17.31 13.028 17.317 12.937 17.067L10.767 11.127C10.685 10.904 10.902 10.687 11.126 10.768Z"/><path d="M15.75 9C15.75 7.343 12.504 6 8.5 6C4.496 6 1.25 7.343 1.25 9C1.25 10.5718 4.17251 11.8618 7.89291 11.9897"/><path d="M11.458 7.78271C11.2184 4.35851 9.9851 1.75 8.5 1.75C6.843 1.75 5.5 4.996 5.5 9C5.5 13.004 6.843 16.25 8.5 16.25"/></svg>',
+    papelera: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.6977 7.75L13.35 14.35C13.294 15.4201 12.416 16.25 11.353 16.25H6.64804C5.58404 16.25 4.70703 15.42 4.65103 14.35L4.30334 7.75"/><path d="M2.75 4.75H15.25"/><path d="M6.75 4.75V2.75C6.75 2.2 7.198 1.75 7.75 1.75H10.25C10.802 1.75 11.25 2.2 11.25 2.75V4.75"/></svg>',
+    abajo: '<svg viewBox="0 0 18 18"><polyline points="15.25 6.5 9 12.75 2.75 6.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>',
+    buscar: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.75 15.75L11.6386 11.6386"/><path d="M7.75 13.25C10.7875 13.25 13.25 10.7875 13.25 7.75C13.25 4.7125 10.7875 2.25 7.75 2.25C4.7125 2.25 2.25 4.7125 2.25 7.75C2.25 10.7875 4.7125 13.25 7.75 13.25Z"/></svg>',
+    check: '<svg viewBox="0 0 18 18"><polyline points="2.75 9.25 6.75 14.25 15.25 3.75" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>',
+    huella: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M5.078,3.462c1.052-.911,2.424-1.462,3.922-1.462,3.309,0,6,2.691,6,6,0,2.307-.363,4.373-.988,6.213"/><path d="M1.908,11.703c1.04-1.692,1.092-3.383,1.092-3.703,0-.912,.204-1.777,.57-2.552"/><path d="M11.87,10.142c-.278,2.234-.983,4.16-1.951,5.806"/><path d="M3.872,14.14c1.224-1.479,2.128-3.474,2.128-6.14,0-1.657,1.343-3,3-3,1.524,0,2.783,1.137,2.975,2.608"/><path d="M6.551,15.618c1.424-1.874,2.449-4.356,2.449-7.618"/></svg>',
+    atras: '<svg viewBox="0 0 18 18"><polyline points="11.5 15.25 5.25 9 11.5 2.75" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>',
+    recargar: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 12.75L10.75 15L8.5 17.25"/><path d="M4.655 4.505C3.4774 5.6413 2.75 7.2359 2.75 9C2.75 12.452 5.55 15.25 9 15.25C9.6 15.25 10.17 15.166 10.72 15.01"/><path d="M9.5 5.25L7.25 3L9.5 0.75"/><path d="M13.3444 13.4937C14.5146 12.3575 15.25 10.7634 15.25 9C15.25 5.548 12.45 2.75 9.00002 2.75C8.42002 2.75 7.86002 2.82895 7.33002 2.97595"/></svg>',
+    cerrar: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><line x1="14" y1="4" x2="4" y2="14"/><line x1="4" y1="4" x2="14" y2="14"/></svg>'
+  };
+  document.querySelectorAll('#root [data-i]').forEach((el) => { el.innerHTML = ICONS[el.dataset.i] || ''; });
+
+  const tl = gsap.timeline({ paused: true });
+  const $ = (s) => document.querySelector(s);
+
+  // ---- Camera: focus window point (fx, fy) at scale S on screen centre ----
+  const WL = 320, WT = 160;
+  const camAt = (S, fx, fy) => ({ scale: S, x: 960 - WL - S * fx, y: 540 - WT - S * fy });
+  const cam = (t, d, S, fx, fy, ease = 'power3.inOut') => tl.to('#demo-world', { ...camAt(S, fx, fy), duration: d, ease }, t);
+  const FULL = [1.3, 640, 380];
+
+  // ---- Discrete text states, painted from timeline time (seek-safe) ----
+  const PROMPT = 'Necesito renovar el DNI en Sevilla. Me caduca el mes que viene.';
+  const T_TYPE0 = 0.7, T_CHAR = 0.026;
+  const T_TYPE1 = T_TYPE0 + PROMPT.length * T_CHAR;
+  const fields = [
+    ['#demo-f1', 'Lucía Martín Gómez', 11.9, 0.035],
+    ['#demo-f2', '12345678Z', 12.65, 0.045],
+    ['#demo-f3', '600 123 456', 13.15, 0.04],
+  ];
+  const counters = [
+    ['#demo-w-secs', 3.2, 6.9],
+    ['#demo-n-secs', 10.9, 14.7],
+  ];
+  const typeEl = $('#demo-type'), caret = $('#demo-caret'), ph = $('#demo-home-ph');
+  function paint(t) {
+    const n = Math.max(0, Math.min(PROMPT.length, Math.floor((t - T_TYPE0) / T_CHAR)));
+    typeEl.textContent = t < T_TYPE0 ? '' : PROMPT.slice(0, n);
+    ph.style.display = t < T_TYPE0 ? 'inline' : 'none';
+    caret.style.opacity = t < T_TYPE0 || t > 2.75 ? 0 : (t < T_TYPE1 ? 1 : ((t * 2) % 1 < 0.5 ? 1 : 0));
+    for (const [sel, val, t0, dt] of fields) {
+      const k = Math.max(0, Math.min(val.length, Math.floor((t - t0) / dt)));
+      $(sel).textContent = val.slice(0, k);
+    }
+    for (const [sel, t0, t1] of counters) {
+      $(sel).textContent = Math.max(1, Math.floor(Math.min(t, t1) - t0) + 1) + ' s';
+    }
+    const sel4 = $('#demo-f4'), sel5 = $('#demo-f5');
+    if (t >= 13.95) { sel4.textContent = 'Sevilla – Centro'; sel4.style.color = '#141414'; } else { sel4.textContent = 'Elige una oficina'; sel4.style.color = '#5b6170'; }
+    if (t >= 14.35) { sel5.textContent = 'Mar 21 oct · 10:30'; sel5.style.color = '#141414'; } else { sel5.textContent = 'Elige un hueco'; sel5.style.color = '#5b6170'; }
+  }
+  tl.eventCallback('onUpdate', () => paint(tl.time()));
+  paint(0);
+
+  // ---- Shimmers (finite loops inside each active window) ----
+  const shimmer = (sel, t0, t1) => {
+    const reps = Math.max(0, Math.floor((t1 - t0) / 1.6) - 1);
+    tl.fromTo(sel, { backgroundPosition: '100% 0px, 0px 0px' }, { backgroundPosition: '0% 0px, 0px 0px', duration: 1.6, ease: 'none', repeat: reps, immediateRender: false }, t0);
+  };
+
+  // ---- Initial states ----
+  gsap.set('#demo-world', camAt(1.18, 640, 400));
+  gsap.set(['#demo-wide', '#demo-narrow', '#demo-browser', '#demo-new', '#demo-w-trig-b', '#demo-w-s1b', '#demo-w-after', '#demo-w-steps .demo-c',
+          '#demo-n-trig-b', '#demo-n-s1b', '#demo-n-s2b', '#demo-n-s3b', '#demo-n-s2', '#demo-n-s3', '#demo-n-s1', '#demo-n-after', '#demo-n-card', '#demo-n-act2',
+          '#demo-n2-trig-b', '#demo-n-final', '#demo-cursor', '#demo-ripple', '#demo-ripple2', '#demo-pg-ok', '#demo-load', '#demo-page',
+          '#demo-st-dot', '#demo-st-yellow', '#demo-st-red', '#demo-st-blue', '#demo-w-s2', '.demo-a', '#demo-w-card', '.demo-p', '#demo-scrim', '.demo-cap span'], { opacity: 0 });
+
+  // ---- 0.0 window arrives on the home screen ----
+  tl.fromTo('#demo-win', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 0);
+  tl.to('#demo-world', { ...camAt(...FULL), duration: 0.7, ease: 'power3.out' }, 0);
+  cam(0.7, 1.4, 1.75, 770, 410);                       // push to the composer while typing
+  tl.fromTo('#demo-home-send', { scale: 1 }, { scale: 0.9, duration: 0.08, ease: 'power2.in', immediateRender: false }, 2.62);
+  tl.to('#demo-home-send', { scale: 1, duration: 0.25, ease: 'back.out(3)' }, 2.70);
+
+  // ---- 2.8 send → the trámite opens ----
+  tl.to('#demo-home', { opacity: 0, y: -12, duration: 0.25, ease: 'power2.in' }, 2.8);
+  tl.fromTo('#demo-wide', { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out', immediateRender: false }, 2.95);
+  tl.fromTo('#demo-w-user', { y: 12, filter: 'blur(3px)' }, { y: 0, filter: 'blur(0px)', duration: 0.42, ease: 'power3.out', immediateRender: false }, 2.95);
+  tl.fromTo('#demo-old', { y: 0 }, { y: 38, duration: 0.35, ease: 'power3.out', immediateRender: false }, 2.95);
+  tl.fromTo('#demo-new', { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out', immediateRender: false }, 3.05);
+  tl.to('#demo-st-dot', { opacity: 1, duration: 0.2 }, 3.1);
+  tl.fromTo('#demo-st-dot span', { opacity: 1 }, { opacity: 0.25, duration: 0.6, ease: 'sine.inOut', yoyo: true, repeat: 8, immediateRender: false }, 3.1);
+  cam(2.8, 0.9, 1.88, 771, 300);
+
+  // ---- 3.2 thinking → search → read ----
+  shimmer('#demo-sh1', 3.2, 6.9);
+  tl.fromTo('#demo-w-steps', { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.28, ease: 'power3.out', immediateRender: false }, 4.0);
+  shimmer('#demo-sh2', 4.0, 4.9);
+  tl.to('#demo-w-s1a', { opacity: 0, duration: 0.15 }, 4.9);
+  tl.to('#demo-w-s1b', { opacity: 1, duration: 0.15 }, 4.9);
+  tl.fromTo('#demo-w-steps .demo-c', { opacity: 0, y: 6, filter: 'blur(3px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.28, ease: 'power3.out', stagger: 0.09, immediateRender: false }, 4.95);
+  tl.fromTo('#demo-w-s2', { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.28, ease: 'power3.out', immediateRender: false }, 5.6);
+  tl.set('#demo-w-s2dot', { backgroundColor: '#0a0a0a' }, 5.6);
+  shimmer('#demo-sh3', 5.6, 6.7);
+  tl.set('#demo-w-s2dot', { backgroundColor: 'rgba(10,10,10,0.25)' }, 6.7);
+  tl.set('#demo-sh3', { color: '#6b6b6b', backgroundImage: 'none' }, 6.7);
+
+  // ---- 6.9 done: collapse to «Ha trabajado 9 s», the answer streams in ----
+  tl.to('#demo-w-steps', { opacity: 0, y: -4, duration: 0.22, ease: 'power2.in' }, 6.9);
+  tl.to('#demo-w-chev', { rotation: -90, duration: 0.2, ease: 'power2.out' }, 6.9);
+  tl.to('#demo-w-trig-a', { opacity: 0, duration: 0.15 }, 6.9);
+  tl.to('#demo-w-trig-b', { opacity: 1, duration: 0.2 }, 6.95);
+  tl.set('#demo-w-after', { opacity: 1 }, 7.05);
+  tl.fromTo('.demo-a', { opacity: 0, y: 6, filter: 'blur(3px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.36, ease: 'power3.out', stagger: 0.32, immediateRender: false }, 7.1);
+  cam(7.0, 1.2, 1.88, 771, 330);
+
+  // ---- 8.6 offer card; sidebar shows the yellow «!» ----
+  tl.fromTo('#demo-w-card', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power3.out', immediateRender: false }, 8.6);
+  tl.to('#demo-st-dot', { opacity: 0, duration: 0.15 }, 8.6);
+  tl.fromTo('#demo-st-yellow', { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2.5)', immediateRender: false }, 8.65);
+  cam(8.6, 0.9, 1.88, 771, 360);
+
+  // ---- 9.2 cursor clicks «Pedir la cita por mí» ----
+  const OFFER = [1000, 370];                      // window coords of the button centre
+  tl.fromTo('#demo-cursor', { opacity: 0, x: 1150, y: 600 }, { opacity: 1, x: OFFER[0] - 4, y: OFFER[1] - 4, duration: 0.75, ease: 'power2.inOut', immediateRender: false }, 9.2);
+  tl.to('#demo-offer-sun', { opacity: 1, duration: 0.25, ease: 'power2.out' }, 9.75);
+  tl.to(['#demo-offer-btn', '#demo-cursor'], { scale: 0.94, duration: 0.08, ease: 'power2.in' }, 10.0);
+  tl.to(['#demo-offer-btn', '#demo-cursor'], { scale: 1, duration: 0.22, ease: 'back.out(3)' }, 10.08);
+  tl.fromTo('#demo-ripple', { opacity: 0.9, scale: 0.4, x: OFFER[0], y: OFFER[1] }, { opacity: 0, scale: 1.8, duration: 0.5, ease: 'power2.out', immediateRender: false }, 10.0);
+  tl.to('#demo-cursor', { opacity: 0, duration: 0.25 }, 10.35);
+  tl.to('#demo-st-yellow', { opacity: 0, duration: 0.15 }, 10.15);
+  tl.to('#demo-st-dot', { opacity: 1, duration: 0.15 }, 10.2);
+
+  // ---- 10.2 the browser opens beside the conversation ----
+  tl.fromTo('#demo-browser', { opacity: 1, x: 640 }, { opacity: 1, x: 0, duration: 0.6, ease: 'power3.inOut', immediateRender: false }, 10.2);
+  tl.to('#demo-wide', { opacity: 0, x: -60, duration: 0.3, ease: 'power2.in' }, 10.25);
+  tl.fromTo('#demo-narrow', { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power3.out', immediateRender: false }, 10.5);
+  tl.fromTo('#demo-load', { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.7, ease: 'power2.out', immediateRender: false }, 10.85);
+  tl.to('#demo-load', { opacity: 0, duration: 0.2 }, 11.55);
+  tl.to('#demo-page', { opacity: 1, duration: 0.3, ease: 'power2.out' }, 11.3);
+  cam(10.2, 0.9, ...FULL);
+  shimmer('#demo-sh4', 10.9, 14.7);
+  tl.fromTo('#demo-n-s1', { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.28, ease: 'power3.out', immediateRender: false }, 10.9);
+  tl.set('#demo-n-s1dot', { backgroundColor: '#0a0a0a' }, 10.9);
+  shimmer('#demo-sh5', 10.9, 11.7);
+  tl.set('#demo-n-s1dot', { backgroundColor: 'rgba(10,10,10,0.25)' }, 11.7);
+  tl.to('#demo-n-s1a', { opacity: 0, duration: 0.12 }, 11.7);
+  tl.to('#demo-n-s1b', { opacity: 1, duration: 0.12 }, 11.7);
+  tl.to('#demo-n-s1b', { color: '#6b6b6b', duration: 0.01 }, 11.7);
+
+  // ---- 11.8 the app writes real values in the web; the AI only saw {{placeholders}} ----
+  cam(11.6, 1.0, 1.88, 771, 380);
+  tl.fromTo('#demo-n-s2', { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.28, ease: 'power3.out', immediateRender: false }, 11.8);
+  tl.set('#demo-n-s2dot', { backgroundColor: '#0a0a0a' }, 11.8);
+  shimmer('#demo-sh6', 11.8, 13.7);
+  tl.fromTo('.demo-p', { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2)', stagger: 0.5, immediateRender: false }, 11.9);
+  [['#demo-f1f', 11.85, 12.6], ['#demo-f2f', 12.6, 13.1], ['#demo-f3f', 13.1, 13.65], ['#demo-f4f', 13.75, 14.1], ['#demo-f5f', 14.15, 14.5]].forEach(([s, a, b]) => {
+    tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: 0.1, immediateRender: false }, a);
+    tl.to(s, { opacity: 0, duration: 0.12 }, b);
+  });
+  tl.set('#demo-n-s2dot', { backgroundColor: 'rgba(10,10,10,0.25)' }, 13.7);
+  tl.to('#demo-n-s2a', { opacity: 0, duration: 0.12 }, 13.7);
+  tl.to('#demo-n-s2b', { opacity: 1, color: '#6b6b6b', duration: 0.12 }, 13.7);
+  tl.fromTo('#demo-n-s3', { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.28, ease: 'power3.out', immediateRender: false }, 13.75);
+  tl.set('#demo-n-s3dot', { backgroundColor: '#0a0a0a' }, 13.75);
+  shimmer('#demo-sh7', 13.75, 14.6);
+  tl.set('#demo-n-s3dot', { backgroundColor: 'rgba(10,10,10,0.25)' }, 14.6);
+  tl.to('#demo-n-s3a', { opacity: 0, duration: 0.12 }, 14.6);
+  tl.to('#demo-n-s3b', { opacity: 1, color: '#6b6b6b', duration: 0.12 }, 14.6);
+
+  // ---- 14.7 permission card; sidebar red «!» ----
+  tl.to('#demo-n-steps', { opacity: 0, y: -4, duration: 0.22, ease: 'power2.in' }, 14.7);
+  tl.to('#demo-n-chev', { rotation: -90, duration: 0.2, ease: 'power2.out' }, 14.7);
+  tl.to('#demo-n-trig-a', { opacity: 0, duration: 0.15 }, 14.7);
+  tl.to('#demo-n-trig-b', { opacity: 1, duration: 0.2 }, 14.75);
+  tl.set('#demo-n-after', { opacity: 1 }, 14.8);
+  tl.fromTo('#demo-n-card', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power3.out', immediateRender: false }, 14.85);
+  tl.to('#demo-st-dot', { opacity: 0, duration: 0.15 }, 14.8);
+  tl.fromTo('#demo-st-red', { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2.5)', immediateRender: false }, 14.85);
+  cam(14.7, 1.0, 1.9, 300, 300);
+
+  // ---- 15.7 cursor approves (Touch ID) ----
+  const OK = [360, 381];
+  tl.fromTo('#demo-cursor', { opacity: 0, x: 330, y: 520 }, { opacity: 1, x: OK[0] - 4, y: OK[1] - 4, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, 15.7);
+  tl.to('#demo-ok-sun', { opacity: 1, duration: 0.25, ease: 'power2.out' }, 16.2);
+  tl.to(['#demo-ok-btn', '#demo-cursor'], { scale: 0.94, duration: 0.08, ease: 'power2.in' }, 16.5);
+  tl.to(['#demo-ok-btn', '#demo-cursor'], { scale: 1, duration: 0.22, ease: 'back.out(3)' }, 16.58);
+  tl.fromTo('#demo-ripple2', { opacity: 0.9, scale: 0.4, x: OK[0], y: OK[1] }, { opacity: 0, scale: 2.2, duration: 0.6, ease: 'power2.out', immediateRender: false }, 16.5);
+  tl.to('#demo-cursor', { opacity: 0, duration: 0.25 }, 16.9);
+  tl.to('#demo-st-red', { opacity: 0, duration: 0.15 }, 16.6);
+  tl.to('#demo-st-dot', { opacity: 1, duration: 0.15 }, 16.65);
+  tl.to('#demo-ok-sun', { opacity: 0, duration: 0.3 }, 16.75);
+
+  // ---- 16.8 booking, then «Listo» ----
+  tl.fromTo('#demo-n-act2', { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power3.out', immediateRender: false }, 16.85);
+  shimmer('#demo-sh8', 16.85, 18.0);
+  shimmer('#demo-sh9', 16.85, 18.0);
+  tl.to('#demo-pg-form', { opacity: 0, duration: 0.25 }, 17.35);
+  tl.fromTo('#demo-pg-ok', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', immediateRender: false }, 17.4);
+  tl.to('#demo-n2-steps', { opacity: 0, duration: 0.2, ease: 'power2.in' }, 18.0);
+  tl.to('#demo-n2-chev', { rotation: -90, duration: 0.2 }, 18.0);
+  tl.to('#demo-n2-trig-a', { opacity: 0, duration: 0.15 }, 18.0);
+  tl.to('#demo-n2-trig-b', { opacity: 1, duration: 0.2 }, 18.05);
+  tl.fromTo('#demo-n-final', { opacity: 0, y: 6, filter: 'blur(3px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.36, ease: 'power3.out', immediateRender: false }, 18.15);
+  tl.to('#demo-st-dot', { opacity: 0, duration: 0.15 }, 18.1);
+  tl.fromTo('#demo-st-blue', { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2.5)', immediateRender: false }, 18.2);
+  cam(16.9, 1.0, 1.88, 771, 420);
+
+  // ---- 19.3 pull back to the whole app, then clear ----
+  cam(19.3, 1.2, ...FULL, 'power3.inOut');
+  tl.to('#demo-win', { opacity: 0, y: -16, duration: 0.3, ease: 'power2.in' }, 21.15);
+
+  // ---- Captions: words blur in, hold, exit ----
+  const caption = (id, tIn, tOut) => {
+    tl.fromTo(`#${id} span`, { opacity: 0, y: 14, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.36, ease: 'power3.out', stagger: 0.12, immediateRender: false }, tIn);
+    tl.to(`#${id} span`, { opacity: 0, y: -14, filter: 'blur(8px)', duration: 0.26, ease: 'power2.in', stagger: 0.02 }, tOut);
+  };
+  [[3.9, 6.75], [7.25, 8.75], [11.75, 14.35], [14.95, 16.4]].forEach(([a, b]) => {
+    tl.fromTo('#demo-scrim', { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power1.out', immediateRender: false }, a - 0.1);
+    tl.to('#demo-scrim', { opacity: 0, duration: 0.3, ease: 'power1.in' }, b + 0.05);
+  });
+  caption('demo-cap1', 3.9, 6.75);
+  caption('demo-cap2', 7.25, 8.75);
+  caption('demo-cap3', 11.75, 14.35);
+  caption('demo-cap4', 14.95, 16.4);
+
+  // ---- «Hecho»: the composer is idle again ----
+  tl.to('#demo-n-stop', { opacity: 0, duration: 0.15 }, 18.15);
+  tl.fromTo('#demo-n-arrow', { opacity: 0 }, { opacity: 1, duration: 0.15, immediateRender: false }, 18.15);
+  tl.to('#demo-n-ph1', { opacity: 0, duration: 0.15 }, 18.15);
+  tl.fromTo('#demo-n-ph2', { opacity: 0 }, { opacity: 1, duration: 0.15, immediateRender: false }, 18.15);
+
+  window.__timelines["demo"] = tl;
+</script>
+</template></body></html>
