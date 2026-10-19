@@ -485,7 +485,7 @@ export function mensajeDeError(e: unknown): string {
   if (status === 402 || /insufficient|credit|balance|quota/i.test(texto))
     return 'No queda saldo en el proveedor de IA. Recárgalo o cambia de proveedor en Ajustes.';
   if (status === 429)
-    return 'El proveedor de IA está limitando las peticiones. Espera un poco y vuelve a intentarlo.';
+    return 'El servicio ha limitado o bloqueado la petición. Espera un poco y vuelve a intentarlo; si persiste, avisa al equipo de Reforma Digital.';
   if (/fetch failed|ENOTFOUND|ECONNRESET|network/i.test(texto))
     return 'No hay conexión a internet.';
   return `El asistente ha tenido un problema: ${texto.slice(0, 200)}`;

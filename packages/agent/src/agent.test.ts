@@ -128,7 +128,7 @@ describe('errores del proveedor', () => {
       reason: 'maxRetriesExceeded',
       errors: [limite],
     });
-    expect(mensajeDeError(e)).toMatch(/limitando las peticiones/);
+    expect(mensajeDeError(e)).toMatch(/limitado o bloqueado/);
   });
 });
 
