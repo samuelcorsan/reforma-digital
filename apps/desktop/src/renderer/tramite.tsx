@@ -263,6 +263,14 @@ function Conversacion({
   const caja = useRef<HTMLDivElement>(null);
   const trabajando = vista.ejecucion === 'trabajando';
   const primero = vista.conversacion.find((i) => i.tipo === 'usuario');
+  // Ya aceptó que el asistente haga el trámite: lo que pida después no vuelve a ser una oferta.
+  const enCurso = vista.conversacion.some(
+    (i) =>
+      i.tipo === 'pregunta' &&
+      i.pregunta.tipo === 'formulario' &&
+      Boolean(i.pregunta.formulario.accion) &&
+      i.resultado === 'Respondido',
+  );
   const bloques = agrupar(vista.conversacion);
   const ultimo = vista.conversacion.at(-1);
   // Mientras piensa sin haber hecho nada todavía: el mismo bloque que mostrará sus acciones.
@@ -366,7 +374,15 @@ function Conversacion({
               </div>
             );
           if (i.tipo === 'pregunta')
-            return <Pregunta key={i.id} tramite={vista.id} item={i} verNavegador={verNavegador} />;
+            return (
+              <Pregunta
+                key={i.id}
+                tramite={vista.id}
+                item={i}
+                enCurso={enCurso}
+                verNavegador={verNavegador}
+              />
+            );
           if (i.tipo !== 'aviso') return null;
           return (
             <div key={i.id} className="my-4">

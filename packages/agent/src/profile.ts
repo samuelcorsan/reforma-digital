@@ -144,11 +144,14 @@ export function perfilParaModelo(perfil: Perfil, hoy = new Date()): string {
           : c.clave === 'documento_caducidad' && vigencia(valor, hoy)
             ? `; ${vigencia(valor, hoy)}`
             : '';
-      lineas.push(`- ${c.clave} (${c.etiqueta}): {{${c.clave}}} (guardado${extra})`);
+      lineas.push(
+        `- ${c.clave} (${c.etiqueta}): {{${c.clave}}} (guardado${extra}${conForma(c.clave, valor)})`,
+      );
     }
   }
   for (const [clave, valor] of Object.entries(perfil))
-    if (valor && !campoPerfil(clave)) lineas.push(`- ${clave}: {{${clave}}} (guardado)`);
+    if (valor && !campoPerfil(clave))
+      lineas.push(`- ${clave}: {{${clave}}} (guardado${conForma(clave, valor)})`);
   return [
     lineas.length ? lineas.join('\n') : '- (sin datos guardados)',
     faltan.length ? `Sin guardar: ${faltan.join(', ')}` : '',
@@ -236,8 +239,8 @@ export const TIPOS_DATO = {
   dato: false,
 } as const;
 const clavesDe = (tipos: string[]) => new RegExp(`^(${tipos.join('|')})_\\d+$`);
-/** Cualquier marcador, con su formato opcional: `{{fecha_nacimiento:dia}}`. */
-export const MARCADOR = /\{\{([a-z0-9_.]+)(?::([a-z/]+))?\}\}/gi;
+/** Cualquier marcador, con su formato opcional: `{{fecha_nacimiento:dia}}`, `{{direccion:3-5}}`. */
+export const MARCADOR = /\{\{([a-z0-9_.]+)(?::([a-z0-9/-]+))?\}\}/gi;
 /** Claves de los datos que encuentra el detector o que trae una web: `{{nombre_1}}`, `{{dato_3}}`. */
 export const DETECTADO = clavesDe(Object.keys(TIPOS_DATO));
 const CODIGO_DETECTADO = clavesDe(
@@ -246,7 +249,7 @@ const CODIGO_DETECTADO = clavesDe(
 /** Aplica `fn` solo al texto que hay entre marcadores: un valor («Correo») no toca {{correo_1}}. */
 const fueraDeMarcadores = (texto: string, fn: (t: string) => string) =>
   texto
-    .split(/(\{\{[a-z0-9_.]+(?::[a-z/]+)?\}\})/i)
+    .split(/(\{\{[a-z0-9_.]+(?::[a-z0-9/-]+)?\}\})/i)
     .map((t, i) => (i % 2 ? t : fn(t)))
     .join('');
 const BORDE_INI = '(?<![\\p{L}\\p{N}])';
@@ -625,7 +628,8 @@ export class Privacidad {
 
   /**
    * Sustituye los marcadores por los valores reales. Formatos: `{{fecha_nacimiento}}` (dd/mm/aaaa),
-   * `:iso`, `:dia`, `:mes`, `:anio`; `{{documento_numero:numero}}` y `:letra`.
+   * `:iso`, `:dia`, `:mes`, `:anio`; `{{documento_numero:numero}}` y `:letra`; y un trozo de cualquier
+   * dato según su forma: `{{direccion:2}}`, `{{direccion:3-5}}`. Un trozo que no existe falta.
    */
   resolver(texto: string): { texto: string; faltan: string[] } {
     const faltan: string[] = [];
@@ -635,7 +639,9 @@ export class Privacidad {
         faltan.push(clave);
         return marca;
       }
-      return formatear(clave, valor, formato);
+      const v = formatear(clave, valor, formato);
+      if (!v) faltan.push(`${clave}:${formato}`);
+      return v || marca;
     });
     return { texto: out, faltan };
   }
@@ -652,7 +658,40 @@ export function claveDeDato(todos: Perfil, tipo: TipoDato, valor: string): strin
   return `${tipo}_${Math.max(0, ...usados) + 1}`;
 }
 
+/** Los trozos de un dato: palabras y números (el «º» de «2º» va aparte, como un signo). */
+const trozos = (valor: string) => [...valor.matchAll(/(?:(?![ºª])\p{L})+|\p{N}+/gu)];
+
+/**
+ * La forma de un dato sin su contenido, para que el modelo razone con qué trozos rellenar un
+ * formulario que lo pide por partes: «C/ Mayor, 11, 2º B» → «[1 letra]/ [2 palabra], [3 número],
+ * [4 número]º [5 letra]». Solo se ven los signos y la clase de cada trozo, no su longitud.
+ */
+function forma(valor: string): string {
+  let out = '';
+  let fin = 0;
+  trozos(valor).forEach((t, n) => {
+    const clase = /\p{N}/u.test(t[0]) ? 'número' : t[0].length === 1 ? 'letra' : 'palabra';
+    out += `${valor.slice(fin, t.index)}[${n + 1} ${clase}]`;
+    fin = t.index + t[0].length;
+  });
+  return out + valor.slice(fin);
+}
+
+/** La forma de un identificador de varios trozos, para la línea de «Mis datos» que ve el modelo. */
+function conForma(clave: string, valor: string): string {
+  const tipo = campoPerfil(clave)?.tipo;
+  if (tipo === 'fecha' || tipo === 'email' || trozos(valor).length < 2) return '';
+  return `; forma: ${forma(valor)}`;
+}
+
 function formatear(clave: string, valor: string, formato?: string): string {
+  const rango = /^(\d+)(?:-(\d+))?$/.exec(formato ?? '');
+  if (rango) {
+    const t = trozos(valor);
+    const a = t[Number(rango[1]) - 1];
+    const b = t[Number(rango[2] ?? rango[1]) - 1];
+    return a && b && b.index >= a.index ? valor.slice(a.index, b.index + b[0].length) : '';
+  }
   if (campoPerfil(clave)?.tipo === 'fecha') {
     const [y = '', m = '', d = ''] = valor.split('-');
     if (formato === 'iso') return valor;

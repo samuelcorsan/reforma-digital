@@ -91,6 +91,17 @@ describe('privacidad', () => {
     expect(p.resolver('{{email}}').faltan).toEqual(['email']);
   });
 
+  it('enseña la forma de un dato sin su contenido y escribe sus trozos', () => {
+    const texto = perfilParaModelo({ direccion: 'C/ Mayor, 11, 2º B' });
+    expect(texto).toContain('forma: [1 letra]/ [2 palabra], [3 número], [4 número]º [5 letra]');
+    expect(texto).not.toMatch(/Mayor|11/);
+    const p = new Privacidad({ direccion: 'C/ Mayor, 11, 2º B' });
+    expect(p.resolver('{{direccion:2}}|{{direccion:3}}|{{direccion:4-5}}').texto).toBe(
+      'Mayor|11|2º B',
+    );
+    expect(p.resolver('{{direccion:6}}').faltan).toEqual(['direccion:6']);
+  });
+
   it('valida la letra del DNI y del NIE y el control del IBAN', () => {
     expect(validarCampo('documento_numero', '12345678Z')).toBeNull();
     expect(validarCampo('documento_numero', '12345678A')).toMatch(/letra/);

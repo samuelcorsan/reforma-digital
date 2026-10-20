@@ -45,6 +45,8 @@ const RAIZ = import.meta.dirname;
 /** Fuera del ASAR: ONNX Runtime no lee modelos desde un archivo empaquetado. */
 const DESEMPAQUETADO = RAIZ.replace(/app\.asar(?=[/\\]|$)/, 'app.asar.unpacked');
 const ORIGEN_APP = 'app://bundle';
+/** Sin empaquetar, Electron lleva su icono: en el Dock, la ventana y los diálogos va el de la app. */
+const ICONO = app.isPackaged ? undefined : path.join(RAIZ, '../build/icon.png');
 app.setName('Reforma Digital');
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true } },
@@ -407,6 +409,7 @@ function crearVentana() {
           autoHideMenuBar: true,
         }),
     backgroundColor: '#f5f5f5',
+    ...(ICONO && { icon: ICONO }),
     webPreferences: {
       preload: path.join(RAIZ, 'preload.cjs'),
       sandbox: true,
@@ -530,6 +533,7 @@ app
         return new Response('No encontrado', { status: 404 });
       return net.fetch(pathToFileURL(destino).href);
     });
+    if (ICONO) app.dock?.setIcon(ICONO);
     almacen = await Almacen.abrir(path.join(app.getPath('userData'), 'datos'));
     const guardados = await almacen.leer<Partial<Secretos>>('secretos.bin');
     secretos = {

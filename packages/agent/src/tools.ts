@@ -716,7 +716,7 @@ export function crearHerramientas(ctx: Contexto) {
 
     escribir: tool({
       description:
-        'Escribe en un campo de texto, sustituyendo lo que tenga. Para datos de la persona usa marcadores: {{documento_numero}}, {{nombre}}, {{fecha_nacimiento}} (dd/mm/aaaa), {{fecha_nacimiento:iso}}, {{fecha_nacimiento:dia}}/:mes/:anio, {{documento_numero:numero}} y :letra. Para enviar el formulario, pulsa su botón.',
+        'Escribe en un campo de texto, sustituyendo lo que tenga. Para datos de la persona usa marcadores: {{documento_numero}}, {{nombre}}, {{fecha_nacimiento}} (dd/mm/aaaa), {{fecha_nacimiento:iso}}, {{fecha_nacimiento:dia}}/:mes/:anio, {{documento_numero:numero}} y :letra. Si la web pide un dato por partes (la dirección en vía, número y piso), usa los trozos de su forma en «Mis datos»: {{direccion:2}}, {{direccion:3-5}}; si le falta una parte, pídela con preguntar. Para enviar el formulario, pulsa su botón.',
       inputSchema: z.object({ ref, texto: z.string().max(2000) }),
       execute: enOrden(async ({ ref: r, texto }, o) => {
         const nav = await navegador();

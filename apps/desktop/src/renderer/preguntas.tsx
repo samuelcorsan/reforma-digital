@@ -113,7 +113,7 @@ function useConMarcadores() {
   const { app } = useEstado();
   const vista = new Map((app?.perfil ?? []).map((d) => [d.clave, d.vista]));
   return (t: string) =>
-    t.replace(/\{\{([a-z0-9_.]+)(?::[a-z/]+)?\}\}/gi, (_m, clave: string) => {
+    t.replace(/\{\{([a-z0-9_.]+)(?::[a-z0-9/-]+)?\}\}/gi, (_m, clave: string) => {
       const v = vista.get(clave);
       return v ? `«${v}»` : `«${app?.campos.find((c) => c.clave === clave)?.etiqueta ?? clave}»`;
     });
@@ -265,26 +265,37 @@ function enPasos(campos: Campo[]) {
 /**
  * Si el formulario ofrece hacer el trámite, llega plegado bajo la explicación del asistente, con
  * el botón de la acción («Pedir la cita»): al pulsarlo se despliega con los datos que hacen falta.
- * Con más de cuatro datos va por pasos y termina con un resumen para revisarlos.
+ * Si la persona ya aceptó una oferta en este trámite (`enCurso`), lo que pide después llega
+ * desplegado: el asistente ya lo está haciendo. Con más de cuatro datos va por pasos y termina
+ * con un resumen para revisarlos.
  */
-function Formulario({ tramite, item }: { tramite: string; item: ItemPregunta }) {
+function Formulario({
+  tramite,
+  item,
+  enCurso,
+}: {
+  tramite: string;
+  item: ItemPregunta;
+  enCurso: boolean;
+}) {
   const base = useId();
   const f = item.pregunta.tipo === 'formulario' ? item.pregunta.formulario : null;
+  const plegable = Boolean(f?.accion) && !enCurso;
   const [valores, setValores] = useState<Record<string, string>>({});
-  const [abierto, setAbierto] = useState(!f?.accion);
+  const [abierto, setAbierto] = useState(!plegable);
   const [paso, setPaso] = useState(0);
   const [atras, setAtras] = useState(false);
   const formulario = useRef<HTMLFormElement>(null);
   const { enviando, responder } = useResponder(tramite, item);
-  const plegable = Boolean(f?.accion);
   useEffect(() => {
-    if (abierto && plegable)
+    // Al desplegarlo o al cambiar de paso. Si llega ya abierto, el foco se queda en la tarjeta.
+    if (abierto && (plegable || paso > 0 || atras))
       formulario.current
         ?.querySelector<HTMLElement>(
           'input:not([aria-hidden]), textarea, [role="radio"], button[type="submit"]',
         )
         ?.focus();
-  }, [abierto, plegable, paso]);
+  }, [abierto, plegable, paso, atras]);
   if (!f) return null;
   const pendiente = (c: Campo) => c.obligatorio !== false && !valores[c.clave]?.trim();
   // Los campos que dependen de otra respuesta entran y salen según lo que se va respondiendo.
@@ -292,7 +303,12 @@ function Formulario({ tramite, item }: { tramite: string; item: ItemPregunta }) 
   const faltan = enJuego.filter(pendiente);
   const fijar = (clave: string, v: string) => setValores((x) => ({ ...x, [clave]: v }));
   // Que quede claro quién lo hace: «Pedir la cita» → «Pedir la cita por mí».
-  const accion = f.accion && (/por m[ií]/i.test(f.accion) ? f.accion : `${f.accion} por mí`);
+  const accion =
+    plegable && f.accion
+      ? /por m[ií]/i.test(f.accion)
+        ? f.accion
+        : `${f.accion} por mí`
+      : undefined;
   const pasos = f.accion && f.campos.length > 4 ? enPasos(enJuego) : null;
   const revisar = pasos !== null && paso >= pasos.length;
   const visibles = pasos ? (pasos[paso]?.campos ?? []) : enJuego;
@@ -413,12 +429,16 @@ function Formulario({ tramite, item }: { tramite: string; item: ItemPregunta }) 
       </form>
     </div>
   );
-  if (!f.accion)
+  if (!plegable)
     return (
       <Tarjeta
         icono={<Marca size={28} />}
         sinFondo
-        titulo="El asistente necesita unos datos"
+        titulo={
+          enCurso
+            ? 'Para seguir, el asistente necesita más datos'
+            : 'El asistente necesita unos datos'
+        }
         descripcion={f.titulo}
       >
         {cuerpo}
@@ -667,10 +687,13 @@ function Llamada({ tramite, item }: { tramite: string; item: ItemPregunta }) {
 export function Pregunta({
   tramite,
   item,
+  enCurso,
   verNavegador,
 }: {
   tramite: string;
   item: ItemPregunta;
+  /** La persona ya aceptó que el asistente haga el trámite. */
+  enCurso: boolean;
   verNavegador: () => void;
 }) {
   if (item.estado !== 'pendiente') {
@@ -698,7 +721,8 @@ export function Pregunta({
       </p>
     );
   }
-  if (item.pregunta.tipo === 'formulario') return <Formulario tramite={tramite} item={item} />;
+  if (item.pregunta.tipo === 'formulario')
+    return <Formulario tramite={tramite} item={item} enCurso={enCurso} />;
   if (item.pregunta.tipo === 'confirmacion') return <Confirmacion tramite={tramite} item={item} />;
   if (item.pregunta.tipo === 'llamada') return <Llamada tramite={tramite} item={item} />;
   if (item.pregunta.tipo === 'confianza') return <Confianza tramite={tramite} item={item} />;
