@@ -203,11 +203,6 @@ export default function DesktopPage() {
               </li>
             ))}
           </ul>
-          <p className="mx-auto mt-6 mb-0 max-w-[70ch] text-center text-sm text-(--text-secondary)">
-            La app aún no está firmada. En macOS, si no se abre, ve a Ajustes del Sistema →
-            Privacidad y seguridad y pulsa «Abrir igualmente». En Windows, pulsa «Más información» →
-            «Ejecutar de todas formas».
-          </p>
         </section>
       </main>
       <Footer />
