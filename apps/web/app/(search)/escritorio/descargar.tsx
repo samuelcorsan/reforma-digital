@@ -3,9 +3,11 @@
 import { useSyncExternalStore } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonGroup } from '@reforma-digital/design/ui/button-group';
 
 import { Icon } from '../../../components/brand/icon';
 import { plataformas, type Sistema } from './descargas';
+import { Logo } from './logos';
 
 /** El sistema del visitante, o null en el móvil (el iPad se presenta como Mac) y en ChromeOS. */
 function detectar(): Sistema | null {
@@ -18,13 +20,16 @@ function detectar(): Sistema | null {
 }
 const sinCambios = () => () => {};
 
-const boton = (variant: 'sunset' | 'outline') => ({
+const boton = (variant: 'sunset' | 'outline', className?: string) => ({
   'data-slot': 'button',
   'data-variant': variant,
-  className: cn(buttonVariants({ variant, size: 'xl' })),
+  className: cn(buttonVariants({ variant, size: 'xl' }), className),
 });
 
-/** El botón principal descarga la app para tu sistema; los demás sistemas van como secundarios. */
+/**
+ * El botón principal descarga la app para tu sistema; los demás sistemas van al lado, solo con su
+ * logo, en el mismo grupo.
+ */
 export function Descargar() {
   const sistema = useSyncExternalStore(sinCambios, detectar, () => null);
   const tuya = plataformas.find((p) => p.id === sistema);
@@ -36,9 +41,9 @@ export function Descargar() {
       </a>
     );
   return (
-    <>
+    <ButtonGroup aria-label="Descargar la app">
       <a href={tuya.archivos[0]?.url} {...boton('sunset')}>
-        Descargar para {tuya.nombre} <Icon name="descargar" size={16} />
+        <Logo sistema={tuya.id} /> Descargar para {tuya.nombre}
       </a>
       {plataformas
         .filter((p) => p !== tuya)
@@ -47,11 +52,12 @@ export function Descargar() {
             key={p.id}
             href={p.archivos[0]?.url}
             aria-label={`Descargar para ${p.nombre}`}
-            {...boton('outline')}
+            title={p.nombre}
+            {...boton('outline', 'w-11 px-0')}
           >
-            {p.nombre}
+            <Logo sistema={p.id} />
           </a>
         ))}
-    </>
+    </ButtonGroup>
   );
 }
