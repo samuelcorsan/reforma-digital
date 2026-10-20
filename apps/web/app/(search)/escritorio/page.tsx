@@ -1,6 +1,4 @@
 import { cn } from '@reforma-digital/design/lib/utils';
-import { Badge } from '@reforma-digital/design/ui/badge';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
 
 import type { Metadata } from 'next';
 
@@ -11,6 +9,8 @@ import { Footer } from '../../../components/brand/footer';
 import { JsonLd } from '../../../components/json-ld';
 import { breadcrumbs, organizationId, pageMetadata, webPage } from '../../../lib/seo';
 import { links } from '../../../lib/site';
+import { Descargar } from './descargar';
+import { plataformas } from './descargas';
 import { Marcadores } from './marcadores';
 
 const title = 'Reforma Digital para escritorio';
@@ -69,12 +69,6 @@ const pasos = [
 
 const tuyo = ['Contraseñas', 'CAPTCHA', 'Certificados', 'Firmas', 'Pagos'];
 
-const plataformas = [
-  { nombre: 'macOS', detalle: 'Apple silicon e Intel', formatos: '.dmg' },
-  { nombre: 'Windows', detalle: 'Windows 10 y 11', formatos: '.exe' },
-  { nombre: 'Linux', detalle: 'x64', formatos: '.deb · .AppImage' },
-];
-
 export default function DesktopPage() {
   return (
     <>
@@ -98,14 +92,7 @@ export default function DesktopPage() {
             permiso.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-            <a
-              href="#descargar"
-              data-slot="button"
-              data-variant="sunset"
-              className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
-            >
-              Ver cuándo sale <Icon name="abajo" size={16} />
-            </a>
+            <Descargar />
             <a
               href={readme}
               className="flex min-h-11 items-center gap-2 underline underline-offset-[0.25em]"
@@ -186,28 +173,41 @@ export default function DesktopPage() {
           <div className="mb-10 grid justify-items-center gap-5 text-center">
             <p className={etiqueta}>Descargar</p>
             <h2 id="es-descargar" className={cn(titularSeccion, 'max-w-[18ch]')}>
-              Sale pronto para macOS, Windows y Linux.
+              Descárgala para macOS, Windows y Linux.
             </h2>
             <p className={cn(entradilla, 'm-0 max-w-[60ch] text-(--text-secondary)')}>
-              Está en pre-alpha: aún no hay instaladores y todavía no ha completado ningún trámite
-              de principio a fin en una sede real.
+              Está en pre-alpha: todavía no ha completado ningún trámite de principio a fin en una
+              sede real.
             </p>
           </div>
           <ul className="m-0 grid list-none grid-cols-3 border border-border p-0 max-[800px]:grid-cols-1">
             {plataformas.map((p) => (
               <li
-                key={p.nombre}
-                className="flex items-start justify-between gap-4 p-8 not-first:border-l not-first:border-border max-[800px]:p-6 max-[800px]:not-first:border-t max-[800px]:not-first:border-l-0"
+                key={p.id}
+                className="p-8 not-first:border-l not-first:border-border max-[800px]:p-6 max-[800px]:not-first:border-t max-[800px]:not-first:border-l-0"
               >
-                <div>
-                  <h3 className={titularTarjeta}>{p.nombre}</h3>
-                  <p className="mt-2 mb-0 text-(--text-secondary)">{p.detalle}</p>
-                  <p className="mt-4 mb-0 font-mono text-sm text-muted-foreground">{p.formatos}</p>
-                </div>
-                <Badge variant="outline">Próximamente</Badge>
+                <h3 className={titularTarjeta}>{p.nombre}</h3>
+                <p className="mt-2 mb-0 text-(--text-secondary)">{p.detalle}</p>
+                <ul className="mt-4 mb-0 grid list-none gap-1 p-0">
+                  {p.archivos.map((a) => (
+                    <li key={a.url}>
+                      <a
+                        href={a.url}
+                        className="flex min-h-11 items-center gap-2 underline underline-offset-[0.25em]"
+                      >
+                        <Icon name="descargar" size={16} /> {a.etiqueta}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ul>
+          <p className="mx-auto mt-6 mb-0 max-w-[70ch] text-center text-sm text-(--text-secondary)">
+            La app aún no está firmada. En macOS, si no se abre, ve a Ajustes del Sistema →
+            Privacidad y seguridad y pulsa «Abrir igualmente». En Windows, pulsa «Más información» →
+            «Ejecutar de todas formas».
+          </p>
         </section>
       </main>
       <Footer />
