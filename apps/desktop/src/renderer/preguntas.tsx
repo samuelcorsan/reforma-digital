@@ -452,8 +452,8 @@ function Formulario({
         titulo="El asistente puede hacerlo por ti"
         descripcion={f.titulo}
         accesorio={
-          // En un chat estrecho, la acción pasa a dos líneas en vez de salirse de la tarjeta.
-          <div className="ml-auto flex max-w-full min-w-0 gap-2">
+          // En un chat estrecho, la acción baja a otra línea en vez de salirse de la tarjeta.
+          <div className="ml-auto flex flex-wrap-reverse justify-end gap-2">
             {!abierto && (
               <Button variant="ghost" size="lg" disabled={enviando} onClick={() => responder(null)}>
                 Ahora no
@@ -463,14 +463,7 @@ function Formulario({
             <CollapsibleTrigger
               aria-label={abierto ? 'Plegar' : undefined}
               render={
-                <Button
-                  variant={abierto ? 'ghost' : 'sunset'}
-                  size={abierto ? 'icon-lg' : 'lg'}
-                  className={cn(
-                    !abierto &&
-                      'h-auto min-h-9 min-w-0 shrink py-1.5 text-balance whitespace-normal',
-                  )}
-                />
+                <Button variant={abierto ? 'ghost' : 'sunset'} size={abierto ? 'icon-lg' : 'lg'} />
               }
             >
               {abierto ? <Icono nombre="siguiente" className="-rotate-90" /> : accion}
