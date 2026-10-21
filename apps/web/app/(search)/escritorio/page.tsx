@@ -9,7 +9,7 @@ import { Footer } from '../../../components/brand/footer';
 import { JsonLd } from '../../../components/json-ld';
 import { breadcrumbs, organizationId, pageMetadata, webPage } from '../../../lib/seo';
 import { links } from '../../../lib/site';
-import { Descargar } from './descargar';
+import { Descargar, EnlaceDescarga } from './descargar';
 import { plataformas } from './descargas';
 import { Marcadores } from './marcadores';
 
@@ -191,12 +191,13 @@ export default function DesktopPage() {
                 <ul className="mt-4 mb-0 grid list-none gap-1 p-0">
                   {p.archivos.map((a) => (
                     <li key={a.url}>
-                      <a
+                      <EnlaceDescarga
+                        sistema={p.id}
                         href={a.url}
                         className="flex min-h-11 items-center gap-2 underline underline-offset-[0.25em]"
                       >
                         <Icon name="descargar" size={16} /> {a.etiqueta}
-                      </a>
+                      </EnlaceDescarga>
                     </li>
                   ))}
                 </ul>

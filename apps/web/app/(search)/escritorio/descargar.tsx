@@ -1,13 +1,26 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useSyncExternalStore, type ComponentProps } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { buttonVariants } from '@reforma-digital/design/ui/button';
 import { ButtonGroup } from '@reforma-digital/design/ui/button-group';
+import { Dialog, DialogTrigger } from '@reforma-digital/design/ui/dialog';
 
 import { Icon } from '../../../components/brand/icon';
 import { plataformas, type Sistema } from './descargas';
 import { Logo } from './logos';
+import { GuiaMac } from './guia-mac';
+
+export function EnlaceDescarga({ sistema, ...props }: ComponentProps<'a'> & { sistema: Sistema }) {
+  if (sistema !== 'macos') return <a {...props} />;
+
+  return (
+    <Dialog>
+      <DialogTrigger nativeButton={false} role="link" render={<a {...props} />} />
+      <GuiaMac />
+    </Dialog>
+  );
+}
 
 /** El sistema del visitante, o null en el móvil (el iPad se presenta como Mac) y en ChromeOS. */
 function detectar(): Sistema | null {
@@ -42,13 +55,14 @@ export function Descargar() {
     );
   return (
     <ButtonGroup aria-label="Descargar la app">
-      <a href={tuya.archivos[0]?.url} {...boton('sunset')}>
+      <EnlaceDescarga sistema={tuya.id} href={tuya.archivos[0]?.url} {...boton('sunset')}>
         <Logo sistema={tuya.id} /> Descargar para {tuya.nombre}
-      </a>
+      </EnlaceDescarga>
       {plataformas
         .filter((p) => p !== tuya)
         .map((p) => (
-          <a
+          <EnlaceDescarga
+            sistema={p.id}
             key={p.id}
             href={p.archivos[0]?.url}
             aria-label={`Descargar para ${p.nombre}`}
@@ -56,7 +70,7 @@ export function Descargar() {
             {...boton('outline', 'w-11 px-0')}
           >
             <Logo sistema={p.id} />
-          </a>
+          </EnlaceDescarga>
         ))}
     </ButtonGroup>
   );
