@@ -15,3 +15,13 @@
   line-height: 1.6;
   color: var(--foreground);
 }
+
+/* Objetivos de 44 px (DESIGN.md §1): los botones, campos y selectores de shadcn se quedan en 24–36 px. */
+@layer base {
+  [data-slot='button'],
+  [data-slot='input'],
+  [data-slot='select-trigger'],
+  [data-slot='collapsible-trigger'] {
+    min-height: 44px;
+  }
+}
