@@ -23,6 +23,7 @@
     "@reforma-digital/government": "workspace:*",
     "electron": "44.7.0",
     "electron-builder": "26.17.0",
+    "electron-updater": "6.8.10",
     "nucleo-ui-essential-outline-18": "^1.1.8",
     "zod": "^4.1.0"
   }
