@@ -527,7 +527,12 @@ app
   .then(async () => {
     const renderer = path.join(RAIZ, 'renderer');
     protocol.handle('app', (req) => {
-      const { pathname } = new URL(req.url);
+      const { pathname, searchParams } = new URL(req.url);
+      // Los iconos de las webs, a través del servidor: así Google no sabe quién las consulta.
+      if (pathname === '/icono')
+        return net.fetch(
+          `${SERVIDOR}/api/escritorio/icono?origen=${encodeURIComponent(searchParams.get('origen') ?? '')}`,
+        );
       const destino = path.normalize(path.join(renderer, decodeURIComponent(pathname)));
       if (!destino.startsWith(renderer + path.sep))
         return new Response('No encontrado', { status: 404 });

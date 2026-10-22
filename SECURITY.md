@@ -30,6 +30,8 @@ No incluyas sesiones, documentos personales, tokens reales o datos identificativ
 
 La app de escritorio (`apps/desktop`) tiene su propio protocolo: qué datos guarda, qué llega al proveedor de IA, las capas que lo impiden, lo que queda fuera y qué comprobar antes de cambiarlo. Consulta [apps/desktop/security-protocol.md](apps/desktop/security-protocol.md).
 
+El registro de actividades de tratamiento y la evaluación de impacto del RGPD están en [docs/proteccion-de-datos.md](docs/proteccion-de-datos.md).
+
 Referencias técnicas consultadas:
 
 - [Content scripts y aislamiento de Chrome](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts)

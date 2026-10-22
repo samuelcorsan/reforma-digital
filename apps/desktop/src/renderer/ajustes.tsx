@@ -315,9 +315,10 @@ export function Ajustes({ privacidad }: { privacidad: boolean }) {
             </li>
             <li>
               Tus datos, conversaciones y trámites se guardan cifrados en este ordenador, con una
-              clave protegida por el sistema. No salen de él: al servidor de Reforma Digital solo le
-              llegan las peticiones al asistente, con marcadores en lugar de tus datos, y no las
-              guarda.
+              clave protegida por el sistema. Al servidor de Reforma Digital solo le llegan las
+              peticiones al asistente, con marcadores en lugar de tus datos, y no las guarda: las
+              pasa al modelo de IA (NaN Builders, que procesa en la UE) y las búsquedas a Exa (en
+              EE. UU.).
             </li>
             <li>
               En lugar de tu nombre, tu DNI, tus fechas, tu dirección, tu teléfono, tu correo o tu
@@ -335,6 +336,11 @@ export function Ajustes({ privacidad }: { privacidad: boolean }) {
               falla, no se envía nada.
             </li>
             <li>
+              Ese modelo no lo encuentra todo: un nombre de pila suelto o lo que cuentes de tu
+              situación, como tu salud, puede llegar a la IA. Escribe solo lo que haga falta para el
+              trámite.
+            </li>
+            <li>
               La app pone el dato real solo al escribirlo en la web del trámite: en una web oficial
               o en otra si confías en ella.
             </li>
@@ -350,6 +356,14 @@ export function Ajustes({ privacidad }: { privacidad: boolean }) {
                 }
               >
                 github.com/samuelcorsan/reforma-digital
+              </button>
+              . Quién recibe qué y cuánto tiempo, en la{' '}
+              <button
+                type="button"
+                className="underline underline-offset-2 hover:text-foreground"
+                onClick={() => void window.rd.abrirEnlace('https://reforma-digital.es/privacy')}
+              >
+                política de privacidad
               </button>
               .
             </li>

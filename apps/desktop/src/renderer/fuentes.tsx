@@ -3,8 +3,9 @@ import { cn } from '@reforma-digital/design/lib/utils';
 import { Icono } from './icono';
 
 /**
- * El icono de la web, del servicio de favicons de Google. Solo se le envía el origen, sin ruta,
- * sin referer y al mostrarse; si no carga, se dibuja un globo.
+ * El icono de la web, del servicio de favicons de Google a través del servidor de Reforma Digital
+ * (`/icono` en el proceso principal). Solo se envía el origen, sin ruta, y al mostrarse; si no
+ * carga, se dibuja un globo.
  */
 export function Favicon({ url, className }: { url: string; className?: string }) {
   const [falla, setFalla] = useState(false);
@@ -17,12 +18,11 @@ export function Favicon({ url, className }: { url: string; className?: string })
     );
   return (
     <img
-      src={`https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(URL.parse(url)?.origin ?? '')}&sz=64`}
+      src={`/icono?origen=${encodeURIComponent(URL.parse(url)?.origin ?? '')}`}
       alt=""
       width={20}
       height={20}
       loading="lazy"
-      referrerPolicy="no-referrer"
       onError={() => setFalla(true)}
       className={base}
     />

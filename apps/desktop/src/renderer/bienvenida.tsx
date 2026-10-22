@@ -414,7 +414,20 @@ export function Bienvenida({ alTerminar }: { alTerminar: () => void }) {
                 Así viaja una petición con tus datos.
               </p>
               <Viaje />
-              <p className="mt-6 mb-0 text-[15px] text-muted-foreground">
+              <p className="mx-auto mt-6 mb-0 max-w-[64ch] text-[15px] text-muted-foreground">
+                La conversación, con marcadores, va a la IA (NaN Builders, en la UE) a través del
+                servidor de Reforma Digital, y las búsquedas a Exa. Lo que el detector no reconozca,
+                como un nombre suelto, puede llegar a la IA: lo explica la{' '}
+                <button
+                  type="button"
+                  className="underline underline-offset-2 hover:text-foreground"
+                  onClick={() => void window.rd.abrirEnlace('https://reforma-digital.es/privacy')}
+                >
+                  política de privacidad
+                </button>
+                .
+              </p>
+              <p className="mt-2 mb-0 text-[15px] text-muted-foreground">
                 Es código abierto: puedes comprobarlo todo en{' '}
                 <button
                   type="button"
