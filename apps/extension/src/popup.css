@@ -1,3 +1,20 @@
 @import 'tailwindcss' source(none);
 @import '@reforma-digital/design/theme.css';
 @source '../../../packages/design/ui/**/*.{ts,tsx}';
+
+/* Objetivos de 44 px (DESIGN.md §1): los tamaños de Button de shadcn se quedan en 24–36 px. */
+@layer base {
+  [data-slot='button'] {
+    min-height: 44px;
+  }
+}
+
+/* Los enlaces de «Portales incluidos» ganan el área táctil sin cambiar la maqueta. */
+li > a.bg-link {
+  position: relative;
+}
+li > a.bg-link::after {
+  content: '';
+  position: absolute;
+  inset: -14px 0;
+}
