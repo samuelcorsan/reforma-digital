@@ -30,7 +30,7 @@ Desde el commit de `main` que se publica:
 git fetch origin && git tag escritorio-v0.2.0 origin/main && git push origin escritorio-v0.2.0
 ```
 
-La etiqueta tiene que coincidir con `version` de `package.json`. En el workflow, macOS 26 empaqueta, firma con el Developer ID del equipo `4P7D7N2DZN` y notariza, mientras Windows y Ubuntu empaquetan sus instaladores. Al final, un último job crea la release. Se sigue con `gh run watch`.
+La etiqueta tiene que coincidir con `version` de `package.json`. En el workflow, macOS 26 empaqueta, firma con el Developer ID del equipo `4P7D7N2DZN` y notariza, mientras Windows y Ubuntu empaquetan sus instaladores. Al final, un último job crea la release. No hay que firmar nada a mano: el workflow usa el certificado y la clave de notarización de los secretos del repositorio, así que puede publicar cualquiera con permiso para subir etiquetas. Se sigue con `gh run watch`.
 
 ### 3. Comprobar la release
 
