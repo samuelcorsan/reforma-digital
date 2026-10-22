@@ -162,7 +162,8 @@ test('con otro proveedor, un DNI escrito en el chat no le llega y el trámite se
 
   // Todo lo de la app queda en el perfil de prueba y cifrado: ni el mensaje ni el DNI en claro.
   const datos = path.join(perfil, 'datos');
-  const tramites = readdirSync(datos).filter((f) => f.startsWith('tramite-'));
+  // Solo los guardados: una escritura en curso deja un `tramite-….bin.….tmp` al lado.
+  const tramites = readdirSync(datos).filter((f) => /^tramite-.+\.bin$/.test(f));
   expect(tramites.length).toBe(2);
   for (const t of tramites) {
     const guardado = readFileSync(path.join(datos, t)).toString('latin1');
