@@ -200,7 +200,7 @@ export function Inicio({ abrir }: { abrir: (id: string) => void }) {
       <div className="arrastrar h-[52px] shrink-0" />
       <div className="relative flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-8">
         <div className="my-auto w-full max-w-[680px] py-10">
-          <h1 className="m-0 mb-8 text-center font-heading text-[40px] leading-[1.1] font-normal tracking-[-0.02em]">
+          <h1 className="m-0 mb-8 text-center font-heading text-[40px] leading-[1.1] font-normal">
             ¿Qué trámite quieres hacer?
           </h1>
           {app?.recordatorios.length ? (

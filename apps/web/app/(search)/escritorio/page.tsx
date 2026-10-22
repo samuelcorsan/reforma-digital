@@ -43,9 +43,9 @@ const readme = `${links.repo}/tree/main/apps/desktop#readme`;
 
 const etiqueta = 'text-sm font-medium text-brand';
 const titularSeccion =
-  'm-0 font-heading font-normal text-balance text-[clamp(32px,4vw,52px)] leading-[1.05] tracking-[-0.02em]';
+  'm-0 font-heading font-normal text-balance text-[clamp(32px,4vw,52px)] leading-[1.05]';
 const titularTarjeta =
-  'm-0 font-heading font-normal text-balance text-[clamp(24px,2.4vw,30px)] leading-[1.15] tracking-[-0.01em]';
+  'm-0 font-heading font-normal text-balance text-[clamp(24px,2.4vw,30px)] leading-[1.15]';
 const entradilla = 'text-[clamp(17px,1.4vw,19px)] leading-[1.6] text-pretty';
 const seccion = 'mx-auto max-w-(--container-content) px-(--page-gutter)';
 
@@ -82,7 +82,7 @@ export default function DesktopPage() {
           <p className={cn(etiqueta, 'mb-5')}>App de escritorio para macOS, Windows y Linux</p>
           <h1
             id="es-titulo"
-            className="mx-auto mb-6 max-w-[28ch] font-heading text-[clamp(36px,5vw,60px)] leading-[1.08] font-normal tracking-[-0.02em] text-balance"
+            className="mx-auto mb-6 max-w-[28ch] font-heading text-[clamp(36px,5vw,60px)] leading-[1.08] font-normal text-balance"
           >
             Haz tus trámites sin perderte en la sede electrónica.
           </h1>

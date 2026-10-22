@@ -1,6 +1,7 @@
-/* La app usa Inter, que va dentro de la app. */
+/* La app usa Inter, que va dentro de la app, y Host Grotesk Medium en los titulares. */
 :root {
   --font-brand-text: 'Inter Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-brand-heading: 'Host Grotesk', var(--font-brand-text);
 }
 html,
 body,

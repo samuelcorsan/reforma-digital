@@ -7,6 +7,7 @@ import { congressBase } from '../../lib/congreso/routes';
 import { electionsBase } from '../../lib/elecciones/pages';
 import { Icon } from './icon';
 import { Logo } from './logo';
+import { LogoPuzle } from './logo-puzle';
 
 const secciones = [
   ['La iniciativa', '/#iniciativa'],
@@ -18,10 +19,7 @@ const secciones = [
 
 export function Footer() {
   return (
-    <footer
-      className={'pie [--logo-color:currentColor] max-w-none p-2 [border-top:0]'}
-      aria-labelledby="pie-titulo"
-    >
+    <footer className={'pie max-w-none p-2 [border-top:0]'} aria-labelledby="pie-titulo">
       <div
         className={
           'pie-sol flex flex-col gap-10 [padding:clamp(48px,_8vw,_112px)_max(var(--page-gutter),_(100%_-_var(--container-content))_/_2_+_var(--page-gutter))_40px] [border-radius:28px] [background:radial-gradient(80%_70%_at_50%_-12%,_#ffe58f_0%,_rgba(255,_229,_143,_0)_70%),_linear-gradient(180deg,_#ffd34d_0%,_var(--brand-yellow)_46%,_var(--brand-orange)_100%)] [color:var(--foreground)] [@media(max-width:_720px)]:gap-8'
@@ -30,7 +28,7 @@ export function Footer() {
         <h2
           id="pie-titulo"
           className={
-            'pie-titulo m-0 [max-width:20ch] [font-size:clamp(32px,_4vw,_56px)] [line-height:1] [letter-spacing:-0.03em]'
+            'pie-titulo m-0 [max-width:20ch] [font-size:clamp(32px,_4vw,_56px)] [line-height:1]'
           }
         >
           Lo público es de todos. Su web, también.
@@ -63,7 +61,7 @@ export function Footer() {
           }
         >
           <span role="img" aria-label="Reforma Digital" className={'pie-marca inline-flex'}>
-            <Logo />
+            <Logo size={48} mark={<LogoPuzle size={48} />} />
           </span>
           <nav aria-label="Secciones">
             <ul>

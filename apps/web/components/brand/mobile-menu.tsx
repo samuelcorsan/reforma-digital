@@ -57,7 +57,7 @@ export function MobileMenu({ links }: { links: readonly MenuLink[] }) {
                 href={href}
                 aria-current={current ? 'page' : undefined}
                 onClick={close}
-                className="flex min-h-[76px] items-center justify-between border-b border-foreground/15 font-heading text-4xl leading-tight tracking-tight no-underline"
+                className="flex min-h-[76px] items-center justify-between border-b border-foreground/15 font-heading text-4xl leading-tight no-underline"
               >
                 {text}
                 <Icon name="derecha" size={18} />

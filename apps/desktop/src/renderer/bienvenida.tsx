@@ -297,8 +297,7 @@ export function Bienvenida({ alTerminar }: { alTerminar: () => void }) {
   const titulo = useRef<HTMLHeadingElement>(null);
   useEffect(() => titulo.current?.focus(), [paso]);
   const ultimo = paso === PASOS.length - 1;
-  const h1 =
-    'm-0 font-heading text-[40px] leading-[1.1] font-normal tracking-[-0.02em] outline-none';
+  const h1 = 'm-0 font-heading text-[40px] leading-[1.1] font-normal outline-none';
   const entradilla = 'mx-auto mt-4 mb-8 max-w-[56ch] text-[17px] leading-relaxed';
   return (
     <div className="flex h-full flex-col bg-muted">

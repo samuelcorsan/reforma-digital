@@ -132,7 +132,7 @@ export function ProjectTour({
                 <Fragment key="label">{p.label}</Fragment>
                 <h3
                   className={
-                    't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15] [letter-spacing:-0.01em]'
+                    't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15]'
                   }
                 >
                   {p.title}

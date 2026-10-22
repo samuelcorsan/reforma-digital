@@ -10,9 +10,7 @@ export function Cabecera({ titulo, entradilla }: { titulo: string; entradilla: s
   return (
     <>
       <div className="arrastrar h-[52px] shrink-0" />
-      <h1 className="m-0 font-heading text-[36px] leading-[1.1] font-normal tracking-[-0.02em]">
-        {titulo}
-      </h1>
+      <h1 className="m-0 font-heading text-[36px] leading-[1.1] font-normal">{titulo}</h1>
       <p className="mt-3 mb-8 max-w-[62ch] text-base leading-relaxed text-[var(--text-secondary)]">
         {entradilla}
       </p>

@@ -1,4 +1,5 @@
 import { Logotipo } from '@reforma-digital/design/ui/logotipo';
+import type { ReactNode } from 'react';
 
 const cuerpo = 'M48 0H96V48H48V96H96V144H48V192H0V48H48ZM96 48H144V96H96ZM96 144H144V192H96Z';
 const doblez = 'M0 48L48 0V48Z';
@@ -17,11 +18,12 @@ export function LogoMark({ size = 28 }: { size?: number }) {
 }
 
 // Logo completo: la R y «Reforma / Digital» en dos líneas, separados por un módulo (1/4 de la R).
-// `size` es el alto de la R. El tamaño de letra solo fija las medidas en em de `.marca`.
-export function Logo({ size = 28 }: { size?: number }) {
+// `size` es el alto de la R. El tamaño de letra solo fija las medidas en em de `.marca`. `mark`
+// sustituye a la R (en el pie, la R puzle).
+export function Logo({ size = 28, mark }: { size?: number; mark?: ReactNode }) {
   return (
     <span className={'marca inline-flex items-center [gap:0.5em]'} style={{ fontSize: size / 2 }}>
-      <LogoMark size={size} />
+      {mark ?? <LogoMark size={size} />}
       <span className={'marca-texto flex'}>
         <Logotipo size={size} />
       </span>

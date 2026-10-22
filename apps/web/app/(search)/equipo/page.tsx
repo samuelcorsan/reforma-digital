@@ -57,7 +57,7 @@ export default async function CoreTeamPage() {
               <h1
                 id="ct-titulo"
                 className={
-                  't-titular-m m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(32px,_4vw,_52px)] [line-height:1.05] [letter-spacing:-0.02em]'
+                  't-titular-m m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(32px,_4vw,_52px)] [line-height:1.05]'
                 }
               >
                 Core team
@@ -99,7 +99,7 @@ export default async function CoreTeamPage() {
                         <div>
                           <h2
                             className={
-                              't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15] [letter-spacing:-0.01em]'
+                              't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15]'
                             }
                           >
                             {name}
@@ -136,7 +136,7 @@ export default async function CoreTeamPage() {
                 <h2
                   id="ct-contributors-titulo"
                   className={
-                    't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15] [letter-spacing:-0.01em]'
+                    't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15]'
                   }
                 >
                   Contributors

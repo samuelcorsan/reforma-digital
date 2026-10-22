@@ -77,7 +77,7 @@ export default function HomePage() {
             <h1
               id="in-titulo"
               className={
-                't-titular-xl m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(44px,_6.4vw,_92px)] [line-height:1] [letter-spacing:-0.03em]'
+                't-titular-xl m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(44px,_6.4vw,_92px)] [line-height:1]'
               }
             >
               Lo público, a la altura de las personas.
@@ -127,7 +127,7 @@ export default function HomePage() {
             <h2
               id="in-idea"
               className={
-                't-titular-m m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(32px,_4vw,_52px)] [line-height:1.05] [letter-spacing:-0.02em]'
+                't-titular-m m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(32px,_4vw,_52px)] [line-height:1.05]'
               }
             >
               Que hacer un trámite no sea otro trámite.
@@ -185,7 +185,7 @@ export default function HomePage() {
                   <h2
                     id="in-proyectos-titulo"
                     className={
-                      't-titular-m m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(32px,_4vw,_52px)] [line-height:1.05] [letter-spacing:-0.02em]'
+                      't-titular-m m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(32px,_4vw,_52px)] [line-height:1.05]'
                     }
                   >
                     La idea, puesta en práctica.
@@ -415,7 +415,7 @@ export default function HomePage() {
           <h2
             id="in-comunidad-titulo"
             className={
-              't-titular-m m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(32px,_4vw,_52px)] [line-height:1.05] [letter-spacing:-0.02em]'
+              't-titular-m m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(32px,_4vw,_52px)] [line-height:1.05]'
             }
           >
             Tu experiencia puede ser el próximo cambio.
@@ -452,7 +452,7 @@ export default function HomePage() {
                 <div>
                   <h3
                     className={
-                      't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15] [letter-spacing:-0.01em]'
+                      't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15]'
                     }
                   >
                     Entra en GitHub.
@@ -483,7 +483,7 @@ export default function HomePage() {
                 <div>
                   <h3
                     className={
-                      't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15] [letter-spacing:-0.01em]'
+                      't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15]'
                     }
                   >
                     Comparte lo que mejorarías.
@@ -514,7 +514,7 @@ export default function HomePage() {
                 <div>
                   <h3
                     className={
-                      't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15] [letter-spacing:-0.01em]'
+                      't-titular-s m-0 [font-family:var(--font-brand-heading)] font-normal [font-kerning:normal] text-balance [font-size:clamp(24px,_2.4vw,_30px)] [line-height:1.15]'
                     }
                   >
                     Dale forma a una propuesta.

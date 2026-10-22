@@ -415,7 +415,7 @@ export async function ElectionsHome() {
           <div className="grid gap-8">
             <div className="grid justify-items-start gap-4">
               <Badge className="font-mono uppercase">{current.label}</Badge>
-              <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-[1.08] font-normal tracking-tight lg:text-[56px]">
+              <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
                 {current.title}
               </h1>
               <p className="m-0 max-w-[58ch] text-lg leading-relaxed text-muted-foreground">
