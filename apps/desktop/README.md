@@ -17,7 +17,7 @@ pnpm --filter @reforma-digital/desktop package                 # la app, sin ins
 
 `package` empaqueta para el sistema y la arquitectura en los que se ejecuta (`dist/mac-arm64`, `dist/win-unpacked`, `dist/linux-unpacked`…). El detector usa ONNX Runtime en WebAssembly, igual en todos los sistemas: la app no lleva binarios nativos propios, pero Electron sí, así que cada sistema se empaqueta en el suyo. Después, `pnpm --filter @reforma-digital/desktop exec electron-builder --config electron-builder.json` crea los instaladores de ese sistema: `.dmg` para Apple silicon y para Intel, instalador `.exe` (NSIS) o `.deb` y `.AppImage`. En macOS, empaquetar pide Xcode 26 por el icono de Icon Composer.
 
-**Publicar una versión.** Se sube la versión de `package.json` y una etiqueta `escritorio-v<versión>`: `.github/workflows/desktop-release.yml` empaqueta cada sistema, firma y notariza la app de macOS con el Developer ID del equipo (secretos `CSC_LINK`, `CSC_KEY_PASSWORD` y `APPLE_API_*`) y lo publica todo en la release. Cuando está, se cambia `version` en `apps/web/app/(search)/escritorio/descargas.ts`: al desplegar la web, `/escritorio` ofrece la versión nueva y las apps instaladas la descargan de `/api/escritorio/actualizaciones` y la instalan al cerrarse.
+**Publicar una versión.** Con una etiqueta `escritorio-v<versión>`, firmada y notarizada en macOS; las apps instaladas se actualizan cuando la web anuncia la versión. Pasos en [el proceso de release](release-process.md).
 
 `dev` y `package` descargan antes, una sola vez, el modelo del detector de datos personales (1,45 MB, versión fija y huella SHA-256 comprobada) en `packages/agent/.cache/rampart-edge`; la app lo lleva dentro. Sin él, la app no envía nada al asistente.
 
