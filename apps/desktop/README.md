@@ -17,6 +17,8 @@ pnpm --filter @reforma-digital/desktop package                 # la app, sin ins
 
 `package` empaqueta para el sistema y la arquitectura en los que se ejecuta (`dist/mac-arm64`, `dist/win-unpacked`, `dist/linux-unpacked`…). El detector usa ONNX Runtime en WebAssembly, igual en todos los sistemas: la app no lleva binarios nativos propios, pero Electron sí, así que cada sistema se empaqueta en el suyo. Después, `pnpm --filter @reforma-digital/desktop exec electron-builder --config electron-builder.json` crea los instaladores de ese sistema: `.dmg` para Apple silicon y para Intel, instalador `.exe` (NSIS) o `.deb` y `.AppImage`. En macOS, empaquetar pide Xcode 26 por el icono de Icon Composer.
 
+**Publicar una versión.** Se sube la versión de `package.json` y una etiqueta `escritorio-v<versión>`: `.github/workflows/desktop-release.yml` empaqueta cada sistema, firma y notariza la app de macOS con el Developer ID del equipo (secretos `CSC_LINK`, `CSC_KEY_PASSWORD` y `APPLE_API_*`) y lo publica todo en la release. Cuando está, se cambia `version` en `apps/web/app/(search)/escritorio/descargas.ts`: al desplegar la web, `/escritorio` ofrece la versión nueva y las apps instaladas la descargan de `/api/escritorio/actualizaciones` y la instalan al cerrarse.
+
 `dev` y `package` descargan antes, una sola vez, el modelo del detector de datos personales (1,45 MB, versión fija y huella SHA-256 comprobada) en `packages/agent/.cache/rampart-edge`; la app lo lleva dentro. Sin él, la app no envía nada al asistente.
 
 Si el terminal tiene `ELECTRON_RUN_AS_NODE=1` (lo definen algunas apps hechas con Electron), quítalo antes de `dev`: con esa variable Electron arranca como Node. La app empaquetada no se ve afectada porque el fusible `runAsNode` está desactivado.
@@ -148,7 +150,8 @@ Lo que SpainAssist tiene y esta app no: firma propia sin AutoFirma, DNIe con el 
 - **Los iconos de las fuentes vienen de Google.** Al mostrarlas, Google recibe el origen de cada web (`https://sede.policia.gob.es`), sin ruta ni referer: sabe qué webs se han consultado, no la pregunta ni los datos.
 - **La protección de datos reduce el riesgo, no lo elimina.** El modelo sigue viendo el contexto y la información del trámite que no identifica (fechas de cita, importes, estados), y el detector puede pasar por alto un nombre suelto. Ver [lo que todavía puede llegar al modelo](security-protocol.md#lo-que-todavía-puede-llegar-al-modelo).
 - **Touch ID es una comprobación de la interfaz**, no protege criptográficamente la clave de datos. Solo existe en Mac: en Windows y Linux, las confirmaciones se aprueban sin él.
-- **Sin firma de Apple ni notarización.** El `.app` está firmado ad hoc; en otro Mac, Gatekeeper lo bloqueará hasta abrirlo con clic derecho → Abrir.
+- **Solo las releases están firmadas por Apple.** El `.app` de `package` se firma ad hoc; en otro Mac, Gatekeeper lo bloqueará hasta abrirlo con clic derecho → Abrir.
+- **Actualizaciones sin probar en Windows ni Linux.** En Linux solo se actualiza sola el `.AppImage`.
 - **Sin firma en Windows.** SmartScreen avisa de que el instalador es de un editor desconocido («Más información» → «Ejecutar de todas formas»). Las notificaciones necesitan la app instalada, no la carpeta de `package`.
 - **Linux necesita un llavero.** Sin GNOME Keyring o KWallet, la app no arranca: no tendría con qué proteger la clave de datos. En Ubuntu 24.04 o posterior, mejor el `.deb`, que instala el perfil de AppArmor que necesita Electron; el `.AppImage` puede no abrirse.
 - **Sin probar en Windows, Linux ni Mac con Intel.** Se han empaquetado desde un Mac con Apple silicon para comprobar la configuración, pero la app no se ha abierto en esos sistemas.

@@ -1,9 +1,12 @@
 import { links } from '../../../lib/site';
 
-/** La release de GitHub que publica .github/workflows/desktop-release.yml. */
-const version = '0.1.0';
-const archivo = (nombre: string) =>
-  `${links.repo}/releases/download/escritorio-v${version}/${nombre}`;
+/**
+ * La release de GitHub que publica .github/workflows/desktop-release.yml. Es también la que reciben
+ * las apps instaladas como actualización (api/escritorio/actualizaciones).
+ */
+export const version = '0.1.0';
+export const archivo = (nombre: string, v = version) =>
+  `${links.repo}/releases/download/escritorio-v${v}/${nombre}`;
 
 export type Sistema = 'macos' | 'windows' | 'linux';
 

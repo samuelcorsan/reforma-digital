@@ -2,7 +2,9 @@ import { randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST as modelo } from '../apps/web/app/api/escritorio/v1/chat/completions/route';
 import { POST as buscar } from '../apps/web/app/api/escritorio/buscar/route';
+import { GET as actualizacion } from '../apps/web/app/api/escritorio/actualizaciones/[nombre]/route';
 import { LIMITES, USD_POR_MILLON_DE_TOKENS } from '../apps/web/lib/escritorio';
+import { version } from '../apps/web/app/(search)/escritorio/descargas';
 
 /** Las rutas del servidor de la app de escritorio, con NaN Builders y Exa simulados. */
 const peticion = (
@@ -306,5 +308,32 @@ describe('servidor de la app de escritorio', () => {
     for (let i = 0; i < LIMITES.usdEntreTodos.busqueda / LIMITES.usdPorUsuario; i++)
       expect(await desde(`198.51.100.${i}`, true)).toBe(200);
     expect(await desde('203.0.113.1', true)).toBe(429);
+  });
+});
+
+describe('actualizaciones de la app de escritorio', () => {
+  const destino = async (nombre: string) => {
+    const r = await actualizacion(new Request(`https://reforma-digital.es/${nombre}`), {
+      params: Promise.resolve({ nombre }),
+    });
+    return r.status === 302 ? r.headers.get('location') : r.status;
+  };
+  const release = 'https://github.com/samuelcorsan/reforma-digital/releases/download';
+
+  it('da los latest*.yml de la versión de /escritorio y cada archivo de la suya', async () => {
+    expect(await destino('latest-mac.yml')).toBe(
+      `${release}/escritorio-v${version}/latest-mac.yml`,
+    );
+    expect(await destino('reforma-digital-0.1.0-arm64.zip.blockmap')).toBe(
+      `${release}/escritorio-v0.1.0/reforma-digital-0.1.0-arm64.zip.blockmap`,
+    );
+    expect(await destino('reforma-digital_0.3.1_amd64.deb')).toBe(
+      `${release}/escritorio-v0.3.1/reforma-digital_0.3.1_amd64.deb`,
+    );
+  });
+
+  it('no redirige otros archivos', async () => {
+    for (const nombre of ['latest-win.yml', 'otra-app-1.0.0.zip', 'reforma-digital-x.zip', '..'])
+      expect(await destino(nombre)).toBe(404);
   });
 });

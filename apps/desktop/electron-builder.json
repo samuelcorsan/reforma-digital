@@ -9,13 +9,19 @@
   "files": ["out/**", "package.json", "!node_modules/**"],
   "npmRebuild": false,
   "electronLanguages": ["es", "en"],
+  "publish": {
+    "provider": "generic",
+    "url": "https://reforma-digital.es/api/escritorio/actualizaciones"
+  },
   "mac": {
-    "target": [{ "target": "dmg", "arch": ["arm64", "x64"] }],
+    "target": [
+      { "target": "dmg", "arch": ["arm64", "x64"] },
+      { "target": "zip", "arch": ["arm64", "x64"] }
+    ],
     "artifactName": "reforma-digital-${version}-${arch}.${ext}",
     "category": "public.app-category.productivity",
     "icon": "build/icon.icon",
     "identity": "-",
-    "hardenedRuntime": false,
     "extendInfo": {
       "NSHumanReadableCopyright": "Reforma Digital \u00b7 Proyecto independiente, sin vinculaci\u00f3n con la Administraci\u00f3n"
     }

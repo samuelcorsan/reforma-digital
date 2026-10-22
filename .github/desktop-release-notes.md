@@ -9,7 +9,6 @@ Primera versión de la app de escritorio. Le dices qué trámite necesitas: lo b
 
 ## Antes de abrirla
 
-- **macOS:** la app no está firmada por Apple. Si macOS no deja abrirla, ve a Ajustes del Sistema → Privacidad y seguridad y pulsa «Abrir igualmente».
 - **Windows:** el instalador no está firmado. SmartScreen avisa de un editor desconocido: pulsa «Más información» → «Ejecutar de todas formas».
 - **Linux:** necesita un llavero (GNOME Keyring o KWallet) para proteger la clave de los datos.
 

@@ -15,6 +15,7 @@ import {
   systemPreferences,
   type MenuItemConstructorOptions,
 } from 'electron';
+import updater from 'electron-updater';
 import { z } from 'zod';
 import {
   camposPerfil,
@@ -580,6 +581,13 @@ app
     crearVentana();
     // Se carga ya para que el primer mensaje no espere; los fallos se muestran al enviarlo.
     cargarDetector().catch(() => undefined);
+    // Solo empaquetada: descarga la versión nueva que publique la web y la instala al salir.
+    updater.autoUpdater
+      .checkForUpdatesAndNotify({
+        title: 'Actualización lista',
+        body: '{appName} {version} se instalará al cerrar la app.',
+      })
+      .catch(() => undefined);
     app.on('activate', () => {
       if (!ventana) crearVentana();
     });
