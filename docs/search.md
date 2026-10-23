@@ -43,6 +43,7 @@ La clasificación territorial comparte la llamada que resuelve el contexto y tam
 - `EXA_API_KEY`: búsqueda web.
 - `DATABASE_URL`: almacenamiento opcional en PostgreSQL.
 - `APP_ORIGIN`: origen público de la web (URLs canónicas y sitemap).
+- `POSTHOG_KEY`: estadísticas de uso de la web y de la app de escritorio (`/api/eventos`); sin ella no se envían.
 
 NaN no cobra por token: el coste de los modelos es desconocido y se muestra como N/A. El de Exa sale de su respuesta.
 

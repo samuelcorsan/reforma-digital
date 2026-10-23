@@ -39,6 +39,8 @@ export const ajustesEsquema = z.object({
   touchIdEnConfirmaciones: z.boolean(),
   /** Borrar las sesiones de las webs (cookies, inicios de sesión) al cerrar la app. */
   cerrarSesiones: z.boolean(),
+  /** Enviar estadísticas de uso anónimas: qué acciones se hacen, sin su contenido. */
+  estadisticas: z.boolean(),
   /** El proveedor de IA: el de Reforma Digital, a través de su servidor (por defecto), u otro. */
   proveedor: z.enum(['app', 'propio']),
   /** El otro proveedor: un servidor compatible con la API de OpenAI y su modelo. Sus claves van aparte. */

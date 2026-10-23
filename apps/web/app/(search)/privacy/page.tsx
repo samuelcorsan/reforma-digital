@@ -56,6 +56,11 @@ export default function Privacy() {
           guardar tu IP.
         </li>
         <li>
+          <strong>Estadísticas de uso.</strong> Contamos las páginas vistas y las descargas de la
+          app en PostHog, en la UE. Le llegan desde nuestro servidor, sin tu IP, con la ruta de la
+          página y un identificador aleatorio que solo vive en la pestaña y se pierde al recargarla.
+        </li>
+        <li>
           <strong>Fotos del equipo.</strong> Vienen de GitHub, pero nuestro servidor las descarga y
           las optimiza: tu navegador no se conecta con GitHub para verlas.
         </li>
@@ -100,6 +105,15 @@ export default function Privacy() {
           <tr>
             <td>Exa, el buscador (EE. UU.)</td>
             <td>Las búsquedas del asistente, sin tus datos.</td>
+          </tr>
+          <tr>
+            <td>PostHog, las estadísticas de uso (UE)</td>
+            <td>
+              Qué acciones haces (abrir la app, crear un trámite, enviar un mensaje…), sin lo que
+              escribes ni tus datos, con la versión, el sistema y un identificador aleatorio que
+              cambia cada vez que abres la app. Le llega desde nuestro servidor, sin tu IP. Lo
+              puedes desactivar en Ajustes.
+            </td>
           </tr>
           <tr>
             <td>Google</td>
@@ -147,7 +161,8 @@ export default function Privacy() {
         </li>
         <li>
           <strong>Por interés legítimo</strong> (art. 6.1.f del RGPD): mantener la web segura,
-          evitar abusos del servidor y saber qué páginas se visitan, sin identificarte.
+          evitar abusos del servidor y saber qué páginas se visitan y qué partes de la app se usan,
+          sin identificarte.
         </li>
       </ul>
       <p>No vendemos datos, no hacemos publicidad y no creamos perfiles de nadie.</p>
@@ -161,6 +176,9 @@ export default function Privacy() {
         <li>Los contadores de gasto, hasta el día siguiente.</li>
         <li>Las conversaciones y las búsquedas: nuestro servidor no las guarda.</li>
         <li>El identificador de cada visita en las estadísticas, 24 horas.</li>
+        <li>
+          Las estadísticas de uso en PostHog, el plazo de su plan, sin nada que te identifique.
+        </li>
       </ul>
 
       <h2>Tus derechos</h2>

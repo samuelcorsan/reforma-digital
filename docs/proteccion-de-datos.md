@@ -54,6 +54,14 @@ No es un dictamen jurídico: conviene que lo revise quien asesore al proyecto en
 - **Destinatarios:** Google, sin datos de la persona.
 - **Plazo:** no se guarda; la CDN guarda el icono, no quién lo pidió.
 
+### 6. Estadísticas de uso
+
+- **Finalidad:** saber qué partes de la web y de la app de escritorio se usan.
+- **Base jurídica:** interés legítimo (art. 6.1.f). Sin cookies ni almacenamiento en el dispositivo: el identificador vive en la memoria de la pestaña o de la app, así que no necesita consentimiento (art. 22.2 de la LSSI-CE). En la app se puede desactivar en Ajustes.
+- **Personas y datos:** visitantes y usuarios de la app. El nombre del evento de una lista cerrada (página vista con su ruta sin query, descarga de la app, acciones de la app sin su contenido), la versión, el sistema, el proveedor elegido y un identificador aleatorio de la pestaña o de la sesión de la app. Sin IP: la petición a PostHog la hace el servidor (`apps/web/app/api/eventos`), y sin GeoIP ni perfiles de persona.
+- **Destinatarios:** PostHog, como encargado, en su región de la UE.
+- **Plazo:** el de PostHog según el plan contratado.
+
 ### Fuera del registro
 
 - **La extensión** no envía datos a Reforma Digital ni a terceros. Solo guarda en el navegador si está activada en cada web.
@@ -90,7 +98,7 @@ Con estas medidas ningún riesgo residual es alto, así que no haría falta la c
 ### Pendiente
 
 1. Identificar al responsable del tratamiento y un canal para ejercer los derechos.
-2. Firmar los contratos de encargado (art. 28) con Vercel, NaN Builders, Exa y el proveedor de la base de datos.
+2. Firmar los contratos de encargado (art. 28) con Vercel, NaN Builders, Exa, PostHog y el proveedor de la base de datos.
 3. Acreditar el mecanismo de transferencia de Exa (Marco de Privacidad de Datos o cláusulas contractuales tipo).
 4. Repetir la evaluación de privacidad con Rampart Edge (`pnpm eval:agent --suite ejecucion`), pendiente según el protocolo de seguridad.
 

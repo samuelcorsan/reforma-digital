@@ -261,6 +261,15 @@ export function Ajustes({ privacidad }: { privacidad: boolean }) {
             Si lo activas, al volver a abrir la app tendrás que iniciar sesión otra vez en las webs
             de tus trámites. Si no, siguen abiertas, guardadas en este ordenador.
           </Opcion>
+          <Opcion
+            activo={a.estadisticas}
+            alCambiar={(v) => void window.rd.guardarAjustes({ estadisticas: v })}
+            titulo="Enviar estadísticas de uso anónimas"
+          >
+            Solo qué acciones haces (abrir la app, crear un trámite, enviar un mensaje…), sin lo que
+            escribes ni tus datos, y sin nada que te identifique entre una sesión y otra. Nos ayuda
+            a saber qué mejorar.
+          </Opcion>
           <Opcion activo={false} titulo="Interfaces comunitarias" proximamente>
             Interfaces más claras de Reforma Digital para algunas webs oficiales, como la cita del
             DNI o la Agencia Tributaria, sin quitar sus controles.

@@ -115,9 +115,43 @@ type Secretos = {
 const AJUSTES_INICIALES: Ajustes = {
   touchIdEnConfirmaciones: true,
   cerrarSesiones: false,
+  estadisticas: true,
   proveedor: 'app',
   proveedorPropio: null,
 };
+
+/** Las acciones de la interfaz que cuentan en las estadísticas de uso, con el nombre del evento. */
+const EVENTOS: Partial<Record<Exclude<keyof ApiRd, 'on'>, string>> = {
+  crearTramite: 'tramite_creado',
+  enviar: 'mensaje_enviado',
+  responder: 'pregunta_respondida',
+  detener: 'tramite_detenido',
+  borrarTramite: 'tramite_borrado',
+  guardarPerfil: 'perfil_guardado',
+};
+/** El identificador de esta sesión de la app en las estadísticas: solo en memoria, cambia al abrirla. */
+const SESION = randomUUID();
+
+/**
+ * Cuenta una acción en las estadísticas de uso (api/eventos del servidor), si la persona no lo ha
+ * desactivado: solo su nombre, la versión, el sistema y el proveedor. Sin empaquetar no cuenta.
+ */
+function contar(evento: string) {
+  if (!app.isPackaged || !secretos.ajustes.estadisticas) return;
+  net
+    .fetch(`${SERVIDOR}/api/eventos`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        evento,
+        sesion: SESION,
+        version: app.getVersion(),
+        plataforma: process.platform,
+        proveedor: secretos.ajustes.proveedor,
+      }),
+    })
+    .catch(() => undefined);
+}
 
 let ventana: BrowserWindow | null = null;
 let almacen: Almacen;
@@ -580,10 +614,14 @@ app
           ? metodos[metodo as keyof typeof metodos]
           : null;
       if (!fn) throw new Error('Método desconocido');
-      return fn(...args);
+      const r = await fn(...args);
+      const evento = EVENTOS[metodo as keyof typeof metodos];
+      if (evento) contar(evento);
+      return r;
     });
     menu();
     crearVentana();
+    contar('app_abierta');
     // Se carga ya para que el primer mensaje no espere; los fallos se muestran al enviarlo.
     cargarDetector().catch(() => undefined);
     // Solo empaquetada: descarga la versión nueva que publique la web y la instala al salir.

@@ -6,6 +6,7 @@ import { buttonVariants } from '@reforma-digital/design/ui/button';
 import { ButtonGroup } from '@reforma-digital/design/ui/button-group';
 
 import { Icon } from '../../../components/brand/icon';
+import { contar } from '../../../components/estadisticas';
 import { plataformas, type Sistema } from './descargas';
 import { Logo } from './logos';
 
@@ -42,7 +43,11 @@ export function Descargar() {
     );
   return (
     <ButtonGroup aria-label="Descargar la app">
-      <a href={tuya.archivos[0]?.url} {...boton('sunset')}>
+      <a
+        href={tuya.archivos[0]?.url}
+        onClick={() => contar('descarga_escritorio', { sistema: tuya.id })}
+        {...boton('sunset')}
+      >
         <Logo sistema={tuya.id} /> Descargar para {tuya.nombre}
       </a>
       {plataformas
@@ -51,6 +56,7 @@ export function Descargar() {
           <a
             key={p.id}
             href={p.archivos[0]?.url}
+            onClick={() => contar('descarga_escritorio', { sistema: p.id })}
             aria-label={`Descargar para ${p.nombre}`}
             title={p.nombre}
             {...boton('outline', 'w-11 px-0')}

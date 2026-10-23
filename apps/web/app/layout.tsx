@@ -2,6 +2,7 @@ import '@reforma-digital/design/web.css';
 import { Analytics } from '@vercel/analytics/next';
 import type { Metadata, Viewport } from 'next';
 import { fuentesSol } from '../components/brand/fuentes';
+import { Estadisticas } from '../components/estadisticas';
 import { RouteFocus } from '../components/route-focus';
 import { pageMetadata } from '../lib/seo';
 import { siteUrl } from '../lib/site';
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <RouteFocus />
         {children}
         <Analytics />
+        <Estadisticas />
       </body>
     </html>
   );
