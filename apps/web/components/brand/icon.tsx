@@ -60,10 +60,17 @@ const iconos = {
   silencio: IconMicrophoneSlashOutline18,
 } satisfies Record<string, Svg>;
 
-const pixelTurn = { derecha: 0, abajo: 90, izquierda: 180 } as const;
+const pixelTurn = { derecha: 0, abajo: 90, izquierda: 180, arriba: 270 } as const;
+// Reproducir y pausa, en píxel como los chevrons: Nucleo no los tiene.
+const pixelGlyph = {
+  reproducir: 'M4 2h3v12H4zM7 4h3v8H7zM10 6h3v4h-3z',
+  pausa: 'M3 2h4v12H3zM9 2h4v12H9z',
+} as const;
 
-export type IconName = keyof typeof iconos | keyof typeof pixelTurn | 'mas';
+export type IconName =
+  keyof typeof iconos | keyof typeof pixelTurn | keyof typeof pixelGlyph | 'mas';
 const isPixel = (name: IconName): name is keyof typeof pixelTurn => name in pixelTurn;
+const isGlyph = (name: IconName): name is keyof typeof pixelGlyph => name in pixelGlyph;
 
 export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
   // «Más»: cinco puntos en cruz; girado 45° hace de cierre.
@@ -79,6 +86,21 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
         aria-hidden="true"
       >
         <path d="M6 0h3v3H6zM0 6h3v3H0zM6 6h3v3H6zM12 6h3v3h-3zM6 12h3v3H6z" />
+      </svg>
+    );
+  }
+  if (isGlyph(name)) {
+    return (
+      <svg
+        className={'icono shrink-0'}
+        width={size}
+        height={size}
+        viewBox="0 0 16 16"
+        fill="currentColor"
+        shapeRendering="crispEdges"
+        aria-hidden="true"
+      >
+        <path d={pixelGlyph[name]} />
       </svg>
     );
   }

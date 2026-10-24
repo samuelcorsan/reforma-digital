@@ -457,10 +457,17 @@ export function speech(a: Interview) {
   const words = text.match(/[a-zñ0-9]+/g) ?? [];
   const flat = ` ${words.join(' ')} `;
   // Muletillas: eh, em, mm (con sus letras repetidas), «o sea», «digamos», «en plan» y la coletilla «¿no?».
-  const fillers =
-    words.filter((w) => /^eh+$|^e+h?m+$|^m{2,}$/.test(w)).length +
-    ['o sea', 'digamos', 'en plan'].reduce((n, e) => n + flat.split(` ${e} `).length - 1, 0) +
-    (text.match(/[,¿]\s*no\s*\?/g) ?? []).length;
+  const counts = new Map<string, number>([
+    ['eh', words.filter((w) => /^eh+$/.test(w)).length],
+    ['em', words.filter((w) => /^e+h?m+$/.test(w)).length],
+    ['mm', words.filter((w) => /^m{2,}$/.test(w)).length],
+    ...['o sea', 'digamos', 'en plan'].map((e): [string, number] => [
+      e,
+      flat.split(` ${e} `).length - 1,
+    ]),
+    ['¿no?', (text.match(/[,¿]\s*no\s*\?/g) ?? []).length],
+  ]);
+  const fillers = [...counts.values()].reduce((n, c) => n + c, 0);
   // Titubeos: la misma palabra dos veces seguidas.
   const stutters = words.filter((w, i) => i > 0 && w === words[i - 1] && w.length < 12).length;
   // Pausa antes de responder: el silencio del audio más cercano al paso de una pregunta del
@@ -480,8 +487,60 @@ export function speech(a: Interview) {
     fillers: fillers / minutes,
     stutters: stutters / minutes,
     pause: pauses.length ? pauses.reduce((t, p) => t + p, 0) / pauses.length : null,
+    // Las que más repite.
+    top: [...counts]
+      .filter(([, n]) => n > 0)
+      .sort((x, y) => y[1] - x[1])
+      .slice(0, 3),
   };
 }
+
+// Minuto a minuto: quién tiene la palabra (segundos del candidato y del entrevistador) y la
+// intensidad, con la fórmula de El VAR Electoral y la misma escala para los cuatro: cambios de turno
+// entre los dos (de al menos cuatro palabras) + 3 × interrupciones + 2 × momentos de tensión
+// (repreguntas, evasivas, ataques personales, calificaciones que no son «Cierto» y choques), sobre
+// 25 puntos por minuto. Mide ida y vuelta, no emociones.
+export const intensityScale = 25;
+export function perMinute(a: Interview) {
+  const n = Math.max(1, Math.ceil(a.duracion / 60));
+  const rows = Array.from({ length: n }, (_, i) => ({
+    start: i * 60,
+    candidate: 0,
+    interviewer: 0,
+    points: 0,
+  }));
+  const bump = (second: number, by: number) => {
+    const row = rows[Math.min(n - 1, Math.max(0, Math.floor(second / 60)))];
+    if (row) row.points += by;
+  };
+  a.segmentos.forEach((s, i) => {
+    if (s.hablante === 'candidato' || s.hablante === 'jordi') {
+      for (const row of rows) {
+        const overlap = Math.min(s.fin, row.start + 60) - Math.max(s.inicio, row.start);
+        if (overlap > 0) row[s.hablante === 'candidato' ? 'candidate' : 'interviewer'] += overlap;
+      }
+    }
+    const before = a.segmentos[i - 1];
+    const pair = new Set([s.hablante, before?.hablante]);
+    if (before && before.hablante !== s.hablante && pair.has('jordi') && pair.has('candidato'))
+      if (s.texto.split(/\s+/).length >= 4) bump(s.inicio, 1);
+  });
+  for (const x of a.interrupciones) bump(x.segundo, 3);
+  const tension = [
+    ...a.preguntas.filter(
+      (p) => p.repregunta || p.respuesta === 'evasiva' || p.respuesta === 'cambio',
+    ),
+    ...a.ataques.filter((x) => x.tipo === 'personal'),
+    ...a.revisiones.filter((r) => r.veredicto !== 'legal'),
+    ...a.momentos.filter((m) => m.tipo === 'choque'),
+  ];
+  for (const t of tension) bump(t.segundo, 2);
+  return rows.map(({ points, ...row }) => ({
+    ...row,
+    intensity: Math.min(1, points / intensityScale),
+  }));
+}
+export type Minute = ReturnType<typeof perMinute>[number];
 
 // Cómo le trató el entrevistador.
 export function interviewer(a: Interview) {

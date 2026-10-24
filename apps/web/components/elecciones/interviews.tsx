@@ -22,6 +22,7 @@ import {
   interviewerOf,
   outlet,
   pendingRound,
+  perMinute,
   roundInterviews,
   roundOf,
   speakingShare,
@@ -505,18 +506,25 @@ function Profile({ interview: a }: { interview: Interview }) {
   const s = speech(a);
   const i = interviewer(a);
   const who = interviewerOf(a) ?? 'el entrevistador';
-  const rows = (items: [string, string, string?][]) => (
-    <dl className="m-0 grid gap-4">
-      {items.map(([name, value, unit]) => (
-        <div
-          key={name}
-          className="flex items-baseline justify-between gap-4 border-b border-border pb-3 last:border-0 last:pb-0"
-        >
-          <dt className="text-muted-foreground">{name}</dt>
-          <dd className="m-0 font-heading text-2xl tabular-nums">
-            {value}
-            {unit && <span className="ml-1 text-sm text-muted-foreground">{unit}</span>}
-          </dd>
+  // Cada cifra con su barra, sobre una escala fija e igual para los cuatro.
+  type Row = { name: string; value: number | null; scale: number; unit?: string; digits?: number };
+  const rows = (items: Row[]) => (
+    <dl className="m-0 grid gap-5">
+      {items.map(({ name, value, scale, unit, digits = 0 }) => (
+        <div key={name} className="grid gap-2">
+          <div className="flex items-baseline justify-between gap-4">
+            <dt className="text-muted-foreground">{name}</dt>
+            <dd className="m-0 font-heading text-2xl tabular-nums">
+              {value == null ? '—' : decimal(value, digits)}
+              {unit && <span className="ml-1 text-sm text-muted-foreground">{unit}</span>}
+            </dd>
+          </div>
+          <span aria-hidden="true" className="relative h-1.5 rounded-full bg-muted">
+            <i
+              className="absolute inset-y-0 left-0 rounded-full bg-foreground"
+              style={{ width: `${Math.min(1, (value ?? 0) / scale) * 100}%` }}
+            />
+          </span>
         </div>
       ))}
     </dl>
@@ -526,11 +534,27 @@ function Profile({ interview: a }: { interview: Interview }) {
       <Grid>
         <Cell span={6} label="Cómo habla">
           {rows([
-            ['Ritmo', String(Math.round(s.pace)), 'palabras/min'],
-            ['Muletillas', decimal(s.fillers), 'por minuto'],
-            ['Titubeos', decimal(s.stutters), 'por minuto'],
-            ['Pausa antes de responder', s.pause == null ? '—' : decimal(s.pause), 'segundos'],
+            { name: 'Ritmo', value: s.pace, scale: 300, unit: 'palabras/min' },
+            { name: 'Muletillas', value: s.fillers, scale: 10, unit: 'por minuto', digits: 1 },
+            { name: 'Titubeos', value: s.stutters, scale: 10, unit: 'por minuto', digits: 1 },
+            {
+              name: 'Pausa antes de responder',
+              value: s.pause,
+              scale: 2,
+              unit: 'segundos',
+              digits: 1,
+            },
           ])}
+          {s.top.length > 0 && (
+            <p className="m-0 flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Las que más repite:</span>
+              {s.top.map(([word, n]) => (
+                <span key={word} className="rounded-full px-3 py-1 ring-1 ring-border">
+                  «{word}» <span className="text-muted-foreground tabular-nums">× {n}</span>
+                </span>
+              ))}
+            </p>
+          )}
           <p className="m-0 text-sm text-muted-foreground">
             Señales observables en la transcripción, no un diagnóstico: no dicen si alguien está
             nervioso ni si es sincero.
@@ -538,19 +562,26 @@ function Profile({ interview: a }: { interview: Interview }) {
         </Cell>
         <Cell span={6} label={`Cómo le trató ${who}`}>
           {rows([
-            ['Tiempo de palabra del entrevistador', `${i.share} %`],
-            ['Preguntas por minuto', decimal(i.questionsPerMinute)],
-            ['Repreguntas', String(i.followUps)],
-            ['Veces que le corta', String(i.cuts)],
-            ['Palabras por pregunta', String(Math.round(i.wordsPerQuestion))],
+            { name: 'Tiempo de palabra del entrevistador', value: i.share, scale: 100, unit: '%' },
+            { name: 'Preguntas por minuto', value: i.questionsPerMinute, scale: 3, digits: 1 },
+            { name: 'Repreguntas', value: i.followUps, scale: 20 },
+            { name: 'Veces que le corta', value: i.cuts, scale: 20 },
+            { name: 'Palabras por pregunta', value: i.wordsPerQuestion, scale: 60 },
           ])}
+          <p className="m-0 text-sm text-muted-foreground">
+            Mismas reglas y escalas para los cuatro.
+          </p>
         </Cell>
       </Grid>
     </ReportSection>
   );
 }
 
+const times = (n: number) => `${n} ${n === 1 ? 'vez' : 'veces'}`;
+
 export function InterviewReport({ interview: a }: { interview: Interview }) {
+  const interrupts = a.interrupciones.filter((x) => x.quien === 'candidato').length;
+  const cuts = a.interrupciones.filter((x) => x.quien === 'jordi').length;
   const complete = a.propuestas.filter((p) => proposalScore(p) === 4).length;
   const video = videoUrl(a);
   const where = outlet(a);
@@ -606,57 +637,6 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
         ]}
       />
 
-      <Grid>
-        <Cell span={6} label="La valoración, criterio a criterio">
-          <Bars
-            max={10}
-            rows={criterionIds.map((id) => {
-              const value = a.nota.criterios[id];
-              return {
-                label: `${criteria[id].name} (${criteria[id].weight} %)`,
-                value,
-                display: decimal(value),
-              };
-            })}
-          />
-          <p className="m-0 text-sm text-muted-foreground">
-            Entre paréntesis, lo que pesa cada criterio. Si dos valoraciones se solapan con su
-            margen, es un empate.{' '}
-            <Link href={interviewsHref('metodologia')} className="underline underline-offset-4">
-              Cómo se calcula
-            </Link>
-            .
-          </p>
-        </Cell>
-        <Cell span={6} label="Tiempo por tema">
-          <Bars
-            rows={topicShare(a)
-              .slice(0, 6)
-              .map((t) => ({ label: t.topic, value: t.share, display: `${t.share} %` }))}
-          />
-        </Cell>
-        <Cell span={6} label="Cómo responde">
-          <Bars
-            rows={Object.entries(answers).map(([id, name]) => {
-              const value = a.preguntas.filter((p) => p.respuesta === id).length;
-              return { label: name, value, display: String(value) };
-            })}
-          />
-          <p className="m-0 text-sm text-muted-foreground">
-            {a.preguntas.filter((p) => p.repregunta).length} repreguntas: el entrevistador insiste
-            porque no le han contestado.
-          </p>
-        </Cell>
-        <Cell span={6} label="Las afirmaciones verificadas">
-          <Bars
-            rows={Object.entries(verdicts).map(([id, v]) => {
-              const value = a.revisiones.filter((r) => r.veredicto === id).length;
-              return { label: v.name, value, display: String(value), color: v.color };
-            })}
-          />
-        </Cell>
-      </Grid>
-
       <ReportSection title="Minuto a minuto">
         <InterviewPlayer
           youtubeId={a.youtubeId}
@@ -672,7 +652,119 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
           }}
           marks={marks(a)}
           lanes={lanes}
+          minutes={perMinute(a)}
+          topics={a.temas}
+          color={candidate?.color ?? 'var(--foreground)'}
         />
+      </ReportSection>
+
+      <ReportSection title="Las cifras de la entrevista">
+        <Grid>
+          <Cell span={6} label="La valoración, criterio a criterio">
+            <Bars
+              max={10}
+              rows={criterionIds.map((id) => {
+                const value = a.nota.criterios[id];
+                return {
+                  label: `${criteria[id].name} (${criteria[id].weight} %)`,
+                  value,
+                  display: decimal(value),
+                };
+              })}
+            />
+            <p className="m-0 text-sm text-muted-foreground">
+              Entre paréntesis, lo que pesa cada criterio. Si dos valoraciones se solapan con su
+              margen, es un empate.{' '}
+              <Link href={interviewsHref('metodologia')} className="underline underline-offset-4">
+                Cómo se calcula
+              </Link>
+              .
+            </p>
+          </Cell>
+          <Cell span={6} label="Tiempo por tema">
+            <Bars
+              rows={topicShare(a)
+                .slice(0, 6)
+                .map((t) => ({ label: t.topic, value: t.share, display: `${t.share} %` }))}
+            />
+          </Cell>
+          <Cell span={6} label="Cómo responde">
+            <Bars
+              rows={Object.entries(answers).map(([id, name]) => {
+                const value = a.preguntas.filter((p) => p.respuesta === id).length;
+                return { label: name, value, display: String(value) };
+              })}
+            />
+            <p className="m-0 text-sm text-muted-foreground">
+              {a.preguntas.filter((p) => p.repregunta).length} repreguntas: el entrevistador insiste
+              porque no le han contestado.
+            </p>
+          </Cell>
+          <Cell span={6} label="Las afirmaciones verificadas">
+            <Bars
+              rows={Object.entries(verdicts).map(([id, v]) => {
+                const value = a.revisiones.filter((r) => r.veredicto === id).length;
+                return { label: v.name, value, display: String(value), color: v.color };
+              })}
+            />
+          </Cell>
+          <Cell span={6} label="Quién tiene la palabra">
+            <Bars
+              max={100}
+              rows={[
+                {
+                  label: interviewName(a),
+                  value: speakingShare(a, 'candidato'),
+                  color: candidate?.color,
+                },
+                {
+                  label: who ?? 'El entrevistador',
+                  value: speakingShare(a, 'jordi'),
+                  color: 'var(--muted-foreground)',
+                },
+                {
+                  label: 'Otras personas',
+                  value: 100 - speakingShare(a, 'candidato') - speakingShare(a, 'jordi'),
+                  color: 'var(--border)',
+                },
+              ].map((row) => ({ ...row, display: `${row.value} %` }))}
+            />
+          </Cell>
+          <Cell span={6} label={`Lo que concretan sus ${a.propuestas.length} propuestas`}>
+            <Bars
+              max={100}
+              rows={(
+                [
+                  ['que', 'Qué'],
+                  ['cuanto', 'Cuánto'],
+                  ['cuando', 'Cuándo'],
+                  ['como', 'Cómo'],
+                ] as const
+              ).map(([key, label]) => {
+                const value = a.propuestas.length
+                  ? Math.round(
+                      (a.propuestas.filter((p) => p[key]).length / a.propuestas.length) * 100,
+                    )
+                  : 0;
+                return { label, value, display: `${value} %` };
+              })}
+            />
+            <p className="m-0 text-sm text-muted-foreground">
+              Qué parte de sus propuestas lo dice de forma explícita.
+            </p>
+          </Cell>
+          <Cell label="A quién critica">
+            <Bars
+              rows={[...new Set(a.ataques.map((x) => x.objetivo))].map((target) => {
+                const value = a.ataques.filter((x) => x.objetivo === target).length;
+                return { label: `A ${target}`, value, display: String(value) };
+              })}
+            />
+            <p className="m-0 text-sm text-muted-foreground">
+              Interrumpe {times(interrupts)}; el entrevistador le corta {times(cuts)}.
+            </p>
+          </Cell>
+        </Grid>
       </ReportSection>
 
       <ReportSections interview={a} />
