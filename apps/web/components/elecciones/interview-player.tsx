@@ -637,10 +637,16 @@ export function InterviewPlayer({
             </svg>,
           )}
           {row(
-            <span className="grid gap-0.5">
-              <span className="text-foreground">{speakers.candidato}</span>
+            // Los nombres, como etiquetas cortas en mayúsculas (12 px): Sol no deja texto corrido por
+            // debajo de 14 px.
+            <span className="grid gap-1">
+              <span className="font-mono text-xs leading-tight tracking-[0.06em] text-foreground uppercase">
+                {speakers.candidato}
+              </span>
               <span>Tiene la palabra</span>
-              <span>{speakers.jordi}</span>
+              <span className="font-mono text-xs leading-tight tracking-[0.06em] uppercase">
+                {speakers.jordi}
+              </span>
             </span>,
             60,
             <>
