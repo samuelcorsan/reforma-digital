@@ -105,22 +105,29 @@ function Sources({ items }: { items: { titulo: string; url: string }[] }) {
   );
 }
 
-const steps = [
-  ['La entrevista entera', 'El vídeo completo, sin cortes ni clips.'],
-  [
-    'Transcripción',
-    'Quién habla y en qué segundo: el entrevistador, el candidato u otras personas.',
-  ],
-  [
-    'Análisis con IA',
-    'Temas, cifras, propuestas, críticas, interrupciones y preguntas sin responder.',
-  ],
-  [
-    'Contraste con fuentes',
-    'Cada afirmación comprobable, frente al INE, Eurostat, el BOE, el Banco de España…',
-  ],
-  ['Revisión humana', 'Una persona confirma cada decisión. Sin eso no se publica nada.'],
-  ['El informe', 'Cada calificación, con su explicación y sus fuentes enlazadas.'],
+// El proceso, con quién hace cada paso: la IA propone y una persona decide.
+const steps: { title: string; text: string; by?: 'IA' | 'Persona' }[] = [
+  { title: 'La entrevista entera', text: 'El vídeo completo, sin cortes ni clips.' },
+  {
+    title: 'Transcripción',
+    text: 'Quién habla y en qué segundo: el entrevistador, el candidato u otras personas.',
+  },
+  {
+    title: 'Análisis',
+    text: 'Temas, cifras, propuestas, críticas, interrupciones y preguntas sin responder.',
+    by: 'IA',
+  },
+  {
+    title: 'Contraste con fuentes',
+    text: 'Cada afirmación comprobable, frente al INE, Eurostat, el BOE, el Banco de España…',
+    by: 'IA',
+  },
+  {
+    title: 'Revisión humana',
+    text: 'Una persona confirma cada decisión. Sin eso no se publica nada.',
+    by: 'Persona',
+  },
+  { title: 'El informe', text: 'Cada calificación, con su explicación y sus fuentes enlazadas.' },
 ];
 
 const voteDate = '2026-11-29';
@@ -277,32 +284,58 @@ export function InterviewsHome() {
         </Grid>
       </ReportSection>
 
-      <ReportSection title="Cómo se revisa">
+      <ReportSection
+        title="Cómo se revisa"
+        action={
+          <Link
+            href={interviewsHref('metodologia')}
+            className="inline-flex min-h-11 items-center gap-2 text-sm font-medium"
+          >
+            La metodología completa <Icon name="derecha" size={16} />
+          </Link>
+        }
+      >
         <Grid>
-          <Cell span={7} label="Del vídeo al informe">
-            <ol className="m-0 grid list-none gap-5 p-0">
-              {steps.map(([title, text], i) => (
-                <li key={title} className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3">
-                  <span className="font-mono text-sm text-muted-foreground tabular-nums">
-                    {String(i + 1).padStart(2, '0')}
+          <Cell label="Del vídeo al informe">
+            <ol className="m-0 grid list-none gap-x-8 gap-y-8 p-0 sm:grid-cols-2 lg:grid-cols-3">
+              {steps.map((step, i) => (
+                <li
+                  key={step.title}
+                  className="grid content-start gap-2 border-t border-border pt-4"
+                >
+                  <span className="flex items-center justify-between gap-3">
+                    <span className="font-mono text-sm text-muted-foreground tabular-nums">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    {step.by && (
+                      <Badge
+                        variant={step.by === 'Persona' ? 'default' : 'outline'}
+                        className="font-mono uppercase"
+                      >
+                        {step.by === 'Persona' ? 'Lo decide una persona' : 'IA'}
+                      </Badge>
+                    )}
                   </span>
-                  <span>
-                    <b className="font-medium">{title}.</b>{' '}
-                    <span className="text-muted-foreground">{text}</span>
-                  </span>
+                  <h3 className="m-0 font-heading text-xl leading-tight font-normal">
+                    {step.title}
+                  </h3>
+                  <p className="m-0 text-muted-foreground">{step.text}</p>
                 </li>
               ))}
             </ol>
           </Cell>
-          <Cell span={5} label="Cómo se califica una afirmación">
-            <VerdictList />
-            <Explore
-              links={[
-                { href: interviewsHref('metodologia'), text: 'La metodología' },
-                { href: interviewsHref('comparar'), text: 'Compararlos' },
-                { href: interviewsHref('ejemplo'), text: 'Un ejemplo ficticio' },
-              ]}
-            />
+          <Cell label="Cómo se califica una afirmación">
+            <ul className="m-0 grid list-none gap-6 p-0 sm:grid-cols-2 lg:grid-cols-4">
+              {verdictIds.map((id) => (
+                <li key={id} className="grid content-start gap-2">
+                  <MarkIcon kind={id} color={verdicts[id].color} className="size-10" />
+                  <h3 className="m-0 mt-1 font-heading text-xl leading-tight font-normal">
+                    {verdicts[id].name}
+                  </h3>
+                  <p className="m-0 text-muted-foreground">{verdicts[id].text}</p>
+                </li>
+              ))}
+            </ul>
           </Cell>
         </Grid>
       </ReportSection>
