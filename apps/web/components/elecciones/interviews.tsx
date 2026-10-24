@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { cn } from '@reforma-digital/design/lib/utils';
+import { Badge } from '@reforma-digital/design/ui/badge';
+import { buttonVariants } from '@reforma-digital/design/ui/button';
 import { Card } from '@reforma-digital/design/ui/card';
-import { decimal, longDate, minute } from '../../lib/elecciones/format';
+import { decimal, formatDate, longDate, minute } from '../../lib/elecciones/format';
 import {
   answers,
   candidates,
@@ -25,10 +28,10 @@ import {
   type Interview,
 } from '../../lib/elecciones/interviews';
 import { electionsHref } from '../../lib/elecciones/pages';
-import { Icon } from '../brand/icon';
+import { Icon, type IconName } from '../brand/icon';
 import { AI, Source } from '../congreso/common';
 import { InterviewPlayer } from './interview-player';
-import { MarkIcon } from './mark-icon';
+import { IconChip, MarkIcon, markIcons } from './mark-icon';
 import { PhotoCredits, Portrait } from './portrait';
 import {
   Bars,
@@ -39,6 +42,7 @@ import {
   ReportIntro,
   ReportSection,
   ReportStats,
+  Stat,
 } from './report';
 
 export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
@@ -119,50 +123,160 @@ const steps = [
   ['El informe', 'Cada calificación, con su explicación y sus fuentes enlazadas.'],
 ];
 
+const voteDate = '2026-11-29';
+// «13 nov»: el día y el mes de una fecha ISO.
+const shortDay = (iso: string) => formatDate(iso, { day: 'numeric', month: 'short' });
+
+// Lo que trae cada informe, con los mismos iconos que su línea de tiempo.
+const features: { icon: IconName; color?: string; title: string; text: string }[] = [
+  {
+    icon: markIcons.legal,
+    color: verdicts.legal.color,
+    title: 'Lo que afirma, verificado',
+    text: 'Cada afirmación comprobable, con su calificación y sus fuentes oficiales enlazadas.',
+  },
+  {
+    icon: markIcons.completa,
+    title: 'Lo que propone',
+    text: 'Si cada propuesta dice qué, cuánto, cuándo y cómo.',
+  },
+  {
+    icon: markIcons.repregunta,
+    title: 'Cómo responde',
+    text: 'Respuestas directas, evasivas, cambios de tema y las veces que le repreguntan.',
+  },
+  {
+    icon: markIcons.momento,
+    title: 'Momentos clave',
+    text: 'Anuncios, choques, titulares y rectificaciones, con su cita literal.',
+  },
+  {
+    icon: markIcons.critica,
+    title: 'El tono',
+    text: 'Críticas a la política de otros frente a ataques personales e interrupciones.',
+  },
+  {
+    icon: 'documento',
+    title: 'Minuto a minuto',
+    text: 'La transcripción entera y una línea de tiempo con cada marca, junto al vídeo.',
+  },
+];
+
 export function InterviewsHome() {
+  const round = roundInterviews(nextRound.id).map((e) => e.interview);
+  const complete = round.every(Boolean);
+  const status = round.some(Boolean)
+    ? complete && round.every((a) => !a?.pending)
+      ? 'Ronda revisada'
+      : 'En revisión'
+    : `Pendiente · ${shortDay(nextRound.date)}`;
   return (
     <>
-      <ReportIntro title="Las entrevistas">
-        <p>
-          Las entrevistas a los cuatro candidatos, revisadas una a una con las mismas reglas: qué
-          afirman y si es cierto, qué proponen y si responden a lo que se les pregunta.
-        </p>
-      </ReportIntro>
       <Grid>
-        {candidates.map((c) => {
-          const latest = interviewsOf(c.slug)[0];
-          return (
-            <Card
-              key={c.slug}
-              render={<Link href={interviewsHref(c.slug)} />}
-              className="col-span-6 gap-4 p-3 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 md:col-span-3"
+        <Cell span={7} className="gap-10">
+          <Label>Elecciones generales · 29 de noviembre de 2026</Label>
+          <div className="grid justify-items-start gap-4">
+            <Badge className="font-mono uppercase">{status}</Badge>
+            <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
+              Cuatro candidatos, las mismas reglas
+            </h1>
+            <p className="m-0 max-w-[58ch] text-lg leading-relaxed text-muted-foreground">
+              Sus entrevistas, revisadas una a una: qué afirman y si es cierto, qué proponen y si
+              responden a lo que se les pregunta. Cada informe trae una valoración sobre 10, con sus
+              criterios y sus pesos a la vista.
+            </p>
+          </div>
+          <div className="mt-auto flex flex-wrap gap-2">
+            <Link
+              href={interviewsHref(complete ? 'comparar' : 'ejemplo')}
+              data-slot="button"
+              data-variant="sunset"
+              className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
             >
-              <Portrait candidate={c} sizes="(min-width: 768px) 360px, 60vw" />
-              <div className="grid gap-1 px-2 pb-2 max-sm:px-1">
-                <h3 className="m-0 font-heading text-2xl leading-tight font-normal max-sm:text-xl">
-                  {c.name}
-                </h3>
-                <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
-                  <Dot color={c.color} />
-                  {c.party}
-                </p>
-                <p className="m-0 mt-2 flex items-center justify-between gap-2 text-sm">
-                  {latest
-                    ? `${decimal(latest.nota.global)} sobre 10${latest.pending ? ', provisional' : ''}`
-                    : `Pendiente · ${longDate(nextRound.date).replace(/ de \d{4}$/, '')}`}
-                  <Icon name="derecha" size={16} />
-                </p>
-              </div>
-            </Card>
-          );
-        })}
+              {complete ? 'Comparar a los cuatro' : 'Ver un informe de ejemplo'}{' '}
+              <Icon name="derecha" size={16} />
+            </Link>
+            <Link
+              href={interviewsHref('metodologia')}
+              data-slot="button"
+              data-variant="outline"
+              className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+            >
+              Cómo se revisa <Icon name="derecha" size={16} />
+            </Link>
+          </div>
+        </Cell>
+        <Cell span={5} label="La ronda">
+          <Stat
+            value={shortDay(nextRound.date)}
+            caption={`${nextRound.title}: se publican las cuatro entrevistas el mismo día`}
+          />
+          <p className="m-0 text-muted-foreground">{nextRound.text}</p>
+          <ol className="m-0 mt-auto grid list-none gap-2 border-t border-border p-0 pt-5">
+            {[
+              [nextRound.date, 'Se publican las entrevistas y empieza la revisión'],
+              [voteDate, 'Elecciones generales'],
+            ].map(([date, text]) => (
+              <li key={date} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3">
+                <span className="font-mono text-sm text-muted-foreground tabular-nums">
+                  {date && shortDay(date)}
+                </span>
+                {text}
+              </li>
+            ))}
+          </ol>
+        </Cell>
       </Grid>
-      <div className="mt-4 grid gap-1">
-        <p className="m-0 text-sm text-muted-foreground">
-          De menos a más escaños en las generales de 2023.
-        </p>
-        <PhotoCredits people={candidates} />
-      </div>
+
+      <ReportSection title="Los cuatro candidatos">
+        <Grid>
+          {candidates.map((c) => {
+            const latest = interviewsOf(c.slug)[0];
+            return (
+              <Card
+                key={c.slug}
+                render={<Link href={interviewsHref(c.slug)} />}
+                className="col-span-6 gap-4 p-3 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 md:col-span-3"
+              >
+                <Portrait candidate={c} sizes="(min-width: 768px) 360px, 60vw" />
+                <div className="grid gap-1 px-2 pb-2 max-sm:px-1">
+                  <h3 className="m-0 font-heading text-2xl leading-tight font-normal max-sm:text-xl">
+                    {c.name}
+                  </h3>
+                  <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
+                    <Dot color={c.color} />
+                    {c.party}
+                  </p>
+                  <p className="m-0 mt-2 flex items-center justify-between gap-2 text-sm">
+                    {latest
+                      ? `${decimal(latest.nota.global)} sobre 10${latest.pending ? ', provisional' : ''}`
+                      : `Pendiente · ${longDate(nextRound.date).replace(/ de \d{4}$/, '')}`}
+                    <Icon name="derecha" size={16} />
+                  </p>
+                </div>
+              </Card>
+            );
+          })}
+        </Grid>
+        <div className="mt-4 grid gap-1">
+          <p className="m-0 text-sm text-muted-foreground">
+            De menos a más escaños en las generales de 2023.
+          </p>
+          <PhotoCredits people={candidates} />
+        </div>
+      </ReportSection>
+
+      <ReportSection title="Qué tiene cada informe">
+        <Grid>
+          {features.map((f) => (
+            <Cell key={f.title} span={4} className="gap-4">
+              <IconChip name={f.icon} color={f.color} className="size-10" />
+              <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{f.title}</h3>
+              <p className="m-0 text-muted-foreground">{f.text}</p>
+            </Cell>
+          ))}
+        </Grid>
+      </ReportSection>
 
       <ReportSection title="Cómo se revisa">
         <Grid>
@@ -191,17 +305,6 @@ export function InterviewsHome() {
               ]}
             />
           </Cell>
-        </Grid>
-      </ReportSection>
-
-      <ReportSection title="Las rondas">
-        <Grid>
-          {rounds.map((r) => (
-            <Cell key={r.id} span={6} label={longDate(r.date)}>
-              <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{r.title}</h3>
-              <p className="m-0 max-w-[60ch] text-muted-foreground">{r.text}</p>
-            </Cell>
-          ))}
         </Grid>
       </ReportSection>
     </>

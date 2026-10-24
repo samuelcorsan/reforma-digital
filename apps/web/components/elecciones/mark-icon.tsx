@@ -20,15 +20,15 @@ export const markIcons: Record<Mark['kind'], IconName> = {
   interrumpido: 'silencio',
 };
 
-// El icono en su círculo. Con color (las calificaciones), una pastilla tintada: fondo claro del
+// Un icono en su círculo. Con color (las calificaciones), una pastilla tintada: fondo claro del
 // color, icono en su tono oscuro y un canto fino del mismo tono. Sin color, blanca con canto gris.
 // Decorativo: el texto de al lado dice qué es.
-export function MarkIcon({
-  kind,
+export function IconChip({
+  name,
   color,
   className,
 }: {
-  kind: Mark['kind'];
+  name: IconName;
   color?: string;
   className?: string;
 }) {
@@ -50,7 +50,15 @@ export function MarkIcon({
           : undefined
       }
     >
-      <Icon name={markIcons[kind]} size={15} />
+      <Icon name={name} size={15} />
     </span>
   );
 }
+
+// La marca de una entrevista con su icono.
+export const MarkIcon = ({
+  kind,
+  ...props
+}: { kind: Mark['kind'] } & Omit<Parameters<typeof IconChip>[0], 'name'>) => (
+  <IconChip name={markIcons[kind]} {...props} />
+);
