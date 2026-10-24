@@ -20,7 +20,8 @@ export const candidates = [
     color: '#D9701A',
     face: { x: 0.3978, y: 0.3206, size: 0.2269 },
     adjust: 1,
-    credit: 'Robo71, CC0',
+    author: 'Robo71',
+    license: 'CC0',
     source: 'https://commons.wikimedia.org/wiki/File:Ada-Colau-Encuentro-2024.jpg',
   },
   {
@@ -31,7 +32,8 @@ export const candidates = [
     color: '#5BA83A',
     face: { x: 0.5356, y: 0.2839, size: 0.3125 },
     adjust: 1,
-    credit: 'Gage Skidmore, CC BY-SA 2.0',
+    author: 'Gage Skidmore',
+    license: 'CC BY-SA 2.0',
     source: 'https://commons.wikimedia.org/wiki/File:Santiago_Abascal_(54349274173)_(cropped).jpg',
   },
   {
@@ -42,7 +44,8 @@ export const candidates = [
     color: '#D8342B',
     face: { x: 0.5252, y: 0.3156, size: 0.3086 },
     adjust: 1.08,
-    credit: 'Pool Moncloa / Carlos Spottorno de las Morenas',
+    author: 'Pool Moncloa / Carlos Spottorno',
+    license: 'Atribución',
     source: 'https://commons.wikimedia.org/wiki/File:Pedro_S%C3%A1nchez_in_2026.jpg',
   },
   {
@@ -53,7 +56,8 @@ export const candidates = [
     color: '#2C7BC4',
     face: { x: 0.5086, y: 0.2541, size: 0.2122 },
     adjust: 1,
-    credit: 'Partido Popular, CC0',
+    author: 'Partido Popular',
+    license: 'CC0',
     source: 'https://commons.wikimedia.org/wiki/File:ALBERTO_N%C3%9A%C3%91EZ_FEIJ%C3%93O.jpg',
   },
 ] as const;

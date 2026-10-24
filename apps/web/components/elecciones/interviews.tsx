@@ -258,11 +258,10 @@ export function InterviewsHome() {
             );
           })}
         </Grid>
-        <div className="mt-4 grid gap-1">
-          <p className="m-0 text-sm text-muted-foreground">
-            De menos a más escaños en las generales de 2023.
-          </p>
-          <PhotoCredits people={candidates} />
+        <div className="mt-4">
+          <PhotoCredits people={candidates}>
+            <p className="m-0">De menos a más escaños en las generales de 2023.</p>
+          </PhotoCredits>
         </div>
       </ReportSection>
 
