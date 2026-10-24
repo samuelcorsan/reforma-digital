@@ -141,6 +141,8 @@ function stack(list: Mark[], pixelsPerSecond: number) {
 
 export function InterviewPlayer({
   youtubeId,
+  source,
+  outlet,
   duration,
   segments,
   speakers,
@@ -148,6 +150,9 @@ export function InterviewPlayer({
   lanes,
 }: {
   youtubeId: string | null;
+  // El vídeo en la web del medio, si no está en YouTube.
+  source: string | null;
+  outlet: string;
   duration: number;
   segments: Interview['segmentos'];
   speakers: Record<Interview['segmentos'][number]['hablante'], string>;
@@ -219,7 +224,23 @@ export function InterviewPlayer({
               </>
             ) : (
               <p className="m-0 max-w-[44ch] text-muted-foreground">
-                Esta entrevista no tiene vídeo. Recórrela con la transcripción y la línea de tiempo.
+                {source ? (
+                  <>
+                    El vídeo está en la web de {outlet || 'su medio'}:{' '}
+                    <a
+                      href={source}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground underline underline-offset-4"
+                    >
+                      verlo allí<span aria-hidden="true"> ↗</span>
+                      <span className="sr-only"> (se abre en una pestaña nueva)</span>
+                    </a>
+                    . Aquí, recórrela con la transcripción y la línea de tiempo.
+                  </>
+                ) : (
+                  'Esta entrevista no tiene vídeo. Recórrela con la transcripción y la línea de tiempo.'
+                )}
               </p>
             )}
           </div>

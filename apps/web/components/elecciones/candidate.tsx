@@ -11,7 +11,9 @@ import {
   candidates,
   interviewsOf,
   proposalScore,
-  rounds,
+  outlet,
+  pendingRound,
+  roundOf,
   topicShare,
   type Candidate,
 } from '../../lib/elecciones/interviews';
@@ -22,17 +24,21 @@ import { Dot, interviewsHref, ReportSections, shortDay } from './interviews';
 import { PhotoCredits, Portrait } from './portrait';
 import { Cell, Grid, Label, ReportSection, Stat } from './report';
 
-const round = rounds[0];
-
 // La ficha de un candidato: su estado en la ronda, las cifras de su entrevista cuando las hay, su
 // partido en las encuestas y el paso a los otros tres.
 export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
-  const latest = interviewsOf(c.slug)[0];
+  // Su entrevista más reciente hace de informe; las demás quedan listadas debajo.
+  const mine = interviewsOf(c.slug);
+  const latest = mine[0];
+  const upcoming = pendingRound(c.slug);
+  const round = latest && roundOf(latest);
   const status = latest
     ? latest.pending
       ? 'En revisión'
       : 'Revisada'
-    : `Pendiente · ${shortDay(round.date)}`;
+    : upcoming
+      ? `Pendiente · ${shortDay(upcoming.date)}`
+      : 'Sin entrevistas';
   const figures: [string, string][] = latest
     ? [
         [
@@ -76,13 +82,22 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
             </dl>
           ) : (
             <p className="m-0 max-w-[60ch] border-t border-border pt-6">
-              Su entrevista en {round.title} se publica el {longDate(round.date)}. Cuando una
-              persona haya revisado el análisis, aquí estarán su valoración, lo que afirma
-              verificado y lo que propone.
+              {upcoming
+                ? `Su próxima entrevista: ${upcoming.title}, el ${longDate(upcoming.date)}. `
+                : ''}
+              Cuando una persona haya revisado el análisis, aquí estarán su valoración, lo que
+              afirma verificado, lo que propone y cómo habla.
             </p>
           )}
           {latest && (
             <div className="grid gap-3">
+              <p className="m-0 text-sm text-muted-foreground">
+                Informe de su entrevista en {outlet(latest) || latest.titulo} (
+                {longDate(latest.publicado.slice(0, 10))})
+                {round && !round.comparable
+                  ? '. Sus cifras no se comparan con las de los demás: los formatos son distintos.'
+                  : '.'}
+              </p>
               {latest.pending > 0 && (
                 <p className="m-0 text-sm text-muted-foreground">
                   Informe provisional: quedan {latest.pending} afirmaciones o momentos por revisar.
@@ -128,6 +143,25 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
 
       {latest && (
         <>
+          {mine.length > 1 && (
+            <ReportSection title="Sus entrevistas">
+              <Grid>
+                {mine.map((a, i) => (
+                  <Card
+                    key={a.id}
+                    render={<Link href={interviewsHref(a.id)} />}
+                    className="col-span-12 gap-1 p-5 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 md:col-span-4"
+                  >
+                    <b className="font-medium">{outlet(a) || a.titulo}</b>
+                    <span className="text-sm text-muted-foreground">
+                      {longDate(a.publicado.slice(0, 10))} · {Math.round(a.duracion / 60)} min
+                      {i === 0 ? ' · la más reciente, su informe está debajo' : ''}
+                    </span>
+                  </Card>
+                ))}
+              </Grid>
+            </ReportSection>
+          )}
           <ReportSections interview={latest} />
           <div className="flex flex-wrap gap-2">
             <Link

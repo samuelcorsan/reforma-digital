@@ -68,15 +68,26 @@ export const candidates = [
 ] as const;
 export type Candidate = (typeof candidates)[number];
 
-// Una ronda: las entrevistas a los cuatro que se publican y se revisan juntas.
-export const rounds = [
+// Una ronda: una entrevista larga a cada uno de los cuatro, en un medio nacional, que se revisan
+// juntas. Puede ser el mismo programa para los cuatro o medios distintos; solo las `comparable`
+// (mismo formato y quien entrevista) se ponen lado a lado. `note` explica por qué una no lo es.
+type Round = {
+  id: string;
+  title: string;
+  date: string;
+  text: string;
+  comparable: boolean;
+  note?: string;
+};
+export const rounds: Round[] = [
   {
     id: '13n',
     title: 'The Wild Project',
     date: '2026-11-13',
     text: 'Jordi Wild entrevista a los cuatro candidatos por separado, sin preguntas pactadas y con dos periodistas comprobando datos en el plató. Se publican el mismo día.',
+    comparable: true,
   },
-] as const;
+];
 
 const verdict = z.enum(['legal', 'amarilla', 'fuera', 'roja']);
 const criterion = z.enum([
@@ -156,7 +167,13 @@ const interviewSchema = z.object({
     .optional(),
   jornada: z.string().optional(),
   entrevista: z
-    .object({ entrevistador: z.string(), medio: z.string(), programa: z.string().optional() })
+    .object({
+      entrevistador: z.string(),
+      medio: z.string(),
+      programa: z.string().optional(),
+      // El vídeo original, también cuando no está en YouTube.
+      url: z.string().optional(),
+    })
     .nullish(),
   candidato: z.string(),
   titulo: z.string(),
@@ -392,6 +409,24 @@ export function marks(a: Interview): Mark[] {
   return list.sort((x, y) => x.second - y.second);
 }
 
+// Dónde se publicó («Cadena SER · Hoy por Hoy») y quién entrevista, si se sabe.
+export const outlet = (a: Interview) =>
+  [a.entrevista?.medio, a.entrevista?.programa].filter(Boolean).join(' · ');
+export const interviewerOf = (a: Interview) => a.entrevista?.entrevistador || null;
+export const roundOf = (a: Interview) => rounds.find((r) => r.id === a.jornada);
+
+// La ronda más reciente a la que aún le falta alguna entrevista (o la de un candidato, con `slug`):
+// la que está por llegar o en marcha. Sale de los datos, no del reloj.
+export const pendingRound = (slug?: string) =>
+  [...rounds]
+    .sort((x, y) => y.date.localeCompare(x.date))
+    .find((r) =>
+      roundInterviews(r.id).some((e) => !e.interview && (!slug || e.candidate.slug === slug)),
+    );
+// La ronda comparable más reciente: la que enseña «Los cuatro, lado a lado».
+export const comparableRound = () =>
+  [...rounds].sort((x, y) => y.date.localeCompare(x.date)).find((r) => r.comparable);
+
 // Las entrevistas de una ronda, por candidato. Solo las reales.
 export const roundInterviews = (round: string) =>
   candidates.map((c) => ({
@@ -472,6 +507,8 @@ export function topicShare(a: Interview) {
     .sort((x, y) => y.share - x.share);
 }
 
+// El vídeo en YouTube (en su segundo) o, si no está allí, el original en la web del medio.
 export const videoUrl = (a: Interview, second = 0) =>
-  a.youtubeId &&
-  `https://www.youtube.com/watch?v=${a.youtubeId}${second ? `&t=${Math.floor(second)}s` : ''}`;
+  a.youtubeId
+    ? `https://www.youtube.com/watch?v=${a.youtubeId}${second ? `&t=${Math.floor(second)}s` : ''}`
+    : a.entrevista?.url || null;

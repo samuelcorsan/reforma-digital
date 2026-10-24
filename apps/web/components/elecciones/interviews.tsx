@@ -18,7 +18,12 @@ import {
   marks,
   moments,
   proposalScore,
+  comparableRound,
+  interviewerOf,
+  outlet,
+  pendingRound,
   roundInterviews,
+  roundOf,
   speakingShare,
   speech,
   rounds,
@@ -48,7 +53,6 @@ import {
 } from './report';
 
 export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
-const nextRound = rounds[0];
 
 export function Dot({ color }: { color: string }) {
   return (
@@ -132,7 +136,6 @@ const steps: { title: string; text: string; by?: 'IA' | 'Persona' }[] = [
   { title: 'El informe', text: 'Cada calificación, con su explicación y sus fuentes enlazadas.' },
 ];
 
-const voteDate = '2026-11-29';
 // «13 nov»: el día y el mes de una fecha ISO.
 export const shortDay = (iso: string) => formatDate(iso, { day: 'numeric', month: 'short' });
 
@@ -172,13 +175,14 @@ const features: { icon: IconName; color?: string; title: string; text: string }[
 ];
 
 export function InterviewsHome() {
-  const round = roundInterviews(nextRound.id).map((e) => e.interview);
-  const complete = round.every(Boolean);
-  const status = round.some(Boolean)
-    ? complete && round.every((a) => !a?.pending)
-      ? 'Ronda revisada'
-      : 'En revisión'
-    : `Pendiente · ${shortDay(nextRound.date)}`;
+  const upcoming = pendingRound();
+  const compared = comparableRound();
+  const complete = !!compared && roundInterviews(compared.id).every((e) => e.interview);
+  const status = upcoming
+    ? roundInterviews(upcoming.id).some((e) => e.interview)
+      ? `En revisión · ${upcoming.title}`
+      : `Próxima ronda · ${shortDay(upcoming.date)}`
+    : 'Rondas publicadas';
   return (
     <>
       <Grid>
@@ -190,9 +194,9 @@ export function InterviewsHome() {
               Cuatro candidatos, las mismas reglas
             </h1>
             <p className="m-0 max-w-[58ch] text-lg leading-relaxed text-muted-foreground">
-              Sus entrevistas, revisadas una a una: qué afirman y si es cierto, qué proponen y si
-              responden a lo que se les pregunta. Cada informe trae una valoración sobre 10, con sus
-              criterios y sus pesos a la vista.
+              Sus entrevistas largas en medios nacionales, revisadas una a una: qué afirman y si es
+              cierto, qué proponen y si responden a lo que se les pregunta. Cada informe trae una
+              valoración sobre 10, con sus criterios y sus pesos a la vista.
             </p>
           </div>
           <div className="mt-auto flex flex-wrap gap-2">
@@ -215,24 +219,31 @@ export function InterviewsHome() {
             </Link>
           </div>
         </Cell>
-        <Cell span={5} label="La ronda">
-          <Stat
-            value={shortDay(nextRound.date)}
-            caption={`${nextRound.title}: se publican las cuatro entrevistas el mismo día`}
-          />
-          <p className="m-0 text-muted-foreground">{nextRound.text}</p>
-          <ol className="m-0 mt-auto grid list-none gap-2 border-t border-border p-0 pt-5">
-            {[
-              [nextRound.date, 'Se publican las entrevistas y empieza la revisión'],
-              [voteDate, 'Elecciones generales'],
-            ].map(([date, text]) => (
-              <li key={date} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3">
-                <span className="font-mono text-sm text-muted-foreground tabular-nums">
-                  {date && shortDay(date)}
-                </span>
-                {text}
-              </li>
-            ))}
+        <Cell span={5} label="Las rondas">
+          <ol className="m-0 grid list-none gap-5 p-0">
+            {[...rounds]
+              .sort((x, y) => y.date.localeCompare(x.date))
+              .map((r) => {
+                const published = roundInterviews(r.id).filter((e) => e.interview).length;
+                return (
+                  <li
+                    key={r.id}
+                    className="grid gap-1 border-b border-border pb-5 last:border-0 last:pb-0"
+                  >
+                    <span className="flex items-baseline justify-between gap-3">
+                      <b className="font-heading text-2xl font-normal">{r.title}</b>
+                      <span className="font-mono text-sm text-muted-foreground tabular-nums">
+                        {shortDay(r.date)}
+                      </span>
+                    </span>
+                    <span className="text-muted-foreground">{r.text}</span>
+                    <span className="mt-1 text-sm">
+                      {published} de {candidates.length} entrevistas publicadas
+                      {r.comparable ? '' : ` · ${r.note ?? 'No se comparan entre sí'}`}
+                    </span>
+                  </li>
+                );
+              })}
           </ol>
         </Cell>
       </Grid>
@@ -241,6 +252,7 @@ export function InterviewsHome() {
         <Grid>
           {candidates.map((c) => {
             const latest = interviewsOf(c.slug)[0];
+            const next = pendingRound(c.slug);
             return (
               <Card
                 key={c.slug}
@@ -259,7 +271,9 @@ export function InterviewsHome() {
                   <p className="m-0 mt-2 flex items-center justify-between gap-2 text-sm">
                     {latest
                       ? `${decimal(latest.nota.global)} sobre 10${latest.pending ? ', provisional' : ''}`
-                      : `Pendiente · ${longDate(nextRound.date).replace(/ de \d{4}$/, '')}`}
+                      : next
+                        ? `Pendiente · ${shortDay(next.date)}`
+                        : 'Sin entrevistas'}
                     <Icon name="derecha" size={16} />
                   </p>
                 </div>
@@ -490,7 +504,7 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
 function Profile({ interview: a }: { interview: Interview }) {
   const s = speech(a);
   const i = interviewer(a);
-  const who = a.entrevista?.entrevistador ?? 'el entrevistador';
+  const who = interviewerOf(a) ?? 'el entrevistador';
   const rows = (items: [string, string, string?][]) => (
     <dl className="m-0 grid gap-4">
       {items.map(([name, value, unit]) => (
@@ -539,7 +553,9 @@ function Profile({ interview: a }: { interview: Interview }) {
 export function InterviewReport({ interview: a }: { interview: Interview }) {
   const complete = a.propuestas.filter((p) => proposalScore(p) === 4).length;
   const video = videoUrl(a);
-  const where = [a.entrevista?.medio, a.entrevista?.programa].filter(Boolean).join(' · ');
+  const where = outlet(a);
+  const who = interviewerOf(a);
+  const round = roundOf(a);
   const candidate = getCandidate(a.candidato);
   return (
     <>
@@ -563,9 +579,15 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
       )}
       <ReportIntro title={interviewName(a)}>
         <p>
-          {where && `${where}, `}con {a.entrevista?.entrevistador ?? 'el entrevistador'}. Publicada
-          el {longDate(a.publicado.slice(0, 10))}; dura {Math.round(a.duracion / 60)} minutos.
+          {[where, who && `con ${who}`].filter(Boolean).join(', ')}. Publicada el{' '}
+          {longDate(a.publicado.slice(0, 10))}; dura {Math.round(a.duracion / 60)} minutos.
         </p>
+        {round && !round.comparable && (
+          <p>
+            Ronda «{round.title}»: {round.note ?? 'formatos distintos'}. Sus cifras no se comparan
+            con las de los demás.
+          </p>
+        )}
         {video && <Source url={video}>Ver la entrevista completa</Source>}
       </ReportIntro>
 
@@ -638,10 +660,12 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
       <ReportSection title="Minuto a minuto">
         <InterviewPlayer
           youtubeId={a.youtubeId}
+          source={a.youtubeId ? null : video}
+          outlet={where}
           duration={a.duracion}
           segments={a.segmentos}
           speakers={{
-            jordi: a.entrevista?.entrevistador ?? 'Entrevistador',
+            jordi: interviewerOf(a) ?? 'Entrevistador',
             candidato: candidate?.name ?? 'Candidato',
             verificador: 'Verificadores',
             otro: 'Otra persona',
@@ -656,7 +680,7 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
       <div className="grid gap-6">
         <Explore
           links={[
-            { href: interviewsHref(), text: 'Las cuatro entrevistas' },
+            { href: interviewsHref(), text: 'Todas las entrevistas' },
             { href: interviewsHref('metodologia'), text: 'Cómo se revisan' },
           ]}
         />
@@ -846,7 +870,16 @@ const metricGroups: { title: string; metrics: Metric[] }[] = [
 // Las cuatro entrevistas de una ronda, con la misma escala y siempre en el mismo orden. Solo se
 // comparan cuando están las cuatro: con una menos, la comparación no sería justa.
 export function InterviewsCompare() {
-  const round = rounds[0];
+  const round = comparableRound();
+  if (!round)
+    return (
+      <ReportIntro title="Los cuatro, lado a lado">
+        <p>
+          Solo se ponen lado a lado las rondas con el mismo formato para los cuatro. Todavía no hay
+          ninguna.
+        </p>
+      </ReportIntro>
+    );
   const entries = roundInterviews(round.id);
   const all = entries.flatMap(({ candidate, interview }) =>
     interview ? [{ candidate, interview }] : [],
@@ -856,7 +889,8 @@ export function InterviewsCompare() {
       <ReportIntro title="Los cuatro, lado a lado">
         <p>
           Las cuatro entrevistas de {round.title}, del {longDate(round.date)}, con la misma escala y
-          siempre en el mismo orden. No hay ganador: cada cifra se lee por separado.
+          siempre en el mismo orden. No hay ganador: cada cifra se lee por separado. Las rondas con
+          formatos distintos no se comparan.
         </p>
       </ReportIntro>
       {all.length < entries.length ? (
