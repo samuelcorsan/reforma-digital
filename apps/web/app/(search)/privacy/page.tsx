@@ -64,6 +64,13 @@ export default function Privacy() {
           <strong>Fotos del equipo.</strong> Vienen de GitHub, pero nuestro servidor las descarga y
           las optimiza: tu navegador no se conecta con GitHub para verlas.
         </li>
+        <li>
+          <strong>Vídeos de las entrevistas.</strong> En «Las entrevistas» de Elecciones, el vídeo
+          de YouTube solo se carga si pulsas «Cargar el vídeo». Desde ese momento, tu navegador se
+          conecta con YouTube (Google, EE. UU.) a través de youtube-nocookie.com, que recibe tu IP y
+          puede guardar datos en tu navegador según su propia política. Si no lo pulsas, no se
+          conecta.
+        </li>
       </ul>
 
       <h2>La extensión</h2>

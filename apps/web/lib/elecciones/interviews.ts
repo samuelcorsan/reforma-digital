@@ -160,9 +160,24 @@ const interviewSchema = z.object({
     criterios: z.record(criterion, z.number()),
   }),
   stats: z.object({ alGrano: z.number() }),
+  // La transcripción: quién habla y de qué segundo a qué segundo.
+  segmentos: z.array(
+    z.object({
+      inicio: z.number(),
+      fin: z.number(),
+      hablante: z.enum(['jordi', 'candidato', 'verificador', 'otro']),
+      texto: z.string(),
+    }),
+  ),
   temas: z.array(z.object({ tema: z.string(), inicio: z.number(), fin: z.number() })),
   preguntas: z.array(
-    z.object({ id: z.string(), respuesta: answer, repregunta: z.boolean().optional() }),
+    z.object({
+      id: z.string(),
+      segundo: z.number(),
+      texto: z.string(),
+      respuesta: answer,
+      repregunta: z.boolean().optional(),
+    }),
   ),
   propuestas: z.array(
     z.object({
@@ -196,6 +211,10 @@ const interviewSchema = z.object({
       estado: state,
     }),
   ),
+  // Quién corta al otro antes de que termine: el candidato o el entrevistador.
+  interrupciones: z
+    .array(z.object({ segundo: z.number(), quien: z.enum(['candidato', 'jordi']) }))
+    .default([]),
   momentos: z
     .array(
       z.object({
@@ -243,6 +262,106 @@ export const interviewsOf = (slug: string) =>
     .filter((a) => !a.ficticio && a.candidato === slug)
     .sort((x, y) => y.publicado.localeCompare(x.publicado));
 
+// Lo que se marca en la línea de tiempo, con reglas fijas e iguales para los cuatro: ninguna marca
+// la decide el modelo por su cuenta.
+export const lanes = {
+  momentos: 'Momentos clave',
+  propuestas: 'Propuestas',
+  verificaciones: 'Verificaciones',
+  preguntas: 'Repreguntas y evasivas',
+  criticas: 'Críticas e interrupciones',
+} as const;
+export type Mark = {
+  id: string;
+  second: number;
+  lane: keyof typeof lanes;
+  label: string;
+  text: string;
+  detail?: string;
+  color?: string;
+};
+
+const missing = {
+  que: 'el qué',
+  cuanto: 'el cuánto',
+  cuando: 'el cuándo',
+  como: 'el cómo',
+} as const;
+
+export function marks(a: Interview): Mark[] {
+  const list: Mark[] = [
+    ...a.momentos.map((m) => ({
+      id: m.id,
+      second: m.segundo,
+      lane: 'momentos' as const,
+      label: moments[m.tipo].name,
+      text: m.titulo,
+      detail: `«${m.cita}»`,
+    })),
+    ...a.propuestas.flatMap((p) => {
+      const score = proposalScore(p);
+      if (score < 3) return [];
+      const lacks = (['que', 'cuanto', 'cuando', 'como'] as const).find((k) => !p[k]);
+      return {
+        id: p.id,
+        second: p.segundo,
+        lane: 'propuestas' as const,
+        label: lacks ? 'Casi completa' : 'Propuesta completa',
+        text: p.texto,
+        detail: lacks ? `Le falta ${missing[lacks]}` : 'Qué, cuánto, cuándo y cómo',
+      };
+    }),
+    ...a.revisiones.map((r) => ({
+      id: r.id,
+      second: r.segundo,
+      lane: 'verificaciones' as const,
+      label: verdicts[r.veredicto].name,
+      text: `«${r.cita}»`,
+      detail: r.explicacion,
+      color: verdicts[r.veredicto].color,
+    })),
+    ...a.preguntas.flatMap((p) =>
+      p.repregunta
+        ? {
+            id: p.id,
+            second: p.segundo,
+            lane: 'preguntas' as const,
+            label: 'Repregunta',
+            text: p.texto,
+            detail: `Respuesta: ${answers[p.respuesta].toLowerCase()}`,
+          }
+        : p.respuesta === 'evasiva' || p.respuesta === 'cambio'
+          ? {
+              id: p.id,
+              second: p.segundo,
+              lane: 'preguntas' as const,
+              label: answers[p.respuesta],
+              text: p.texto,
+            }
+          : [],
+    ),
+    ...a.ataques.map((x) => ({
+      id: x.id,
+      second: x.segundo,
+      lane: 'criticas' as const,
+      label: x.tipo === 'personal' ? 'Ataque personal' : 'Crítica política',
+      text: `«${x.texto}»`,
+      detail: `A ${x.objetivo}`,
+    })),
+    ...a.interrupciones.map((x, i) => ({
+      id: `i${i + 1}`,
+      second: x.segundo,
+      lane: 'criticas' as const,
+      label: x.quien === 'candidato' ? 'Interrumpe' : 'Le interrumpen',
+      text:
+        x.quien === 'candidato'
+          ? 'Corta a quien habla antes de que termine'
+          : 'El entrevistador le corta antes de que termine',
+    })),
+  ];
+  return list.sort((x, y) => x.second - y.second);
+}
+
 export const proposalScore = (p: Interview['propuestas'][number]) =>
   +p.que + +p.cuanto + +p.cuando + +p.como;
 
@@ -253,13 +372,6 @@ export function topicShare(a: Interview) {
   return [...total]
     .map(([topic, seconds]) => ({ topic, share: Math.round((seconds / a.duracion) * 100) }))
     .sort((x, y) => y.share - x.share);
-}
-
-export function minute(second: number) {
-  const h = Math.floor(second / 3600);
-  const m = String(Math.floor((second % 3600) / 60)).padStart(2, '0');
-  const s = String(Math.floor(second % 60)).padStart(2, '0');
-  return h ? `${h}:${m}:${s}` : `${m}:${s}`;
 }
 
 export const videoUrl = (a: Interview, second = 0) =>

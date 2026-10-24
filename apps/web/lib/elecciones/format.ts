@@ -13,6 +13,14 @@ export const signed = (n: number) => `${n > 0 ? '+' : n < 0 ? '−' : '±'}${dec
 export const chance = (p: number) =>
   p >= 0.995 ? '> 99\u00a0%' : p <= 0.005 ? '< 1\u00a0%' : `${Math.round(p * 100)}\u00a0%`;
 
+// «04:05» o «1:02:03»: un segundo de un vídeo.
+export function minute(second: number) {
+  const h = Math.floor(second / 3600);
+  const m = String(Math.floor((second % 3600) / 60)).padStart(2, '0');
+  const s = String(Math.floor(second % 60)).padStart(2, '0');
+  return h ? `${h}:${m}:${s}` : `${m}:${s}`;
+}
+
 // Los días desde 1970 de una fecha ISO, para medir distancias entre fechas.
 export const toDay = (iso: string) => Date.parse(`${iso}T00:00:00Z`) / 864e5;
 // Una fecha ISO como año con decimales, para los ejes de tiempo.

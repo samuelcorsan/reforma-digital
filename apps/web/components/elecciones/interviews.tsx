@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { Card } from '@reforma-digital/design/ui/card';
-import { decimal, longDate } from '../../lib/elecciones/format';
+import { decimal, longDate, minute } from '../../lib/elecciones/format';
 import {
   answers,
   candidates,
@@ -10,7 +10,8 @@ import {
   getCandidate,
   interviewName,
   interviewsOf,
-  minute,
+  lanes,
+  marks,
   moments,
   proposalScore,
   rounds,
@@ -23,6 +24,7 @@ import {
 import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon } from '../brand/icon';
 import { AI, Source } from '../congreso/common';
+import { InterviewPlayer } from './interview-player';
 import { PhotoCredits, Portrait } from './portrait';
 import {
   Bars,
@@ -350,6 +352,22 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
           />
         </Cell>
       </Grid>
+
+      <ReportSection title="Minuto a minuto">
+        <InterviewPlayer
+          youtubeId={a.youtubeId}
+          duration={a.duracion}
+          segments={a.segmentos}
+          speakers={{
+            jordi: a.entrevista?.entrevistador ?? 'Entrevistador',
+            candidato: candidate?.name ?? 'Candidato',
+            verificador: 'Verificadores',
+            otro: 'Otra persona',
+          }}
+          marks={marks(a)}
+          lanes={lanes}
+        />
+      </ReportSection>
 
       {a.revisiones.length > 0 && (
         <ReportSection title="Lo que afirma, verificado">
