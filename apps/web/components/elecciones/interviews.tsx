@@ -393,9 +393,9 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
           <AI label="Propuesto con IA · confirmado por una persona">
             <p>Cada afirmación comprobable, contrastada con fuentes oficiales enlazadas.</p>
           </AI>
-          <ul className="m-0 mt-6 grid list-none gap-4 p-0">
+          <ul className="m-0 mt-6 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
             {a.revisiones.map((r) => (
-              <li key={r.id}>
+              <li key={r.id} className="grid">
                 <Cell className="gap-4">
                   <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
                     <Verdict id={r.veredicto} />
@@ -403,14 +403,14 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                       minuto {minute(r.segundo)}
                     </span>
                   </p>
-                  <blockquote className="m-0 font-heading text-2xl leading-snug">
+                  <blockquote className="m-0 font-heading text-xl leading-snug">
                     «{r.cita}»
                   </blockquote>
-                  <p className="m-0 max-w-[65ch] text-muted-foreground">{r.explicacion}</p>
+                  <p className="m-0 text-muted-foreground">{r.explicacion}</p>
                   <Sources items={r.fuentes} />
                   <Link
                     href={interviewsHref(`${a.id}/${r.id}`)}
-                    className="self-start text-sm underline underline-offset-4"
+                    className="mt-auto self-start text-sm underline underline-offset-4"
                   >
                     Enlace a esta verificación
                   </Link>
