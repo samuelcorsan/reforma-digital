@@ -249,6 +249,17 @@ export function InterviewPlayer({
     if (item && list) list.scrollTop = item.offsetTop - 16;
   }, []);
 
+  // Las marcas que caen en cada tramo, para enseñarlas junto a quien habla.
+  const marksBySegment = useMemo(
+    () =>
+      segments.map((s, i) => {
+        // En segundos enteros: las marcas van al segundo y los tramos traen decimales.
+        const end = Math.floor(segments[i + 1]?.inicio ?? Infinity);
+        return marks.filter((m) => m.second >= Math.floor(s.inicio) && m.second < end);
+      }),
+    [segments, marks],
+  );
+
   // La lista entera solo se vuelve a pintar cuando cambia el tramo que se está diciendo.
   const transcript = useMemo(
     () =>
@@ -258,13 +269,39 @@ export function InterviewPlayer({
             type="button"
             onClick={() => seek(s.inicio)}
             aria-current={i === active || undefined}
-            className="grid w-full gap-1 rounded-lg px-3 py-2 text-left hover:bg-muted aria-[current=true]:bg-muted"
+            className="grid w-full gap-1.5 rounded-lg p-3 text-left transition-colors hover:bg-background/60 aria-[current=true]:bg-background aria-[current=true]:shadow-sm motion-reduce:transition-none"
           >
-            <span className="font-mono text-xs text-muted-foreground">
-              {minute(s.inicio)} · {speakers[s.hablante]}
+            <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+              <i
+                aria-hidden="true"
+                className="block size-2 rounded-full"
+                style={{
+                  background: s.hablante === 'candidato' ? color : 'var(--muted-foreground)',
+                }}
+              />
+              <span className={cn(s.hablante === 'candidato' && 'font-medium')}>
+                {speakers[s.hablante]}
+              </span>
+              <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                {minute(s.inicio)}
+              </span>
+              {!!marksBySegment[i]?.length && (
+                <span className="ml-auto flex flex-wrap gap-1">
+                  {marksBySegment[i]?.map((m) => (
+                    <span
+                      key={m.id}
+                      className="inline-flex items-center gap-1 rounded-full bg-background py-0.5 pr-2.5 pl-0.5 text-xs ring-1 ring-border"
+                    >
+                      <MarkIcon kind={m.kind} color={m.color} className="size-5" />
+                      {m.label}
+                    </span>
+                  ))}
+                </span>
+              )}
             </span>
             <span
               className={cn(
+                'leading-relaxed',
                 s.hablante === 'candidato' ? 'text-foreground' : 'text-muted-foreground',
               )}
             >
@@ -273,7 +310,7 @@ export function InterviewPlayer({
           </button>
         </li>
       )),
-    [segments, speakers, active, seek, follow],
+    [segments, speakers, color, marksBySegment, active, seek, follow],
   );
 
   // La ventana que se ve: la entrevista entera o unos minutos alrededor de lo que suena.
@@ -366,27 +403,30 @@ export function InterviewPlayer({
         defaultValue="transcripcion"
         className="col-span-12 gap-4 rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-5 lg:p-8 max-sm:p-5"
       >
-        <TabsList variant="line" className="h-auto w-full justify-start gap-4">
-          <TabsTrigger value="transcripcion" className="min-h-11 flex-none px-1">
-            Transcripción
-          </TabsTrigger>
-          <TabsTrigger value="momentos" className="min-h-11 flex-none px-1">
-            Momentos ({marks.length})
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <TabsList aria-label="Qué ver">
+            <TabsTrigger value="transcripcion" className="px-3">
+              Transcripción
+            </TabsTrigger>
+            <TabsTrigger value="momentos" className="px-3">
+              Momentos ({marks.length})
+            </TabsTrigger>
+          </TabsList>
+          <span className="text-sm text-muted-foreground">Pulsa para ir a ese momento</span>
+        </div>
         <TabsContent value="transcripcion">
-          <ol className="relative m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto p-0">
+          <ol className="relative m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
             {transcript}
           </ol>
         </TabsContent>
         <TabsContent value="momentos">
-          <ol className="m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto p-0">
+          <ol className="m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
             {marks.map((m) => (
               <li key={m.id}>
                 <button
                   type="button"
                   onClick={() => pick(m)}
-                  className="grid w-full gap-1 rounded-lg px-3 py-2 text-left hover:bg-muted"
+                  className="grid w-full gap-1 rounded-lg p-3 text-left transition-colors hover:bg-background motion-reduce:transition-none"
                 >
                   <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
                     <MarkIcon kind={m.kind} color={m.color} className="size-6" />
@@ -410,19 +450,20 @@ export function InterviewPlayer({
               {topic && <span className="text-muted-foreground"> · {topic}</span>}
             </span>
           </div>
-          <div role="group" aria-label="Zoom" className="flex gap-1 rounded-full bg-muted p-1">
-            {zooms.map(([value, name]) => (
-              <button
-                key={name}
-                type="button"
-                aria-pressed={zoom === value}
-                onClick={() => setZoom(value)}
-                className="min-h-9 rounded-full px-4 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background motion-reduce:transition-none"
-              >
-                {name}
-              </button>
-            ))}
-          </div>
+          <Tabs
+            value={String(zoom)}
+            onValueChange={(value) =>
+              setZoom(zooms.find(([z]) => String(z) === value)?.[0] ?? null)
+            }
+          >
+            <TabsList aria-label="Zoom">
+              {zooms.map(([value, name]) => (
+                <TabsTrigger key={name} value={String(value)} className="px-3">
+                  {name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
 
         {/* Las filas comparten la columna de la izquierda, así la línea vertical del tiempo las cruza todas. */}
