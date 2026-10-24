@@ -472,7 +472,8 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                   }
                 >
                   <p className="m-0 text-lg leading-snug">{p.texto}</p>
-                  <ul className="m-0 flex list-none flex-wrap gap-2 p-0 text-sm">
+                  {/* Lo que dice y lo que le falta: cuatro casillas iguales, con icono y texto. */}
+                  <ul className="m-0 mt-auto grid list-none grid-cols-4 gap-1.5 p-0 text-sm max-sm:grid-cols-2">
                     {(
                       [
                         ['que', 'Qué'],
@@ -483,13 +484,15 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                     ).map(([key, name]) => (
                       <li
                         key={key}
-                        className={
+                        className={cn(
+                          'flex min-h-10 items-center justify-center gap-1.5 rounded-lg px-2',
                           p[key]
-                            ? 'rounded-full bg-foreground px-3 py-1 text-background'
-                            : 'rounded-full px-3 py-1 text-muted-foreground ring-1 ring-border'
-                        }
+                            ? 'bg-muted font-medium text-foreground'
+                            : 'border border-dashed border-muted-foreground/40 text-muted-foreground',
+                        )}
                       >
-                        {p[key] ? '✓' : '✗'} {name}
+                        <Icon name={p[key] ? 'hecho' : 'nunca'} size={14} />
+                        {name}
                         <span className="sr-only">{p[key] ? ': lo dice' : ': no lo dice'}</span>
                       </li>
                     ))}

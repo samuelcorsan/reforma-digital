@@ -637,16 +637,12 @@ export function InterviewPlayer({
             </svg>,
           )}
           {row(
-            // Los nombres, como etiquetas cortas en mayúsculas (12 px): Sol no deja texto corrido por
-            // debajo de 14 px.
-            <span className="grid gap-1">
-              <span className="font-mono text-xs leading-tight tracking-[0.06em] text-foreground uppercase">
-                {speakers.candidato}
-              </span>
+            // Los nombres, más pequeños que la etiqueta de la fila (12 px; lo pidió la persona que
+            // lo diseña, aunque Sol reserva ese tamaño para las etiquetas en mayúsculas).
+            <span className="grid gap-0.5">
+              <span className="text-xs leading-tight text-foreground">{speakers.candidato}</span>
               <span>Tiene la palabra</span>
-              <span className="font-mono text-xs leading-tight tracking-[0.06em] uppercase">
-                {speakers.jordi}
-              </span>
+              <span className="text-xs leading-tight">{speakers.jordi}</span>
             </span>,
             60,
             <>
