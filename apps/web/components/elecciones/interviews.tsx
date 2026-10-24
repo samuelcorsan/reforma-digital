@@ -686,7 +686,7 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
               ] as const
             ).map(([name, value, aside]) => (
               <div key={name} className="grid content-start gap-1">
-                <dt className="max-w-[12ch]">
+                <dt className="whitespace-nowrap">
                   <Label>{name}</Label>
                 </dt>
                 <dd className="m-0 font-heading text-3xl leading-none whitespace-nowrap tabular-nums lg:text-4xl">
