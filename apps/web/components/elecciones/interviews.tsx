@@ -14,6 +14,8 @@ import {
   marks,
   moments,
   proposalScore,
+  roundInterviews,
+  speakingShare,
   rounds,
   topicShare,
   verdicts,
@@ -182,6 +184,7 @@ export function InterviewsHome() {
             <Explore
               links={[
                 { href: interviewsHref('metodologia'), text: 'La metodología' },
+                { href: interviewsHref('comparar'), text: 'Compararlos' },
                 { href: interviewsHref('ejemplo'), text: 'Un ejemplo ficticio' },
               ]}
             />
@@ -538,6 +541,205 @@ export function VerificationPage({
       </Grid>
       <div className="mt-8">
         <Explore links={[{ href: interviewsHref(a.id), text: 'El informe completo' }]} />
+      </div>
+    </>
+  );
+}
+
+type Metric = {
+  name: string;
+  // El tope de la escala, igual para los cuatro; si alguien lo pasa, la escala crece para todos.
+  max: number;
+  value: (a: Interview) => number;
+  display?: (a: Interview) => string;
+  // Lo que va junto al nombre: el margen de la valoración.
+  aside?: (a: Interview) => string;
+};
+const count = (filter: (a: Interview) => unknown[]) => (a: Interview) => filter(a).length;
+const metricGroups: { title: string; metrics: Metric[] }[] = [
+  {
+    title: 'La valoración',
+    metrics: [
+      {
+        name: 'Valoración, sobre 10, con su margen',
+        max: 10,
+        value: (a) => a.nota.global,
+        display: (a) => decimal(a.nota.global),
+        aside: (a) => `± ${decimal(a.nota.margen)}`,
+      },
+      ...criterionIds.map((id) => ({
+        name: `${criteria[id].name} (${criteria[id].weight} %)`,
+        max: 10,
+        value: (a: Interview) => a.nota.criterios[id],
+        display: (a: Interview) => decimal(a.nota.criterios[id]),
+      })),
+    ],
+  },
+  {
+    title: 'Cómo responde',
+    metrics: [
+      {
+        name: 'Respuestas al grano',
+        max: 100,
+        value: (a) => a.stats.alGrano,
+        display: (a) => `${a.stats.alGrano} %`,
+      },
+      {
+        name: 'Evasivas y cambios de tema',
+        max: 20,
+        value: count((a) =>
+          a.preguntas.filter((p) => p.respuesta === 'evasiva' || p.respuesta === 'cambio'),
+        ),
+      },
+      {
+        name: 'Repreguntas',
+        max: 20,
+        value: count((a) => a.preguntas.filter((p) => p.repregunta)),
+      },
+      {
+        name: 'Tiempo de palabra del candidato',
+        max: 100,
+        value: (a) => speakingShare(a, 'candidato'),
+        display: (a) => `${speakingShare(a, 'candidato')} %`,
+      },
+    ],
+  },
+  {
+    title: 'Las propuestas',
+    metrics: [
+      {
+        name: 'Propuestas completas',
+        max: 10,
+        value: count((a) => a.propuestas.filter((p) => proposalScore(p) === 4)),
+      },
+      {
+        name: 'Casi completas',
+        max: 10,
+        value: count((a) => a.propuestas.filter((p) => proposalScore(p) === 3)),
+      },
+    ],
+  },
+  {
+    title: 'Las verificaciones',
+    metrics: Object.entries(verdicts).map(([id, v]) => ({
+      name: v.name,
+      max: 15,
+      value: count((a) => a.revisiones.filter((r) => r.veredicto === id)),
+    })),
+  },
+  {
+    title: 'El tono',
+    metrics: [
+      {
+        name: 'Críticas políticas',
+        max: 20,
+        value: count((a) => a.ataques.filter((x) => x.tipo === 'politica')),
+      },
+      {
+        name: 'Ataques personales',
+        max: 20,
+        value: count((a) => a.ataques.filter((x) => x.tipo === 'personal')),
+      },
+      {
+        name: 'Interrumpe',
+        max: 20,
+        value: count((a) => a.interrupciones.filter((x) => x.quien === 'candidato')),
+      },
+    ],
+  },
+  {
+    title: 'Cómo le trató el entrevistador',
+    metrics: [
+      {
+        name: 'Tiempo de palabra del entrevistador',
+        max: 100,
+        value: (a) => speakingShare(a, 'jordi'),
+        display: (a) => `${speakingShare(a, 'jordi')} %`,
+      },
+      {
+        name: 'Le interrumpe',
+        max: 20,
+        value: count((a) => a.interrupciones.filter((x) => x.quien === 'jordi')),
+      },
+      {
+        name: 'Duración',
+        max: 90,
+        value: (a) => Math.round(a.duracion / 60),
+        display: (a) => `${Math.round(a.duracion / 60)} min`,
+      },
+    ],
+  },
+];
+
+// Las cuatro entrevistas de una ronda, con la misma escala y siempre en el mismo orden. Solo se
+// comparan cuando están las cuatro: con una menos, la comparación no sería justa.
+export function InterviewsCompare() {
+  const round = rounds[0];
+  const entries = roundInterviews(round.id);
+  const all = entries.flatMap(({ candidate, interview }) =>
+    interview ? [{ candidate, interview }] : [],
+  );
+  return (
+    <>
+      <ReportIntro title="Los cuatro, lado a lado">
+        <p>
+          Las cuatro entrevistas de {round.title}, del {longDate(round.date)}, con la misma escala y
+          siempre en el mismo orden. No hay ganador: cada cifra se lee por separado.
+        </p>
+      </ReportIntro>
+      {all.length < entries.length ? (
+        <Grid>
+          <Cell span={7} label="Pendiente">
+            <p className="m-0 max-w-[60ch]">
+              Se comparan cuando estén publicadas y revisadas las cuatro entrevistas de la ronda.
+            </p>
+            <ul className="m-0 grid list-none gap-3 p-0">
+              {entries.map(({ candidate, interview }) => (
+                <li key={candidate.slug} className="flex items-center gap-3">
+                  <Portrait candidate={candidate} kind="avatar" sizes="80px" className="size-10" />
+                  <span className="font-medium">{candidate.name}</span>
+                  <span className="ml-auto text-sm text-muted-foreground">
+                    {interview ? 'Publicada' : 'Pendiente'}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Cell>
+        </Grid>
+      ) : (
+        metricGroups.map((group) => (
+          <ReportSection key={group.title} title={group.title}>
+            <Grid>
+              {group.metrics.map((m) => {
+                const values = all.map(({ interview }) => m.value(interview));
+                return (
+                  <Cell key={m.name} span={6} label={m.name}>
+                    <Bars
+                      max={Math.max(m.max, ...values)}
+                      rows={all.map(({ candidate, interview }, i) => ({
+                        label: m.aside ? `${candidate.name} ${m.aside(interview)}` : candidate.name,
+                        value: values[i] ?? 0,
+                        display: m.display?.(interview) ?? String(values[i]),
+                        color: candidate.color,
+                      }))}
+                    />
+                  </Cell>
+                );
+              })}
+            </Grid>
+          </ReportSection>
+        ))
+      )}
+      <div className="mt-6 grid gap-6">
+        <p className="m-0 max-w-[65ch] text-sm text-muted-foreground">
+          Las cifras son totales de cada entrevista. Si dos valoraciones se solapan con su margen,
+          es un empate.{' '}
+          <Link href={interviewsHref('metodologia')} className="underline underline-offset-4">
+            Cómo se calcula
+          </Link>
+          .
+        </p>
+        <PhotoCredits people={entries.map((e) => e.candidate)} />
       </div>
     </>
   );

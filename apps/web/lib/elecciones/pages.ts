@@ -89,6 +89,12 @@ export const electionPages = {
     text: 'Las entrevistas a los cuatro candidatos, revisadas una a una: qué afirman y si es cierto, qué proponen y si responden a lo que se les pregunta.',
     cta: 'Ver las entrevistas',
   },
+  'entrevistas/comparar': {
+    short: 'Comparar',
+    title: 'Los cuatro, lado a lado',
+    text: 'Las cifras de las cuatro entrevistas de una ronda con la misma escala y en el mismo orden: valoración, respuestas, propuestas, verificaciones y tono.',
+    cta: 'Comparar las entrevistas',
+  },
   'entrevistas/metodologia': {
     short: 'Metodología',
     title: 'Cómo se revisan las entrevistas',
@@ -138,7 +144,7 @@ export const electionGroups: {
     name: 'Las entrevistas',
     title: 'Los candidatos, entrevista a entrevista',
     text: 'Cuatro candidatos y las mismas reglas: cada afirmación comprobable se contrasta con fuentes oficiales y una persona confirma cada decisión.',
-    pages: ['entrevistas', 'entrevistas/metodologia'],
+    pages: ['entrevistas', 'entrevistas/comparar', 'entrevistas/metodologia'],
   },
 ];
 export const electionOrder = electionGroups.flatMap((group) => group.pages);

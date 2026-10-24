@@ -35,6 +35,7 @@ describe('las entrevistas', () => {
     for (const path of [
       ['nadie'],
       ['metodologia', 'x'],
+      ['comparar', 'x'],
       ['pedro-sanchez', 'r1'],
       ['ejemplo', 'r99'],
     ])
@@ -42,5 +43,6 @@ describe('las entrevistas', () => {
     const paths = sitemap().map(({ url }) => new URL(url).pathname);
     expect(paths).toContain('/elecciones/entrevistas');
     expect(paths).toContain('/elecciones/entrevistas/metodologia');
+    expect(paths).toContain('/elecciones/entrevistas/comparar');
   });
 });

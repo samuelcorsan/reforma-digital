@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import {
   CandidatePending,
   InterviewReport,
+  InterviewsCompare,
   InterviewsHome,
   InterviewsMethod,
   interviewsHref,
@@ -20,15 +21,23 @@ import {
 import { electionPages } from '../../../../../lib/elecciones/pages';
 import { pageMetadata } from '../../../../../lib/seo';
 
+// Las vistas que son apartados de la sección, con su pestaña en la navegación.
+const sectionPage = {
+  home: 'entrevistas',
+  method: 'entrevistas/metodologia',
+  compare: 'entrevistas/comparar',
+} as const;
+
 type Props = { params: Promise<{ path?: string[] }> };
 
-// /entrevistas, /entrevistas/metodologia, /entrevistas/<candidato>, /entrevistas/<entrevista> y
+// /entrevistas, /entrevistas/metodologia, /entrevistas/comparar, /entrevistas/<candidato>, /entrevistas/<entrevista> y
 // /entrevistas/<entrevista>/<verificación>.
 function route(path: string[] = []) {
   const [id, detail, ...rest] = path;
   if (rest.length) return null;
   if (!id) return detail ? null : { kind: 'home' as const };
   if (id === 'metodologia') return detail ? null : { kind: 'method' as const };
+  if (id === 'comparar') return detail ? null : { kind: 'compare' as const };
   const candidate = getCandidate(id);
   if (candidate) return detail ? null : { kind: 'candidate' as const, candidate };
   const interview = getInterview(id);
@@ -45,8 +54,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const base = { path: interviewsHref(path?.join('/')), og: 'elecciones' as const };
   switch (match.kind) {
     case 'home':
-    case 'method': {
-      const page = electionPages[match.kind === 'home' ? 'entrevistas' : 'entrevistas/metodologia'];
+    case 'method':
+    case 'compare': {
+      const page = electionPages[sectionPage[match.kind]];
       return pageMetadata({
         ...base,
         title: `${page.title} · Elecciones · Reforma Digital`,
@@ -103,11 +113,16 @@ export default async function Page({ params }: Props) {
       className="mx-auto max-w-(--container-content) px-(--page-gutter) pt-8 pb-20"
     >
       <ElectionsFrame
-        current={match.kind === 'method' ? 'entrevistas/metodologia' : 'entrevistas'}
+        current={
+          match.kind === 'method' || match.kind === 'compare'
+            ? sectionPage[match.kind]
+            : 'entrevistas'
+        }
         crumb={crumb}
       >
         {match.kind === 'home' && <InterviewsHome />}
         {match.kind === 'method' && <InterviewsMethod />}
+        {match.kind === 'compare' && <InterviewsCompare />}
         {match.kind === 'candidate' && <CandidatePending candidate={match.candidate} />}
         {match.kind === 'interview' && <InterviewReport interview={match.interview} />}
         {match.kind === 'verification' && (

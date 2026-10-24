@@ -945,7 +945,7 @@ export async function ElectionsHome() {
       >
         {card(
           'entrevistas',
-          6,
+          4,
           <div className="flex">
             {candidates.map((c) => (
               <Portrait
@@ -958,7 +958,8 @@ export async function ElectionsHome() {
             ))}
           </div>,
         )}
-        {card('entrevistas/metodologia', 6)}
+        {card('entrevistas/comparar', 4)}
+        {card('entrevistas/metodologia', 4)}
       </Chapter>
     </>
   );
