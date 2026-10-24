@@ -1,3 +1,4 @@
+import { cn } from '@reforma-digital/design/lib/utils';
 import type { Mark } from '../../lib/elecciones/interviews';
 import { Icon, type IconName } from '../brand/icon';
 
@@ -19,20 +20,37 @@ export const markIcons: Record<Mark['kind'], IconName> = {
   interrumpido: 'silencio',
 };
 
-// Sobre el verde y el rojo, el icono va en blanco; sobre el amarillo y el naranja, en tinta.
-export const iconInk = (kind: Mark['kind']) =>
-  kind === 'legal' || kind === 'roja' ? '#fff' : undefined;
-
-// El icono en su círculo, con el color de la marca si lo tiene. Decorativo: el texto de al lado
-// dice qué es.
-export function MarkIcon({ kind, color }: { kind: Mark['kind']; color?: string }) {
+// El icono en su círculo. Con color (las calificaciones), una pastilla tintada: fondo claro del
+// color, icono en su tono oscuro y un canto fino del mismo tono. Sin color, blanca con canto gris.
+// Decorativo: el texto de al lado dice qué es.
+export function MarkIcon({
+  kind,
+  color,
+  className,
+}: {
+  kind: Mark['kind'];
+  color?: string;
+  className?: string;
+}) {
   return (
     <span
       aria-hidden="true"
-      className="grid size-7 shrink-0 place-items-center rounded-full bg-background ring-1 ring-foreground/20"
-      style={{ background: color, color: iconInk(kind) }}
+      className={cn(
+        'grid size-7 shrink-0 place-items-center rounded-full',
+        !color && 'bg-background text-foreground ring-1 ring-foreground/15',
+        className,
+      )}
+      style={
+        color
+          ? {
+              background: `color-mix(in oklab, ${color} 16%, var(--background))`,
+              color: `color-mix(in oklab, ${color} 78%, black)`,
+              boxShadow: `inset 0 0 0 1px color-mix(in oklab, ${color} 40%, transparent)`,
+            }
+          : undefined
+      }
     >
-      <Icon name={markIcons[kind]} size={16} />
+      <Icon name={markIcons[kind]} size={15} />
     </span>
   );
 }

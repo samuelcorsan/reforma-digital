@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@reforma-digital/desig
 import { minute } from '../../lib/elecciones/format';
 import type { Interview, lanes as laneNames, Mark } from '../../lib/elecciones/interviews';
 import { Icon } from '../brand/icon';
-import { iconInk, markIcons } from './mark-icon';
+import { MarkIcon } from './mark-icon';
 import { Label } from './report';
 import { useWidth } from './use-width';
 
@@ -253,9 +253,7 @@ export function InterviewPlayer({
                   className="grid w-full gap-1 rounded-lg px-3 py-2 text-left hover:bg-muted"
                 >
                   <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-                    <span style={{ color: m.color }}>
-                      <Icon name={markIcons[m.kind]} size={14} />
-                    </span>
+                    <MarkIcon kind={m.kind} color={m.color} className="size-6" />
                     {minute(m.second)} · {m.label}
                   </span>
                   <span>{m.text}</span>
@@ -316,15 +314,10 @@ export function InterviewPlayer({
                       setSelected(m);
                       seek(m.second);
                     }}
-                    className="absolute grid size-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-background ring-1 ring-foreground/20 transition-transform hover:z-10 hover:scale-115 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground motion-reduce:transition-none"
-                    style={{
-                      left: at(m.second / duration),
-                      top: 18 + row * gap,
-                      background: m.color,
-                      color: iconInk(m.kind),
-                    }}
+                    className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-transform hover:z-10 hover:scale-115 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground aria-pressed:ring-offset-2 aria-pressed:ring-offset-background motion-reduce:transition-none"
+                    style={{ left: at(m.second / duration), top: 18 + row * gap }}
                   >
-                    <Icon name={markIcons[m.kind]} size={16} />
+                    <MarkIcon kind={m.kind} color={m.color} />
                   </button>
                 ))}
               </div>
@@ -349,7 +342,7 @@ export function InterviewPlayer({
         {selected && (
           <div aria-live="polite" className="grid gap-1 rounded-lg bg-muted p-4">
             <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-              <Icon name={markIcons[selected.kind]} size={14} />
+              <MarkIcon kind={selected.kind} color={selected.color} className="size-6" />
               {minute(selected.second)} · {selected.label}
             </span>
             <span>{selected.text}</span>
@@ -370,7 +363,7 @@ export function InterviewPlayer({
             <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-x-4 gap-y-2 p-0 pt-2 text-sm">
               {legend.map(([kind, name]) => (
                 <li key={kind} className="flex items-center gap-2">
-                  <Icon name={markIcons[kind]} size={16} />
+                  <MarkIcon kind={kind} color={marks.find((m) => m.kind === kind)?.color} />
                   {name}
                 </li>
               ))}
