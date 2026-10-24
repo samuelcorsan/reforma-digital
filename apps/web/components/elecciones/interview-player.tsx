@@ -1,7 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { Button } from '@reforma-digital/design/ui/button';
 import {
@@ -173,13 +182,15 @@ const zooms = [
   [720, '12 min'],
   [180, '3 min'],
 ] as const;
-// Los iconos miden 28 px: la línea empieza y acaba a media anchura de icono de cada borde.
-const edge = 14;
-// Distancia mínima entre dos iconos de la misma fila, y entre filas.
-const gap = 30;
+// Los iconos de la línea de tiempo miden 24 px: las pistas empiezan y acaban a media anchura de
+// icono de cada borde.
+const edge = 12;
+// Distancia mínima entre dos iconos de la misma fila, y entre filas; y el centro de la primera fila.
+const gap = 26;
+const half = 17;
 const at = (share: number) => `calc(${edge}px + (100% - ${2 * edge}px) * ${share})`;
 // Los temas, en una escala de grises; el que suena va en tinta.
-const greys = ['#5d5953', '#8f8a83', '#b3aea6', '#3b3935', '#d3cfc8', '#6d6963'];
+const greys = ['#8f8a83', '#b3aea6', '#a29c94', '#c9c5be', '#7d7871', '#d3cfc8'];
 
 // Las marcas que se pisarían bajan a otra fila de su carril: así se ven todas.
 function stack(list: Mark[], pixelsPerSecond: number) {
@@ -191,7 +202,7 @@ function stack(list: Mark[], pixelsPerSecond: number) {
     else ends[row] = x;
     return { mark, row };
   });
-  return { placed, height: 36 + Math.max(ends.length - 1, 0) * gap };
+  return { placed, height: 2 * half + Math.max(ends.length - 1, 0) * gap };
 }
 
 export function InterviewPlayer({
@@ -226,6 +237,9 @@ export function InterviewPlayer({
   const [hovered, setHovered] = useState<Mark | null>(null);
   const [zoom, setZoom] = useState<number | null>(null);
   const [inView, setInView] = useState(false);
+  const [hover, setHover] = useState<number | null>(null);
+  // Sin «:» ni «»», que rompen `url(#…)`.
+  const gradient = `intensidad-${useId().replace(/[^\w-]/g, '')}`;
   const root = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const width = useWidth(track, 600);
@@ -335,7 +349,40 @@ export function InterviewPlayer({
     setSelected(m);
     seek(m.second);
   };
-  const ticks = [0, 0.25, 0.5, 0.75, 1].map((x) => from + x * (to - from));
+  // Marcas del eje cada 30 s, 1, 2, 5, 10, 15, 20 o 30 minutos: las que quepan.
+  const step =
+    [30, 60, 120, 300, 600, 900, 1200, 1800].find(
+      (s) => (to - from) / s <= Math.max(2, Math.floor(width / 110)),
+    ) ?? 3600;
+  const ticks = Array.from(
+    { length: Math.floor(to / step) - Math.ceil(from / step) + 1 },
+    (_, i) => (Math.ceil(from / step) + i) * step,
+  );
+  // La intensidad como una curva suave: de cada punto, a medio camino del siguiente.
+  const points = minutes.map((m) => [share(m.start + 30) * 1000, 38 - m.intensity * 34] as const);
+  const curve =
+    points.reduce((d, [x, y], i) => {
+      const prev = points[i - 1];
+      return prev
+        ? `${d} Q${prev[0]},${prev[1]} ${(prev[0] + x) / 2},${(prev[1] + y) / 2}`
+        : `M${x},${y}`;
+    }, '') + (points.length ? ` L${points.at(-1)?.join(',')}` : '');
+  // El segundo bajo el ratón, o nada si está fuera de las pistas.
+  const timeAt = (event: MouseEvent<HTMLElement>) => {
+    const r = track.current?.getBoundingClientRect();
+    if (!r) return null;
+    const x = (event.clientX - r.left - edge) / (r.width - 2 * edge);
+    return x < 0 || x > 1 ? null : from + x * (to - from);
+  };
+  const row = (label: ReactNode, height: number, content: ReactNode) => (
+    <div className="grid grid-cols-[var(--label)_minmax(0,1fr)] items-center gap-3">
+      <span className="text-sm leading-tight text-muted-foreground">{label}</span>
+      <div className="relative" style={{ height }}>
+        {/* Recortado a los mismos márgenes que los carriles de iconos. */}
+        <div className="absolute inset-y-0 inset-x-3 overflow-hidden">{content}</div>
+      </div>
+    </div>
+  );
 
   return (
     <div ref={root} className="grid grid-cols-12 gap-4">
@@ -466,92 +513,102 @@ export function InterviewPlayer({
           </Tabs>
         </div>
 
-        {/* Las filas comparten la columna de la izquierda, así la línea vertical del tiempo las cruza todas. */}
-        <div className="relative grid gap-1 [--label:6rem] sm:[--label:10rem]">
-          {[
-            {
-              name: 'Intensidad',
-              height: 36,
-              content: (
-                <svg
-                  key="intensidad"
-                  viewBox="0 0 1000 32"
-                  preserveAspectRatio="none"
-                  aria-hidden="true"
-                  className="absolute inset-0 size-full"
-                >
-                  <path
-                    d={`M${share(0) * 1000},32 ${minutes
-                      .map((m) => `L${share(m.start + 30) * 1000},${32 - m.intensity * 28}`)
-                      .join(' ')} L${share(duration) * 1000},32 Z`}
-                    fill="color-mix(in oklab, var(--foreground) 12%, transparent)"
-                    stroke="var(--foreground)"
-                    strokeWidth="1.5"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                </svg>
-              ),
-            },
-            {
-              name: 'Tiene la palabra',
-              height: 48,
-              content: minutes
+        {/* Las filas comparten la columna de la izquierda, así las líneas del tiempo las cruzan todas. */}
+        <div
+          className="relative grid pt-7 [--label:6rem] sm:[--label:10rem]"
+          onMouseMove={(event) => setHover(timeAt(event))}
+          onMouseLeave={() => setHover(null)}
+          onClick={(event) => {
+            const second = timeAt(event);
+            if (second != null) seek(second);
+          }}
+        >
+          {row(
+            'Intensidad',
+            40,
+            <svg
+              viewBox="0 0 1000 40"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+              className="absolute inset-0 size-full"
+            >
+              <defs>
+                <linearGradient id={gradient} x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stopColor="var(--foreground)" stopOpacity="0.32" />
+                  <stop offset="1" stopColor="var(--foreground)" stopOpacity="0.04" />
+                </linearGradient>
+              </defs>
+              <path
+                d={`${curve} L${share(duration) * 1000},40 L${share(0) * 1000},40 Z`}
+                fill={`url(#${gradient})`}
+              />
+              <path
+                d={curve}
+                fill="none"
+                stroke="var(--muted-foreground)"
+                strokeWidth="1"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>,
+          )}
+          {row(
+            <span className="grid gap-0.5">
+              <span className="text-foreground">{speakers.candidato}</span>
+              <span>Tiene la palabra</span>
+              <span>{speakers.jordi}</span>
+            </span>,
+            60,
+            <>
+              <i aria-hidden="true" className="absolute inset-x-0 top-1/2 h-px bg-border" />
+              {minutes
                 .filter((m) => visible(m.start) || visible(m.start + 60))
                 .map((m) => (
                   <span
                     key={m.start}
                     className="absolute top-1/2 h-0"
                     style={{
-                      left: `${share(m.start) * 100}%`,
-                      width: `calc(${(share(m.start + 60) - share(m.start)) * 100}% - 1px)`,
+                      left: `calc(${share(m.start) * 100}% + 1px)`,
+                      width: `calc(${(share(m.start + 60) - share(m.start)) * 100}% - 2px)`,
                     }}
                   >
                     <i
                       className="absolute bottom-0 left-0 w-full rounded-t-[2px]"
-                      style={{ height: (m.candidate / 60) * 20, background: color }}
+                      style={{
+                        height: (m.candidate / 60) * 27,
+                        background: `color-mix(in oklab, ${color} 55%, var(--background))`,
+                      }}
                     />
                     <i
-                      className="absolute top-0 left-0 w-full rounded-b-[2px] bg-muted-foreground/40"
-                      style={{ height: (m.interviewer / 60) * 20 }}
+                      className="absolute top-0 left-0 w-full rounded-b-[2px] bg-muted-foreground/25"
+                      style={{ height: (m.interviewer / 60) * 27 }}
                     />
                   </span>
-                )),
-            },
-            {
-              name: 'Temas',
-              height: 28,
-              content: topics
-                .filter((t) => t.fin >= from && t.inicio <= to)
-                .map((t, i) => (
-                  <span
-                    key={`${t.tema}-${t.inicio}-${i}`}
-                    title={t.tema}
-                    className="absolute top-1/2 h-3 -translate-y-1/2 rounded-[3px] border-x border-background"
-                    style={{
-                      left: `${share(t.inicio) * 100}%`,
-                      width: `${(share(t.fin) - share(t.inicio)) * 100}%`,
-                      background:
-                        t.tema === topic
-                          ? 'var(--foreground)'
-                          : greys[topicNames.indexOf(t.tema) % greys.length],
-                    }}
-                  />
-                )),
-            },
-          ].map(({ name, height, content }) => (
-            <div
-              key={name}
-              className="grid grid-cols-[var(--label)_minmax(0,1fr)] items-center gap-3"
-            >
-              <span className="text-sm leading-tight text-muted-foreground">{name}</span>
-              <div className="relative cursor-pointer" style={{ height }} onClick={seekAt}>
-                {/* Recortado a los mismos márgenes que los carriles de iconos. */}
-                <div className="absolute inset-y-0 inset-x-3.5 overflow-hidden">{content}</div>
-              </div>
-            </div>
-          ))}
+                ))}
+            </>,
+          )}
+          {row(
+            'Temas',
+            24,
+            topics
+              .filter((t) => t.fin >= from && t.inicio <= to)
+              .map((t, i) => (
+                <span
+                  key={`${t.tema}-${t.inicio}-${i}`}
+                  title={t.tema}
+                  className="absolute top-1/2 h-2.5 -translate-y-1/2 rounded-[2px]"
+                  style={{
+                    left: `calc(${share(t.inicio) * 100}% + 1px)`,
+                    width: `calc(${(share(t.fin) - share(t.inicio)) * 100}% - 2px)`,
+                    background:
+                      t.tema === topic
+                        ? 'var(--foreground)'
+                        : greys[topicNames.indexOf(t.tema) % greys.length],
+                  }}
+                />
+              )),
+          )}
 
-          {Object.entries(lanes).map(([id, name], i) => {
+          {Object.entries(lanes).map(([id, name]) => {
             const lane = stack(
               marks.filter((m) => m.lane === id && visible(m.second)),
               (width - 2 * edge) / (to - from),
@@ -559,24 +616,11 @@ export function InterviewPlayer({
             return (
               <div
                 key={id}
-                className={cn(
-                  'grid grid-cols-[var(--label)_minmax(0,1fr)] items-start gap-3',
-                  i === 0 && 'mt-2 border-t border-border pt-3',
-                )}
+                className="grid grid-cols-[var(--label)_minmax(0,1fr)] items-start gap-3 border-t border-border"
               >
-                <span className="pt-2 text-sm leading-tight text-muted-foreground">{name}</span>
-                {/* Clic en la línea: salta a ese punto. Clic en un icono: salta a la marca y la explica. */}
-                <div
-                  ref={i === 0 ? track : undefined}
-                  className="relative cursor-pointer"
-                  style={{ height: lane.height }}
-                  onClick={seekAt}
-                >
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-x-3.5 top-[18px] h-px bg-border"
-                  />
-                  {lane.placed.map(({ mark: m, row }) => (
+                <span className="py-2 text-sm leading-tight text-muted-foreground">{name}</span>
+                <div className="relative" style={{ height: lane.height }}>
+                  {lane.placed.map(({ mark: m, row: level }) => (
                     <button
                       key={m.id}
                       type="button"
@@ -588,10 +632,17 @@ export function InterviewPlayer({
                       }}
                       onMouseEnter={() => setHovered(m)}
                       onMouseLeave={() => setHovered(null)}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-transform hover:z-10 hover:scale-115 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground aria-pressed:ring-offset-2 aria-pressed:ring-offset-background motion-reduce:transition-none"
-                      style={{ left: at(share(m.second)), top: 18 + row * gap }}
+                      className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-transform hover:z-10 hover:scale-125 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground aria-pressed:ring-offset-2 aria-pressed:ring-offset-background motion-reduce:transition-none"
+                      style={{ left: at(share(m.second)), top: half + level * gap }}
                     >
-                      <MarkIcon kind={m.kind} color={m.color} />
+                      <MarkIcon
+                        kind={m.kind}
+                        color={m.color}
+                        className={cn(
+                          'size-6',
+                          !m.color && 'bg-transparent text-muted-foreground ring-0',
+                        )}
+                      />
                     </button>
                   ))}
                 </div>
@@ -599,17 +650,28 @@ export function InterviewPlayer({
             );
           })}
 
-          {/* La línea del tiempo: una sola, de arriba abajo. */}
+          {/* La columna de las pistas: la línea de lo que suena (continua) y la del ratón (discontinua). */}
           <div
+            ref={track}
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-0 left-[calc(var(--label)+12px)]"
           >
             <i
-              className="absolute inset-y-0 w-0.5 -translate-x-1/2 bg-brand"
+              className="absolute top-1 bottom-0 w-px -translate-x-1/2 bg-foreground"
               style={{ left: at(share(time)) }}
             >
-              <b className="absolute -top-1 left-1/2 size-2.5 -translate-x-1/2 rounded-full bg-brand" />
+              <b className="absolute top-0 left-1/2 size-2 -translate-x-1/2 rounded-full bg-foreground" />
             </i>
+            {hover != null && (
+              <i
+                className="absolute top-6 bottom-0 -translate-x-1/2 border-l border-dashed border-foreground/40"
+                style={{ left: at(share(hover)) }}
+              >
+                <b className="absolute -top-6 left-1/2 -translate-x-1/2 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs font-normal whitespace-nowrap text-background">
+                  {minute(hover)}
+                </b>
+              </i>
+            )}
           </div>
         </div>
 
@@ -619,16 +681,11 @@ export function InterviewPlayer({
         >
           <span />
           <div className="relative h-4 font-mono text-xs text-muted-foreground tabular-nums">
-            {ticks.map((second, i) => (
+            {ticks.map((second) => (
               <span
-                key={i}
-                className={cn(
-                  'absolute',
-                  i === 0 ? '' : i === ticks.length - 1 ? '-translate-x-full' : '-translate-x-1/2',
-                  // En móvil solo caben el principio, la mitad y el final.
-                  i % 2 === 1 && 'max-sm:hidden',
-                )}
-                style={{ left: at(i / (ticks.length - 1)) }}
+                key={second}
+                className="absolute -translate-x-1/2"
+                style={{ left: at(share(second)) }}
               >
                 {minute(second)}
               </span>
