@@ -4,10 +4,17 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { Button } from '@reforma-digital/design/ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@reforma-digital/design/ui/collapsible';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import { minute } from '../../lib/elecciones/format';
 import type { Interview, lanes as laneNames, Mark } from '../../lib/elecciones/interviews';
+import { Icon, type IconName } from '../brand/icon';
 import { Label } from './report';
+import { useWidth } from './use-width';
 
 type Player = {
   playVideo(): void;
@@ -97,6 +104,55 @@ function useVideo(youtubeId: string | null) {
   return { time, loaded, load: () => setLoaded(true), box, seek };
 }
 
+const icons: Record<Mark['kind'], IconName> = {
+  momento: 'estrella',
+  completa: 'diana',
+  casi: 'casi',
+  legal: 'hecho',
+  amarilla: 'balanza',
+  fuera: 'aviso',
+  roja: 'nunca',
+  repregunta: 'repetir',
+  evasiva: 'esquiva',
+  critica: 'contacto',
+  ataque: 'rayo',
+  interrumpe: 'tijeras',
+  interrumpido: 'silencio',
+};
+const legend: [Mark['kind'], string][] = [
+  ['momento', 'Momento clave'],
+  ['completa', 'Propuesta completa'],
+  ['casi', 'Propuesta casi completa'],
+  ['legal', 'Cierto'],
+  ['amarilla', 'Con matices'],
+  ['fuera', 'Engañoso'],
+  ['roja', 'Falso'],
+  ['repregunta', 'Repregunta'],
+  ['evasiva', 'Evasiva o cambio de tema'],
+  ['critica', 'Crítica política'],
+  ['ataque', 'Ataque personal'],
+  ['interrumpe', 'Interrumpe'],
+  ['interrumpido', 'Le interrumpen'],
+];
+// Los iconos miden 28 px: la línea empieza y acaba a media anchura de icono de cada borde.
+const edge = 14;
+// Distancia mínima entre dos iconos de la misma fila, y entre filas.
+const gap = 30;
+const at = (share: number) => `calc(${edge}px + (100% - ${2 * edge}px) * ${share})`;
+
+// Las marcas que se pisarían bajan a otra fila de su carril: así se ven todas sin zoom.
+function stack(list: Mark[], pixelsPerSecond: number) {
+  const ends: number[] = [];
+  const placed = list.map((mark) => {
+    const x = mark.second * pixelsPerSecond;
+    let row = ends.findIndex((end) => x - end >= gap);
+    if (row === -1) row = ends.push(x) - 1;
+    else ends[row] = x;
+    return { mark, row };
+  });
+  return { placed, height: 36 + Math.max(ends.length - 1, 0) * gap };
+}
+
 export function InterviewPlayer({
   youtubeId,
   duration,
@@ -113,6 +169,9 @@ export function InterviewPlayer({
   lanes: typeof laneNames;
 }) {
   const { time, loaded, load, box, seek } = useVideo(youtubeId);
+  const [selected, setSelected] = useState<Mark | null>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const width = useWidth(track, 600);
   // El último tramo que ya ha empezado.
   const next = segments.findIndex((s) => s.inicio > time);
   const active = (next === -1 ? segments.length : next) - 1;
@@ -179,51 +238,6 @@ export function InterviewPlayer({
             )}
           </div>
         )}
-
-        <div className="grid gap-3">
-          <div className="flex items-baseline justify-between gap-4">
-            <Label>Línea de tiempo</Label>
-            <span className="font-mono text-sm tabular-nums">
-              {minute(time)} <span className="text-muted-foreground">/ {minute(duration)}</span>
-            </span>
-          </div>
-          {/* Un resumen visual para el ratón: la misma información, con teclado, está en «Momentos». */}
-          <div aria-hidden="true" className="grid gap-2">
-            {Object.entries(lanes).map(([id, name]) => (
-              <div
-                key={id}
-                className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] items-center gap-3 max-sm:grid-cols-1 max-sm:gap-1"
-              >
-                <span className="text-sm text-muted-foreground">{name}</span>
-                <div
-                  className="relative h-6 cursor-pointer rounded-full bg-muted"
-                  onClick={(event) => {
-                    const r = event.currentTarget.getBoundingClientRect();
-                    seek(((event.clientX - r.left) / r.width) * duration);
-                  }}
-                >
-                  {marks
-                    .filter((m) => m.lane === id)
-                    .map((m) => (
-                      <i
-                        key={m.id}
-                        title={`${minute(m.second)} · ${m.label}: ${m.text}`}
-                        className="absolute inset-y-1 w-1 -translate-x-1/2 rounded-full"
-                        style={{
-                          left: `${(m.second / duration) * 100}%`,
-                          background: m.color ?? 'var(--foreground)',
-                        }}
-                      />
-                    ))}
-                  <i
-                    className="pointer-events-none absolute -inset-y-1 w-0.5 bg-brand"
-                    style={{ left: `${(time / duration) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
       <Tabs
@@ -239,12 +253,12 @@ export function InterviewPlayer({
           </TabsTrigger>
         </TabsList>
         <TabsContent value="transcripcion">
-          <ol className="relative m-0 grid max-h-[560px] list-none gap-1 overflow-y-auto p-0">
+          <ol className="relative m-0 grid max-h-[420px] list-none gap-1 overflow-y-auto p-0">
             {transcript}
           </ol>
         </TabsContent>
         <TabsContent value="momentos">
-          <ol className="m-0 grid max-h-[560px] list-none gap-1 overflow-y-auto p-0">
+          <ol className="m-0 grid max-h-[420px] list-none gap-1 overflow-y-auto p-0">
             {marks.map((m) => (
               <li key={m.id}>
                 <button
@@ -253,11 +267,9 @@ export function InterviewPlayer({
                   className="grid w-full gap-1 rounded-lg px-3 py-2 text-left hover:bg-muted"
                 >
                   <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-                    <i
-                      aria-hidden="true"
-                      className="block size-2 rounded-full"
-                      style={{ background: m.color ?? 'var(--foreground)' }}
-                    />
+                    <span style={{ color: m.color }}>
+                      <Icon name={icons[m.kind]} size={14} />
+                    </span>
                     {minute(m.second)} · {m.label}
                   </span>
                   <span>{m.text}</span>
@@ -268,6 +280,118 @@ export function InterviewPlayer({
           </ol>
         </TabsContent>
       </Tabs>
+
+      <div className="col-span-12 grid gap-3 rounded-xl p-6 ring-1 ring-foreground/10 lg:p-8 max-sm:p-5">
+        <div className="flex items-baseline justify-between gap-4">
+          <Label>Línea de tiempo</Label>
+          <span className="font-mono text-sm tabular-nums">
+            {minute(time)} <span className="text-muted-foreground">/ {minute(duration)}</span>
+          </span>
+        </div>
+        {Object.entries(lanes).map(([id, name]) => {
+          const lane = stack(
+            marks.filter((m) => m.lane === id),
+            (width - 2 * edge) / duration,
+          );
+          return (
+            <div
+              key={id}
+              className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] items-center gap-3 max-sm:grid-cols-1 max-sm:gap-0"
+            >
+              <span className="text-sm text-muted-foreground">{name}</span>
+              {/* Clic en la línea: salta a ese punto. Clic en un icono: salta a la marca y la explica. */}
+              <div
+                ref={id === 'momentos' ? track : undefined}
+                className="relative cursor-pointer"
+                style={{ height: lane.height }}
+                onClick={(event) => {
+                  const r = event.currentTarget.getBoundingClientRect();
+                  const at = (event.clientX - r.left - edge) / (r.width - 2 * edge);
+                  seek(Math.min(1, Math.max(0, at)) * duration);
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-3.5 top-[18px] h-px bg-border"
+                />
+                <i
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 w-0.5 -translate-x-1/2 bg-brand"
+                  style={{ left: at(time / duration) }}
+                />
+                {lane.placed.map(({ mark: m, row }) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    aria-label={`${minute(m.second)} · ${m.label}: ${m.text}`}
+                    aria-pressed={selected?.id === m.id}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setSelected(m);
+                      seek(m.second);
+                    }}
+                    className="absolute grid size-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-background ring-1 ring-foreground/20 transition-transform hover:z-10 hover:scale-115 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground motion-reduce:transition-none"
+                    style={{
+                      left: at(m.second / duration),
+                      top: 18 + row * gap,
+                      background: m.color,
+                      color: m.kind === 'legal' || m.kind === 'roja' ? '#fff' : undefined,
+                    }}
+                  >
+                    <Icon name={icons[m.kind]} size={16} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+
+        <div
+          aria-hidden="true"
+          className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-3 max-sm:grid-cols-1"
+        >
+          <span className="max-sm:hidden" />
+          <div className="relative h-4 font-mono text-xs text-muted-foreground tabular-nums">
+            {[0, 0.25, 0.5, 0.75, 1].map((share) => (
+              <span key={share} className="absolute -translate-x-1/2" style={{ left: at(share) }}>
+                {minute(share * duration)}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {selected && (
+          <div aria-live="polite" className="grid gap-1 rounded-lg bg-muted p-4">
+            <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+              <Icon name={icons[selected.kind]} size={14} />
+              {minute(selected.second)} · {selected.label}
+            </span>
+            <span>{selected.text}</span>
+            {selected.detail && (
+              <span className="text-sm text-muted-foreground">{selected.detail}</span>
+            )}
+          </div>
+        )}
+
+        <Collapsible>
+          <CollapsibleTrigger className="group flex min-h-11 items-center gap-2 text-sm font-medium">
+            Qué significa cada icono
+            <span aria-hidden="true" className="flex group-data-open:rotate-180">
+              <Icon name="abajo" size={16} />
+            </span>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-x-4 gap-y-2 p-0 pt-2 text-sm">
+              {legend.map(([kind, name]) => (
+                <li key={kind} className="flex items-center gap-2">
+                  <Icon name={icons[kind]} size={16} />
+                  {name}
+                </li>
+              ))}
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
     </div>
   );
 }

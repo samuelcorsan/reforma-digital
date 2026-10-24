@@ -2,19 +2,29 @@
 // aria-label del control que los contiene da el nombre.
 import type { ComponentType } from 'react';
 import {
+  IconBoltOutline18,
   IconCalendarOutline18,
   IconCheckOutline18,
+  IconCircleHalfDottedCheckOutline18,
   IconCircleInfoOutline18,
   IconClipboardOutline18,
   IconCreditCardOutline18,
+  IconEyeClosedOutline18,
   IconFileContentOutline18,
   IconInboxArrowDownOutline18,
   IconLinkOutline18,
   IconLocation2Outline18,
   IconLockOutline18,
   IconMagnifierOutline18,
+  IconMicrophoneSlashOutline18,
   IconMsgsOutline18,
   IconPhoneOutline18,
+  IconRefresh2Outline18,
+  IconScaleOutline18,
+  IconScissorsOutline18,
+  IconStarOutline18,
+  IconTargetOutline18,
+  IconTriangleWarningOutline18,
   IconUserOutline18,
   IconXmarkOutline18,
 } from 'nucleo-ui-essential-outline-18';
@@ -37,6 +47,17 @@ const iconos = {
   usuario: IconUserOutline18,
   tarjeta: IconCreditCardOutline18,
   telefono: IconPhoneOutline18,
+  // Las marcas de la línea de tiempo de las entrevistas.
+  estrella: IconStarOutline18,
+  diana: IconTargetOutline18,
+  casi: IconCircleHalfDottedCheckOutline18,
+  balanza: IconScaleOutline18,
+  aviso: IconTriangleWarningOutline18,
+  repetir: IconRefresh2Outline18,
+  esquiva: IconEyeClosedOutline18,
+  rayo: IconBoltOutline18,
+  tijeras: IconScissorsOutline18,
+  silencio: IconMicrophoneSlashOutline18,
 } satisfies Record<string, Svg>;
 
 const pixelTurn = { derecha: 0, abajo: 90, izquierda: 180 } as const;

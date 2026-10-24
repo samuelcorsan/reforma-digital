@@ -275,6 +275,17 @@ export type Mark = {
   id: string;
   second: number;
   lane: keyof typeof lanes;
+  kind:
+    | 'momento'
+    | 'completa'
+    | 'casi'
+    | z.infer<typeof verdict>
+    | 'repregunta'
+    | 'evasiva'
+    | 'critica'
+    | 'ataque'
+    | 'interrumpe'
+    | 'interrumpido';
   label: string;
   text: string;
   detail?: string;
@@ -294,6 +305,7 @@ export function marks(a: Interview): Mark[] {
       id: m.id,
       second: m.segundo,
       lane: 'momentos' as const,
+      kind: 'momento' as const,
       label: moments[m.tipo].name,
       text: m.titulo,
       detail: `«${m.cita}»`,
@@ -306,6 +318,7 @@ export function marks(a: Interview): Mark[] {
         id: p.id,
         second: p.segundo,
         lane: 'propuestas' as const,
+        kind: lacks ? ('casi' as const) : ('completa' as const),
         label: lacks ? 'Casi completa' : 'Propuesta completa',
         text: p.texto,
         detail: lacks ? `Le falta ${missing[lacks]}` : 'Qué, cuánto, cuándo y cómo',
@@ -315,6 +328,7 @@ export function marks(a: Interview): Mark[] {
       id: r.id,
       second: r.segundo,
       lane: 'verificaciones' as const,
+      kind: r.veredicto,
       label: verdicts[r.veredicto].name,
       text: `«${r.cita}»`,
       detail: r.explicacion,
@@ -326,6 +340,7 @@ export function marks(a: Interview): Mark[] {
             id: p.id,
             second: p.segundo,
             lane: 'preguntas' as const,
+            kind: 'repregunta' as const,
             label: 'Repregunta',
             text: p.texto,
             detail: `Respuesta: ${answers[p.respuesta].toLowerCase()}`,
@@ -335,6 +350,7 @@ export function marks(a: Interview): Mark[] {
               id: p.id,
               second: p.segundo,
               lane: 'preguntas' as const,
+              kind: 'evasiva' as const,
               label: answers[p.respuesta],
               text: p.texto,
             }
@@ -344,6 +360,7 @@ export function marks(a: Interview): Mark[] {
       id: x.id,
       second: x.segundo,
       lane: 'criticas' as const,
+      kind: x.tipo === 'personal' ? ('ataque' as const) : ('critica' as const),
       label: x.tipo === 'personal' ? 'Ataque personal' : 'Crítica política',
       text: `«${x.texto}»`,
       detail: `A ${x.objetivo}`,
@@ -352,6 +369,7 @@ export function marks(a: Interview): Mark[] {
       id: `i${i + 1}`,
       second: x.segundo,
       lane: 'criticas' as const,
+      kind: x.quien === 'candidato' ? ('interrumpe' as const) : ('interrumpido' as const),
       label: x.quien === 'candidato' ? 'Interrumpe' : 'Le interrumpen',
       text:
         x.quien === 'candidato'
@@ -360,6 +378,22 @@ export function marks(a: Interview): Mark[] {
     })),
   ];
   return list.sort((x, y) => x.second - y.second);
+}
+
+// Las entrevistas de una ronda, por candidato. Solo las reales.
+export const roundInterviews = (round: string) =>
+  candidates.map((c) => ({
+    candidate: c,
+    interview: interviews.find((a) => !a.ficticio && a.jornada === round && a.candidato === c.slug),
+  }));
+
+// Qué parte del tiempo hablado es de quien se pida, en %.
+export function speakingShare(a: Interview, who: Interview['segmentos'][number]['hablante']) {
+  const time = (list: Interview['segmentos']) => list.reduce((t, s) => t + s.fin - s.inicio, 0);
+  const total = time(a.segmentos);
+  return total
+    ? Math.round((time(a.segmentos.filter((s) => s.hablante === who)) / total) * 100)
+    : 0;
 }
 
 export const proposalScore = (p: Interview['propuestas'][number]) =>
