@@ -40,7 +40,8 @@ function place(c: Candidate, photo: StaticImageData, f: (typeof frames)[keyof ty
   };
 }
 
-// Las fotos acaban en los hombros con un corte recto: el retrato se funde por abajo.
+// El retrato se funde por abajo, a la misma altura en los cuatro: la máscara va en una capa del
+// tamaño del marco, no en la foto, que puede ser más alta que él (o acabar en un corte recto).
 const fade = 'linear-gradient(to bottom, #000 72%, transparent 98%)';
 
 // La foto es más ancha que su caja (la cara manda), así que `sizes` tiene que pedir de más.
@@ -59,17 +60,19 @@ export function Portrait({
   const frame = frames[kind];
   return (
     <div className={cn('relative overflow-hidden bg-muted', frame.box, className)}>
-      <Image
-        src={photo}
-        alt=""
-        sizes={sizes}
-        draggable={false}
-        className="pointer-events-none absolute h-auto max-w-none select-none"
-        style={{
-          ...place(candidate, photo, frame),
-          ...(kind === 'portrait' && { maskImage: fade, WebkitMaskImage: fade }),
-        }}
-      />
+      <div
+        className="absolute inset-0"
+        style={kind === 'portrait' ? { maskImage: fade, WebkitMaskImage: fade } : undefined}
+      >
+        <Image
+          src={photo}
+          alt=""
+          sizes={sizes}
+          draggable={false}
+          className="pointer-events-none absolute h-auto max-w-none select-none"
+          style={place(candidate, photo, frame)}
+        />
+      </div>
     </div>
   );
 }
