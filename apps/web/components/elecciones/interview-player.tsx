@@ -391,7 +391,7 @@ export function InterviewPlayer({
     return x < 0 || x > 1 ? null : from + x * (to - from);
   };
   const row = (label: ReactNode, height: number, content: ReactNode) => (
-    <div className="grid grid-cols-[var(--label)_minmax(0,1fr)] items-center gap-3">
+    <div className="grid grid-cols-[var(--label)_minmax(0,1fr)] items-center gap-3 py-3">
       <span className="text-sm leading-tight text-muted-foreground">{label}</span>
       <div className="relative" style={{ height }}>
         {/* Recortado a los mismos márgenes que los carriles de iconos. */}
