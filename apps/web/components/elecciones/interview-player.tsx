@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
   type MouseEvent,
+  type PointerEvent,
   type ReactNode,
 } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
@@ -236,6 +237,9 @@ export function InterviewPlayer({
   const [selected, setSelected] = useState<Mark | null>(null);
   const [hovered, setHovered] = useState<Mark | null>(null);
   const [zoom, setZoom] = useState<number | null>(null);
+  // Con zoom, dónde empieza la ventana si la has movido tú; sin valor, sigue a lo que suena.
+  const [pan, setPan] = useState<number | null>(null);
+  const dragging = useRef(false);
   const [inView, setInView] = useState(false);
   const [hover, setHover] = useState<number | null>(null);
   // Sin «:» ni «»», que rompen `url(#…)`.
@@ -329,8 +333,20 @@ export function InterviewPlayer({
 
   // La ventana que se ve: la entrevista entera o unos minutos alrededor de lo que suena.
   const span = Math.min(zoom ?? duration, duration);
-  const from = Math.min(Math.max(0, time - span / 2), Math.max(0, duration - span));
+  const clampStart = (start: number) => Math.min(Math.max(0, start), Math.max(0, duration - span));
+  const from = clampStart(pan ?? time - span / 2);
   const to = from + span;
+  // Si lo que suena sale de la ventana que habías movido, vuelve a seguirlo.
+  useEffect(() => {
+    if (playing && pan != null && !dragging.current && (time < pan || time > pan + span))
+      setPan(null);
+  }, [playing, pan, time, span]);
+  // El minimapa: la ventana se centra donde pulsas y se arrastra.
+  const panTo = (event: PointerEvent<HTMLElement>) => {
+    const r = event.currentTarget.getBoundingClientRect();
+    const x = Math.min(1, Math.max(0, (event.clientX - r.left) / r.width));
+    setPan(clampStart(x * duration - span / 2));
+  };
   const share = (second: number) => (second - from) / (to - from);
   const visible = (second: number) => second >= from && second <= to;
   const seekAt = (event: MouseEvent<HTMLElement>) => {
@@ -499,9 +515,10 @@ export function InterviewPlayer({
           </div>
           <Tabs
             value={String(zoom)}
-            onValueChange={(value) =>
-              setZoom(zooms.find(([z]) => String(z) === value)?.[0] ?? null)
-            }
+            onValueChange={(value) => {
+              setZoom(zooms.find(([z]) => String(z) === value)?.[0] ?? null);
+              setPan(null);
+            }}
           >
             <TabsList aria-label="Zoom">
               {zooms.map(([value, name]) => (
@@ -512,6 +529,74 @@ export function InterviewPlayer({
             </TabsList>
           </Tabs>
         </div>
+
+        {zoom != null && (
+          <div className="grid grid-cols-[var(--label)_minmax(0,1fr)] items-center gap-3 [--label:6rem] sm:[--label:10rem]">
+            <span className="text-sm leading-tight text-muted-foreground">Toda la entrevista</span>
+            {/* Arrastra la ventana (o pulsa en un punto) para moverte por la entrevista con zoom. */}
+            <div
+              role="slider"
+              tabIndex={0}
+              aria-label="Parte de la entrevista que se ve"
+              aria-valuemin={0}
+              aria-valuemax={Math.round(Math.max(0, duration - span))}
+              aria-valuenow={Math.round(from)}
+              aria-valuetext={`De ${minute(from)} a ${minute(to)}`}
+              className="relative h-7 cursor-grab touch-none rounded-md outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 active:cursor-grabbing"
+              onPointerDown={(event) => {
+                dragging.current = true;
+                event.currentTarget.setPointerCapture(event.pointerId);
+                panTo(event);
+              }}
+              onPointerMove={(event) => dragging.current && panTo(event)}
+              onPointerUp={() => {
+                dragging.current = false;
+              }}
+              onKeyDown={(event) => {
+                const moves: Record<string, number> = {
+                  ArrowLeft: from - span / 4,
+                  ArrowRight: from + span / 4,
+                  Home: 0,
+                  End: duration,
+                };
+                const start = moves[event.key];
+                if (start === undefined) return;
+                event.preventDefault();
+                setPan(clampStart(start));
+              }}
+            >
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-[2px] bg-muted"
+              >
+                {topics.map((t, i) => (
+                  <i
+                    key={`${t.tema}-${t.inicio}-${i}`}
+                    className="absolute inset-y-0"
+                    style={{
+                      left: `${(t.inicio / duration) * 100}%`,
+                      width: `${((t.fin - t.inicio) / duration) * 100}%`,
+                      background: greys[topicNames.indexOf(t.tema) % greys.length],
+                    }}
+                  />
+                ))}
+              </span>
+              <i
+                aria-hidden="true"
+                className="absolute inset-y-1 w-px bg-foreground"
+                style={{ left: `${(time / duration) * 100}%` }}
+              />
+              <span
+                aria-hidden="true"
+                className="absolute inset-y-0 rounded-md border border-foreground bg-foreground/5"
+                style={{
+                  left: `${(from / duration) * 100}%`,
+                  width: `${(span / duration) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Las filas comparten la columna de la izquierda, así las líneas del tiempo las cruzan todas. */}
         <div
@@ -656,12 +741,14 @@ export function InterviewPlayer({
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-0 left-[calc(var(--label)+12px)]"
           >
-            <i
-              className="absolute top-1 bottom-0 w-px -translate-x-1/2 bg-foreground"
-              style={{ left: at(share(time)) }}
-            >
-              <b className="absolute top-0 left-1/2 size-2 -translate-x-1/2 rounded-full bg-foreground" />
-            </i>
+            {visible(time) && (
+              <i
+                className="absolute top-1 bottom-0 w-px -translate-x-1/2 bg-foreground"
+                style={{ left: at(share(time)) }}
+              >
+                <b className="absolute top-0 left-1/2 size-2 -translate-x-1/2 rounded-full bg-foreground" />
+              </i>
+            )}
             {hover != null && (
               <i
                 className="absolute top-6 bottom-0 -translate-x-1/2 border-l border-dashed border-foreground/40"
