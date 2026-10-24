@@ -38,7 +38,7 @@ export function Cell({
   children,
 }: {
   span?: keyof typeof spans;
-  label?: string;
+  label?: ReactNode;
   className?: string;
   children: ReactNode;
 }) {

@@ -34,6 +34,7 @@ import {
   videoUrl,
   type Candidate,
   type Interview,
+  type Mark,
 } from '../../lib/elecciones/interviews';
 import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon, type IconName } from '../brand/icon';
@@ -81,12 +82,30 @@ function CandidateLine({ candidate }: { candidate: Candidate }) {
   );
 }
 
-// La calificación siempre con su nombre: el color solo acompaña.
+// La calificación con su icono y su nombre: el color solo acompaña.
 function Verdict({ id }: { id: keyof typeof verdicts }) {
   return (
     <span className="inline-flex items-center gap-2 font-medium">
-      <Dot color={verdicts[id].color} />
+      <MarkIcon kind={id} color={verdicts[id].color} />
       {verdicts[id].name}
+    </span>
+  );
+}
+
+// Una etiqueta con el icono de su marca delante.
+function MarkLabel({
+  kind,
+  color,
+  children,
+}: {
+  kind: Mark['kind'];
+  color?: string;
+  children: ReactNode;
+}) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <MarkIcon kind={kind} color={color} className="size-6" />
+      {children}
     </span>
   );
 }
@@ -425,7 +444,15 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
         <ReportSection title="Momentos clave">
           <Grid>
             {a.momentos.map((m) => (
-              <Cell key={m.id} span={4} label={`${moments[m.tipo].name} · ${minute(m.segundo)}`}>
+              <Cell
+                key={m.id}
+                span={4}
+                label={
+                  <MarkLabel kind="momento">
+                    {moments[m.tipo].name} · {minute(m.segundo)}
+                  </MarkLabel>
+                }
+              >
                 <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{m.titulo}</h3>
                 <p className="m-0">«{m.cita}»</p>
                 <p className="m-0 text-sm text-muted-foreground">{m.porQue}</p>
@@ -444,7 +471,15 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                 <Cell
                   key={p.id}
                   span={6}
-                  label={`${score === 4 ? 'Propuesta completa' : score === 3 ? 'Casi completa' : 'Propuesta'} · ${minute(p.segundo)}`}
+                  label={
+                    score >= 3 ? (
+                      <MarkLabel kind={score === 4 ? 'completa' : 'casi'}>
+                        {score === 4 ? 'Propuesta completa' : 'Casi completa'} · {minute(p.segundo)}
+                      </MarkLabel>
+                    ) : (
+                      `Propuesta · ${minute(p.segundo)}`
+                    )
+                  }
                 >
                   <p className="m-0 text-lg leading-snug">{p.texto}</p>
                   <ul className="m-0 flex list-none flex-wrap gap-2 p-0 text-sm">
@@ -486,8 +521,10 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                   className="grid gap-1 border-b border-border pb-4 last:border-0 last:pb-0"
                 >
                   <Label>
-                    {x.tipo === 'personal' ? 'Ataque personal' : 'Crítica política'} · a{' '}
-                    {x.objetivo} · {minute(x.segundo)}
+                    <MarkLabel kind={x.tipo === 'personal' ? 'ataque' : 'critica'}>
+                      {x.tipo === 'personal' ? 'Ataque personal' : 'Crítica política'} · a{' '}
+                      {x.objetivo} · {minute(x.segundo)}
+                    </MarkLabel>
                   </Label>
                   <p className="m-0">«{x.texto}»</p>
                 </li>
@@ -701,12 +738,19 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
             </p>
           </Cell>
           <Cell span={6} label="Las afirmaciones verificadas">
-            <Bars
-              rows={Object.entries(verdicts).map(([id, v]) => {
-                const value = a.revisiones.filter((r) => r.veredicto === id).length;
-                return { label: v.name, value, display: String(value), color: v.color };
-              })}
-            />
+            <dl className="m-0 grid grid-cols-2 gap-x-6 gap-y-5">
+              {verdictIds.map((id) => (
+                <div key={id} className="flex items-center gap-3">
+                  <MarkIcon kind={id} color={verdicts[id].color} className="size-10" />
+                  <span className="grid">
+                    <dt className="text-sm text-muted-foreground">{verdicts[id].name}</dt>
+                    <dd className="m-0 font-heading text-3xl leading-none tabular-nums">
+                      {a.revisiones.filter((r) => r.veredicto === id).length}
+                    </dd>
+                  </span>
+                </div>
+              ))}
+            </dl>
           </Cell>
           <Cell span={6} label="Quién tiene la palabra">
             <Bars
@@ -842,6 +886,9 @@ type Metric = {
   display?: (a: Interview) => string;
   // Lo que va junto al nombre: el margen de la valoración.
   aside?: (a: Interview) => string;
+  // Su icono y su color, si es una marca (las calificaciones).
+  kind?: Mark['kind'];
+  color?: string;
 };
 const count = (filter: (a: Interview) => unknown[]) => (a: Interview) => filter(a).length;
 const metricGroups: { title: string; metrics: Metric[] }[] = [
@@ -909,8 +956,10 @@ const metricGroups: { title: string; metrics: Metric[] }[] = [
   },
   {
     title: 'Las verificaciones',
-    metrics: Object.entries(verdicts).map(([id, v]) => ({
-      name: v.name,
+    metrics: verdictIds.map((id) => ({
+      name: verdicts[id].name,
+      kind: id,
+      color: verdicts[id].color,
       max: 15,
       value: count((a) => a.revisiones.filter((r) => r.veredicto === id)),
     })),
@@ -1011,7 +1060,19 @@ export function InterviewsCompare() {
               {group.metrics.map((m) => {
                 const values = all.map(({ interview }) => m.value(interview));
                 return (
-                  <Cell key={m.name} span={6} label={m.name}>
+                  <Cell
+                    key={m.name}
+                    span={6}
+                    label={
+                      m.kind ? (
+                        <MarkLabel kind={m.kind} color={m.color}>
+                          {m.name}
+                        </MarkLabel>
+                      ) : (
+                        m.name
+                      )
+                    }
+                  >
                     <Bars
                       max={Math.max(m.max, ...values)}
                       rows={all.map(({ candidate, interview }, i) => ({
