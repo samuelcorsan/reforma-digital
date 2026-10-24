@@ -48,7 +48,7 @@ import {
 export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
 const nextRound = rounds[0];
 
-function Dot({ color }: { color: string }) {
+export function Dot({ color }: { color: string }) {
   return (
     <i
       aria-hidden="true"
@@ -132,7 +132,7 @@ const steps: { title: string; text: string; by?: 'IA' | 'Persona' }[] = [
 
 const voteDate = '2026-11-29';
 // «13 nov»: el día y el mes de una fecha ISO.
-const shortDay = (iso: string) => formatDate(iso, { day: 'numeric', month: 'short' });
+export const shortDay = (iso: string) => formatDate(iso, { day: 'numeric', month: 'short' });
 
 // Lo que trae cada informe, con los mismos iconos que su línea de tiempo.
 const features: { icon: IconName; color?: string; title: string; text: string }[] = [
@@ -362,40 +362,6 @@ function VerdictList() {
         );
       })}
     </dl>
-  );
-}
-
-// Página de un candidato sin entrevista publicada todavía. En cuanto hay una, la ruta lleva a ella.
-export function CandidatePending({ candidate }: { candidate: Candidate }) {
-  return (
-    <>
-      <ReportIntro title={candidate.name}>
-        <p className="flex items-center gap-2">
-          <Dot color={candidate.color} />
-          {candidate.party}
-        </p>
-      </ReportIntro>
-      <Grid>
-        <div className="col-span-12 md:col-span-4">
-          <Portrait candidate={candidate} sizes="(min-width: 768px) 500px, 100vw" />
-        </div>
-        <Cell span={8} label="Pendiente">
-          <p className="m-0 max-w-[60ch]">
-            Su entrevista en {nextRound.title} se publica el {longDate(nextRound.date)}. Hasta que
-            una persona revise el análisis, aquí no aparece nada.
-          </p>
-          <Explore
-            links={[
-              { href: interviewsHref('ejemplo'), text: 'Ver un informe de ejemplo' },
-              { href: interviewsHref(), text: 'Las cuatro entrevistas' },
-            ]}
-          />
-        </Cell>
-      </Grid>
-      <div className="mt-4">
-        <PhotoCredits people={[candidate]} />
-      </div>
-    </>
   );
 }
 

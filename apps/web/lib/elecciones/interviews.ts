@@ -8,12 +8,14 @@ const files: unknown[] = [example];
 
 // `face`: el punto medio de los ojos y el tamaño de la cara en cada foto (fracciones de su alto,
 // medidas con Vision en El VAR Electoral), para que las cuatro caras salgan igual de grandes.
-// `adjust` corrige a ojo la medida automática. Las fotos son de Wikimedia Commons, recortadas del
+// `adjust` corrige a ojo la medida automática. `pollId` es su partido en las encuestas de la
+// sección (Frente Amplio se lee como sucesor de Sumar). Las fotos son de Wikimedia Commons, recortadas del
 // fondo y en blanco y negro.
 export const candidates = [
   // De menos a más escaños en las generales de 2023, como el resto de la sección.
   {
     slug: 'ada-colau',
+    pollId: 'SUMAR',
     name: 'Ada Colau',
     party: 'Frente Amplio',
     short: 'FA',
@@ -26,6 +28,7 @@ export const candidates = [
   },
   {
     slug: 'santiago-abascal',
+    pollId: 'VOX',
     name: 'Santiago Abascal',
     party: 'Vox',
     short: 'Vox',
@@ -38,6 +41,7 @@ export const candidates = [
   },
   {
     slug: 'pedro-sanchez',
+    pollId: 'PSOE',
     name: 'Pedro Sánchez',
     party: 'PSOE',
     short: 'PSOE',
@@ -50,6 +54,7 @@ export const candidates = [
   },
   {
     slug: 'alberto-nunez-feijoo',
+    pollId: 'PP',
     name: 'Alberto Núñez Feijóo',
     party: 'Partido Popular',
     short: 'PP',

@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import {
-  CandidatePending,
   InterviewReport,
   InterviewsCompare,
   InterviewsHome,
@@ -10,12 +9,12 @@ import {
   interviewsHref,
   VerificationPage,
 } from '../../../../../components/elecciones/interviews';
+import { CandidateProfile } from '../../../../../components/elecciones/candidate';
 import { ElectionsFrame } from '../../../../../components/elecciones/nav';
 import {
   getCandidate,
   getInterview,
   interviewName,
-  interviewsOf,
   verdicts,
 } from '../../../../../lib/elecciones/interviews';
 import { electionPages } from '../../../../../lib/elecciones/pages';
@@ -93,10 +92,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const match = route((await params).path);
   if (!match) notFound();
-  if (match.kind === 'candidate') {
-    const latest = interviewsOf(match.candidate.slug)[0];
-    if (latest) redirect(interviewsHref(latest.id));
-  }
   const crumb =
     match.kind === 'verification' ? (
       <Link
@@ -123,7 +118,7 @@ export default async function Page({ params }: Props) {
         {match.kind === 'home' && <InterviewsHome />}
         {match.kind === 'method' && <InterviewsMethod />}
         {match.kind === 'compare' && <InterviewsCompare />}
-        {match.kind === 'candidate' && <CandidatePending candidate={match.candidate} />}
+        {match.kind === 'candidate' && <CandidateProfile candidate={match.candidate} />}
         {match.kind === 'interview' && <InterviewReport interview={match.interview} />}
         {match.kind === 'verification' && (
           <VerificationPage interview={match.interview} verification={match.verification} />
