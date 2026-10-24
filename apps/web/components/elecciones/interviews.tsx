@@ -18,6 +18,7 @@ import {
   speakingShare,
   rounds,
   topicShare,
+  verdictIds,
   verdicts,
   videoUrl,
   type Candidate,
@@ -27,6 +28,7 @@ import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon } from '../brand/icon';
 import { AI, Source } from '../congreso/common';
 import { InterviewPlayer } from './interview-player';
+import { MarkIcon } from './mark-icon';
 import { PhotoCredits, Portrait } from './portrait';
 import {
   Bars,
@@ -209,15 +211,21 @@ export function InterviewsHome() {
 function VerdictList() {
   return (
     <dl className="m-0 grid gap-3">
-      {Object.entries(verdicts).map(([id, v]) => (
-        <div key={id} className="grid grid-cols-[minmax(0,9rem)_minmax(0,1fr)] gap-3">
-          <dt className="flex items-center gap-2 font-medium">
-            <Dot color={v.color} />
-            {v.name}
-          </dt>
-          <dd className="m-0 text-muted-foreground">{v.text}</dd>
-        </div>
-      ))}
+      {verdictIds.map((id) => {
+        const v = verdicts[id];
+        return (
+          <div
+            key={id}
+            className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] items-center gap-3"
+          >
+            <dt className="flex items-center gap-2 font-medium">
+              <MarkIcon kind={id} color={v.color} />
+              {v.name}
+            </dt>
+            <dd className="m-0 text-muted-foreground">{v.text}</dd>
+          </div>
+        );
+      })}
     </dl>
   );
 }

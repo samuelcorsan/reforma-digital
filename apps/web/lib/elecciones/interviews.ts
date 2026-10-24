@@ -82,6 +82,7 @@ const answer = z.enum(['directa', 'parcial', 'evasiva', 'cambio']);
 const moment = z.enum(['anuncio', 'choque', 'titular', 'rectificacion']);
 
 export const criterionIds = criterion.options;
+export const verdictIds = verdict.options;
 
 export const verdicts = {
   legal: { name: 'Cierto', text: 'Es verdad', color: '#2F7A4A' },

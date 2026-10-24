@@ -12,7 +12,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import { minute } from '../../lib/elecciones/format';
 import type { Interview, lanes as laneNames, Mark } from '../../lib/elecciones/interviews';
-import { Icon, type IconName } from '../brand/icon';
+import { Icon } from '../brand/icon';
+import { iconInk, markIcons } from './mark-icon';
 import { Label } from './report';
 import { useWidth } from './use-width';
 
@@ -104,21 +105,6 @@ function useVideo(youtubeId: string | null) {
   return { time, loaded, load: () => setLoaded(true), box, seek };
 }
 
-const icons: Record<Mark['kind'], IconName> = {
-  momento: 'estrella',
-  completa: 'diana',
-  casi: 'casi',
-  legal: 'hecho',
-  amarilla: 'balanza',
-  fuera: 'aviso',
-  roja: 'nunca',
-  repregunta: 'repetir',
-  evasiva: 'esquiva',
-  critica: 'contacto',
-  ataque: 'rayo',
-  interrumpe: 'tijeras',
-  interrumpido: 'silencio',
-};
 const legend: [Mark['kind'], string][] = [
   ['momento', 'Momento clave'],
   ['completa', 'Propuesta completa'],
@@ -268,7 +254,7 @@ export function InterviewPlayer({
                 >
                   <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
                     <span style={{ color: m.color }}>
-                      <Icon name={icons[m.kind]} size={14} />
+                      <Icon name={markIcons[m.kind]} size={14} />
                     </span>
                     {minute(m.second)} · {m.label}
                   </span>
@@ -335,10 +321,10 @@ export function InterviewPlayer({
                       left: at(m.second / duration),
                       top: 18 + row * gap,
                       background: m.color,
-                      color: m.kind === 'legal' || m.kind === 'roja' ? '#fff' : undefined,
+                      color: iconInk(m.kind),
                     }}
                   >
-                    <Icon name={icons[m.kind]} size={16} />
+                    <Icon name={markIcons[m.kind]} size={16} />
                   </button>
                 ))}
               </div>
@@ -363,7 +349,7 @@ export function InterviewPlayer({
         {selected && (
           <div aria-live="polite" className="grid gap-1 rounded-lg bg-muted p-4">
             <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-              <Icon name={icons[selected.kind]} size={14} />
+              <Icon name={markIcons[selected.kind]} size={14} />
               {minute(selected.second)} · {selected.label}
             </span>
             <span>{selected.text}</span>
@@ -384,7 +370,7 @@ export function InterviewPlayer({
             <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-x-4 gap-y-2 p-0 pt-2 text-sm">
               {legend.map(([kind, name]) => (
                 <li key={kind} className="flex items-center gap-2">
-                  <Icon name={icons[kind]} size={16} />
+                  <Icon name={markIcons[kind]} size={16} />
                   {name}
                 </li>
               ))}
