@@ -27,6 +27,8 @@ import { electionPages, electionsHref, type ElectionPage } from '../../lib/elecc
 import { href } from '../congreso/common';
 import { ProvincePicker, type ProvinceSummary } from './province-picker';
 import { Icon } from '../brand/icon';
+import { candidates } from '../../lib/elecciones/interviews';
+import { Portrait } from './portrait';
 import { Bars, CardCta, Cell, Chapter, Grid, Label, Legend, PageCard, Stat } from './report';
 import { hemicycleOrder, SeatsCard } from './seats-card';
 import { Tips } from './tips';
@@ -111,6 +113,12 @@ const chapters = [
   },
   { id: 'mapa', name: 'El mapa', title: 'El mapa del voto', color: 'var(--brand-yellow)' },
   { id: 'encuestas', name: 'Las encuestas', title: 'Lo que dicen las encuestas', color: '#2F7A4A' },
+  {
+    id: 'entrevistas',
+    name: 'Las entrevistas',
+    title: 'Los candidatos, entrevista a entrevista',
+    color: 'var(--foreground)',
+  },
 ];
 
 const card = (id: ElectionPage, span: 4 | 6 | 12, children?: ReactNode) => (
@@ -924,6 +932,33 @@ export async function ElectionsHome() {
             {accuracyCard}
           </>
         )}
+      </Chapter>
+
+      <Chapter
+        {...chapter('entrevistas')}
+        insight={
+          <>
+            Cuatro candidatos y las mismas reglas: cada afirmación comprobable se contrasta con{' '}
+            <b>fuentes oficiales</b> y una persona confirma cada decisión.
+          </>
+        }
+      >
+        {card(
+          'entrevistas',
+          6,
+          <div className="flex">
+            {candidates.map((c) => (
+              <Portrait
+                key={c.slug}
+                candidate={c}
+                kind="avatar"
+                sizes="112px"
+                className="-mr-2 size-16 ring-4 ring-card"
+              />
+            ))}
+          </div>,
+        )}
+        {card('entrevistas/metodologia', 6)}
       </Chapter>
     </>
   );

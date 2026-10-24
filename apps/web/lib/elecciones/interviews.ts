@@ -1,0 +1,267 @@
+import { z } from 'zod';
+import example from './entrevistas/ejemplo.json';
+
+// Las entrevistas a los candidatos del 29N, revisadas con IA y confirmadas por una persona.
+// El análisis sale del pipeline de El VAR Electoral: un JSON por entrevista en ./entrevistas/
+// (`<ronda>-<candidato>.json`). Para publicar una, copia el JSON revisado ahí y añádelo a `files`.
+const files: unknown[] = [example];
+
+// `face`: el punto medio de los ojos y el tamaño de la cara en cada foto (fracciones de su alto,
+// medidas con Vision en El VAR Electoral), para que las cuatro caras salgan igual de grandes.
+// `adjust` corrige a ojo la medida automática. Las fotos son de Wikimedia Commons, recortadas del
+// fondo y en blanco y negro.
+export const candidates = [
+  // De menos a más escaños en las generales de 2023, como el resto de la sección.
+  {
+    slug: 'ada-colau',
+    name: 'Ada Colau',
+    party: 'Frente Amplio',
+    short: 'FA',
+    color: '#D9701A',
+    face: { x: 0.3978, y: 0.3206, size: 0.2269 },
+    adjust: 1,
+    credit: 'Robo71, CC0',
+    source: 'https://commons.wikimedia.org/wiki/File:Ada-Colau-Encuentro-2024.jpg',
+  },
+  {
+    slug: 'santiago-abascal',
+    name: 'Santiago Abascal',
+    party: 'Vox',
+    short: 'Vox',
+    color: '#5BA83A',
+    face: { x: 0.5356, y: 0.2839, size: 0.3125 },
+    adjust: 1,
+    credit: 'Gage Skidmore, CC BY-SA 2.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Santiago_Abascal_(54349274173)_(cropped).jpg',
+  },
+  {
+    slug: 'pedro-sanchez',
+    name: 'Pedro Sánchez',
+    party: 'PSOE',
+    short: 'PSOE',
+    color: '#D8342B',
+    face: { x: 0.5252, y: 0.3156, size: 0.3086 },
+    adjust: 1.08,
+    credit: 'Pool Moncloa / Carlos Spottorno de las Morenas',
+    source: 'https://commons.wikimedia.org/wiki/File:Pedro_S%C3%A1nchez_in_2026.jpg',
+  },
+  {
+    slug: 'alberto-nunez-feijoo',
+    name: 'Alberto Núñez Feijóo',
+    party: 'Partido Popular',
+    short: 'PP',
+    color: '#2C7BC4',
+    face: { x: 0.5086, y: 0.2541, size: 0.2122 },
+    adjust: 1,
+    credit: 'Partido Popular, CC0',
+    source: 'https://commons.wikimedia.org/wiki/File:ALBERTO_N%C3%9A%C3%91EZ_FEIJ%C3%93O.jpg',
+  },
+] as const;
+export type Candidate = (typeof candidates)[number];
+
+// Una ronda: las entrevistas a los cuatro que se publican y se revisan juntas.
+export const rounds = [
+  {
+    id: '13n',
+    title: 'The Wild Project',
+    date: '2026-11-13',
+    text: 'Jordi Wild entrevista a los cuatro candidatos por separado, sin preguntas pactadas y con dos periodistas comprobando datos en el plató. Se publican el mismo día.',
+  },
+] as const;
+
+const verdict = z.enum(['legal', 'amarilla', 'fuera', 'roja']);
+const criterion = z.enum([
+  'veracidad',
+  'alGrano',
+  'concrecion',
+  'sustancia',
+  'juegoLimpio',
+  'claridad',
+]);
+const answer = z.enum(['directa', 'parcial', 'evasiva', 'cambio']);
+const moment = z.enum(['anuncio', 'choque', 'titular', 'rectificacion']);
+
+export const criterionIds = criterion.options;
+
+export const verdicts = {
+  legal: { name: 'Cierto', text: 'Es verdad', color: '#2F7A4A' },
+  amarilla: { name: 'Con matices', text: 'Impreciso o incompleto', color: 'var(--brand-yellow)' },
+  fuera: { name: 'Engañoso', text: 'Fuera de contexto o engañoso', color: 'var(--brand-orange)' },
+  roja: { name: 'Falso', text: 'Es falso', color: 'var(--brand)' },
+} as const satisfies Record<z.infer<typeof verdict>, object>;
+
+export const criteria = {
+  veracidad: {
+    name: 'Veracidad',
+    weight: 25,
+    text: 'Si lo que afirma es cierto, según fuentes oficiales',
+  },
+  alGrano: { name: 'Al grano', weight: 25, text: 'Si responde a lo que se le pregunta' },
+  concrecion: {
+    name: 'Concreción',
+    weight: 20,
+    text: 'Si sus propuestas dicen qué, cuánto, cuándo y cómo',
+  },
+  sustancia: {
+    name: 'Sustancia',
+    weight: 15,
+    text: 'Tiempo en propuestas, datos y argumentos frente a relleno',
+  },
+  juegoLimpio: {
+    name: 'Tono',
+    weight: 10,
+    text: 'Críticas argumentadas frente a descalificaciones',
+  },
+  claridad: { name: 'Claridad', weight: 5, text: 'Si se le entiende' },
+} as const satisfies Record<z.infer<typeof criterion>, object>;
+
+export const answers = {
+  directa: 'Directa',
+  parcial: 'Parcial',
+  evasiva: 'Evasiva',
+  cambio: 'Cambio de tema',
+} as const satisfies Record<z.infer<typeof answer>, string>;
+
+export const moments = {
+  anuncio: {
+    name: 'Anuncio',
+    text: 'Dice algo nuevo: una medida, un compromiso o un dato que no había contado',
+  },
+  choque: {
+    name: 'Choque',
+    text: 'Tensión con el entrevistador o una pregunta incómoda que marca la entrevista',
+  },
+  titular: { name: 'Titular', text: 'La frase que mejor resume su postura en un tema' },
+  rectificacion: { name: 'Rectificación', text: 'Reconoce un error, matiza o cambia de postura' },
+} as const satisfies Record<z.infer<typeof moment>, object>;
+
+// La IA propone y una persona aprueba o descarta. Sin estado, el pipeline lo da por aprobado.
+const state = z.enum(['propuesta', 'aprobada', 'descartada']).default('aprobada');
+const source = z.object({ titulo: z.string(), url: z.string() });
+
+const interviewSchema = z.object({
+  id: z
+    .string()
+    .regex(/^[a-z0-9-]+$/)
+    .optional(),
+  jornada: z.string().optional(),
+  entrevista: z
+    .object({ entrevistador: z.string(), medio: z.string(), programa: z.string().optional() })
+    .nullish(),
+  candidato: z.string(),
+  titulo: z.string(),
+  youtubeId: z.string().nullable(),
+  publicado: z.string(),
+  duracion: z.number(),
+  ficticio: z.boolean().optional(),
+  nota: z.object({
+    global: z.number(),
+    margen: z.number(),
+    criterios: z.record(criterion, z.number()),
+  }),
+  stats: z.object({ alGrano: z.number() }),
+  temas: z.array(z.object({ tema: z.string(), inicio: z.number(), fin: z.number() })),
+  preguntas: z.array(
+    z.object({ id: z.string(), respuesta: answer, repregunta: z.boolean().optional() }),
+  ),
+  propuestas: z.array(
+    z.object({
+      id: z.string(),
+      segundo: z.number(),
+      texto: z.string(),
+      que: z.boolean(),
+      cuanto: z.boolean(),
+      cuando: z.boolean(),
+      como: z.boolean(),
+    }),
+  ),
+  ataques: z.array(
+    z.object({
+      id: z.string(),
+      segundo: z.number(),
+      objetivo: z.string(),
+      tipo: z.enum(['politica', 'personal']),
+      texto: z.string(),
+    }),
+  ),
+  revisiones: z.array(
+    z.object({
+      id: z.string(),
+      segundo: z.number(),
+      cita: z.string(),
+      veredicto: verdict,
+      explicacion: z.string(),
+      fuentes: z.array(source),
+      pilladoEnDirecto: z.boolean().optional(),
+      estado: state,
+    }),
+  ),
+  momentos: z
+    .array(
+      z.object({
+        id: z.string(),
+        segundo: z.number(),
+        tipo: moment,
+        titulo: z.string(),
+        cita: z.string(),
+        porQue: z.string(),
+        estado: state,
+      }),
+    )
+    .default([]),
+});
+
+// Una fuente publicable: título y enlace http(s).
+const validSource = (f: z.infer<typeof source>) =>
+  f.titulo.trim().length > 0 && /^https?:\/\/\S+\.\S+/.test(f.url);
+
+// Lo que se publica de una entrevista: solo las verificaciones aprobadas por una persona y con al
+// menos una fuente, y los momentos aprobados. Lo que la IA propuso y nadie ha revisado cuenta como
+// pendiente: mientras quede algo, el informe es provisional.
+export function publish(raw: unknown) {
+  const a = interviewSchema.parse(raw);
+  const id = a.id ?? `${a.jornada}-${a.candidato}`;
+  return {
+    ...a,
+    id,
+    revisiones: a.revisiones.filter((r) => r.estado === 'aprobada' && r.fuentes.some(validSource)),
+    momentos: a.momentos.filter((m) => m.estado === 'aprobada'),
+    pending: [...a.revisiones, ...a.momentos].filter((x) => x.estado === 'propuesta').length,
+  };
+}
+export type Interview = ReturnType<typeof publish>;
+
+const interviews = files.map(publish);
+
+export const getInterview = (id: string) => interviews.find((a) => a.id === id);
+export const getCandidate = (slug: string) => candidates.find((c) => c.slug === slug);
+// El nombre del candidato, o el título de la entrevista de ejemplo.
+export const interviewName = (a: Interview) => getCandidate(a.candidato)?.name ?? a.titulo;
+// Las de un candidato real, de la más reciente a la más antigua. La de ejemplo nunca aparece aquí.
+export const interviewsOf = (slug: string) =>
+  interviews
+    .filter((a) => !a.ficticio && a.candidato === slug)
+    .sort((x, y) => y.publicado.localeCompare(x.publicado));
+
+export const proposalScore = (p: Interview['propuestas'][number]) =>
+  +p.que + +p.cuanto + +p.cuando + +p.como;
+
+// Porcentaje del tiempo de la entrevista por tema, de mayor a menor.
+export function topicShare(a: Interview) {
+  const total = new Map<string, number>();
+  for (const t of a.temas) total.set(t.tema, (total.get(t.tema) ?? 0) + t.fin - t.inicio);
+  return [...total]
+    .map(([topic, seconds]) => ({ topic, share: Math.round((seconds / a.duracion) * 100) }))
+    .sort((x, y) => y.share - x.share);
+}
+
+export function minute(second: number) {
+  const h = Math.floor(second / 3600);
+  const m = String(Math.floor((second % 3600) / 60)).padStart(2, '0');
+  const s = String(Math.floor(second % 60)).padStart(2, '0');
+  return h ? `${h}:${m}:${s}` : `${m}:${s}`;
+}
+
+export const videoUrl = (a: Interview, second = 0) =>
+  a.youtubeId &&
+  `https://www.youtube.com/watch?v=${a.youtubeId}${second ? `&t=${Math.floor(second)}s` : ''}`;

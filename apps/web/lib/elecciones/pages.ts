@@ -82,6 +82,19 @@ export const electionPages = {
     text: 'Las encuestas de las cinco últimas generales frente al resultado: quién falló, cuánto y hacia dónde.',
     cta: 'Ver el ranking',
   },
+  // Viven en su propia ruta (/elecciones/entrevistas/...), con candidatos y entrevistas debajo.
+  entrevistas: {
+    short: 'Entrevistas',
+    title: 'Las entrevistas',
+    text: 'Las entrevistas a los cuatro candidatos, revisadas una a una: qué afirman y si es cierto, qué proponen y si responden a lo que se les pregunta.',
+    cta: 'Ver las entrevistas',
+  },
+  'entrevistas/metodologia': {
+    short: 'Metodología',
+    title: 'Cómo se revisan las entrevistas',
+    text: 'La valoración sobre 10, sus seis criterios y sus pesos, las cuatro calificaciones de una afirmación y qué hace la IA y qué decide una persona.',
+    cta: 'Ver la metodología',
+  },
 } as const;
 export type ElectionPage = keyof typeof electionPages;
 
@@ -120,6 +133,12 @@ export const electionGroups: {
     title: 'Lo que dicen las encuestas',
     text: 'Las encuestas y su media hasta el 23 de noviembre: desde el 24, la ley prohíbe publicarlas.',
     pages: ['encuestas', 'proyeccion', 'mercados', 'acierto'],
+  },
+  {
+    name: 'Las entrevistas',
+    title: 'Los candidatos, entrevista a entrevista',
+    text: 'Cuatro candidatos y las mismas reglas: cada afirmación comprobable se contrasta con fuentes oficiales y una persona confirma cada decisión.',
+    pages: ['entrevistas', 'entrevistas/metodologia'],
   },
 ];
 export const electionOrder = electionGroups.flatMap((group) => group.pages);

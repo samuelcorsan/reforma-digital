@@ -1,0 +1,662 @@
+{
+  "id": "ejemplo",
+  "jornada": "",
+  "entrevista": {
+    "entrevistador": "Entrevistador de ejemplo",
+    "medio": "Medio ficticio",
+    "programa": "",
+    "url": ""
+  },
+  "candidato": "ejemplo",
+  "titulo": "Entrevista de ejemplo",
+  "youtubeId": null,
+  "publicado": "2026-11-13T18:00:00+01:00",
+  "duracion": 1108,
+  "ficticio": true,
+  "nota": {
+    "global": 6.4,
+    "margen": 0.5,
+    "criterios": {
+      "veracidad": 6.2,
+      "alGrano": 5.6,
+      "concrecion": 6.8,
+      "sustancia": 6.5,
+      "juegoLimpio": 6.0,
+      "claridad": 7.6
+    }
+  },
+  "stats": {
+    "alGrano": 40,
+    "remates": 2,
+    "entradas": 2,
+    "balonesFuera": 5,
+    "faltas": 1,
+    "cambios": 2
+  },
+  "segmentos": [
+    {
+      "inicio": 4.0,
+      "fin": 30.3,
+      "hablante": "jordi",
+      "texto": "Bueno, pues bienvenido. Muchas gracias por venir, que sé que estás en plena campaña."
+    },
+    {
+      "inicio": 31.5,
+      "fin": 74.6,
+      "hablante": "candidato",
+      "texto": "Gracias a ti, Jordi. Es un placer estar aquí y poder hablar con calma, sin prisas, que eso en campaña no pasa nunca."
+    },
+    {
+      "inicio": 75.8,
+      "fin": 117.0,
+      "hablante": "jordi",
+      "texto": "Vamos a empezar por lo que más preocupa a la gente joven. ¿Qué vas a hacer con el precio de la vivienda?"
+    },
+    {
+      "inicio": 118.2,
+      "fin": 197.0,
+      "hablante": "candidato",
+      "texto": "Mira, la vivienda ha subido más de un 40 % en cinco años y los salarios no. Esa es la realidad. Nosotros proponemos construir cien mil viviendas públicas de alquiler en cuatro años, financiadas con el fondo de vivienda que ya existe."
+    },
+    {
+      "inicio": 198.2,
+      "fin": 220.7,
+      "hablante": "jordi",
+      "texto": "¿Y cuánto cuesta eso? Porque cien mil viviendas no se hacen gratis."
+    },
+    {
+      "inicio": 221.9,
+      "fin": 253.8,
+      "hablante": "candidato",
+      "texto": "Lo hemos calculado: unos doce mil millones repartidos en cuatro presupuestos, con suelo público de los ayuntamientos."
+    },
+    {
+      "inicio": 254.9,
+      "fin": 279.3,
+      "hablante": "jordi",
+      "texto": "Vale. Y los alquileres que ya existen, ¿los vas a limitar o no?"
+    },
+    {
+      "inicio": 280.5,
+      "fin": 318.0,
+      "hablante": "candidato",
+      "texto": "Lo importante es que haya más oferta. Si hay más viviendas, los precios bajan solos. Eso lo dice cualquier economista."
+    },
+    {
+      "inicio": 319.2,
+      "fin": 339.8,
+      "hablante": "jordi",
+      "texto": "Pero no me has contestado: ¿limitarías los precios, sí o no?"
+    },
+    {
+      "inicio": 341.0,
+      "fin": 371.0,
+      "hablante": "candidato",
+      "texto": "Yo creo que hay que hablar con todos los sectores antes de tomar una decisión así."
+    },
+    {
+      "inicio": 372.2,
+      "fin": 402.2,
+      "hablante": "jordi",
+      "texto": "Vamos a la economía. Tu partido dice que el empleo va mejor que nunca. ¿Es así?"
+    },
+    {
+      "inicio": 403.4,
+      "fin": 437.2,
+      "hablante": "candidato",
+      "texto": "Hemos creado más empleo que nunca en la historia. Hay más gente trabajando que en ningún otro momento."
+    },
+    {
+      "inicio": 438.4,
+      "fin": 479.6,
+      "hablante": "verificador",
+      "texto": "Un apunte: hay más afiliados que nunca, sí, pero también hay más población activa. La tasa de empleo no está en máximos."
+    },
+    {
+      "inicio": 480.8,
+      "fin": 503.3,
+      "hablante": "candidato",
+      "texto": "Bueno, el dato de afiliados es el que es. Es un récord."
+    },
+    {
+      "inicio": 504.5,
+      "fin": 518.0,
+      "hablante": "jordi",
+      "texto": "¿Vas a subir impuestos?"
+    },
+    {
+      "inicio": 519.2,
+      "fin": 547.4,
+      "hablante": "candidato",
+      "texto": "Nunca hemos subido un impuesto a la clase media y no lo vamos a hacer."
+    },
+    {
+      "inicio": 548.6,
+      "fin": 562.1,
+      "hablante": "jordi",
+      "texto": "¿Y a las rentas altas?"
+    },
+    {
+      "inicio": 563.3,
+      "fin": 602.6,
+      "hablante": "candidato",
+      "texto": "A las grandes fortunas sí les pediremos un esfuerzo, con un tipo adicional a partir de los tres millones de patrimonio."
+    },
+    {
+      "inicio": 603.9,
+      "fin": 617.4,
+      "hablante": "jordi",
+      "texto": "Cambio de tema. Inmigración. ¿Qué modelo quieres?"
+    },
+    {
+      "inicio": 618.6,
+      "fin": 671.1,
+      "hablante": "candidato",
+      "texto": "La inmigración irregular se ha duplicado este año y eso no puede seguir así. Hace falta más control en frontera y más vías legales para venir a trabajar."
+    },
+    {
+      "inicio": 672.3,
+      "fin": 685.8,
+      "hablante": "jordi",
+      "texto": "¿Más vías legales cómo? Concreta."
+    },
+    {
+      "inicio": 687.0,
+      "fin": 715.1,
+      "hablante": "candidato",
+      "texto": "Contratación en origen con las empresas que necesitan trabajadores, que ya funciona en el campo."
+    },
+    {
+      "inicio": 716.3,
+      "fin": 733.2,
+      "hablante": "jordi",
+      "texto": "Pensiones. ¿Están garantizadas para la gente de mi edad?"
+    },
+    {
+      "inicio": 734.4,
+      "fin": 779.4,
+      "hablante": "candidato",
+      "texto": "El gasto en pensiones ya supera el 12 % del PIB y va a seguir subiendo. Hay que hacerlo sostenible sin recortar a nadie."
+    },
+    {
+      "inicio": 780.6,
+      "fin": 794.1,
+      "hablante": "jordi",
+      "texto": "Eso suena muy bien, pero ¿cómo?"
+    },
+    {
+      "inicio": 795.3,
+      "fin": 836.5,
+      "hablante": "candidato",
+      "texto": "Lo que no vamos a hacer es lo que hizo el anterior gobierno, que congeló las pensiones y mintió a los jubilados."
+    },
+    {
+      "inicio": 837.7,
+      "fin": 860.2,
+      "hablante": "jordi",
+      "texto": "Ya, pero te pregunto por tu plan, no por el de otros."
+    },
+    {
+      "inicio": 861.4,
+      "fin": 885.8,
+      "hablante": "candidato",
+      "texto": "Nuestro plan es crecer más, que haya más cotizantes. Esa es la clave."
+    },
+    {
+      "inicio": 887.0,
+      "fin": 909.5,
+      "hablante": "jordi",
+      "texto": "Hablemos de corrupción. Tu partido tiene casos abiertos. ¿Qué tienes que decir?"
+    },
+    {
+      "inicio": 910.7,
+      "fin": 953.8,
+      "hablante": "candidato",
+      "texto": "Mi partido ha expulsado a todo el que ha tenido un problema. Otros no pueden decir lo mismo; algunos son directamente unos sinvergüenzas."
+    },
+    {
+      "inicio": 955.0,
+      "fin": 968.5,
+      "hablante": "jordi",
+      "texto": "¿Propones algo concreto contra la corrupción?"
+    },
+    {
+      "inicio": 969.7,
+      "fin": 1003.5,
+      "hablante": "candidato",
+      "texto": "Sí: una oficina anticorrupción independiente, con presupuesto propio y nombrada por el Parlamento por mayoría de tres quintos."
+    },
+    {
+      "inicio": 1004.7,
+      "fin": 1018.2,
+      "hablante": "jordi",
+      "texto": "Última. Europa. ¿España pinta algo en Europa?"
+    },
+    {
+      "inicio": 1019.4,
+      "fin": 1068.1,
+      "hablante": "candidato",
+      "texto": "España es el país con más paro juvenil de Europa, y eso nos debería dar vergüenza. Europa tiene que ayudarnos con un fondo de empleo joven."
+    },
+    {
+      "inicio": 1069.3,
+      "fin": 1084.3,
+      "hablante": "jordi",
+      "texto": "Muchas gracias por venir. Ha sido un placer."
+    },
+    {
+      "inicio": 1085.5,
+      "fin": 1104.3,
+      "hablante": "candidato",
+      "texto": "Gracias a ti, Jordi. Un abrazo a toda tu audiencia."
+    }
+  ],
+  "temas": [
+    {
+      "tema": "Vivienda",
+      "inicio": 75.8,
+      "fin": 371.0
+    },
+    {
+      "tema": "Economía",
+      "inicio": 372.2,
+      "fin": 602.6
+    },
+    {
+      "tema": "Inmigración",
+      "inicio": 603.9,
+      "fin": 715.1
+    },
+    {
+      "tema": "Pensiones",
+      "inicio": 716.3,
+      "fin": 885.8
+    },
+    {
+      "tema": "Corrupción",
+      "inicio": 887.0,
+      "fin": 1003.5
+    },
+    {
+      "tema": "Europa",
+      "inicio": 1004.7,
+      "fin": 1068.1
+    }
+  ],
+  "preguntas": [
+    {
+      "id": "p1",
+      "segundo": 76,
+      "texto": "¿Qué vas a hacer con el precio de la vivienda?",
+      "respuesta": "directa",
+      "comun": true,
+      "repregunta": false
+    },
+    {
+      "id": "p2",
+      "segundo": 198,
+      "texto": "¿Y cuánto cuesta eso?",
+      "respuesta": "directa",
+      "comun": false,
+      "repregunta": false
+    },
+    {
+      "id": "p3",
+      "segundo": 255,
+      "texto": "¿los vas a limitar o no?",
+      "respuesta": "evasiva",
+      "comun": false,
+      "repregunta": false
+    },
+    {
+      "id": "p4",
+      "segundo": 319,
+      "texto": "¿limitarías los precios, sí o no?",
+      "respuesta": "cambio",
+      "comun": false,
+      "repregunta": true
+    },
+    {
+      "id": "p5",
+      "segundo": 372,
+      "texto": "¿Es así?",
+      "respuesta": "parcial",
+      "comun": false,
+      "repregunta": false
+    },
+    {
+      "id": "p6",
+      "segundo": 504,
+      "texto": "¿Vas a subir impuestos?",
+      "respuesta": "parcial",
+      "comun": true,
+      "repregunta": false
+    },
+    {
+      "id": "p7",
+      "segundo": 549,
+      "texto": "¿Y a las rentas altas?",
+      "respuesta": "directa",
+      "comun": false,
+      "repregunta": false
+    },
+    {
+      "id": "p8",
+      "segundo": 604,
+      "texto": "¿Qué modelo quieres?",
+      "respuesta": "directa",
+      "comun": true,
+      "repregunta": false
+    },
+    {
+      "id": "p9",
+      "segundo": 672,
+      "texto": "Concreta.",
+      "respuesta": "directa",
+      "comun": false,
+      "repregunta": false
+    },
+    {
+      "id": "p10",
+      "segundo": 716,
+      "texto": "¿Están garantizadas para la gente de mi edad?",
+      "respuesta": "parcial",
+      "comun": true,
+      "repregunta": false
+    },
+    {
+      "id": "p11",
+      "segundo": 781,
+      "texto": "¿cómo?",
+      "respuesta": "cambio",
+      "comun": false,
+      "repregunta": false
+    },
+    {
+      "id": "p12",
+      "segundo": 838,
+      "texto": "te pregunto por tu plan",
+      "respuesta": "evasiva",
+      "comun": false,
+      "repregunta": true
+    },
+    {
+      "id": "p13",
+      "segundo": 887,
+      "texto": "¿Qué tienes que decir?",
+      "respuesta": "evasiva",
+      "comun": true,
+      "repregunta": false
+    },
+    {
+      "id": "p14",
+      "segundo": 955,
+      "texto": "¿Propones algo concreto contra la corrupción?",
+      "respuesta": "directa",
+      "comun": false,
+      "repregunta": false
+    },
+    {
+      "id": "p15",
+      "segundo": 1005,
+      "texto": "¿España pinta algo en Europa?",
+      "respuesta": "parcial",
+      "comun": true,
+      "repregunta": false
+    }
+  ],
+  "propuestas": [
+    {
+      "id": "pr1",
+      "segundo": 118,
+      "texto": "construir cien mil viviendas públicas de alquiler en cuatro años",
+      "que": true,
+      "cuanto": true,
+      "cuando": true,
+      "como": true
+    },
+    {
+      "id": "pr2",
+      "segundo": 563,
+      "texto": "un tipo adicional a partir de los tres millones de patrimonio",
+      "que": true,
+      "cuanto": true,
+      "cuando": false,
+      "como": true
+    },
+    {
+      "id": "pr3",
+      "segundo": 687,
+      "texto": "Contratación en origen con las empresas que necesitan trabajadores",
+      "que": true,
+      "cuanto": false,
+      "cuando": false,
+      "como": true
+    },
+    {
+      "id": "pr4",
+      "segundo": 970,
+      "texto": "una oficina anticorrupción independiente, con presupuesto propio",
+      "que": true,
+      "cuanto": false,
+      "cuando": false,
+      "como": true
+    },
+    {
+      "id": "pr5",
+      "segundo": 1019,
+      "texto": "un fondo de empleo joven",
+      "que": true,
+      "cuanto": false,
+      "cuando": false,
+      "como": false
+    }
+  ],
+  "ataques": [
+    {
+      "id": "a1",
+      "segundo": 795,
+      "objetivo": "Gobierno anterior",
+      "tipo": "politica",
+      "texto": "congeló las pensiones y mintió a los jubilados"
+    },
+    {
+      "id": "a2",
+      "segundo": 911,
+      "objetivo": "Otros partidos",
+      "tipo": "personal",
+      "texto": "algunos son directamente unos sinvergüenzas"
+    }
+  ],
+  "revisiones": [
+    {
+      "id": "r1",
+      "candidato": "Candidato de ejemplo",
+      "segundo": 118,
+      "cita": "la vivienda ha subido más de un 40 % en cinco años",
+      "veredicto": "legal",
+      "explicacion": "Coincide con el índice de precios de vivienda del periodo citado.",
+      "fuentes": [
+        {
+          "titulo": "INE · Índice de Precios de Vivienda",
+          "url": "https://www.ine.es/prensa/ipv_prensa.htm"
+        }
+      ],
+      "pilladoEnDirecto": false,
+      "estado": "aprobada"
+    },
+    {
+      "id": "r2",
+      "candidato": "Candidato de ejemplo",
+      "segundo": 403,
+      "cita": "Hemos creado más empleo que nunca en la historia",
+      "veredicto": "fuera",
+      "explicacion": "La afiliación es récord, pero la comparación ignora el crecimiento de la población activa.",
+      "fuentes": [
+        {
+          "titulo": "Seguridad Social · Estadísticas",
+          "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas"
+        },
+        {
+          "titulo": "INE · Encuesta de Población Activa",
+          "url": "https://www.ine.es/prensa/epa_prensa.htm"
+        }
+      ],
+      "pilladoEnDirecto": true,
+      "estado": "aprobada"
+    },
+    {
+      "id": "r3",
+      "candidato": "Candidato de ejemplo",
+      "segundo": 519,
+      "cita": "Nunca hemos subido un impuesto a la clase media",
+      "veredicto": "roja",
+      "explicacion": "Su gobierno aprobó subidas que afectaron a rentas medias durante la legislatura.",
+      "fuentes": [
+        {
+          "titulo": "BOE · Ley 35/2006 del IRPF (texto consolidado)",
+          "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2006-20764"
+        }
+      ],
+      "pilladoEnDirecto": false,
+      "estado": "aprobada"
+    },
+    {
+      "id": "r4",
+      "candidato": "Candidato de ejemplo",
+      "segundo": 619,
+      "cita": "La inmigración irregular se ha duplicado este año",
+      "veredicto": "fuera",
+      "explicacion": "Aumentó, pero muy por debajo del doble; la cifra mezcla dos años distintos.",
+      "fuentes": [
+        {
+          "titulo": "Ministerio del Interior · Balances e informes",
+          "url": "https://www.interior.gob.es/opencms/es/prensa/balances-e-informes/"
+        }
+      ],
+      "pilladoEnDirecto": false,
+      "estado": "aprobada"
+    },
+    {
+      "id": "r5",
+      "candidato": "Candidato de ejemplo",
+      "segundo": 734,
+      "cita": "El gasto en pensiones ya supera el 12 % del PIB",
+      "veredicto": "amarilla",
+      "explicacion": "Es correcto si se incluyen las pensiones de clases pasivas; sin ellas, la cifra es menor.",
+      "fuentes": [
+        {
+          "titulo": "AIReF · Centro documental",
+          "url": "https://www.airef.es/es/centro-documental/"
+        },
+        {
+          "titulo": "Seguridad Social · Estadísticas",
+          "url": "https://www.seg-social.es/wps/portal/wss/internet/EstadisticasPresupuestosEstudios/Estadisticas"
+        }
+      ],
+      "pilladoEnDirecto": false,
+      "estado": "aprobada"
+    },
+    {
+      "id": "r6",
+      "candidato": "Candidato de ejemplo",
+      "segundo": 1019,
+      "cita": "España es el país con más paro juvenil de Europa",
+      "veredicto": "legal",
+      "explicacion": "Según el último dato armonizado disponible.",
+      "fuentes": [
+        {
+          "titulo": "Eurostat · Desempleo por edad (une_rt_m)",
+          "url": "https://ec.europa.eu/eurostat/databrowser/view/une_rt_m/default/table"
+        }
+      ],
+      "pilladoEnDirecto": false,
+      "estado": "aprobada"
+    }
+  ],
+  "momentos": [
+    {
+      "id": "m1",
+      "segundo": 118,
+      "tipo": "anuncio",
+      "titulo": "Propone 100.000 viviendas públicas en cuatro años",
+      "cita": "construir cien mil viviendas públicas de alquiler en cuatro años",
+      "porQue": "Es su medida principal de vivienda y la única que detalla coste, plazo y financiación.",
+      "estado": "aprobada"
+    },
+    {
+      "id": "m2",
+      "segundo": 319,
+      "tipo": "choque",
+      "titulo": "Jordi insiste: ¿limitaría los alquileres?",
+      "cita": "¿limitarías los precios, sí o no?",
+      "porQue": "Tras dos preguntas seguidas no dice si limitaría los precios del alquiler.",
+      "estado": "aprobada"
+    },
+    {
+      "id": "m3",
+      "segundo": 481,
+      "tipo": "rectificacion",
+      "titulo": "Matiza el récord de empleo tras la corrección",
+      "cita": "el dato de afiliados es el que es",
+      "porQue": "Después de que los verificadores corrijan el dato, se queda con la cifra de afiliados.",
+      "estado": "aprobada"
+    },
+    {
+      "id": "m4",
+      "segundo": 838,
+      "tipo": "choque",
+      "titulo": "Jordi le pide su plan de pensiones",
+      "cita": "te pregunto por tu plan, no por el de otros",
+      "porQue": "Responde a la pregunta sobre su plan hablando del gobierno anterior.",
+      "estado": "aprobada"
+    },
+    {
+      "id": "m5",
+      "segundo": 970,
+      "tipo": "anuncio",
+      "titulo": "Propone una oficina anticorrupción independiente",
+      "cita": "una oficina anticorrupción independiente",
+      "porQue": "Concreta cómo se nombraría, aunque no cuánto costaría ni cuándo.",
+      "estado": "aprobada"
+    },
+    {
+      "id": "m6",
+      "segundo": 1019,
+      "tipo": "titular",
+      "titulo": "Pide a Europa un fondo de empleo joven",
+      "cita": "Europa tiene que ayudarnos con un fondo de empleo joven",
+      "porQue": "Resume su postura europea en una sola medida.",
+      "estado": "aprobada"
+    }
+  ],
+  "visuales": [
+    {
+      "segundo": 118,
+      "tipo": "documento",
+      "descripcion": "El candidato muestra a cámara un folio con su plan de vivienda"
+    },
+    {
+      "segundo": 438,
+      "tipo": "verificador",
+      "descripcion": "Jordi pide a los verificadores que comprueben el dato de empleo"
+    },
+    {
+      "segundo": 734,
+      "tipo": "rotulo",
+      "descripcion": "Gráfico en pantalla con la evolución del gasto en pensiones"
+    }
+  ],
+  "silencios": [],
+  "interrupciones": [
+    {
+      "segundo": 481,
+      "quien": "candidato"
+    },
+    {
+      "segundo": 838,
+      "quien": "jordi"
+    }
+  ],
+  "videoLocal": null
+}

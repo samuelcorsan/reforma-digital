@@ -1,0 +1,653 @@
+import Link from 'next/link';
+import type { ReactNode } from 'react';
+import { Card } from '@reforma-digital/design/ui/card';
+import { decimal, longDate } from '../../lib/elecciones/format';
+import {
+  answers,
+  candidates,
+  criteria,
+  criterionIds,
+  getCandidate,
+  interviewName,
+  interviewsOf,
+  minute,
+  moments,
+  proposalScore,
+  rounds,
+  topicShare,
+  verdicts,
+  videoUrl,
+  type Candidate,
+  type Interview,
+} from '../../lib/elecciones/interviews';
+import { electionsHref } from '../../lib/elecciones/pages';
+import { Icon } from '../brand/icon';
+import { AI, Source } from '../congreso/common';
+import { PhotoCredits, Portrait } from './portrait';
+import {
+  Bars,
+  Cell,
+  Explore,
+  Grid,
+  Label,
+  ReportIntro,
+  ReportSection,
+  ReportStats,
+} from './report';
+
+export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
+const nextRound = rounds[0];
+
+function Dot({ color }: { color: string }) {
+  return (
+    <i
+      aria-hidden="true"
+      className="block size-2.5 shrink-0 rounded-full"
+      style={{ background: color }}
+    />
+  );
+}
+
+// El avatar, el nombre y el partido, encima del informe o de una verificación.
+function CandidateLine({ candidate }: { candidate: Candidate }) {
+  return (
+    <div className="flex items-center gap-4">
+      <Portrait candidate={candidate} kind="avatar" sizes="128px" className="size-18 shrink-0" />
+      <p className="m-0 grid gap-1">
+        <b className="font-medium">{candidate.name}</b>
+        <span className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Dot color={candidate.color} />
+          {candidate.party}
+        </span>
+      </p>
+    </div>
+  );
+}
+
+// La calificación siempre con su nombre: el color solo acompaña.
+function Verdict({ id }: { id: keyof typeof verdicts }) {
+  return (
+    <span className="inline-flex items-center gap-2 font-medium">
+      <Dot color={verdicts[id].color} />
+      {verdicts[id].name}
+    </span>
+  );
+}
+
+function Notice({ children }: { children: ReactNode }) {
+  return (
+    <Card className="mb-8 bg-muted p-5 text-base ring-0" role="note">
+      <p className="m-0">{children}</p>
+    </Card>
+  );
+}
+
+function Sources({ items }: { items: { titulo: string; url: string }[] }) {
+  return (
+    <p className="m-0 flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground">
+      {items.length === 1 ? 'Fuente:' : 'Fuentes:'}
+      {items.map((f) => (
+        <Source key={f.url} url={f.url}>
+          {f.titulo}
+        </Source>
+      ))}
+    </p>
+  );
+}
+
+const steps = [
+  ['La entrevista entera', 'El vídeo completo, sin cortes ni clips.'],
+  [
+    'Transcripción',
+    'Quién habla y en qué segundo: el entrevistador, el candidato u otras personas.',
+  ],
+  [
+    'Análisis con IA',
+    'Temas, cifras, propuestas, críticas, interrupciones y preguntas sin responder.',
+  ],
+  [
+    'Contraste con fuentes',
+    'Cada afirmación comprobable, frente al INE, Eurostat, el BOE, el Banco de España…',
+  ],
+  ['Revisión humana', 'Una persona confirma cada decisión. Sin eso no se publica nada.'],
+  ['El informe', 'Cada calificación, con su explicación y sus fuentes enlazadas.'],
+];
+
+export function InterviewsHome() {
+  return (
+    <>
+      <ReportIntro title="Las entrevistas">
+        <p>
+          Las entrevistas a los cuatro candidatos, revisadas una a una con las mismas reglas: qué
+          afirman y si es cierto, qué proponen y si responden a lo que se les pregunta.
+        </p>
+      </ReportIntro>
+      <Grid>
+        {candidates.map((c) => {
+          const latest = interviewsOf(c.slug)[0];
+          return (
+            <Card
+              key={c.slug}
+              render={<Link href={interviewsHref(c.slug)} />}
+              className="col-span-6 gap-4 p-3 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 md:col-span-3"
+            >
+              <Portrait candidate={c} sizes="(min-width: 768px) 360px, 60vw" />
+              <div className="grid gap-1 px-2 pb-2 max-sm:px-1">
+                <h3 className="m-0 font-heading text-2xl leading-tight font-normal max-sm:text-xl">
+                  {c.name}
+                </h3>
+                <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
+                  <Dot color={c.color} />
+                  {c.party}
+                </p>
+                <p className="m-0 mt-2 flex items-center justify-between gap-2 text-sm">
+                  {latest
+                    ? `${decimal(latest.nota.global)} sobre 10${latest.pending ? ', provisional' : ''}`
+                    : `Pendiente · ${longDate(nextRound.date).replace(/ de \d{4}$/, '')}`}
+                  <Icon name="derecha" size={16} />
+                </p>
+              </div>
+            </Card>
+          );
+        })}
+      </Grid>
+      <div className="mt-4 grid gap-1">
+        <p className="m-0 text-sm text-muted-foreground">
+          De menos a más escaños en las generales de 2023.
+        </p>
+        <PhotoCredits people={candidates} />
+      </div>
+
+      <ReportSection title="Cómo se revisa">
+        <Grid>
+          <Cell span={7} label="Del vídeo al informe">
+            <ol className="m-0 grid list-none gap-5 p-0">
+              {steps.map(([title, text], i) => (
+                <li key={title} className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3">
+                  <span className="font-mono text-sm text-muted-foreground tabular-nums">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span>
+                    <b className="font-medium">{title}.</b>{' '}
+                    <span className="text-muted-foreground">{text}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </Cell>
+          <Cell span={5} label="Cómo se califica una afirmación">
+            <VerdictList />
+            <Explore
+              links={[
+                { href: interviewsHref('metodologia'), text: 'La metodología' },
+                { href: interviewsHref('ejemplo'), text: 'Un ejemplo ficticio' },
+              ]}
+            />
+          </Cell>
+        </Grid>
+      </ReportSection>
+
+      <ReportSection title="Las rondas">
+        <Grid>
+          {rounds.map((r) => (
+            <Cell key={r.id} span={6} label={longDate(r.date)}>
+              <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{r.title}</h3>
+              <p className="m-0 max-w-[60ch] text-muted-foreground">{r.text}</p>
+            </Cell>
+          ))}
+        </Grid>
+      </ReportSection>
+    </>
+  );
+}
+
+function VerdictList() {
+  return (
+    <dl className="m-0 grid gap-3">
+      {Object.entries(verdicts).map(([id, v]) => (
+        <div key={id} className="grid grid-cols-[minmax(0,9rem)_minmax(0,1fr)] gap-3">
+          <dt className="flex items-center gap-2 font-medium">
+            <Dot color={v.color} />
+            {v.name}
+          </dt>
+          <dd className="m-0 text-muted-foreground">{v.text}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+// Página de un candidato sin entrevista publicada todavía. En cuanto hay una, la ruta lleva a ella.
+export function CandidatePending({ candidate }: { candidate: Candidate }) {
+  return (
+    <>
+      <ReportIntro title={candidate.name}>
+        <p className="flex items-center gap-2">
+          <Dot color={candidate.color} />
+          {candidate.party}
+        </p>
+      </ReportIntro>
+      <Grid>
+        <div className="col-span-12 md:col-span-4">
+          <Portrait candidate={candidate} sizes="(min-width: 768px) 500px, 100vw" />
+        </div>
+        <Cell span={8} label="Pendiente">
+          <p className="m-0 max-w-[60ch]">
+            Su entrevista en {nextRound.title} se publica el {longDate(nextRound.date)}. Hasta que
+            una persona revise el análisis, aquí no aparece nada.
+          </p>
+          <Explore
+            links={[
+              { href: interviewsHref('ejemplo'), text: 'Ver un informe de ejemplo' },
+              { href: interviewsHref(), text: 'Las cuatro entrevistas' },
+            ]}
+          />
+        </Cell>
+      </Grid>
+      <div className="mt-4">
+        <PhotoCredits people={[candidate]} />
+      </div>
+    </>
+  );
+}
+
+export function InterviewReport({ interview: a }: { interview: Interview }) {
+  const complete = a.propuestas.filter((p) => proposalScore(p) === 4).length;
+  const proposals = [...a.propuestas].sort((x, y) => proposalScore(y) - proposalScore(x));
+  const video = videoUrl(a);
+  const where = [a.entrevista?.medio, a.entrevista?.programa].filter(Boolean).join(' · ');
+  const candidate = getCandidate(a.candidato);
+  return (
+    <>
+      {a.ficticio && (
+        <Notice>
+          <b className="font-medium">Ejemplo con un candidato ficticio y datos inventados.</b> Así
+          será el informe de cada entrevista real.
+        </Notice>
+      )}
+      {a.pending > 0 && (
+        <Notice>
+          <b className="font-medium">Informe provisional.</b> Quedan {a.pending} afirmaciones o
+          momentos por revisar. Mientras tanto, la valoración solo cuenta lo que ya ha confirmado
+          una persona.
+        </Notice>
+      )}
+      {candidate && (
+        <div className="mb-6">
+          <CandidateLine candidate={candidate} />
+        </div>
+      )}
+      <ReportIntro title={interviewName(a)}>
+        <p>
+          {where && `${where}, `}con {a.entrevista?.entrevistador ?? 'el entrevistador'}. Publicada
+          el {longDate(a.publicado.slice(0, 10))}; dura {Math.round(a.duracion / 60)} minutos.
+        </p>
+        {video && <Source url={video}>Ver la entrevista completa</Source>}
+      </ReportIntro>
+
+      <ReportStats
+        items={[
+          [
+            `${decimal(a.nota.global)} ± ${decimal(a.nota.margen)}`,
+            a.pending ? 'valoración provisional, sobre 10' : 'valoración, sobre 10',
+          ],
+          [`${a.stats.alGrano} %`, `de respuestas al grano, en ${a.preguntas.length} preguntas`],
+          [complete, complete === 1 ? 'propuesta completa' : 'propuestas completas'],
+          [
+            a.revisiones.length,
+            a.revisiones.length === 1 ? 'afirmación verificada' : 'afirmaciones verificadas',
+          ],
+        ]}
+      />
+
+      <Grid>
+        <Cell span={6} label="La valoración, criterio a criterio">
+          <Bars
+            max={10}
+            rows={criterionIds.map((id) => {
+              const value = a.nota.criterios[id];
+              return {
+                label: `${criteria[id].name} (${criteria[id].weight} %)`,
+                value,
+                display: decimal(value),
+              };
+            })}
+          />
+          <p className="m-0 text-sm text-muted-foreground">
+            Entre paréntesis, lo que pesa cada criterio. Si dos valoraciones se solapan con su
+            margen, es un empate.{' '}
+            <Link href={interviewsHref('metodologia')} className="underline underline-offset-4">
+              Cómo se calcula
+            </Link>
+            .
+          </p>
+        </Cell>
+        <Cell span={6} label="Tiempo por tema">
+          <Bars
+            rows={topicShare(a)
+              .slice(0, 6)
+              .map((t) => ({ label: t.topic, value: t.share, display: `${t.share} %` }))}
+          />
+        </Cell>
+        <Cell span={6} label="Cómo responde">
+          <Bars
+            rows={Object.entries(answers).map(([id, name]) => {
+              const value = a.preguntas.filter((p) => p.respuesta === id).length;
+              return { label: name, value, display: String(value) };
+            })}
+          />
+          <p className="m-0 text-sm text-muted-foreground">
+            {a.preguntas.filter((p) => p.repregunta).length} repreguntas: el entrevistador insiste
+            porque no le han contestado.
+          </p>
+        </Cell>
+        <Cell span={6} label="Las afirmaciones verificadas">
+          <Bars
+            rows={Object.entries(verdicts).map(([id, v]) => {
+              const value = a.revisiones.filter((r) => r.veredicto === id).length;
+              return { label: v.name, value, display: String(value), color: v.color };
+            })}
+          />
+        </Cell>
+      </Grid>
+
+      {a.revisiones.length > 0 && (
+        <ReportSection title="Lo que afirma, verificado">
+          <AI label="Propuesto con IA · confirmado por una persona">
+            <p>Cada afirmación comprobable, contrastada con fuentes oficiales enlazadas.</p>
+          </AI>
+          <ul className="m-0 mt-6 grid list-none gap-4 p-0">
+            {a.revisiones.map((r) => (
+              <li key={r.id}>
+                <Cell className="gap-4">
+                  <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <Verdict id={r.veredicto} />
+                    <span className="font-mono text-sm text-muted-foreground tabular-nums">
+                      minuto {minute(r.segundo)}
+                    </span>
+                  </p>
+                  <blockquote className="m-0 font-heading text-2xl leading-snug">
+                    «{r.cita}»
+                  </blockquote>
+                  <p className="m-0 max-w-[65ch] text-muted-foreground">{r.explicacion}</p>
+                  <Sources items={r.fuentes} />
+                  <Link
+                    href={interviewsHref(`${a.id}/${r.id}`)}
+                    className="self-start text-sm underline underline-offset-4"
+                  >
+                    Enlace a esta verificación
+                  </Link>
+                </Cell>
+              </li>
+            ))}
+          </ul>
+        </ReportSection>
+      )}
+
+      {a.momentos.length > 0 && (
+        <ReportSection title="Momentos clave">
+          <Grid>
+            {a.momentos.map((m) => (
+              <Cell key={m.id} span={4} label={`${moments[m.tipo].name} · ${minute(m.segundo)}`}>
+                <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{m.titulo}</h3>
+                <p className="m-0">«{m.cita}»</p>
+                <p className="m-0 text-sm text-muted-foreground">{m.porQue}</p>
+              </Cell>
+            ))}
+          </Grid>
+        </ReportSection>
+      )}
+
+      {proposals.length > 0 && (
+        <ReportSection title="Lo que propone">
+          <Grid>
+            {proposals.map((p) => {
+              const score = proposalScore(p);
+              return (
+                <Cell
+                  key={p.id}
+                  span={6}
+                  label={`${score === 4 ? 'Propuesta completa' : score === 3 ? 'Casi completa' : 'Propuesta'} · ${minute(p.segundo)}`}
+                >
+                  <p className="m-0 text-lg leading-snug">{p.texto}</p>
+                  <ul className="m-0 flex list-none flex-wrap gap-2 p-0 text-sm">
+                    {(
+                      [
+                        ['que', 'Qué'],
+                        ['cuanto', 'Cuánto'],
+                        ['cuando', 'Cuándo'],
+                        ['como', 'Cómo'],
+                      ] as const
+                    ).map(([key, name]) => (
+                      <li
+                        key={key}
+                        className={
+                          p[key]
+                            ? 'rounded-full bg-foreground px-3 py-1 text-background'
+                            : 'rounded-full px-3 py-1 text-muted-foreground ring-1 ring-border'
+                        }
+                      >
+                        {p[key] ? '✓' : '✗'} {name}
+                        <span className="sr-only">{p[key] ? ': lo dice' : ': no lo dice'}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Cell>
+              );
+            })}
+          </Grid>
+        </ReportSection>
+      )}
+
+      {a.ataques.length > 0 && (
+        <ReportSection title="Críticas a otros">
+          <Cell>
+            <ul className="m-0 grid list-none gap-4 p-0">
+              {a.ataques.map((x) => (
+                <li
+                  key={x.id}
+                  className="grid gap-1 border-b border-border pb-4 last:border-0 last:pb-0"
+                >
+                  <Label>
+                    {x.tipo === 'personal' ? 'Ataque personal' : 'Crítica política'} · a{' '}
+                    {x.objetivo} · {minute(x.segundo)}
+                  </Label>
+                  <p className="m-0">«{x.texto}»</p>
+                </li>
+              ))}
+            </ul>
+          </Cell>
+        </ReportSection>
+      )}
+
+      <div className="grid gap-6">
+        <Explore
+          links={[
+            { href: interviewsHref(), text: 'Las cuatro entrevistas' },
+            { href: interviewsHref('metodologia'), text: 'Cómo se revisan' },
+          ]}
+        />
+        {candidate && <PhotoCredits people={[candidate]} />}
+      </div>
+    </>
+  );
+}
+
+// Una verificación sola, para enlazarla o compartirla.
+export function VerificationPage({
+  interview: a,
+  verification: r,
+}: {
+  interview: Interview;
+  verification: Interview['revisiones'][number];
+}) {
+  const video = videoUrl(a, r.segundo);
+  const candidate = getCandidate(a.candidato);
+  return (
+    <>
+      {a.ficticio && (
+        <Notice>
+          <b className="font-medium">Ejemplo con un candidato ficticio y datos inventados.</b>
+        </Notice>
+      )}
+      <Grid>
+        <Cell span={8} label={`Verificación · minuto ${minute(r.segundo)}`}>
+          {candidate ? (
+            <CandidateLine candidate={candidate} />
+          ) : (
+            <p className="m-0 font-medium">{interviewName(a)}</p>
+          )}
+          <blockquote className="m-0 font-heading text-[32px] leading-[1.15] lg:text-[44px]">
+            «{r.cita}»
+          </blockquote>
+          <p className="m-0 max-w-[65ch] text-lg leading-relaxed text-muted-foreground">
+            {r.explicacion}
+          </p>
+          <div className="grid gap-2 border-t border-border pt-6">
+            <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1 text-xl">
+              <Verdict id={r.veredicto} />
+              <span className="text-base text-muted-foreground">{verdicts[r.veredicto].text}</span>
+            </p>
+            {r.pilladoEnDirecto && (
+              <p className="m-0 text-sm text-muted-foreground">
+                Lo señalaron en directo durante la entrevista.
+              </p>
+            )}
+          </div>
+          <Sources items={r.fuentes} />
+          {video && <Source url={video}>Verlo en el vídeo, minuto {minute(r.segundo)}</Source>}
+        </Cell>
+      </Grid>
+      <div className="mt-8">
+        <Explore links={[{ href: interviewsHref(a.id), text: 'El informe completo' }]} />
+      </div>
+    </>
+  );
+}
+
+const rules = [
+  ['Propuesta completa', 'Dice qué, cuánto, cuándo y cómo'],
+  ['Casi completa', 'Dice tres de esas cuatro cosas'],
+  ['Repregunta', 'El entrevistador insiste porque no le han contestado'],
+  ['Evasiva', 'Respuesta evasiva o cambio de tema'],
+  ['Crítica política', 'Crítica a la política de otro'],
+  ['Ataque personal', 'Ataque personal o descalificación'],
+  ['Interrumpe', 'El candidato corta a quien habla antes de que termine'],
+  ['Le interrumpen', 'El entrevistador corta al candidato antes de que termine'],
+  ['Momento clave', 'Anuncio, choque, titular o rectificación, aprobado por una persona'],
+];
+
+const fairness = [
+  [
+    'Escalas absolutas',
+    'Cada criterio tiene ejemplos fijos de lo que es un 0, un 5 y un 10. Nadie suspende solo por quedar el último.',
+  ],
+  [
+    'Normalizado',
+    'Se cuenta por pregunta y por hora, nunca en totales: las entrevistas duran distinto.',
+  ],
+  [
+    'Muestras pequeñas',
+    'Con pocas afirmaciones comprobables, la valoración se acerca al centro en lugar de dispararse.',
+  ],
+  ['Mismo análisis', 'Mismo modelo, misma versión y mismas instrucciones para los cuatro.'],
+  ['Margen de error', 'Cada valoración lleva su margen. Si dos se solapan, es un empate.'],
+  [
+    'Solo lo comparable',
+    'Solo se ponen lado a lado entrevistas de la misma ronda, con el mismo formato.',
+  ],
+];
+
+export function InterviewsMethod() {
+  return (
+    <>
+      <ReportIntro title="Cómo se revisan las entrevistas">
+        <p>
+          Se mide cómo responde cada candidato, no si tiene razón: rigor, claridad y sustancia, con
+          los mismos criterios para los cuatro. La IA acelera el trabajo; las personas deciden.
+        </p>
+      </ReportIntro>
+      <Grid>
+        <Cell span={7} label="La valoración sobre 10">
+          <ul className="m-0 grid list-none gap-4 p-0">
+            {Object.values(criteria).map((c) => (
+              <li
+                key={c.name}
+                className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 border-b border-border pb-4 last:border-0 last:pb-0"
+              >
+                <span>
+                  <b className="font-medium">{c.name}.</b>{' '}
+                  <span className="text-muted-foreground">{c.text}.</span>
+                </span>
+                <span className="font-mono tabular-nums">{c.weight} %</span>
+              </li>
+            ))}
+          </ul>
+        </Cell>
+        <Cell span={5} label="Las calificaciones">
+          <VerdictList />
+          <p className="m-0 text-sm text-muted-foreground">
+            Cada afirmación comprobable se contrasta con fuentes oficiales (INE, Eurostat, Banco de
+            España, BOE, Seguridad Social, CIS, ministerios) y se publica con sus enlaces. Ninguna
+            sale sin que una persona la confirme ni sin al menos una fuente.
+          </p>
+        </Cell>
+        <Cell span={7} label="Lo que se marca en cada entrevista">
+          <dl className="m-0 grid gap-3">
+            {rules.map(([name, text]) => (
+              <div
+                key={name}
+                className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-3 max-sm:grid-cols-1 max-sm:gap-0"
+              >
+                <dt className="font-medium">{name}</dt>
+                <dd className="m-0 text-muted-foreground">{text}</dd>
+              </div>
+            ))}
+          </dl>
+        </Cell>
+        <Cell span={5} label="Los momentos clave">
+          <dl className="m-0 grid gap-3">
+            {Object.values(moments).map((m) => (
+              <div key={m.name}>
+                <dt className="font-medium">{m.name}</dt>
+                <dd className="m-0 text-muted-foreground">{m.text}.</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="m-0 text-sm text-muted-foreground">
+            Los propone la IA con una cita literal y una persona los aprueba. Se eligen por su
+            interés informativo, nunca por si favorecen o perjudican a alguien.
+          </p>
+        </Cell>
+      </Grid>
+
+      <ReportSection title="Para que sea comparable">
+        <Grid>
+          {fairness.map(([title, text], i) => (
+            <Cell key={title} span={4} label={String(i + 1).padStart(2, '0')}>
+              <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{title}</h3>
+              <p className="m-0 text-muted-foreground">{text}</p>
+            </Cell>
+          ))}
+        </Grid>
+      </ReportSection>
+
+      <Grid>
+        <Cell span={6} label="Qué entrevistas se revisan">
+          <p className="m-0 max-w-[60ch]">
+            Por rondas: siempre los cuatro candidatos a la vez, nunca uno solo. Entrevistas
+            individuales y largas (30 minutos o más), en un medio de alcance nacional, publicadas
+            íntegras y en la misma semana. Si falta alguno de los cuatro, la ronda no se publica.
+          </p>
+        </Cell>
+        <Cell span={6} label="Independencia y correcciones">
+          <p className="m-0 max-w-[60ch]">
+            Esta sección no tiene relación con los medios cuyas entrevistas analiza ni con ningún
+            partido, y los cuatro candidatos reciben el mismo tratamiento. Si hay un error, se
+            corrige a la vista, con la fecha y el motivo.
+          </p>
+        </Cell>
+      </Grid>
+    </>
+  );
+}
