@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { Badge } from '@reforma-digital/design/ui/badge';
 import { buttonVariants } from '@reforma-digital/design/ui/button';
@@ -13,44 +14,31 @@ import {
 } from '../../lib/congreso/data';
 import { pollsHidden } from '../../lib/congreso/polls';
 import {
+  accuracySchema,
   balanceSchema,
   historicalProvinceSchema,
   mapSchema,
+  marketsSchema,
   projectionSchema,
 } from '../../lib/congreso/schema';
+import { formatDate, percent, thousands } from '../../lib/elecciones/format';
+import { origins } from '../../lib/elecciones/laws';
 import { electionPages, electionsHref, type ElectionPage } from '../../lib/elecciones/pages';
-import { clusters, sunflower } from '../../lib/elecciones/seats';
 import { href } from '../congreso/common';
 import { ProvincePicker, type ProvinceSummary } from './province-picker';
 import { Icon } from '../brand/icon';
-import { Bars, Cell, Chapter, Explore, Grid, Label, Legend, Stat } from './report';
-import { SeatsMap, type Seat } from './seats-map';
+import { Bars, CardCta, Cell, Chapter, Grid, Label, Legend, PageCard, Stat } from './report';
+import { hemicycleOrder, SeatsCard } from './seats-card';
+import { Tips } from './tips';
 
-// Orden de los grupos en el hemiciclo, de izquierda a derecha.
-const hemicycleOrder = ['SUMAR', 'BILDU', 'ERC', 'PSOE', 'MIXTO', 'PNV', 'JUNTS', 'PP', 'VOX'];
-const origins = [
-  ['GRUPOS', 'Grupos parlamentarios', '#2A7DB5'],
-  ['GOB', 'Gobierno', '#7152A8'],
-  ['SEN', 'Senado', '#C9962A'],
-  ['CCAA', 'Parlamentos autonómicos', '#83AE6E'],
-] as const;
 const majority = 176;
 
 const madrid = (options: Intl.DateTimeFormatOptions) =>
   new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', ...options }).format(new Date());
 const dayNumber = (iso: string) => Date.parse(`${iso}T00:00:00Z`) / 864e5;
-const format = (iso: string, options: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat('es-ES', { timeZone: 'UTC', ...options }).format(
-    new Date(`${iso}T00:00:00Z`),
-  );
-const shortDate = (iso: string) => format(iso, { day: 'numeric', month: 'short' });
-const longDate = (iso: string) => format(iso, { day: 'numeric', month: 'long' });
-// es-ES no agrupa los números de cuatro cifras («1340»); aquí siempre llevan punto de miles.
-const thousands = (value: number) =>
-  String(Math.round(value)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const shortDate = (iso: string) => formatDate(iso, { day: 'numeric', month: 'short' });
+const longDate = (iso: string) => formatDate(iso, { day: 'numeric', month: 'long' });
 const decimal = (value: number) => value.toLocaleString('es-ES', { maximumFractionDigits: 1 });
-const percent = (value: number) =>
-  `${(value * 100).toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`;
 
 type Milestone = { fecha: string; hasta?: string; hito: string; detalle?: string };
 
@@ -121,11 +109,22 @@ const chapters = [
     title: 'Cuarenta y nueve años de elecciones',
     color: '#2A7DB5',
   },
+  { id: 'mapa', name: 'El mapa', title: 'El mapa del voto', color: 'var(--brand-yellow)' },
   { id: 'encuestas', name: 'Las encuestas', title: 'Lo que dicen las encuestas', color: '#2F7A4A' },
 ];
 
-const explore = (ids: ElectionPage[]) =>
-  ids.map((id) => ({ href: electionsHref(id), text: electionPages[id].title }));
+const card = (id: ElectionPage, span: 4 | 6 | 12, children?: ReactNode) => (
+  <PageCard
+    key={id}
+    href={electionsHref(id)}
+    title={electionPages[id].title}
+    text={electionPages[id].text}
+    cta={electionPages[id].cta}
+    span={span}
+  >
+    {children}
+  </PageCard>
+);
 
 // Los plazos en vertical: cada hito en una línea, con la fecha a la derecha.
 function Calendar({ calendar, today }: { calendar: Milestone[]; today: string }) {
@@ -180,6 +179,63 @@ function Calendar({ calendar, today }: { calendar: Milestone[]; today: string })
   );
 }
 
+// Meses contados desde el año 0, para colocar fechas en una escala mensual.
+const month = (iso: string) => Number(iso.slice(0, 4)) * 12 + Number(iso.slice(5, 7)) - 1;
+
+// Los años bajo un gráfico de una columna por mes, cada uno donde empieza su enero.
+function Years({ from, count }: { from: number; count: number }) {
+  const first = Math.ceil(from / 12);
+  const last = Math.floor((from + count - 1) / 12);
+  return (
+    <p aria-hidden="true" className="relative m-0 h-4 font-mono text-xs text-muted-foreground">
+      {Array.from({ length: last - first + 1 }, (_, i) => (
+        <span
+          key={first + i}
+          className="absolute border-l border-border pl-1"
+          style={{ left: `${(((first + i) * 12 - from) / count) * 100}%` }}
+        >
+          {first + i}
+        </span>
+      ))}
+    </p>
+  );
+}
+
+// Una barra por mes, partida en tramos de color, con los años debajo. Misma altura en todas las
+// tarjetas para que los gráficos de un capítulo se lean igual.
+function MonthBars({
+  from,
+  columns,
+}: {
+  from: number;
+  columns: { value: number; color: string }[][];
+}) {
+  const totals = columns.map((column) => column.reduce((sum, s) => sum + s.value, 0));
+  const top = Math.max(...totals, 1);
+  return (
+    <div className="grid gap-1.5">
+      <div aria-hidden="true" className="flex h-20 items-end gap-px">
+        {columns.map((column, i) => (
+          <span
+            key={i}
+            className="flex flex-1 flex-col-reverse overflow-hidden rounded-t-[2px]"
+            style={{ height: `${((totals[i] ?? 0) / top) * 100}%` }}
+          >
+            {column.map((s) => (
+              <i
+                key={s.color}
+                className="block"
+                style={{ flexGrow: s.value, background: s.color }}
+              />
+            ))}
+          </span>
+        ))}
+      </div>
+      <Years from={from} count={columns.length} />
+    </div>
+  );
+}
+
 function Spark({
   values,
   label,
@@ -223,21 +279,23 @@ function Spark({
 }
 
 export async function ElectionsHome() {
-  const [election, source, map, history, index, polls] = await Promise.all([
+  const [election, source, map, history, index, polls, accuracy] = await Promise.all([
     getElections(),
     read('elecciones/elecciones.json', balanceSchema),
     read('elecciones/geo-provincias.json', mapSchema),
     getHistory(),
     getIndex(),
     getPolls(),
+    read('encuestas/aciertos.json', accuracySchema),
   ]);
   const last = history.elecciones.at(-1);
   const first = history.elecciones[0];
   if (!last || !first) throw new Error('El histórico de elecciones está vacío');
   const hidden = pollsHidden(polls.veda);
-  const [results, projection] = await Promise.all([
+  const [results, projection, markets] = await Promise.all([
     read(`elecciones/historico-${last.id}.json`, historicalProvinceSchema),
     hidden ? null : read('encuestas/proyeccion.json', projectionSchema),
+    hidden ? null : read('encuestas/mercados.json', marketsSchema),
   ]);
   const year = last.fecha.slice(0, 4);
   const firstYear = first.fecha.slice(0, 4);
@@ -246,12 +304,10 @@ export async function ElectionsHome() {
   const calendar = election.calendario;
   const current = phases[phase(today, election.votacion, calendar)];
   const daysLeft = dayNumber(election.votacion) - dayNumber(today);
+  const lists = calendar.find((m) => m.hito.startsWith('Listas presentadas'));
 
   const families = Object.fromEntries(history.familias.map((f) => [f.id, f]));
   const active = index.diputados.filter((d) => !d.baja);
-  const byCircumscription = Object.fromEntries(
-    Object.entries(map.provincias).map(([id, p]) => [p.circ, id]),
-  );
   const groupColor = (group: string) => index.grupos[group]?.color ?? '#888888';
   const order = (group: string) => hemicycleOrder.indexOf(group);
 
@@ -269,11 +325,10 @@ export async function ElectionsHome() {
           id,
           name: p.corto,
           seats,
+          note: change
+            ? `${Math.abs(change) === 1 ? 'Uno' : Math.abs(change)} ${change > 0 ? 'más' : 'menos'} que en ${year}, por su población (${election.decreto.rd}).`
+            : `Los mismos que en ${year}.`,
           stats: [
-            {
-              value: String(seats),
-              caption: `${seats === 1 ? 'diputado elige' : 'diputados elige'} en ${election.votacion.slice(0, 4)}${change ? ` (${change > 0 ? '+' : ''}${change} respecto a ${year})` : ''}`,
-            },
             {
               value: thousands(total.validos / total.e),
               caption: `votos costó cada escaño en ${year} (España: ${thousands(last.validos / 350)})`,
@@ -312,50 +367,20 @@ export async function ElectionsHome() {
       ];
     });
 
-  // Los 350: en su provincia y en su escaño del hemiciclo.
-  const counts: Record<string, number> = {};
-  for (const d of active) {
-    const id = byCircumscription[d.provincia];
-    if (id) counts[id] = (counts[id] ?? 0) + 1;
-  }
-  const centres = clusters(
-    counts,
-    Object.fromEntries(Object.entries(map.provincias).map(([id, p]) => [id, p.c])),
+  // Los escaños con sitio en el hemiciclo y el recuadro que ocupan, para el dibujo pequeño.
+  const placed = active.flatMap((d) =>
+    d.x === null || d.y === null ? [] : [{ ...d, x: d.x, y: d.y }],
   );
-  const plan = index.hemiciclo;
-  const k = Math.min((map.ancho * 0.86) / plan.ancho, (map.alto * 0.8) / plan.alto);
-  const ox = (map.ancho - plan.ancho * k) / 2;
-  const oy = (map.alto - plan.alto * k) / 2 + 20;
-  const points = Object.entries(counts).flatMap(([id, n]) => {
-    const centre = centres[id];
-    if (!centre) return [];
-    const spiral = sunflower(n);
-    return active
-      .filter((d) => byCircumscription[d.provincia] === id)
-      .sort((a, b) => order(a.grupo) - order(b.grupo) || a.nombre.localeCompare(b.nombre, 'es'))
-      .map((d, j) => {
-        const ax = centre.x + (spiral[j]?.x ?? 0);
-        const ay = centre.y + (spiral[j]?.y ?? 0);
-        return {
-          ax,
-          ay,
-          bx: d.x === null ? ax : ox + d.x * k,
-          by: d.y === null ? ay : oy + d.y * k,
-          color: groupColor(d.grupo),
-          label: `${deputyName(d.nombre)} · ${index.grupos[d.grupo]?.nombre ?? d.grupo} · ${d.provincia}`,
-        };
-      });
-  });
-  const xs = points.map((p) => p.ax);
-  const west = Math.min(...xs);
-  const span = Math.max(...xs) - west || 1;
-  // Los del oeste salen antes; un pequeño desfase determinista evita que se muevan en bloque.
-  const seats: Seat[] = points.map((p, i) => ({
-    ...p,
-    delay: Math.round((((p.ax - west) / span) * 0.45 + ((i * 37) % 100) / 1250) * 1700),
-  }));
-  const legend = hemicycleOrder.filter((g) => active.some((d) => d.grupo === g));
+  const left = Math.min(...placed.map((d) => d.x)) - 6;
+  const upper = Math.min(...placed.map((d) => d.y)) - 6;
+  const seatsBox = `${left} ${upper} ${Math.max(...placed.map((d) => d.x)) + 6 - left} ${Math.max(...placed.map((d) => d.y)) + 6 - upper}`;
   const changes = election.escanos_cambian.filter(([id]) => map.provincias[id]);
+  const changesText = new Intl.ListFormat('es', { type: 'conjunction' }).format(
+    changes.map(([id, before, after]) => {
+      const n = Math.abs(after - before);
+      return `${map.provincias[id]?.corto ?? id} ${after > before ? 'gana' : 'pierde'} ${n === 1 ? 'un escaño' : `${n} escaños`}`;
+    }),
+  );
 
   // El precio de un escaño, de la provincia más cara a la más barata.
   const prices = Object.entries(last.prov)
@@ -370,9 +395,37 @@ export async function ElectionsHome() {
     display: thousands(p.price),
   });
 
+  // El mapa del voto: la familia política más votada en cada provincia.
+  const winners = Object.entries(results.prov).flatMap(([id, p]) => {
+    const top = [...p.c].sort((x, y) => y[2] - x[2])[0];
+    const family = top && families[top[1]];
+    return top && family && map.provincias[id] ? [{ id, party: top[0], family }] : [];
+  });
+  const winnerOf = Object.fromEntries(winners.map((w) => [w.id, w]));
+  const won: Record<string, { label: string; color: string; n: number }> = {};
+  for (const { family: f } of winners) {
+    won[f.id] = { label: f.nombre, color: f.color, n: (won[f.id]?.n ?? 0) + 1 };
+  }
+  const winnerFamilies = Object.values(won).sort((x, y) => y.n - x.n);
+  const topFamily = winnerFamilies[0];
+
   // La legislatura.
   const b = source.balance;
   const caducan = source.caducan;
+  // Una columna por mes, de la sesión constitutiva a la disolución.
+  const firstMonth = month(b.desde);
+  const monthCount = month(b.hasta) - firstMonth + 1;
+  const monthOf = (iso: string) => month(iso) - firstMonth;
+  const lawColumns = Array.from({ length: monthCount }, (_, i) =>
+    origins.map(([id, , color]) => ({
+      value: caducan.lista.filter((law) => law[3] === id && monthOf(law[5]) === i).length,
+      color,
+    })),
+  );
+  const votesByMonth = new Map(index.meses.map((m) => [monthOf(`${m.mes}-01`), m.votaciones]));
+  const voteColumns = Array.from({ length: monthCount }, (_, i) => [
+    { value: votesByMonth.get(i) ?? 0, color: 'var(--foreground)' },
+  ]);
 
   // Las encuestas.
   const party = Object.fromEntries(polls.partidos.map((p) => [p.id, p]));
@@ -391,6 +444,39 @@ export async function ElectionsHome() {
         return { label: name, value: total, display: String(total) };
       })
     : [];
+  const market = markets?.mercados[0];
+  const favourite = market && [...market.opciones].sort((x, y) => y.p - x.p)[0];
+  const accuracyByDate = [...accuracy.elecciones].sort((x, y) => x.fecha.localeCompare(y.fecha));
+  const lastAccuracy = accuracyByDate.at(-1);
+  const worstAccuracy = Math.max(...accuracyByDate.map((e) => e.media_mae));
+  const accuracyCard = card(
+    'acierto',
+    6,
+    lastAccuracy && (
+      <>
+        <Stat
+          value={`${decimal(lastAccuracy.media_mae)} pt`}
+          caption={`de error medio de las encuestas en ${lastAccuracy.nombre}`}
+        />
+        <div aria-hidden="true" className="grid auto-cols-fr grid-flow-col items-end gap-1.5">
+          {accuracyByDate.map((e) => (
+            <span key={e.id} className="grid gap-1.5">
+              <i
+                className={cn(
+                  'block rounded-t-sm',
+                  e === lastAccuracy ? 'bg-brand' : 'bg-muted-foreground/30',
+                )}
+                style={{ height: `${(e.media_mae / worstAccuracy) * 56}px` }}
+              />
+              <span className="text-center font-mono text-xs text-muted-foreground">
+                {e.fecha.slice(2, 4)}
+              </span>
+            </span>
+          ))}
+        </div>
+      </>
+    ),
+  );
 
   // Cuarenta y nueve años: escaños por familia en cada elección.
   const presentFamilies = history.familias.filter((f) =>
@@ -409,7 +495,7 @@ export async function ElectionsHome() {
       <Grid>
         <Cell span={7} className="gap-10">
           <Label>
-            Elecciones generales · {format(election.votacion, { weekday: 'long' })}{' '}
+            Elecciones generales · {formatDate(election.votacion, { weekday: 'long' })}{' '}
             {longDate(election.votacion)} de {election.votacion.slice(0, 4)}
           </Label>
           <div className="grid gap-8">
@@ -434,6 +520,14 @@ export async function ElectionsHome() {
                   {electionPages[id].title} <Icon name="derecha" size={16} />
                 </Link>
               ))}
+              <a
+                href="#tu-provincia"
+                data-slot="button"
+                data-variant="outline"
+                className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}
+              >
+                Tu provincia <Icon name="abajo" size={16} />
+              </a>
             </div>
           </div>
           <nav aria-label="Capítulos" className="mt-auto grid gap-3 border-t border-border pt-6">
@@ -490,55 +584,49 @@ export async function ElectionsHome() {
           </>
         }
       >
-        <Cell span={5} label="Lo que caduca">
-          <Stat value={thousands(caducan.total)} caption="leyes caducan sin terminar" />
-          <div className="grid gap-4 border-t border-border pt-6">
-            <Label>Quién las presentó</Label>
-            <Bars
-              rows={origins.map(([id, label, color]) => {
-                const value = caducan.por_origen[id] ?? 0;
-                return { label, value, display: String(value), color };
-              })}
+        {card(
+          'caducan',
+          4,
+          <>
+            <Stat value={thousands(caducan.total)} caption="leyes caducan sin terminar" />
+            <MonthBars from={firstMonth} columns={lawColumns} />
+            <Legend items={origins.map(([, label, color]) => ({ label, color }))} small />
+          </>,
+        )}
+        {card(
+          'legislatura',
+          4,
+          <>
+            <Stat
+              value={thousands(b.votaciones)}
+              caption={
+                b.mas_ajustada
+                  ? `votaciones; la más ajustada, ${b.mas_ajustada.si} a ${b.mas_ajustada.no}`
+                  : `votaciones en ${b.plenos} plenos`
+              }
             />
-          </div>
-        </Cell>
-        <Cell span={7} label="Una ley, un cuadrado">
-          <svg
-            viewBox={`0 0 ${31 * 7} ${Math.ceil(caducan.lista.length / 31) * 7}`}
-            aria-hidden="true"
-            className="my-auto block h-auto w-full"
-          >
-            {caducan.lista.map((law, i) => (
-              <rect
-                key={law[0]}
-                x={(i % 31) * 7}
-                y={Math.floor(i / 31) * 7}
-                width={5.5}
-                height={5.5}
-                rx={1.5}
-                fill={origins.find(([id]) => id === law[3])?.[2] ?? '#888888'}
+            <MonthBars from={firstMonth} columns={voteColumns} />
+          </>,
+        )}
+        {card(
+          'repite',
+          4,
+          <>
+            {lists && (
+              <Stat
+                value={shortDate(lists.fecha)}
+                caption={
+                  today < lists.fecha ? 'el BOE publica las listas' : 'el BOE publicó las listas'
+                }
               />
-            ))}
-          </svg>
-        </Cell>
-        <Cell span={3} label="Votaciones">
-          <Stat value={thousands(b.votaciones)} caption={`en ${b.plenos} plenos`} />
-        </Cell>
-        <Cell span={3} label="Leyes">
-          <Stat value={b.leyes} caption={`aprobadas, más ${b.leyes_organicas} orgánicas`} />
-        </Cell>
-        <Cell span={3} label="Decretos-ley">
-          <Stat value={b.decretos_ley} caption="aprobados por el Gobierno" />
-        </Cell>
-        <Cell span={3} label="Preguntas">
-          <Stat
-            value={thousands(b.preguntas)}
-            caption={`${thousands(b.sin_respuesta)} sin respuesta`}
-          />
-        </Cell>
-        <div className="col-span-12">
-          <Explore links={explore(['caducan', 'legislatura', 'repite'])} />
-        </div>
+            )}
+            <svg viewBox={seatsBox} aria-hidden="true" className="mx-auto block h-26 w-auto">
+              {placed.map((d) => (
+                <circle key={d.nombre} cx={d.x} cy={d.y} r={5} fill={groupColor(d.grupo)} />
+              ))}
+            </svg>
+          </>,
+        )}
       </Chapter>
 
       <Chapter
@@ -550,48 +638,49 @@ export async function ElectionsHome() {
           </>
         }
       >
-        <Cell>
-          <SeatsMap
-            width={map.ancho}
-            height={map.alto}
-            provinces={Object.entries(map.provincias).map(([id, p]) => ({
-              id,
-              name: p.circ,
-              d: p.d,
-            }))}
-            canarias={map.canarias}
-            seats={seats}
-            hemicycleRadius={5.3 * k * 0.96}
-            groups={legend.map((g) => ({
-              label: index.grupos[g]?.nombre ?? g,
-              color: groupColor(g),
-              seats: active.filter((d) => d.grupo === g).length,
-            }))}
-          />
-        </Cell>
-        <Cell span={8} label={`Votos por escaño en ${year}`}>
-          <Bars rows={prices.slice(0, 5).map(priceRow)} max={dearest.price} />
-          <span aria-hidden="true" className="block border-t border-dashed border-border" />
-          <Bars rows={prices.slice(-5).map(priceRow)} max={dearest.price} />
-          <p className="m-0 text-sm text-muted-foreground">
-            Las cinco provincias donde un escaño costó más votos y las cinco donde costó menos.
-          </p>
-        </Cell>
-        <Cell span={4} label={`Cambios para ${election.votacion.slice(0, 4)}`}>
-          {changes.length ? (
-            changes.map(([id, before, after]) => (
-              <Stat
-                key={id}
-                value={`${after > before ? '+' : '−'}${Math.abs(after - before)}`}
-                caption={`${map.provincias[id]?.corto ?? id} pasa de ${before} a ${after} escaños por su población`}
-              />
-            ))
-          ) : (
-            <Stat value="0" caption="provincias cambian de escaños" />
+        {/* Como las demás tarjetas, toda la tarjeta lleva a «Los 350»; las pestañas y los escaños quedan encima del enlace. */}
+        <SeatsCard
+          index={index}
+          map={map}
+          span={7}
+          className="relative transition-colors hover:bg-muted/60"
+          note={`Diputados de la ${index.meta.legislatura} legislatura, elegidos en ${formatDate(last.fecha, { month: 'long', year: 'numeric' })}.`}
+          footer={
+            <Link
+              href={electionsHref('350')}
+              className="mt-auto self-end no-underline outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-3 focus-visible:after:ring-ring/50"
+            >
+              <CardCta>{electionPages['350'].cta}</CardCta>
+            </Link>
+          }
+        />
+        <div className="col-span-12 grid grid-cols-12 grid-rows-[auto_auto_auto_1fr] gap-4 md:col-span-5">
+          {card(
+            'escano',
+            12,
+            <>
+              <div className="grid gap-3">
+                <Bars rows={prices.slice(-5).reverse().map(priceRow)} max={dearest.price} narrow />
+                <span aria-hidden="true" className="font-mono text-sm text-muted-foreground">
+                  …
+                </span>
+                <Bars
+                  rows={prices
+                    .slice(0, 5)
+                    .reverse()
+                    .map((p) => ({ ...priceRow(p), color: 'var(--brand)' }))}
+                  max={dearest.price}
+                  narrow
+                />
+                <Label>Votos por escaño en {year}</Label>
+              </div>
+              {changes.length > 0 && (
+                <p className="m-0 border-t border-border pt-4 text-muted-foreground">
+                  En {election.votacion.slice(0, 4)}, {changesText} respecto a {year}.
+                </p>
+              )}
+            </>,
           )}
-        </Cell>
-        <div className="col-span-12">
-          <Explore links={explore(['350', 'escano'])} />
         </div>
       </Chapter>
 
@@ -614,41 +703,55 @@ export async function ElectionsHome() {
         }
       >
         <Cell label="Escaños por familia política">
-          <div
-            role="img"
-            aria-label={`Escaños de cada familia política en las elecciones generales desde ${firstYear}`}
-            className="grid auto-cols-fr grid-flow-col gap-0.5 sm:gap-1"
-          >
-            {history.elecciones.map((e, i) => (
-              <div key={e.id} className="grid min-w-0 gap-2">
-                <div className="flex h-60 flex-col overflow-hidden rounded-md">
-                  {history.familias.map((f) => {
-                    const seatsOf = e.fam[f.id]?.[1] ?? 0;
-                    return seatsOf ? (
-                      <i
-                        key={f.id}
-                        title={`${e.fecha.slice(0, 4)} · ${f.nombre}: ${seatsOf} escaños`}
-                        className="block"
-                        style={{ height: `${(seatsOf / 350) * 100}%`, background: f.color }}
-                      />
-                    ) : null;
-                  })}
-                </div>
-                <span
-                  className={cn(
-                    'text-center font-mono text-xs text-muted-foreground sm:text-sm',
-                    i % 2 && 'max-sm:invisible',
-                  )}
+          <Tips className="grid auto-cols-fr grid-flow-col gap-0.5 sm:gap-1">
+            {history.elecciones.map((e, i) => {
+              const ranked = history.familias
+                .map((f) => ({ name: f.nombre, color: f.color, seats: e.fam[f.id]?.[1] ?? 0 }))
+                .filter((f) => f.seats)
+                .sort((x, y) => y.seats - x.seats);
+              const name = `Elecciones de ${formatDate(e.fecha, { month: 'long', year: 'numeric' })}`;
+              const summary = ranked
+                .slice(0, 3)
+                .map((f) => `${f.name} ${f.seats}`)
+                .join(' · ');
+              return (
+                <Link
+                  key={e.id}
+                  href={electionsHref(e.id)}
+                  aria-label={`${name}: ${summary}`}
+                  data-tip={name}
+                  data-tip-text={summary}
+                  data-tip-color={ranked[0]?.color}
+                  className="group grid min-w-0 gap-2 rounded-md no-underline outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
-                  {e.fecha.slice(0, 4)}
-                  {history.elecciones.filter((x) => x.fecha.startsWith(e.fecha.slice(0, 4)))
-                    .length > 1 && (
-                    <span className="block">{format(e.fecha, { month: 'short' })}</span>
-                  )}
-                </span>
-              </div>
-            ))}
-          </div>
+                  <div className="flex h-60 flex-col overflow-hidden rounded-md transition-opacity group-hover:opacity-75">
+                    {history.familias.map((f) => {
+                      const seatsOf = e.fam[f.id]?.[1] ?? 0;
+                      return seatsOf ? (
+                        <i
+                          key={f.id}
+                          className="block"
+                          style={{ height: `${(seatsOf / 350) * 100}%`, background: f.color }}
+                        />
+                      ) : null;
+                    })}
+                  </div>
+                  <span
+                    className={cn(
+                      'text-center font-mono text-xs text-muted-foreground sm:text-sm',
+                      i % 2 && 'max-sm:invisible',
+                    )}
+                  >
+                    {e.fecha.slice(0, 4)}
+                    {history.elecciones.filter((x) => x.fecha.startsWith(e.fecha.slice(0, 4)))
+                      .length > 1 && (
+                      <span className="block">{formatDate(e.fecha, { month: 'short' })}</span>
+                    )}
+                  </span>
+                </Link>
+              );
+            })}
+          </Tips>
           <Legend items={presentFamilies.map((f) => ({ label: f.nombre, color: f.color }))} />
         </Cell>
         <Cell span={6} label="Fragmentación">
@@ -675,10 +778,63 @@ export async function ElectionsHome() {
             to={year}
           />
         </Cell>
-        <div className="col-span-12">
-          <Explore links={explore(['historico', 'metricas', 'mapa', 'voto'])} />
-        </div>
+        {card('historico', 6)}
+        {card('metricas', 6)}
       </Chapter>
+
+      {topFamily && (
+        <Chapter
+          {...chapter('mapa')}
+          insight={
+            <>
+              En {year}, <b>{topFamily.label}</b> fue lo más votado en {topFamily.n} de las{' '}
+              {winners.length} provincias.
+            </>
+          }
+        >
+          <Cell span={7} label={`Lo más votado en cada provincia · ${year}`}>
+            {/* Las provincias no entran en el orden de tabulación: el buscador de «Tu provincia» lleva a cada ficha. */}
+            <Tips>
+              <svg
+                viewBox={`0 0 ${map.ancho} ${map.alto}`}
+                role="img"
+                aria-label={`Mapa de España con el color de la familia política más votada en cada provincia en ${year}`}
+                className="block h-auto w-full"
+              >
+                {Object.entries(map.provincias).map(([id, p]) => {
+                  const w = winnerOf[id];
+                  return (
+                    <a
+                      key={id}
+                      href={href(`geografia/${id}`)}
+                      tabIndex={-1}
+                      data-tip={p.circ}
+                      data-tip-text={w ? `Lo más votado en ${year}: ${w.party}` : undefined}
+                      data-tip-color={w?.family.color}
+                      className="[&:hover>path]:opacity-75"
+                    >
+                      <path
+                        d={p.d}
+                        fill={w?.family.color ?? 'var(--muted)'}
+                        className="stroke-background"
+                        strokeWidth={0.8}
+                      />
+                    </a>
+                  );
+                })}
+                <path d={map.canarias} fill="none" className="stroke-border" strokeWidth={0.8} />
+              </svg>
+            </Tips>
+            <Legend
+              items={winnerFamilies.map((f) => ({ label: `${f.label} ${f.n}`, color: f.color }))}
+            />
+          </Cell>
+          <div className="col-span-12 grid grid-cols-12 gap-4 md:col-span-5">
+            {card('mapa', 12)}
+            {card('voto', 12)}
+          </div>
+        </Chapter>
+      )}
 
       <Chapter
         {...chapter('encuestas')}
@@ -744,17 +900,29 @@ export async function ElectionsHome() {
                 <Bars rows={blocks} max={350} mark={majority} />
               </div>
             </Cell>
-            <div className="col-span-12">
-              <Explore links={explore(['encuestas', 'proyeccion', 'mercados', 'acierto'])} />
-            </div>
+            {card('encuestas', 6)}
+            {card('proyeccion', 6)}
+            {card(
+              'mercados',
+              6,
+              market && favourite && (
+                <Stat
+                  value={`${Math.round(favourite.p * 100)} %`}
+                  caption={`${favourite.nombre}, en «${market.pregunta}», según Polymarket`}
+                />
+              ),
+            )}
+            {accuracyCard}
           </>
         ) : (
-          <Cell label="Veda electoral">
-            <p className="m-0 text-base text-muted-foreground">
-              Las encuestas volverán a mostrarse cuando acabe el periodo de restricción.
-            </p>
-            <Explore links={explore(['acierto'])} />
-          </Cell>
+          <>
+            <Cell span={6} label="Veda electoral">
+              <p className="m-0 text-base text-muted-foreground">
+                Las encuestas volverán a mostrarse cuando acabe el periodo de restricción.
+              </p>
+            </Cell>
+            {accuracyCard}
+          </>
         )}
       </Chapter>
     </>

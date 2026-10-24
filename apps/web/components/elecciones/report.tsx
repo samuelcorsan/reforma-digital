@@ -69,17 +69,39 @@ export function Stat({ value, caption }: { value: ReactNode; caption: ReactNode 
 
 export type Bar = { label: string; value: number; display: string; color?: string; href?: string };
 
-// `mark` dibuja una línea de referencia, como la mayoría absoluta.
-export function Bars({ rows, max, mark }: { rows: Bar[]; max?: number; mark?: number }) {
+// `mark` dibuja una línea de referencia, como la mayoría absoluta. `narrow`, para tarjetas
+// estrechas con nombres cortos.
+export function Bars({
+  rows,
+  max,
+  mark,
+  narrow,
+}: {
+  rows: Bar[];
+  max?: number;
+  mark?: number;
+  narrow?: boolean;
+}) {
   const top = max ?? Math.max(...rows.map((row) => row.value), 1);
   return (
     <ul className="m-0 grid list-none gap-3 p-0">
       {rows.map((row) => (
         <li
           key={row.label}
-          className="grid grid-cols-[minmax(0,12rem)_minmax(0,1fr)_5rem] items-center gap-4 text-base leading-snug max-sm:grid-cols-[minmax(0,7.5rem)_minmax(0,1fr)_4.5rem] max-sm:gap-3"
+          className={cn(
+            'grid items-center gap-4 text-base leading-snug max-sm:gap-3',
+            narrow
+              ? 'grid-cols-[minmax(0,6rem)_minmax(0,1fr)_4.5rem]'
+              : 'grid-cols-[minmax(0,12rem)_minmax(0,1fr)_5rem] max-sm:grid-cols-[minmax(0,7.5rem)_minmax(0,1fr)_4.5rem]',
+          )}
         >
-          {row.href ? <Link href={row.href}>{row.label}</Link> : <span>{row.label}</span>}
+          {row.href ? (
+            <Link href={row.href} className="hover:underline underline-offset-4">
+              {row.label}
+            </Link>
+          ) : (
+            <span>{row.label}</span>
+          )}
           <span className="relative h-4 rounded-full bg-muted">
             <i
               className="block h-full rounded-full"
@@ -103,9 +125,20 @@ export function Bars({ rows, max, mark }: { rows: Bar[]; max?: number; mark?: nu
   );
 }
 
-export function Legend({ items }: { items: { label: string; color: string }[] }) {
+export function Legend({
+  items,
+  small,
+}: {
+  items: { label: string; color: string }[];
+  small?: boolean;
+}) {
   return (
-    <ul className="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-base text-muted-foreground">
+    <ul
+      className={cn(
+        'm-0 flex list-none flex-wrap gap-y-2 p-0 text-muted-foreground',
+        small ? 'gap-x-3 text-sm' : 'gap-x-5 text-base',
+      )}
+    >
       {items.map((item) => (
         <li key={item.label} className="inline-flex items-center gap-2">
           <i className="block size-2.5 rounded-full" style={{ background: item.color }} />
@@ -130,6 +163,74 @@ export function Explore({ links }: { links: { href: string; text: string }[] }) 
           {link.text} <Icon name="derecha" size={16} />
         </Link>
       ))}
+    </div>
+  );
+}
+
+// Un apartado de la sección como tarjeta enlazada: título, qué contiene y, si la portada no lo
+// enseña ya, una cifra o un gráfico pequeño. Las tarjetas vecinas comparten sus cuatro filas
+// (subgrid), así que las cifras y los gráficos empiezan a la misma altura aunque el texto mida distinto.
+export function PageCard({
+  href,
+  title,
+  text,
+  cta,
+  span = 12,
+  children,
+}: {
+  href: string;
+  title: string;
+  text: string;
+  cta: string;
+  span?: keyof typeof spans;
+  children?: ReactNode;
+}) {
+  return (
+    <Card
+      render={<Link href={href} />}
+      className={cn(
+        'col-span-12 row-span-4 grid min-w-0 grid-rows-subgrid gap-4 p-6 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 lg:p-8 max-sm:p-5',
+        spans[span],
+      )}
+    >
+      <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{title}</h3>
+      <p className="m-0 max-w-[48ch] leading-snug text-muted-foreground">{text}</p>
+      <div className="grid content-start gap-4">{children}</div>
+      <CardCta>{cta}</CardCta>
+    </Card>
+  );
+}
+
+// La frase y la flecha al pie de una tarjeta enlazada.
+export function CardCta({ children }: { children: ReactNode }) {
+  return (
+    <span className="flex items-center justify-end gap-2 self-end pt-2 text-sm text-muted-foreground">
+      {children}
+      <span className="text-foreground">
+        <Icon name="derecha" size={16} />
+      </span>
+    </span>
+  );
+}
+
+// Título de un bloque dentro de una tarjeta y, si lo hay, lo que hay que saber para leerlo.
+export function Heading({ title, children }: { title: string; children?: ReactNode }) {
+  return (
+    <div className="grid gap-2">
+      <h2 className="m-0 font-heading text-[28px] leading-tight font-normal">{title}</h2>
+      {children && <p className="m-0 max-w-[65ch] text-muted-foreground">{children}</p>}
+    </div>
+  );
+}
+
+// Título de una sección de la página (fuera de las tarjetas): de 32 a 36 px, como pide DESIGN.md.
+export function SectionHeading({ title, children }: { title: string; children?: ReactNode }) {
+  return (
+    <div className="grid gap-2">
+      <h2 className="m-0 font-heading text-[32px] leading-tight font-normal lg:text-[36px]">
+        {title}
+      </h2>
+      {children && <p className="m-0 max-w-[65ch] text-muted-foreground">{children}</p>}
     </div>
   );
 }
@@ -203,7 +304,7 @@ export function ReportStats({ items }: { items: [number | string, string][] }) {
           key={label}
           className="flex-col-reverse justify-end gap-2 bg-muted p-6 ring-0 max-sm:p-5"
         >
-          <dt className="text-base leading-snug text-muted-foreground">{label}</dt>
+          <dt className="text-base leading-snug text-(--text-secondary)">{label}</dt>
           <dd className="m-0 font-heading text-[40px] leading-none tabular-nums">
             {typeof value === 'number'
               ? String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
@@ -227,7 +328,9 @@ export function ReportSection({
   return (
     <section className="my-16">
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4">
-        <h2 className="m-0 font-heading text-[28px] leading-tight font-normal">{title}</h2>
+        <h2 className="m-0 font-heading text-[32px] leading-tight font-normal lg:text-[36px]">
+          {title}
+        </h2>
         {action}
       </div>
       {children}

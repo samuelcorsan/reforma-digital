@@ -31,7 +31,7 @@ POR_SIGLAS = {"U.P.N.": "UPN", "UPN": "UPN", "ADELANTE ANDALUCÍA": "AA"}
 BLOQUES = {
     "PP + Vox": ["PP", "VOX"],
     "PSOE y sus socios de 2023": ["PSOE", "SUMAR", "PODEMOS", "ERC", "JUNTS", "BILDU", "PNV", "BNG", "CC"],
-    "PSOE + Sumar + Podemos": ["PSOE", "SUMAR", "PODEMOS"],
+    "PSOE + Frente Amplio + Podemos": ["PSOE", "SUMAR", "PODEMOS"],
 }
 SD_PROVINCIA = 0.10      # ruido provincial (multiplicativo, en logaritmos)
 K_ERROR = 0.35           # error nacional de cada partido: 0,35·√(voto), en puntos (PP al 32 %, ±2; Sumar al 6 %, ±0,9)

@@ -237,12 +237,33 @@ export const pollsSchema = z.object({
   encuestas: z.array(
     z.object({
       empresa: z.string(),
+      medio: z.string(),
       ini: date,
       fin: date,
       n: z.number().nullable(),
+      part: z.number().nullable(),
       v: z.record(z.string(), z.number()),
+      // Horquilla de escaños de cada partido.
+      e: z.record(z.string(), z.tuple([count, count])),
+      // El CIS y los agregadores no entran en la media.
+      cis: z.boolean(),
+      agregador: z.boolean().optional(),
     }),
   ),
+  // La media día a día de cada partido (`m`) y cuánto se separan las encuestas (`s`).
+  media: z.object({
+    dias: z.array(date),
+    partidos: z.record(
+      z.string(),
+      z.object({ m: z.array(z.number().nullable()), s: z.array(z.number().nullable()) }),
+    ),
+  }),
+  resultado2023: z.object({
+    fecha: date,
+    v: z.record(z.string(), z.number()),
+    e: z.record(z.string(), z.tuple([count, count])),
+    part: z.number(),
+  }),
 });
 export const historySchema = z.object({
   familias: z.array(
@@ -255,13 +276,33 @@ export const historySchema = z.object({
       censo: count,
       votantes: count,
       validos: count,
+      blancos: count,
+      nulos: count,
+      // La legislatura que salió de la elección, quién la presidió y cuándo acabó.
+      legislatura: z.string(),
+      presidentes: z.array(z.string()),
+      hasta: date,
       fam: z.record(z.string(), z.tuple([count, count])),
       partidos: z.array(z.tuple([z.string(), z.string(), z.string(), count, count])),
       prov: z.record(
         z.string(),
-        z.object({ e: count, censo: count, votantes: count, validos: count }),
+        z.object({
+          e: count,
+          censo: count,
+          votantes: count,
+          validos: count,
+          // Votos y escaños de cada familia política en la provincia.
+          fam: z.record(z.string(), z.tuple([count, count])),
+        }),
       ),
-      metricas: z.object({ nep_votos: z.number() }),
+      // Índices de la elección; la volatilidad no existe para la primera.
+      metricas: z.object({
+        nep_votos: z.number(),
+        nep_escanos: z.number(),
+        gallagher: z.number(),
+        pedersen: z.number().optional(),
+        sin_escano: count,
+      }),
     }),
   ),
 });
@@ -420,21 +461,64 @@ export const radarSchema = z.object({
   ),
 });
 
+const range = { med: z.number(), p05: z.number(), p95: z.number() };
 export const projectionSchema = z.object({
   fecha: z.iso.date(),
   central: z.record(z.string(), z.number()),
   media: z.record(z.string(), z.number()),
   provincias: z.record(z.string(), z.record(z.string(), z.number())),
+  // Parte del voto de cada partido en cada provincia y el último escaño: quién lo gana, quién
+  // queda segundo y cuántos puntos le faltan.
+  votos: z.record(z.string(), z.record(z.string(), z.number())),
+  ultimos: z.record(
+    z.string(),
+    z.object({ gana: z.string(), segundo: z.string(), falta: z.number() }),
+  ),
   bloques: z.record(z.string(), z.array(z.string())),
+  // Las simulaciones: `hist[n]` es la parte de ellas en que se sacan n escaños.
+  simulacion: z.object({
+    n: count,
+    partidos: z.record(
+      z.string(),
+      z.object({ ...range, media: z.number(), hist: z.array(z.number()) }),
+    ),
+    bloques: z.record(
+      z.string(),
+      z.object({
+        ...range,
+        partidos: z.array(z.string()),
+        p176: z.number(),
+        hist: z.array(z.number()),
+      }),
+    ),
+    primero: z.record(z.string(), z.number()),
+    solo176: z.record(z.string(), z.number()),
+  }),
+  // La proyección más probable con la media de cada semana.
+  serie: z.array(z.tuple([date, z.record(z.string(), count)])),
 });
 
 export const marketsSchema = z.object({
+  actualizado: date,
+  veda: z.tuple([date, z.string()]),
   mercados: z.array(
     z.object({
       slug: z.string(),
       pregunta: z.string(),
+      // Quién gana, quién preside o cuándo deja de presidir Sánchez.
+      tipo: z.enum(['ganador', 'presidente', 'fuera']),
       url: z.url({ protocol: /^https$/ }),
-      opciones: z.array(z.object({ nombre: z.string(), p: z.number() })),
+      volumen: z.number(),
+      inicio: date,
+      opciones: z.array(
+        z.object({
+          nombre: z.string(),
+          p: z.number(),
+          vol: z.number(),
+          // El precio de cada día; solo en las seis opciones principales.
+          hist: z.array(z.tuple([date, z.number()])).optional(),
+        }),
+      ),
     }),
   ),
 });
@@ -445,11 +529,72 @@ export const accuracySchema = z.object({
       id: z.string(),
       nombre: z.string(),
       fecha: z.iso.date(),
+      // Error medio en puntos por partido y cuánto se pasó (+) o se quedó corta (−) la media
+      // con cada uno.
       media_mae: z.number(),
+      media_dif: z.record(z.string(), z.number()),
+      partidos: z.array(z.string()),
+      rotulos: z.record(z.string(), z.string()),
       resultado: z.record(z.string(), z.number()),
       media: z.record(z.string(), z.number()),
+      escanos: z.record(z.string(), count),
+      encuestas: z.array(
+        z.object({
+          empresa: z.string(),
+          medio: z.string(),
+          fin: date,
+          v: z.record(z.string(), z.number()),
+          cis: z.boolean(),
+          agregador: z.boolean(),
+        }),
+      ),
     }),
   ),
+  ranking: z.array(
+    z.object({
+      empresa: z.string(),
+      n: count,
+      mae: z.number(),
+      elecciones: z.array(z.object({ id: z.string(), mae: z.number() })),
+    }),
+  ),
+  // La proyección de hoy corregida con el error de cada elección.
+  escenarios: z.record(
+    z.string(),
+    z.object({ escanos: z.record(z.string(), count), ppvox: count }),
+  ),
+});
+
+// El viaje de cada proyecto y proposición de ley de la legislatura: las fechas de cada etapa
+// (vacías si no llegó), cómo acabó y cuándo.
+const optionalDate = z.union([z.iso.date(), z.literal('')]);
+export const journeysSchema = z.object({
+  inicio: z.iso.date(),
+  disolucion: z.iso.date(),
+  leyes: z.array(
+    z.tuple([
+      z.string(),
+      z.string(),
+      z.string(),
+      z.string(),
+      z.array(z.string()),
+      z.string(),
+      z.iso.date(),
+      z.array(optionalDate),
+      z.string(),
+      optionalDate,
+      z.number(),
+    ]),
+  ),
+});
+
+// La legislatura día a día (votaciones, leyes, decretos-leyes y preguntas de cada día) y cada
+// votación nominal con su resultado: [id, fecha, título, sí, no].
+export const legislatureSchema = z.object({
+  desde: date,
+  hasta: date,
+  dias: z.record(z.iso.date(), z.tuple([count, count, count, count])),
+  votos: z.array(z.tuple([z.string(), z.iso.date(), z.string(), count, count])),
 });
 
 export const mapSchema = z.object({
@@ -484,7 +629,12 @@ export const historicalProvinceSchema = z.object({
 });
 
 export const municipalitiesSchema = z.object({
+  // El padrón de hoy y el de referencia para medir cuánto ha crecido o se ha vaciado cada uno.
   anio: z.number(),
+  anio0: z.number(),
+  orden: z.array(z.string()),
+  // [nombre, x, y, km², población, población en `anio0`, renta, edad media, % con 65 o más,
+  // familia más votada el 23J (índice en `orden` de los resultados)].
   m: z.record(
     z.string(),
     z.tuple([
@@ -547,6 +697,13 @@ export const balanceSchema = z.object({
     }),
   ),
   hay: z.object({ candidaturas: z.boolean(), resultados: z.boolean() }),
+  // Población de cada provincia en el padrón que fija el reparto de escaños.
+  padron: z.object({ anio: count, pob: z.record(z.string(), count) }),
+  // Quién dejó el escaño y quién entró por la lista: [sale, entra, fecha, provincia, formación].
+  relevos: z.object({
+    personas: count,
+    salidas: z.array(z.tuple([z.string(), z.string(), date, z.string(), z.string()])),
+  }),
 });
 
 export const metricsSchema = z.object({
@@ -567,12 +724,22 @@ export const municipalityVotesSchema = z.object({
 });
 
 export const municipalityNamesSchema = municipalitiesSchema;
+// El contorno de cada municipio en el plano del mapa de España: [nombre, trazado SVG].
+export const geoMunicipalitiesSchema = z.object({
+  ancho: z.number(),
+  alto: z.number(),
+  municipios: z.record(z.string(), z.tuple([z.string(), z.string()])),
+});
 
 export const ageSchema = z.object({
   fuente: z.string(),
   url: z.url({ protocol: /^https$/ }),
   edades: z.array(z.string()),
+  // Entrevistados de cada edad; el voto escalado al resultado del 23J y lo que dijeron.
+  n: z.array(count),
   ajustado: z.array(z.record(z.string(), z.number())),
+  crudo: z.array(z.record(z.string(), z.number())),
+  no_voto: z.array(z.number()),
 });
 
 datasetSchemas.set('temas.json', topicSchema);
@@ -589,4 +756,8 @@ datasetSchemas.set('elecciones/geo-provincias.json', mapSchema);
 datasetSchemas.set('elecciones/elecciones.json', electionsSchema.and(balanceSchema));
 datasetSchemas.set('elecciones/historico.json', historySchema.and(metricsSchema));
 datasetSchemas.set('elecciones/municipios-202307.json', municipalityVotesSchema);
+datasetSchemas.set('elecciones/municipios-201911.json', municipalityVotesSchema);
+datasetSchemas.set('elecciones/geo-municipios.json', geoMunicipalitiesSchema);
 datasetSchemas.set('elecciones/voto-edad.json', ageSchema);
+datasetSchemas.set('elecciones/viajes.json', journeysSchema);
+datasetSchemas.set('elecciones/legislatura.json', legislatureSchema);

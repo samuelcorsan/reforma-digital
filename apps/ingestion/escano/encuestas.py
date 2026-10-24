@@ -34,12 +34,14 @@ WIKIPEDIA = ("https://en.wikipedia.org/w/api.php?action=parse&page=Opinion_polli
 ELECCION = date(2026, 11, 29)
 VEDA = (date(2026, 11, 24), datetime(2026, 11, 29, 20, 0))   # del 24-N a las 20.00 del 29-N, hora peninsular
 
-# Partidos de la tabla: el rótulo de su columna en Wikipedia → id, nombre y color (los de la web).
+# Partidos de la tabla: el rótulo de su columna en Wikipedia → id, nombre y color (los de la web). Frente Amplio (FA)
+# sucede a Sumar desde octubre de 2026: las dos columnas son la misma serie.
 PARTIDOS = {
     "PP": ("PP", "PP", "#2C7BC4"),
     "PSOE": ("PSOE", "PSOE", "#D8342B"),
     "Vox": ("VOX", "Vox", "#5BA83A"),
-    "Sumar": ("SUMAR", "Sumar", "#C92F72"),
+    "FA": ("SUMAR", "Frente Amplio", "#D9701A"),
+    "Sumar": ("SUMAR", "Frente Amplio", "#D9701A"),
     "Podemos": ("PODEMOS", "Podemos", "#7B4BA8"),
     "Se Acabó La Fiesta": ("SALF", "SALF", "#8A6D4E"),
     "ERC": ("ERC", "ERC", "#E0A410"),
@@ -141,9 +143,10 @@ def leer_wikipedia(html: str) -> tuple[list[dict], dict | None]:
         for celda in rej[0]:
             a, img = celda.find("a"), celda.find("img")
             cab.append((a.get("title") if a else None) or (img.get("alt") if img else None) or celda.get_text(strip=True))
-        # Las tablas van de la más nueva (el año de la elección) hacia atrás, una por año, hasta la de 2023; las fechas
-        # de cada fila no llevan año.
-        anio = ELECCION.year - k
+        # Las fechas de cada fila no llevan año: es el del título de su tabla («2025», «2026 (with Broad Front)»; un año
+        # puede tener más de una). Sin él, las tablas van de la más nueva hacia atrás, una por año.
+        titulo = tabla.find_previous("h5")
+        anio = int(m.group(1)) if titulo and (m := re.search(r"\b(20\d\d)\b", titulo.get_text())) else ELECCION.year - k
         for fila in rej[2:]:
             if len(fila) < 6 or any(c.get("colspan") and int(c.get("colspan")) > 3 for c in fila[:2]):
                 continue
@@ -291,7 +294,7 @@ def construir_datos(hoy: date | None = None) -> dict:
     return {
         "actualizado": hoy.isoformat(), "eleccion": ELECCION.isoformat(), "veda": [VEDA[0].isoformat(), VEDA[1].isoformat(timespec="minutes")],
         "fuente": "https://en.wikipedia.org/wiki/Opinion_polling_for_the_2026_Spanish_general_election",
-        "partidos": [{"id": pid, "nombre": nom, "color": col} for pid, nom, col in PARTIDOS.values()],
+        "partidos": [{"id": pid, "nombre": nom, "color": col} for pid, nom, col in dict.fromkeys(PARTIDOS.values())],
         "resultado2023": resultado, "encuestas": encuestas,
         "media": media(encuestas, min(hoy, ELECCION)),
     }

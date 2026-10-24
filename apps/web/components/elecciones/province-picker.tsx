@@ -17,6 +17,7 @@ export type ProvinceSummary = {
   id: string;
   name: string;
   seats: number;
+  note: string;
   stats: { value: string; caption: string }[];
   parties: { name: string; seats: number; color: string }[];
   deputies: { name: string; color: string; href: string }[];
@@ -26,9 +27,12 @@ export type ProvinceSummary = {
 
 const maxDeputies = 14;
 
-// Un buscador de provincias; su ficha aparece al elegir una.
+// Un buscador de provincias con su ficha. Empieza por la que más diputados elige, para que la
+// ficha se vea antes de elegir.
 export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) {
-  const [p, setP] = useState<ProvinceSummary | null>(null);
+  const [p, setP] = useState<ProvinceSummary | null>(() =>
+    provinces.reduce<ProvinceSummary | null>((a, b) => (!a || b.seats > a.seats ? b : a), null),
+  );
   return (
     <div className="grid gap-8">
       <div className="grid gap-3">
@@ -65,6 +69,12 @@ export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) 
       </div>
       {p && (
         <div className="grid gap-8 border-t border-border pt-8">
+          <div className="grid gap-2" aria-live="polite">
+            <h3 className="m-0 font-heading text-[32px] leading-tight font-normal">
+              {p.name} elige {p.seats} {p.seats === 1 ? 'diputado' : 'diputados'}
+            </h3>
+            <p className="m-0 text-base text-muted-foreground">{p.note}</p>
+          </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-8">
             {p.stats.map((stat) => (
               <Stat key={stat.caption} value={stat.value} caption={stat.caption} />

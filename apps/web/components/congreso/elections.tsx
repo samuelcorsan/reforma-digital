@@ -9,38 +9,23 @@ import {
 import { cn } from '@reforma-digital/design/lib/utils';
 import { buttonVariants } from '@reforma-digital/design/ui/button';
 import { Card, CardContent } from '@reforma-digital/design/ui/card';
-import {
-  Collapsible,
-  CollapsibleTrigger,
-  CollapsibleContent,
-} from '@reforma-digital/design/ui/collapsible';
-
-import { Icon } from '../brand/icon';
-import {
-  projectionSchema,
-  marketsSchema,
-  accuracySchema,
-  mapSchema,
-  historicalProvinceSchema,
-} from '../../lib/congreso/schema';
+import { mapSchema } from '../../lib/congreso/schema';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import {
-  getElections,
-  getHistory,
-  getPolls,
-  getGeography,
-  read,
-  slug,
-} from '../../lib/congreso/data';
+import { getElections, getPolls, getGeography, read, slug } from '../../lib/congreso/data';
 import { municipalities } from '../../lib/congreso/queries';
 import { pollsHidden } from '../../lib/congreso/polls';
-import { Intro, Stats, Source, Filters, Pagination, Empty, date, href, number } from './common';
-import { Coalition } from './coalition';
-import { Dhondt } from './dhondt';
+import { Intro, Stats, Source, Filters, Pagination, Empty, href, number } from './common';
 import { ElectionContext } from './election-context';
-import { electionsHref } from '../../lib/elecciones/pages';
-import { Bars, ReportIntro, ReportSection, ReportStats } from '../elecciones/report';
+import { Bars, ReportIntro } from '../elecciones/report';
+import { The350 } from '../elecciones/the-350';
+import { Election } from '../elecciones/election';
+import { ElectionHistory } from '../elecciones/history';
+import { Accuracy } from '../elecciones/accuracy';
+import { Markets } from '../elecciones/markets';
+import { Polls } from '../elecciones/polls';
+import { Projection } from '../elecciones/projection';
+import { SeatPrice } from '../elecciones/seat-price';
 
 export async function Geography({
   detail,
@@ -197,21 +182,14 @@ export async function Elections({
   detail,
   query,
   page,
+  electionId,
 }: {
   detail?: string;
   query: string;
   page: number;
+  electionId?: string;
 }) {
-  if (detail === 'escano')
-    return (
-      <>
-        <ReportIntro title="Cómo se reparte un escaño" />
-        <Dhondt />
-        <Source url="https://www.boe.es/buscar/act.php?id=BOE-A-1985-11672">
-          Ley Orgánica del Régimen Electoral General
-        </Source>
-      </>
-    );
+  if (detail === 'escano') return <SeatPrice election={electionId} />;
   const election = await getElections();
   const selected = detail ?? '';
   if (['caducan', 'legislatura', 'repite', 'metricas', 'mapa', 'voto'].includes(selected))
@@ -225,370 +203,13 @@ export async function Elections({
           <p>La publicación está restringida durante el periodo indicado en la fuente.</p>
         </>
       );
-    if (selected === 'proyeccion') {
-      const data = await read('encuestas/proyeccion.json', projectionSchema);
-      const geography = await getGeography();
-      return (
-        <>
-          <ReportIntro title="Los escaños de la media">
-            <p>
-              Proyección calculada el {date(data.fecha)}. Es una estimación, no un resultado
-              electoral.
-            </p>
-          </ReportIntro>
-          <Coalition seats={data.central} />
-          <ReportSection title="Reparto central">
-            <ReportStats
-              items={Object.entries(data.central)
-                .sort(([, a], [, b]) => b - a)
-                .map(([id, n]) => [n, id])}
-            />
-          </ReportSection>
-          <ReportSection title="Provincia a provincia">
-            <div
-              className={
-                'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
-              }
-            >
-              {Object.entries(data.provincias).map(([id, seats]) => (
-                <Card
-                  key={id}
-                  render={
-                    <article
-                      className={
-                        'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
-                      }
-                    />
-                  }
-                >
-                  <CardContent>
-                    <h3>{geography.provincias[id]?.n || id}</h3>
-                    <p>
-                      {Object.entries(seats)
-                        .map(([p, n]) => `${p}: ${n}`)
-                        .join(' · ')}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </ReportSection>
-        </>
-      );
-    }
-    if (selected === 'mercados') {
-      const data = await read('encuestas/mercados.json', marketsSchema);
-      return (
-        <>
-          <ReportIntro title="Lo que apuestan los mercados">
-            <p>Precios de apuestas: no son encuestas ni probabilidades verificadas.</p>
-          </ReportIntro>
-          <div
-            className={
-              'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
-            }
-          >
-            {data.mercados.map((market) => (
-              <Card
-                key={market.slug}
-                render={
-                  <article
-                    className={
-                      'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
-                    }
-                  />
-                }
-              >
-                <CardContent>
-                  <h2>{market.pregunta}</h2>
-                  <ReportStats
-                    items={market.opciones.map((o) => [`${(o.p * 100).toFixed(1)} %`, o.nombre])}
-                  />
-                  <Source url={market.url}>Polymarket</Source>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </>
-      );
-    }
-    if (selected === 'acierto') {
-      const data = await read('encuestas/aciertos.json', accuracySchema);
-      return (
-        <>
-          <ReportIntro title="Cuánto acertaron las encuestas" />
-          <div
-            className={
-              'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
-            }
-          >
-            {data.elecciones.map((e) => (
-              <Card
-                key={e.id}
-                render={
-                  <article
-                    className={
-                      'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
-                    }
-                  />
-                }
-              >
-                <CardContent>
-                  <h2>{e.nombre}</h2>
-                  <p>Error absoluto medio: {e.media_mae} puntos</p>
-                  <div
-                    className={
-                      'cg-table overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:[border-bottom:1px_solid_var(--border)] [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:[border-bottom:1px_solid_var(--border)] [&_td]:[vertical-align:top] [&_th]:text-sm'
-                    }
-                  >
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Partido</TableHead>
-                          <TableHead>Media</TableHead>
-                          <TableHead>Resultado</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {Object.entries(e.resultado).map(([p, n]) => (
-                          <TableRow key={p}>
-                            <TableHead>{p}</TableHead>
-                            <TableCell>{e.media[p]} %</TableCell>
-                            <TableCell>{n} %</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </>
-      );
-    }
-    const filtered = polls.encuestas.filter((e) =>
-      e.empresa.toLowerCase().includes(query.toLowerCase()),
-    );
-    return (
-      <>
-        <ReportIntro title="Las encuestas">
-          <p>
-            Datos recopilados hasta el {date(polls.actualizado)}. Cada encuesta es una estimación
-            con incertidumbre.
-          </p>
-        </ReportIntro>
-        <Source url={polls.fuente}>Tabla de origen en Wikipedia</Source>
-        <Filters action={electionsHref('encuestas')} query={query} />
-        <div
-          className={
-            'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
-          }
-        >
-          {filtered.slice((page - 1) * 24, page * 24).map((e, i) => (
-            <Card
-              key={i}
-              render={
-                <article
-                  className={
-                    'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
-                  }
-                />
-              }
-            >
-              <CardContent>
-                <h3>{e.empresa}</h3>
-                <p>
-                  {date(e.ini)} → {date(e.fin)} · muestra {e.n ?? 'no publicada'}
-                </p>
-                <dl
-                  className={
-                    'cg-poll [&_>_div]:flex [&_>_div]:gap-3 [&_>_div]:items-center [&_>_div]:text-sm [&_dt]:w-16 [&_dd]:relative [&_dd]:[flex:1] [&_dd]:[text-align:right] [&_dd]:m-0 [&_dd_>_span]:absolute [&_dd_>_span]:[left:0] [&_dd_>_span]:[bottom:3px] [&_dd_>_span]:[top:3px] [&_dd_>_span]:[max-width:75%] [&_dd_>_span]:[border-radius:4px]'
-                  }
-                >
-                  {Object.entries(e.v)
-                    .sort(([, a], [, b]) => b - a)
-                    .slice(0, 6)
-                    .map(([p, n]) => (
-                      <div key={p}>
-                        <dt>{p}</dt>
-                        <dd>
-                          <span
-                            style={{
-                              width: `${n * 2}%`,
-                              background: polls.partidos.find((party) => party.id === p)?.color,
-                            }}
-                            aria-hidden="true"
-                          />
-                          {n} %
-                        </dd>
-                      </div>
-                    ))}
-                </dl>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <Pagination page={page} total={filtered.length} params={{ q: query }} />
-      </>
-    );
+    if (selected === 'proyeccion') return <Projection />;
+    if (selected === 'mercados') return <Markets />;
+    if (selected === 'acierto') return <Accuracy />;
+    return <Polls />;
   }
-  if (selected === '350') {
-    const geography = await getGeography();
-    const seats = Object.entries(election.escanos).sort(([, a], [, b]) => b - a);
-    return (
-      <>
-        <ReportIntro title="Cada escaño sale de una provincia">
-          <p>
-            Cada provincia elige al menos dos diputados (Ceuta y Melilla, uno) y el resto se reparte
-            por población.
-          </p>
-        </ReportIntro>
-        <ReportSection title="Escaños por provincia">
-          <Bars
-            rows={seats.map(([id, n]) => ({
-              label: geography.provincias[id]?.n || id,
-              value: n,
-              display: String(n),
-              href: href(`geografia/${id}`),
-            }))}
-          />
-        </ReportSection>
-      </>
-    );
-  }
-  if (selected === 'historico' || /^\d{6}$/.test(selected)) {
-    const history = await getHistory();
-    const data = /^\d{6}$/.test(selected)
-      ? history.elecciones.find((e) => e.id === selected)
-      : undefined;
-    if (/^\d{6}$/.test(selected) && !data) notFound();
-    if (data) {
-      const provinces = await read(
-        `elecciones/historico-${data.id}.json`,
-        historicalProvinceSchema,
-      );
-      const geography = await getGeography();
-      return (
-        <>
-          <ReportIntro title={`Elecciones del ${date(data.fecha)}`} />
-          <ReportStats
-            items={[
-              [data.censo, 'Censo'],
-              [data.votantes, 'Votantes'],
-            ]}
-          />
-          <ReportSection title="Resultados nacionales">
-            <div
-              className={
-                'cg-table overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:[border-bottom:1px_solid_var(--border)] [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:[border-bottom:1px_solid_var(--border)] [&_td]:[vertical-align:top] [&_th]:text-sm'
-              }
-            >
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Candidatura</TableHead>
-                    <TableHead>Votos</TableHead>
-                    <TableHead>Escaños</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.partidos.map(([id, name, , votes, seats]) => (
-                    <TableRow key={`${id}-${name}`}>
-                      <TableHead>{name}</TableHead>
-                      <TableCell>{number(votes)}</TableCell>
-                      <TableCell>{seats}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </ReportSection>
-          <ReportSection title="Por provincia">
-            <div
-              className={
-                'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
-              }
-            >
-              {Object.entries(provinces.prov).map(([id, p]) => (
-                <Card
-                  key={id}
-                  render={
-                    <Collapsible
-                      className={
-                        'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
-                      }
-                    />
-                  }
-                >
-                  <CardContent>
-                    <CollapsibleTrigger className="group flex min-h-11 w-full items-center justify-between gap-3 text-left">
-                      <span>
-                        {
-                          <>
-                            {geography.provincias[id]?.n || id} · {p.e} escaños
-                          </>
-                        }
-                      </span>
-                      <span aria-hidden="true" className="flex shrink-0 group-data-open:rotate-180">
-                        {<Icon name="abajo" size={16} />}
-                      </span>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <p>{number(p.sin_escano)} votos a candidaturas sin escaño</p>
-                      <ul>
-                        {p.c.map(([name, , votes, seats]) => (
-                          <li key={name}>
-                            {name}: {number(votes)} votos · {seats} escaños
-                          </li>
-                        ))}
-                      </ul>
-                    </CollapsibleContent>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </ReportSection>
-        </>
-      );
-    }
-    return (
-      <>
-        <ReportIntro title="Elecciones desde 1977" />
-        <div
-          className={
-            'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
-          }
-        >
-          {history.elecciones
-            .slice()
-            .reverse()
-            .map((e) => (
-              <Card
-                key={e.id}
-                render={
-                  <Link
-                    href={electionsHref(e.id)}
-                    className={
-                      'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
-                    }
-                  />
-                }
-              >
-                <CardContent>
-                  <h2>{date(e.fecha)}</h2>
-                  <ReportStats
-                    items={[
-                      [e.votantes, 'Votantes'],
-                      [`${((e.votantes / e.censo) * 100).toFixed(1)} %`, 'Participación'],
-                    ]}
-                  />
-                </CardContent>
-              </Card>
-            ))}
-        </div>
-      </>
-    );
-  }
+  if (selected === '350') return <The350 />;
+  if (selected === 'historico') return <ElectionHistory election={electionId} />;
+  if (/^\d{6}$/.test(selected)) return <Election id={selected} />;
   notFound();
 }

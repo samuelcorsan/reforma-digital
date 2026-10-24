@@ -63,7 +63,7 @@ export function ElectionsFrame({
         aria-label="Estás en"
         className="flex flex-wrap items-center gap-2 font-mono text-xs tracking-wider text-muted-foreground uppercase"
       >
-        <Link href={electionsHref()} className="text-muted-foreground">
+        <Link href={electionsHref()} className="-my-3.5 py-3.5 text-muted-foreground">
           Elecciones 29N
         </Link>
         {group && <span aria-hidden="true">/</span>}
@@ -78,7 +78,8 @@ export function ElectionsFrame({
         <span className="mr-4 flex items-center font-mono text-xs font-medium tracking-[0.08em] uppercase max-md:w-full max-md:pt-2">
           {String(g + 1).padStart(2, '0')} · {group?.name}
         </span>
-        <div className="flex overflow-x-auto max-md:w-full">
+        {/* Se desplaza en horizontal en móvil, sin barra: el subrayado de 1 px abría un scroll vertical. */}
+        <div className="flex overflow-x-auto [scrollbar-width:none] max-md:w-full [&::-webkit-scrollbar]:hidden">
           {group?.pages.map((id) => (
             <Link
               key={id}
@@ -110,7 +111,9 @@ export function ElectionsFrame({
             className="grid gap-2 rounded-xl p-6 no-underline ring-1 ring-foreground/10 hover:bg-muted max-sm:p-4"
           >
             <small className="font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
-              ← Anterior
+              <span className="inline-flex items-center gap-1.5">
+                <Icon name="izquierda" size={14} /> Anterior
+              </span>
             </small>
             <b className="text-lg font-medium">{electionPages[previous].title}</b>
           </Link>
@@ -123,7 +126,9 @@ export function ElectionsFrame({
             className="grid gap-2 rounded-xl p-6 text-right no-underline ring-1 ring-foreground/10 hover:bg-muted max-sm:p-4"
           >
             <small className="font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
-              Siguiente →
+              <span className="inline-flex items-center gap-1.5">
+                Siguiente <Icon name="derecha" size={14} />
+              </span>
             </small>
             <b className="text-lg font-medium">{electionPages[next].title}</b>
           </Link>
