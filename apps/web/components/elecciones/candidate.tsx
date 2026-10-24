@@ -12,12 +12,13 @@ import {
   interviewsOf,
   proposalScore,
   rounds,
+  topicShare,
   type Candidate,
 } from '../../lib/elecciones/interviews';
 import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon } from '../brand/icon';
 import { DataLoading } from '../congreso/loading';
-import { Dot, interviewsHref, shortDay } from './interviews';
+import { Dot, interviewsHref, ReportSections, shortDay } from './interviews';
 import { PhotoCredits, Portrait } from './portrait';
 import { Cell, Grid, Label, ReportSection, Stat } from './report';
 
@@ -80,6 +81,26 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
               verificado y lo que propone.
             </p>
           )}
+          {latest && (
+            <div className="grid gap-3">
+              {latest.pending > 0 && (
+                <p className="m-0 text-sm text-muted-foreground">
+                  Informe provisional: quedan {latest.pending} afirmaciones o momentos por revisar.
+                </p>
+              )}
+              <p className="m-0 flex flex-wrap items-center gap-2 text-sm">
+                <span className="text-muted-foreground">Temas con más tiempo:</span>
+                {topicShare(latest)
+                  .slice(0, 4)
+                  .map((t) => (
+                    <span key={t.topic} className="rounded-full px-3 py-1 ring-1 ring-border">
+                      {t.topic}{' '}
+                      <span className="text-muted-foreground tabular-nums">{t.share} %</span>
+                    </span>
+                  ))}
+              </p>
+            </div>
+          )}
           <div className="mt-auto flex flex-wrap gap-2">
             <Link
               href={interviewsHref(latest ? latest.id : 'ejemplo')}
@@ -104,6 +125,22 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
       <div className="mt-4">
         <PhotoCredits people={[c]} />
       </div>
+
+      {latest && (
+        <>
+          <ReportSections interview={latest} />
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={interviewsHref(latest.id)}
+              data-slot="button"
+              data-variant="sunset"
+              className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
+            >
+              Verla minuto a minuto <Icon name="derecha" size={16} />
+            </Link>
+          </div>
+        </>
+      )}
 
       <ReportSection
         title={`${c.party}, en cifras`}

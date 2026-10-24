@@ -221,6 +221,8 @@ const interviewSchema = z.object({
       estado: state,
     }),
   ),
+  // Silencios reales del audio [inicio, fin], para medir la pausa antes de responder.
+  silencios: z.array(z.tuple([z.number(), z.number()])).default([]),
   // Quién corta al otro antes de que termine: el candidato o el entrevistador.
   interrupciones: z
     .array(z.object({ segundo: z.number(), quien: z.enum(['candidato', 'jordi']) }))
@@ -404,6 +406,58 @@ export function speakingShare(a: Interview, who: Interview['segmentos'][number][
   return total
     ? Math.round((time(a.segmentos.filter((s) => s.hablante === who)) / total) * 100)
     : 0;
+}
+
+// Cómo habla el candidato, sobre la transcripción literal y con las mismas reglas para los cuatro.
+// Son señales observables, no un diagnóstico: no dicen si alguien está nervioso ni si es sincero.
+export function speech(a: Interview) {
+  const own = a.segmentos.filter((s) => s.hablante === 'candidato');
+  const minutes = own.reduce((t, s) => t + s.fin - s.inicio, 0) / 60 || 1;
+  const text = own
+    .map((s) => s.texto)
+    .join(' ')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  const words = text.match(/[a-zñ0-9]+/g) ?? [];
+  const flat = ` ${words.join(' ')} `;
+  // Muletillas: eh, em, mm (con sus letras repetidas), «o sea», «digamos», «en plan» y la coletilla «¿no?».
+  const fillers =
+    words.filter((w) => /^eh+$|^e+h?m+$|^m{2,}$/.test(w)).length +
+    ['o sea', 'digamos', 'en plan'].reduce((n, e) => n + flat.split(` ${e} `).length - 1, 0) +
+    (text.match(/[,¿]\s*no\s*\?/g) ?? []).length;
+  // Titubeos: la misma palabra dos veces seguidas.
+  const stutters = words.filter((w, i) => i > 0 && w === words[i - 1] && w.length < 12).length;
+  // Pausa antes de responder: el silencio del audio más cercano al paso de una pregunta del
+  // entrevistador a la respuesta del candidato.
+  const pauses = a.segmentos.flatMap((s, i) => {
+    const before = a.segmentos[i - 1];
+    if (!a.silencios.length || !before || s.hablante !== 'candidato') return [];
+    if (before.hablante !== 'jordi' || !before.texto.trim().endsWith('?')) return [];
+    const cut = (before.fin + s.inicio) / 2;
+    const near = a.silencios
+      .filter(([from, to]) => to >= cut - 2 && from <= cut + 2)
+      .sort((x, y) => Math.abs((x[0] + x[1]) / 2 - cut) - Math.abs((y[0] + y[1]) / 2 - cut))[0];
+    return near ? Math.min(near[1] - near[0], 10) : 0;
+  });
+  return {
+    pace: words.length / minutes,
+    fillers: fillers / minutes,
+    stutters: stutters / minutes,
+    pause: pauses.length ? pauses.reduce((t, p) => t + p, 0) / pauses.length : null,
+  };
+}
+
+// Cómo le trató el entrevistador.
+export function interviewer(a: Interview) {
+  const words = a.preguntas.reduce((n, p) => n + p.texto.split(/\s+/).length, 0);
+  return {
+    share: speakingShare(a, 'jordi'),
+    questionsPerMinute: a.preguntas.length / (a.duracion / 60 || 1),
+    followUps: a.preguntas.filter((p) => p.repregunta).length,
+    cuts: a.interrupciones.filter((x) => x.quien === 'jordi').length,
+    wordsPerQuestion: a.preguntas.length ? words / a.preguntas.length : 0,
+  };
 }
 
 export const proposalScore = (p: Interview['propuestas'][number]) =>
