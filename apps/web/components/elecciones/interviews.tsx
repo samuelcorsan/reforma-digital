@@ -42,17 +42,7 @@ import { AI, Source } from '../congreso/common';
 import { InterviewPlayer } from './interview-player';
 import { IconChip, MarkIcon, markIcons } from './mark-icon';
 import { PhotoCredits, Portrait } from './portrait';
-import {
-  Bars,
-  Cell,
-  Explore,
-  Grid,
-  Label,
-  ReportIntro,
-  ReportSection,
-  ReportStats,
-  Stat,
-} from './report';
+import { Bars, Cell, Explore, Grid, Label, ReportIntro, ReportSection, Stat } from './report';
 
 export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
 
@@ -633,46 +623,103 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
           será el informe de cada entrevista real.
         </Notice>
       )}
-      {a.pending > 0 && (
-        <Notice>
-          <b className="font-medium">Informe provisional.</b> Quedan {a.pending} afirmaciones o
-          momentos por revisar. Mientras tanto, la valoración solo cuenta lo que ya ha confirmado
-          una persona.
-        </Notice>
-      )}
-      {candidate && (
-        <div className="mb-6">
-          <CandidateLine candidate={candidate} />
-        </div>
-      )}
-      <ReportIntro title={interviewName(a)}>
-        <p>
-          {[where, who && `con ${who}`].filter(Boolean).join(', ')}. Publicada el{' '}
-          {longDate(a.publicado.slice(0, 10))}; dura {Math.round(a.duracion / 60)} minutos.
+      <header className="mb-12 grid justify-items-start gap-6">
+        {candidate && (
+          <Link
+            href={interviewsHref(candidate.slug)}
+            className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground no-underline hover:text-foreground"
+          >
+            <Icon name="izquierda" size={14} /> Ficha de {candidate.name}
+          </Link>
+        )}
+        <p className="m-0 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
+          <span className="text-foreground">
+            {[where, formatDate(a.publicado.slice(0, 10), { day: 'numeric', month: 'long' })]
+              .filter(Boolean)
+              .join(' · ')}
+          </span>
+          {who && <span>Con {who}</span>}
+          {round && <span>Ronda: {round.title}</span>}
+          {video && (
+            <a
+              href={video}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
+            >
+              Ver el original<span aria-hidden="true"> ↗</span>
+              <span className="sr-only"> (se abre en una pestaña nueva)</span>
+            </a>
+          )}
         </p>
+        <div className="flex items-center gap-5 max-sm:gap-4">
+          {candidate && (
+            <Portrait
+              candidate={candidate}
+              kind="avatar"
+              sizes="192px"
+              className="size-20 shrink-0 md:size-24"
+            />
+          )}
+          <div className="grid gap-2">
+            {candidate && (
+              <p className="m-0 flex items-center gap-2 font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
+                <Dot color={candidate.color} />
+                <b className="font-medium text-foreground">{candidate.short}</b> · {candidate.party}
+              </p>
+            )}
+            <h1 className="m-0 font-heading text-4xl leading-[1.05] font-normal lg:text-[60px]">
+              {interviewName(a)}
+              {candidate && <span className="text-muted-foreground"> · la entrevista</span>}
+            </h1>
+          </div>
+        </div>
+        <dl className="m-0 flex flex-wrap gap-x-10 gap-y-5">
+          {(
+            [
+              [
+                a.pending ? 'Valoración provisional' : 'Valoración',
+                decimal(a.nota.global),
+                `± ${decimal(a.nota.margen)}`,
+              ],
+              ['Al grano', `${a.stats.alGrano} %`],
+              ['Verificaciones', String(a.revisiones.length)],
+              ['Propuestas completas', String(complete)],
+              ['Duración', minute(a.duracion)],
+            ] as const
+          ).map(([name, value, aside]) => (
+            <div key={name} className="grid gap-1">
+              <dt>
+                <Label>{name}</Label>
+              </dt>
+              <dd className="m-0 font-heading text-4xl leading-none tabular-nums">
+                {value}
+                {aside && <span className="ml-1.5 text-base text-muted-foreground">{aside}</span>}
+              </dd>
+            </div>
+          ))}
+        </dl>
+        {a.pending > 0 && (
+          <p className="m-0 inline-flex items-center gap-2 rounded-2xl border border-dashed border-foreground/30 px-3.5 py-1.5 text-sm sm:rounded-full">
+            <i aria-hidden="true" className="block size-1.5 shrink-0 rounded-full bg-foreground" />
+            Quedan {a.pending} afirmaciones o momentos por revisar. La valoración puede cambiar
+            según se aprueben.
+          </p>
+        )}
         {round && !round.comparable && (
-          <p>
+          <p className="m-0 text-sm text-muted-foreground">
             Ronda «{round.title}»: {round.note ?? 'formatos distintos'}. Sus cifras no se comparan
             con las de los demás.
           </p>
         )}
-        {video && <Source url={video}>Ver la entrevista completa</Source>}
-      </ReportIntro>
-
-      <ReportStats
-        items={[
-          [
-            `${decimal(a.nota.global)} ± ${decimal(a.nota.margen)}`,
-            a.pending ? 'valoración provisional, sobre 10' : 'valoración, sobre 10',
-          ],
-          [`${a.stats.alGrano} %`, `de respuestas al grano, en ${a.preguntas.length} preguntas`],
-          [complete, complete === 1 ? 'propuesta completa' : 'propuestas completas'],
-          [
-            a.revisiones.length,
-            a.revisiones.length === 1 ? 'afirmación verificada' : 'afirmaciones verificadas',
-          ],
-        ]}
-      />
+        <p className="m-0 text-sm text-muted-foreground">
+          Temas con más tiempo:{' '}
+          {topicShare(a)
+            .slice(0, 3)
+            .map((t) => `${t.topic} (${t.share} %)`)
+            .join(' · ')}
+        </p>
+      </header>
 
       <ReportSection title="Minuto a minuto">
         <InterviewPlayer
