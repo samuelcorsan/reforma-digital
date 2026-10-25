@@ -149,7 +149,17 @@ function useClock(youtubeId: string | null, duration: number) {
     }
   };
 
-  return { time, playing, loaded, load: () => setLoaded(true), box, seek, toggle };
+  const play = useCallback(() => {
+    if (!youtubeId) setPlaying(true);
+    else if (!loaded) setLoaded(true);
+    else if (player.current && ready.current) player.current.playVideo();
+  }, [youtubeId, loaded]);
+  const pause = useCallback(() => {
+    if (!youtubeId) setPlaying(false);
+    else if (player.current && ready.current) player.current.pauseVideo();
+  }, [youtubeId]);
+
+  return { time, playing, loaded, load: () => setLoaded(true), box, seek, toggle, play, pause };
 }
 
 const legend: [Mark['kind'], string][] = [
@@ -166,6 +176,10 @@ const legend: [Mark['kind'], string][] = [
   ['ataque', 'Ataque personal'],
   ['interrumpe', 'Interrumpe'],
   ['interrumpido', 'Le interrumpen'],
+  ['verificador', 'Verificadores en plató'],
+  ['rotulo', 'En pantalla'],
+  ['documento', 'Lo enseña'],
+  ['accion', 'Acción'],
 ];
 // El recuento bajo el vídeo: lo que ha pasado hasta el segundo que suena.
 const tally: [Mark['kind'], string][] = [
@@ -233,7 +247,46 @@ export function InterviewPlayer({
   // El color de su partido, para su tiempo de palabra.
   color: string;
 }) {
-  const { time, playing, loaded, load, box, seek, toggle } = useClock(youtubeId, duration);
+  const { time, playing, loaded, load, box, seek, toggle, play, pause } = useClock(
+    youtubeId,
+    duration,
+  );
+  // El resumen: los momentos clave seguidos, de 3 s antes a 35 s después de cada uno.
+  const clips = useMemo(
+    () =>
+      marks
+        .filter((m) => m.kind === 'momento')
+        .map((m) => ({
+          mark: m,
+          from: Math.max(0, m.second - 3),
+          to: Math.min(duration, m.second + 35),
+        })),
+    [marks, duration],
+  );
+  const [summary, setSummary] = useState<number | null>(null);
+  const clip = summary == null ? undefined : clips[summary];
+  const goToClip = useCallback(
+    (i: number) => {
+      const next = clips[i];
+      if (!next) return;
+      setSummary(i);
+      seek(next.from);
+      play();
+    },
+    [clips, seek, play],
+  );
+  // Al acabar un momento, el siguiente; si mueves el vídeo fuera del momento, el resumen acaba.
+  useEffect(() => {
+    if (!clip || summary == null) return;
+    if (time < clip.from - 1 || time > clip.to + 2) setSummary(null);
+    else if (time >= clip.to) {
+      if (summary + 1 < clips.length) goToClip(summary + 1);
+      else {
+        setSummary(null);
+        pause();
+      }
+    }
+  }, [time, summary, clip, clips.length, goToClip, pause]);
   const [selected, setSelected] = useState<Mark | null>(null);
   const [hovered, setHovered] = useState<Mark | null>(null);
   const [zoom, setZoom] = useState<number | null>(null);
@@ -446,6 +499,57 @@ export function InterviewPlayer({
             )}
           </div>
         )}
+        {clips.length > 0 &&
+          (clip && summary != null ? (
+            <div className="grid gap-3 rounded-lg bg-muted p-4">
+              <span className="flex items-center justify-between gap-3 text-sm">
+                <span className="flex items-center gap-2 font-medium">
+                  <MarkIcon kind="momento" className="size-6" />
+                  Resumen · {summary + 1} de {clips.length}
+                </span>
+                <span className="flex gap-1">
+                  {summary + 1 < clips.length && (
+                    <Button variant="ghost" size="sm" onClick={() => goToClip(summary + 1)}>
+                      Siguiente
+                    </Button>
+                  )}
+                  <Button variant="ghost" size="sm" onClick={() => setSummary(null)}>
+                    Salir
+                  </Button>
+                </span>
+              </span>
+              <span className="leading-snug">
+                {clip.mark.label}: {clip.mark.text}
+              </span>
+              <span aria-hidden="true" className="relative h-1 rounded-full bg-background">
+                <i
+                  className="absolute inset-y-0 left-0 rounded-full bg-foreground"
+                  style={{
+                    width: `${Math.min(1, Math.max(0, (time - clip.from) / (clip.to - clip.from))) * 100}%`,
+                  }}
+                />
+              </span>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => goToClip(0)}
+              className="flex min-h-14 items-center gap-3 rounded-lg p-3 text-left ring-1 ring-foreground/10 transition-colors hover:bg-muted motion-reduce:transition-none"
+            >
+              <MarkIcon kind="momento" />
+              <span className="grid gap-0.5">
+                <b className="font-medium">Ver el resumen</b>
+                <span className="text-sm text-muted-foreground">
+                  Los {clips.length} momentos clave seguidos · unos{' '}
+                  {Math.max(1, Math.round(clips.reduce((t, c) => t + c.to - c.from, 0) / 60))} min
+                </span>
+              </span>
+              <span className="ml-auto">
+                <Icon name="derecha" size={16} />
+              </span>
+            </button>
+          ))}
+
         <div className="grid gap-3">
           <Label>Recuento hasta el {minute(time)}</Label>
           <dl className="m-0 grid grid-cols-4 gap-x-3 gap-y-4 max-sm:grid-cols-2">

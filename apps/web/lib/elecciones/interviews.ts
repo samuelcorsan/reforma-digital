@@ -106,6 +106,8 @@ const moment = z.enum(['anuncio', 'choque', 'titular', 'rectificacion']);
 
 export const criterionIds = criterion.options;
 export const verdictIds = verdict.options;
+export const answerIds = answer.options;
+export const visualIds = ['verificador', 'rotulo', 'documento', 'accion'] as const;
 
 export const verdicts = {
   legal: { name: 'Cierto', text: 'Es verdad', color: '#2F7A4A' },
@@ -159,6 +161,22 @@ export const moments = {
   rectificacion: { name: 'Rectificación', text: 'Reconoce un error, matiza o cambia de postura' },
 } as const satisfies Record<z.infer<typeof moment>, object>;
 
+export const visuals = {
+  verificador: {
+    name: 'Verificadores en plató',
+    text: 'Los verificadores aparecen o el entrevistador les pide comprobar un dato',
+  },
+  rotulo: { name: 'En pantalla', text: 'Rótulos, gráficos o cifras sobreimpresos en el vídeo' },
+  documento: {
+    name: 'Lo enseña',
+    text: 'Alguien muestra a cámara un papel, un gráfico u otro objeto',
+  },
+  accion: {
+    name: 'Acción',
+    text: 'Algo físico y concreto: consulta sus notas, se levanta, señala un gráfico',
+  },
+} as const;
+
 // La IA propone y una persona aprueba o descarta. Sin estado, el pipeline lo da por aprobado.
 const state = z.enum(['propuesta', 'aprobada', 'descartada']).default('aprobada');
 const source = z.object({ titulo: z.string(), url: z.string() });
@@ -207,6 +225,8 @@ const interviewSchema = z.object({
       texto: z.string(),
       respuesta: answer,
       repregunta: z.boolean().optional(),
+      // Si es una de las preguntas que se hicieron a los cuatro.
+      comun: z.boolean().optional(),
     }),
   ),
   propuestas: z.array(
@@ -241,6 +261,16 @@ const interviewSchema = z.object({
       estado: state,
     }),
   ),
+  // Lo que solo se ve en el vídeo: hechos observables, nunca gestos ni aspecto.
+  visuales: z
+    .array(
+      z.object({
+        segundo: z.number(),
+        tipo: z.enum(['verificador', 'rotulo', 'documento', 'accion']),
+        descripcion: z.string(),
+      }),
+    )
+    .default([]),
   // Silencios reales del audio [inicio, fin], para medir la pausa antes de responder.
   silencios: z.array(z.tuple([z.number(), z.number()])).default([]),
   // Quién corta al otro antes de que termine: el candidato o el entrevistador.
@@ -302,6 +332,7 @@ export const lanes = {
   verificaciones: 'Verificaciones',
   preguntas: 'Repreguntas y evasivas',
   criticas: 'Críticas e interrupciones',
+  plato: 'En plató',
 } as const;
 export type Mark = {
   id: string;
@@ -317,7 +348,8 @@ export type Mark = {
     | 'critica'
     | 'ataque'
     | 'interrumpe'
-    | 'interrumpido';
+    | 'interrumpido'
+    | keyof typeof visuals;
   label: string;
   text: string;
   detail?: string;
@@ -407,6 +439,14 @@ export function marks(a: Interview): Mark[] {
         x.quien === 'candidato'
           ? 'Corta a quien habla antes de que termine'
           : 'El entrevistador le corta antes de que termine',
+    })),
+    ...a.visuales.map((v, i) => ({
+      id: `v${i + 1}`,
+      second: v.segundo,
+      lane: 'plato' as const,
+      kind: v.tipo,
+      label: visuals[v.tipo].name,
+      text: v.descripcion,
     })),
   ];
   return list.sort((x, y) => x.second - y.second);

@@ -6,12 +6,14 @@ import { buttonVariants } from '@reforma-digital/design/ui/button';
 import { Card } from '@reforma-digital/design/ui/card';
 import { decimal, formatDate, longDate, minute } from '../../lib/elecciones/format';
 import {
+  answerIds,
   answers,
   candidates,
   criteria,
   criterionIds,
   getCandidate,
   interviewName,
+  intensityScale,
   interviewer,
   interviewsOf,
   lanes,
@@ -32,6 +34,8 @@ import {
   rounds,
   topicShare,
   verdictIds,
+  visualIds,
+  visuals,
   verdicts,
   videoUrl,
   type Candidate,
@@ -49,8 +53,9 @@ import {
   type Person,
 } from './compare-board';
 import { InterviewPlayer } from './interview-player';
-import { IconChip, MarkIcon, markIcons } from './mark-icon';
+import { answerStyles, IconChip, MarkIcon, markIcons } from './mark-icon';
 import { PhotoCredits, Portrait } from './portrait';
+import { ScoreSimulator } from './score-simulator';
 import { Bars, Cell, Explore, Grid, Label, ReportIntro, ReportSection, Stat } from './report';
 
 export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
@@ -535,6 +540,61 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
           </Cell>
         </ReportSection>
       )}
+      {a.preguntas.length > 0 && (
+        <ReportSection title={`Las ${a.preguntas.length} preguntas`}>
+          <ul className="m-0 mb-4 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-sm text-muted-foreground">
+            {answerIds.map((k) => (
+              <li key={k} className="flex items-center gap-1.5">
+                <i
+                  aria-hidden="true"
+                  className={cn('block size-3 rounded-[3px]', answerStyles[k])}
+                />
+                {answers[k]} ({a.preguntas.filter((p) => p.respuesta === k).length})
+              </li>
+            ))}
+          </ul>
+          <Grid>
+            <Cell className="gap-0 py-2 lg:py-2">
+              <ol className="m-0 grid list-none gap-x-10 p-0 md:grid-cols-2">
+                {[...a.preguntas]
+                  .sort((x, y) => x.segundo - y.segundo)
+                  .map((q) => (
+                    <li
+                      key={q.id}
+                      className="grid grid-cols-[3rem_minmax(0,1fr)] gap-3 border-b border-border py-4"
+                    >
+                      <span className="pt-0.5 font-mono text-sm text-muted-foreground tabular-nums">
+                        {minute(q.segundo)}
+                      </span>
+                      <span className="grid gap-2">
+                        <span className="leading-snug">{q.texto}</span>
+                        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                          <span className="inline-flex items-center gap-1.5">
+                            <i
+                              aria-hidden="true"
+                              className={cn(
+                                'block size-3 rounded-[3px]',
+                                answerStyles[q.respuesta],
+                              )}
+                            />
+                            {answers[q.respuesta]}
+                          </span>
+                          {q.repregunta && (
+                            <span className="inline-flex items-center gap-1.5">
+                              <MarkIcon kind="repregunta" className="size-5" /> Repregunta
+                            </span>
+                          )}
+                          {q.comun && <span>Pregunta común a los cuatro</span>}
+                        </span>
+                      </span>
+                    </li>
+                  ))}
+              </ol>
+            </Cell>
+          </Grid>
+        </ReportSection>
+      )}
+
       <Profile interview={a} />
     </>
   );
@@ -1312,6 +1372,29 @@ const rules: [Mark['kind'], string, string][] = [
   ],
 ];
 
+const officialSources = [
+  'INE',
+  'EPA',
+  'Eurostat',
+  'Banco de España',
+  'BOE',
+  'Seguridad Social',
+  'CIS',
+  'AIReF',
+  'Ministerios',
+];
+// Las señales de «Cómo habla»: nombre, unidad y qué cuenta.
+const speechSignals = [
+  ['Ritmo', 'palabras por minuto', 'Palabras por minuto mientras habla'],
+  ['Muletillas', 'por minuto', 'Veces que dice eh, em, mm, o sea, digamos, en plan o ¿no?'],
+  ['Titubeos', 'por minuto', 'Repite la misma palabra seguida (el el, que que)'],
+  [
+    'Pausa antes de responder',
+    'segundos',
+    'Tiempo medio entre la pregunta y su respuesta, medido en el audio',
+  ],
+];
+
 const fairness = [
   [
     'Escalas absolutas',
@@ -1362,10 +1445,16 @@ export function InterviewsMethod() {
         <Cell span={5} label="Las calificaciones">
           <VerdictList />
           <p className="m-0 text-sm text-muted-foreground">
-            Cada afirmación comprobable se contrasta con fuentes oficiales (INE, Eurostat, Banco de
-            España, BOE, Seguridad Social, CIS, ministerios) y se publica con sus enlaces. Ninguna
-            sale sin que una persona la confirme ni sin al menos una fuente.
+            Cada afirmación comprobable se contrasta con fuentes oficiales y se publica con sus
+            enlaces. Ninguna sale sin que una persona la confirme ni sin al menos una fuente.
           </p>
+          <ul className="m-0 flex list-none flex-wrap gap-2 p-0 text-sm">
+            {officialSources.map((name) => (
+              <li key={name} className="rounded-full px-3 py-1 ring-1 ring-border">
+                {name}
+              </li>
+            ))}
+          </ul>
         </Cell>
         <Cell span={7} label="Lo que se marca en cada entrevista">
           <dl className="m-0 grid gap-3">
@@ -1401,6 +1490,74 @@ export function InterviewsMethod() {
           </p>
         </Cell>
       </Grid>
+
+      <ReportSection title="Pon tú los pesos">
+        <p className="m-0 mb-6 max-w-[65ch] text-muted-foreground">
+          Dos candidatos ficticios con perfiles opuestos. Cambiar lo que más pesa puede cambiar
+          quién queda por delante: por eso los pesos son públicos.
+        </p>
+        <Grid>
+          <Cell>
+            <ScoreSimulator
+              criteria={criterionIds.map((id) => ({
+                id,
+                name: criteria[id].name,
+                weight: criteria[id].weight,
+              }))}
+            />
+          </Cell>
+        </Grid>
+      </ReportSection>
+
+      <ReportSection title="Lo que se mide minuto a minuto">
+        <Grid>
+          <Cell span={6} label="Intensidad">
+            <p className="m-0">
+              Por minuto: cambios de turno entre el entrevistador y el candidato (de al menos cuatro
+              palabras) + 3 × interrupciones + 2 × momentos de tensión (repreguntas, evasivas,
+              ataques personales, calificaciones que no son «Cierto» y choques).
+            </p>
+            <p className="m-0 text-sm text-muted-foreground">
+              Se dibuja con la misma escala para los cuatro: {intensityScale} puntos por minuto es
+              el máximo. Mide ida y vuelta, no emociones.
+            </p>
+          </Cell>
+          <Cell span={6} label="Cómo habla">
+            <dl className="m-0 grid gap-3">
+              {speechSignals.map(([name, unit, text]) => (
+                <div key={name}>
+                  <dt className="font-medium">
+                    {name} <span className="font-normal text-muted-foreground">({unit})</span>
+                  </dt>
+                  <dd className="m-0 text-sm text-muted-foreground">{text}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="m-0 text-sm text-muted-foreground">
+              Se cuentan sobre la transcripción literal, con la misma lista para los cuatro. Son
+              señales observables, no un diagnóstico: no dicen si alguien está nervioso ni si es
+              sincero.
+            </p>
+          </Cell>
+          <Cell label="Lo que solo se ve en el vídeo">
+            <dl className="m-0 grid gap-x-8 gap-y-3 md:grid-cols-2">
+              {visualIds.map((id) => (
+                <div key={id} className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-3">
+                  <MarkIcon kind={id} />
+                  <span>
+                    <dt className="font-medium">{visuals[id].name}</dt>
+                    <dd className="m-0 text-sm text-muted-foreground">{visuals[id].text}.</dd>
+                  </span>
+                </div>
+              ))}
+            </dl>
+            <p className="m-0 text-sm text-muted-foreground">
+              Nunca se describen expresiones, emociones ni aspecto físico: no se pueden medir igual
+              para los cuatro.
+            </p>
+          </Cell>
+        </Grid>
+      </ReportSection>
 
       <ReportSection title="Para que sea comparable">
         <Grid>

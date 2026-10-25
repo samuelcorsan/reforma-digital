@@ -5,7 +5,7 @@ import { useState, type ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { Tabs, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import type { Candidate, Mark } from '../../lib/elecciones/interviews';
-import { MarkIcon } from './mark-icon';
+import { answerStyles, MarkIcon } from './mark-icon';
 import { Portrait } from './portrait';
 import { Cell, Grid, Label } from './report';
 
@@ -43,13 +43,6 @@ const answerNames: Record<Answer, string> = {
   parcial: 'Parcial',
   evasiva: 'Evasiva',
   cambio: 'Cambio de tema',
-};
-const answerStyles: Record<Answer, string> = {
-  directa: 'bg-foreground',
-  parcial: 'bg-muted-foreground/60',
-  evasiva: 'bg-muted-foreground/25',
-  cambio:
-    'bg-[repeating-linear-gradient(45deg,var(--border)_0_3px,transparent_3px_6px)] ring-1 ring-border',
 };
 const surname = (c: Candidate) => c.name.split(' ').at(-1) ?? c.name;
 

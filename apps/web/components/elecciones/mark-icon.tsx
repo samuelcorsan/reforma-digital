@@ -18,7 +18,20 @@ export const markIcons: Record<Mark['kind'], IconName> = {
   ataque: 'rayo',
   interrumpe: 'tijeras',
   interrumpido: 'silencio',
+  verificador: 'buscar',
+  rotulo: 'pantalla',
+  documento: 'documento',
+  accion: 'mano',
 };
+
+// Cómo responde a cada pregunta: un cuadrado de tinta (directa) a trama (cambio de tema).
+export const answerStyles = {
+  directa: 'bg-foreground',
+  parcial: 'bg-muted-foreground/60',
+  evasiva: 'bg-muted-foreground/25',
+  cambio:
+    'bg-[repeating-linear-gradient(45deg,var(--border)_0_3px,transparent_3px_6px)] ring-1 ring-border',
+} as const;
 
 // Un icono en su círculo. Con color (las calificaciones), una pastilla tintada: fondo claro del
 // color, icono en su tono oscuro y un canto fino del mismo tono. Sin color, blanca con canto gris.
