@@ -15,6 +15,7 @@ import {
   getCandidate,
   getInterview,
   interviewName,
+  rounds,
   verdicts,
 } from '../../../../../lib/elecciones/interviews';
 import { electionPages } from '../../../../../lib/elecciones/pages';
@@ -29,14 +30,17 @@ const sectionPage = {
 
 type Props = { params: Promise<{ path?: string[] }> };
 
-// /entrevistas, /entrevistas/metodologia, /entrevistas/comparar, /entrevistas/<candidato>, /entrevistas/<entrevista> y
+// /entrevistas, /entrevistas/metodologia, /entrevistas/comparar(/<ronda>), /entrevistas/<candidato>, /entrevistas/<entrevista> y
 // /entrevistas/<entrevista>/<verificación>.
 function route(path: string[] = []) {
   const [id, detail, ...rest] = path;
   if (rest.length) return null;
   if (!id) return detail ? null : { kind: 'home' as const };
   if (id === 'metodologia') return detail ? null : { kind: 'method' as const };
-  if (id === 'comparar') return detail ? null : { kind: 'compare' as const };
+  if (id === 'comparar') {
+    if (detail && !rounds.some((r) => r.id === detail)) return null;
+    return { kind: 'compare' as const, round: detail };
+  }
   const candidate = getCandidate(id);
   if (candidate) return detail ? null : { kind: 'candidate' as const, candidate };
   const interview = getInterview(id);
@@ -117,7 +121,7 @@ export default async function Page({ params }: Props) {
       >
         {match.kind === 'home' && <InterviewsHome />}
         {match.kind === 'method' && <InterviewsMethod />}
-        {match.kind === 'compare' && <InterviewsCompare />}
+        {match.kind === 'compare' && <InterviewsCompare roundId={match.round} />}
         {match.kind === 'candidate' && <CandidateProfile candidate={match.candidate} />}
         {match.kind === 'interview' && <InterviewReport interview={match.interview} />}
         {match.kind === 'verification' && (

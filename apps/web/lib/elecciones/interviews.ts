@@ -5,6 +5,9 @@ import example from './entrevistas/ejemplo.json';
 // El análisis sale del pipeline de El VAR Electoral: un JSON por entrevista en ./entrevistas/
 // (`<ronda>-<candidato>.json`). Para publicar una, copia el JSON revisado ahí y añádelo a `files`.
 const files: unknown[] = [example];
+// Las preguntas que se hicieron a varios candidatos de una ronda (comando `comunes` del pipeline):
+// ./entrevistas/comunes-<ronda>.json, añadido aquí con su ronda.
+const commonFiles: Record<string, unknown> = {};
 
 // `face`: el punto medio de los ojos y el tamaño de la cara en cada foto (fracciones de su alto,
 // medidas con Vision en El VAR Electoral), para que las cuatro caras salgan igual de grandes.
@@ -423,9 +426,31 @@ export const pendingRound = (slug?: string) =>
     .find((r) =>
       roundInterviews(r.id).some((e) => !e.interview && (!slug || e.candidate.slug === slug)),
     );
-// La ronda comparable más reciente: la que enseña «Los cuatro, lado a lado».
+// La ronda comparable más reciente.
 export const comparableRound = () =>
   [...rounds].sort((x, y) => y.date.localeCompare(x.date)).find((r) => r.comparable);
+// La que abre «Los cuatro, lado a lado»: la más reciente con al menos dos entrevistas o, si no
+// hay ninguna, la próxima.
+export const compareRound = () => {
+  const recent = [...rounds].sort((x, y) => y.date.localeCompare(x.date));
+  return (
+    recent.find((r) => roundInterviews(r.id).filter((e) => e.interview).length >= 2) ??
+    pendingRound() ??
+    recent[0]
+  );
+};
+
+const commonSchema = z.array(
+  z.object({
+    id: z.string(),
+    tema: z.string(),
+    pregunta: z.string(),
+    // De cada candidato, el id de su pregunta en su entrevista.
+    respuestas: z.record(z.string(), z.string()),
+  }),
+);
+export const commonQuestions = (round: string) =>
+  round in commonFiles ? commonSchema.parse(commonFiles[round]) : [];
 
 // Las entrevistas de una ronda, por candidato. Solo las reales.
 export const roundInterviews = (round: string) =>

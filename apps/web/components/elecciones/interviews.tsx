@@ -18,7 +18,9 @@ import {
   marks,
   moments,
   proposalScore,
+  commonQuestions,
   comparableRound,
+  compareRound,
   interviewerOf,
   outlet,
   pendingRound,
@@ -39,6 +41,13 @@ import {
 import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon, type IconName } from '../brand/icon';
 import { AI, Source } from '../congreso/common';
+import {
+  CompareBoard,
+  type Common,
+  type Figure,
+  type Footprint,
+  type Person,
+} from './compare-board';
 import { InterviewPlayer } from './interview-player';
 import { IconChip, MarkIcon, markIcons } from './mark-icon';
 import { PhotoCredits, Portrait } from './portrait';
@@ -1096,88 +1105,140 @@ const metricGroups: { title: string; metrics: Metric[] }[] = [
   },
 ];
 
-// Las cuatro entrevistas de una ronda, con la misma escala y siempre en el mismo orden. Solo se
-// comparan cuando están las cuatro: con una menos, la comparación no sería justa.
-export function InterviewsCompare() {
-  const round = comparableRound();
+// «Los cuatro, lado a lado», como el comparador de El VAR Electoral: una ronda a la vez, con la
+// misma escala y siempre en el mismo orden. Las entrevistas que faltan quedan como pendientes y,
+// si la ronda no es comparable, se avisa.
+export function InterviewsCompare({ roundId }: { roundId?: string }) {
+  const round = rounds.find((r) => r.id === roundId) ?? compareRound();
   if (!round)
     return (
       <ReportIntro title="Los cuatro, lado a lado">
-        <p>
-          Solo se ponen lado a lado las rondas con el mismo formato para los cuatro. Todavía no hay
-          ninguna.
-        </p>
+        <p>Todavía no hay ninguna ronda de entrevistas.</p>
       </ReportIntro>
     );
   const entries = roundInterviews(round.id);
   const all = entries.flatMap(({ candidate, interview }) =>
     interview ? [{ candidate, interview }] : [],
   );
+  const people: Person[] = entries.map(({ candidate, interview }) => ({
+    candidate,
+    score: interview ? decimal(interview.nota.global) : null,
+    provisional: !!interview?.pending,
+    interviewId: interview?.id ?? null,
+  }));
+  const figures: Figure[] = metricGroups.flatMap((group) =>
+    group.metrics.map((m) => {
+      const values = all.map(({ interview }) => m.value(interview));
+      return {
+        group: group.title,
+        name: m.name,
+        max: Math.max(m.max, ...values),
+        kind: m.kind,
+        color: m.color,
+        values: Object.fromEntries(
+          all.map(({ candidate, interview }, i) => [
+            candidate.slug,
+            {
+              value: values[i] ?? 0,
+              display: `${m.display?.(interview) ?? String(values[i])}${m.aside ? ` ${m.aside(interview)}` : ''}`,
+            },
+          ]),
+        ),
+      };
+    }),
+  );
+  const footprint: Footprint = {
+    axes: footprintAxes.map(({ name, text }) => ({ name, text })),
+    values: Object.fromEntries(
+      all.map(({ candidate, interview }) => [
+        candidate.slug,
+        footprintAxes.map((axis) => axis.value(interview)),
+      ]),
+    ),
+  };
+  const commons: Common[] = commonQuestions(round.id).map((q) => ({
+    id: q.id,
+    topic: q.tema,
+    question: q.pregunta,
+    answers: Object.fromEntries(
+      all.flatMap(({ candidate, interview }) => {
+        const asked = interview.preguntas.find((p) => p.id === q.respuestas[candidate.slug]);
+        return asked
+          ? [
+              [
+                candidate.slug,
+                { text: asked.texto, answer: asked.respuesta, href: interviewsHref(interview.id) },
+              ],
+            ]
+          : [];
+      }),
+    ),
+  }));
+
   return (
     <>
       <ReportIntro title="Los cuatro, lado a lado">
         <p>
-          Las cuatro entrevistas de {round.title}, del {longDate(round.date)}, con la misma escala y
-          siempre en el mismo orden. No hay ganador: cada cifra se lee por separado. Las rondas con
-          formatos distintos no se comparan.
+          El perfil de cada candidato, las preguntas que se hicieron a varios y todas las cifras de
+          cada entrevista. Mismas reglas y misma escala para los cuatro, sin ganador. Solo se
+          comparan entrevistas de la misma ronda.
         </p>
       </ReportIntro>
-      {all.length < entries.length ? (
+
+      <div className="mb-12 grid justify-items-start gap-4">
+        <Label>Ronda</Label>
+        <nav aria-label="Rondas" className="flex flex-wrap gap-2">
+          {[...rounds]
+            .sort((x, y) => y.date.localeCompare(x.date))
+            .map((r) => (
+              <Link
+                key={r.id}
+                href={interviewsHref(`comparar/${r.id}`)}
+                aria-current={r.id === round.id ? 'page' : undefined}
+                className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm no-underline ring-1 ring-border hover:bg-muted aria-[current=page]:bg-foreground aria-[current=page]:text-background aria-[current=page]:ring-foreground"
+              >
+                {r.title}
+                <span className="opacity-60">· {shortDay(r.date)}</span>
+              </Link>
+            ))}
+        </nav>
+        <p className="m-0 max-w-[65ch] text-muted-foreground">{round.text}</p>
+        {!round.comparable && (
+          <p className="m-0 max-w-[65ch] rounded-xl border border-dashed border-destructive/50 px-4 py-3 text-sm text-destructive">
+            {round.note
+              ? `${round.note[0]?.toUpperCase()}${round.note.slice(1)}`
+              : 'Formatos distintos'}
+            : las cifras no se pueden comparar entre candidatos.
+          </p>
+        )}
+        {all.length < entries.length && (
+          <p className="m-0 text-sm text-muted-foreground">
+            Las entrevistas que faltan aparecen como pendientes.
+          </p>
+        )}
+      </div>
+
+      {all.length ? (
+        <CompareBoard people={people} figures={figures} footprint={footprint} commons={commons} />
+      ) : (
         <Grid>
           <Cell span={7} label="Pendiente">
             <p className="m-0 max-w-[60ch]">
-              Se comparan cuando estén publicadas y revisadas las cuatro entrevistas de la ronda.
+              Todavía no hay ninguna entrevista publicada en esta ronda.
             </p>
             <ul className="m-0 grid list-none gap-3 p-0">
-              {entries.map(({ candidate, interview }) => (
+              {entries.map(({ candidate }) => (
                 <li key={candidate.slug} className="flex items-center gap-3">
                   <Portrait candidate={candidate} kind="avatar" sizes="80px" className="size-10" />
                   <span className="font-medium">{candidate.name}</span>
-                  <span className="ml-auto text-sm text-muted-foreground">
-                    {interview ? 'Publicada' : 'Pendiente'}
-                  </span>
+                  <span className="ml-auto text-sm text-muted-foreground">Pendiente</span>
                 </li>
               ))}
             </ul>
           </Cell>
         </Grid>
-      ) : (
-        metricGroups.map((group) => (
-          <ReportSection key={group.title} title={group.title}>
-            <Grid>
-              {group.metrics.map((m) => {
-                const values = all.map(({ interview }) => m.value(interview));
-                return (
-                  <Cell
-                    key={m.name}
-                    span={6}
-                    label={
-                      m.kind ? (
-                        <MarkLabel kind={m.kind} color={m.color}>
-                          {m.name}
-                        </MarkLabel>
-                      ) : (
-                        m.name
-                      )
-                    }
-                  >
-                    <Bars
-                      max={Math.max(m.max, ...values)}
-                      rows={all.map(({ candidate, interview }, i) => ({
-                        label: m.aside ? `${candidate.name} ${m.aside(interview)}` : candidate.name,
-                        value: values[i] ?? 0,
-                        display: m.display?.(interview) ?? String(values[i]),
-                        color: candidate.color,
-                      }))}
-                    />
-                  </Cell>
-                );
-              })}
-            </Grid>
-          </ReportSection>
-        ))
       )}
-      <div className="mt-6 grid gap-6">
+      <div className="mt-12 grid gap-6">
         <p className="m-0 max-w-[65ch] text-sm text-muted-foreground">
           Las cifras son totales de cada entrevista. Si dos valoraciones se solapan con su margen,
           es un empate.{' '}
@@ -1191,6 +1252,48 @@ export function InterviewsCompare() {
     </>
   );
 }
+
+// La huella: ocho ejes, cada uno de 0 al mismo tope para los cuatro.
+const average = (values: number[]) => values.reduce((t, v) => t + v, 0) / (values.length || 1);
+const footprintAxes: { name: string; text: string; value: (a: Interview) => number }[] = [
+  {
+    name: 'Palabra',
+    text: 'Su parte del tiempo hablado',
+    value: (a) => speakingShare(a, 'candidato') / 100,
+  },
+  {
+    name: 'Directas',
+    text: 'Respuestas que van al grano',
+    value: (a) =>
+      a.preguntas.filter((p) => p.respuesta === 'directa').length / (a.preguntas.length || 1),
+  },
+  {
+    name: 'Propuestas',
+    text: 'Propuestas completas (tope: 10)',
+    value: (a) => a.propuestas.filter((p) => proposalScore(p) === 4).length / 10,
+  },
+  {
+    name: 'Intensidad',
+    text: 'Ida y vuelta por minuto, de media',
+    value: (a) => average(perMinute(a).map((m) => m.intensity)),
+  },
+  {
+    name: 'Críticas',
+    text: 'Críticas a la política de otros (tope: 20)',
+    value: (a) => a.ataques.filter((x) => x.tipo === 'politica').length / 20,
+  },
+  {
+    name: 'Interrumpe',
+    text: 'Veces que corta a quien habla (tope: 20)',
+    value: (a) => a.interrupciones.filter((x) => x.quien === 'candidato').length / 20,
+  },
+  { name: 'Ritmo', text: 'Palabras por minuto (tope: 300)', value: (a) => speech(a).pace / 300 },
+  {
+    name: 'Muletillas',
+    text: 'Muletillas por minuto (tope: 10)',
+    value: (a) => speech(a).fillers / 10,
+  },
+];
 
 const rules = [
   ['Propuesta completa', 'Dice qué, cuánto, cuándo y cómo'],
