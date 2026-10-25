@@ -22,7 +22,7 @@ export const candidates = [
     name: 'Ada Colau',
     party: 'Frente Amplio',
     short: 'FA',
-    color: '#D9701A',
+    color: '#F0522D',
     face: { x: 0.3978, y: 0.3206, size: 0.2269 },
     adjust: 1,
     author: 'Robo71',
