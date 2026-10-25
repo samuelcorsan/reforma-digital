@@ -49,6 +49,8 @@ const ORIGEN_APP = 'app://bundle';
 /** Sin empaquetar, Electron lleva su icono: en el Dock, la ventana y los diálogos va el de la app. */
 const ICONO = app.isPackaged ? undefined : path.join(RAIZ, '../build/icon.png');
 app.setName('Reforma Digital');
+// La app es solo en español: los campos de fecha se muestran como dd/mm/aaaa aunque el sistema esté en inglés.
+app.commandLine.appendSwitch('lang', 'es');
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true } },
 ]);

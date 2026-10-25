@@ -17,6 +17,8 @@ export type CampoPerfil = {
   privacidad: Sensibilidad;
   grupo: 'Identidad' | 'Documento' | 'Contacto' | 'Domicilio' | 'Otros';
   opciones?: readonly string[];
+  /** Dónde encontrar el dato, para quien no lo tiene a mano. */
+  ayuda?: string;
 };
 
 const campo = (
@@ -49,9 +51,17 @@ export const camposPerfil: readonly CampoPerfil[] = [
     'Pasaporte',
   ]),
   campo('documento_numero', 'Número de DNI, NIE o pasaporte', 'Documento', 'identificador'),
-  campo('documento_soporte', 'Número de soporte', 'Documento', 'identificador'),
+  {
+    ...campo('documento_soporte', 'Número de soporte', 'Documento', 'identificador'),
+    ayuda:
+      'Son 9 caracteres (3 letras y 6 cifras, como CAA000000). En el DNI está en el anverso, junto a «IDESP».',
+  },
   campo('documento_caducidad', 'Caducidad del documento', 'Documento', 'identificador', 'fecha'),
-  campo('nuss', 'Número de la Seguridad Social', 'Documento', 'identificador'),
+  {
+    ...campo('nuss', 'Número de la Seguridad Social', 'Documento', 'identificador'),
+    ayuda:
+      'Tiene 12 cifras. Lo encuentras en tu nómina («Nº afiliación a la Seguridad Social»), en tu informe de vida laboral o en tu tarjeta de afiliación.',
+  },
   campo('telefono', 'Teléfono', 'Contacto', 'identificador', 'telefono'),
   campo('email', 'Correo electrónico', 'Contacto', 'identificador', 'email'),
   campo('direccion', 'Dirección (calle, número, piso)', 'Domicilio', 'identificador'),
