@@ -1295,16 +1295,21 @@ const footprintAxes: { name: string; text: string; value: (a: Interview) => numb
   },
 ];
 
-const rules = [
-  ['Propuesta completa', 'Dice qué, cuánto, cuándo y cómo'],
-  ['Casi completa', 'Dice tres de esas cuatro cosas'],
-  ['Repregunta', 'El entrevistador insiste porque no le han contestado'],
-  ['Evasiva', 'Respuesta evasiva o cambio de tema'],
-  ['Crítica política', 'Crítica a la política de otro'],
-  ['Ataque personal', 'Ataque personal o descalificación'],
-  ['Interrumpe', 'El candidato corta a quien habla antes de que termine'],
-  ['Le interrumpen', 'El entrevistador corta al candidato antes de que termine'],
-  ['Momento clave', 'Anuncio, choque, titular o rectificación, aprobado por una persona'],
+// Lo que se marca en cada entrevista, con el icono que lleva en la línea de tiempo.
+const rules: [Mark['kind'], string, string][] = [
+  ['completa', 'Propuesta completa', 'Dice qué, cuánto, cuándo y cómo'],
+  ['casi', 'Casi completa', 'Dice tres de esas cuatro cosas'],
+  ['repregunta', 'Repregunta', 'El entrevistador insiste porque no le han contestado'],
+  ['evasiva', 'Evasiva', 'Respuesta evasiva o cambio de tema'],
+  ['critica', 'Crítica política', 'Crítica a la política de otro'],
+  ['ataque', 'Ataque personal', 'Ataque personal o descalificación'],
+  ['interrumpe', 'Interrumpe', 'El candidato corta a quien habla antes de que termine'],
+  ['interrumpido', 'Le interrumpen', 'El entrevistador corta al candidato antes de que termine'],
+  [
+    'momento',
+    'Momento clave',
+    'Anuncio, choque, titular o rectificación, aprobado por una persona',
+  ],
 ];
 
 const fairness = [
@@ -1364,12 +1369,15 @@ export function InterviewsMethod() {
         </Cell>
         <Cell span={7} label="Lo que se marca en cada entrevista">
           <dl className="m-0 grid gap-3">
-            {rules.map(([name, text]) => (
+            {rules.map(([kind, name, text]) => (
               <div
                 key={name}
-                className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-3 max-sm:grid-cols-1 max-sm:gap-0"
+                className="grid grid-cols-[minmax(0,12rem)_minmax(0,1fr)] items-center gap-3 max-sm:grid-cols-1 max-sm:gap-1"
               >
-                <dt className="font-medium">{name}</dt>
+                <dt className="flex items-center gap-2 font-medium">
+                  <MarkIcon kind={kind} />
+                  {name}
+                </dt>
                 <dd className="m-0 text-muted-foreground">{text}</dd>
               </div>
             ))}
@@ -1379,7 +1387,10 @@ export function InterviewsMethod() {
           <dl className="m-0 grid gap-3">
             {Object.values(moments).map((m) => (
               <div key={m.name}>
-                <dt className="font-medium">{m.name}</dt>
+                <dt className="flex items-center gap-2 font-medium">
+                  <MarkIcon kind="momento" />
+                  {m.name}
+                </dt>
                 <dd className="m-0 text-muted-foreground">{m.text}.</dd>
               </div>
             ))}
