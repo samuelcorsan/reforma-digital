@@ -514,6 +514,8 @@ export class Tramites {
     control: AbortController,
   ) {
     let actual: Extract<ItemConversacion, { tipo: 'asistente' }> | null = null;
+    // Un proveedor puede reutilizar el ID de una herramienta en otro turno.
+    const turno = randomUUID();
     // Desde cuándo trabaja el asistente en lo que sigue: el inicio del turno, el final de su último
     // texto o la respuesta de la persona. Es lo que tarda cada tanda de acciones.
     let trabajaDesde = ahora();
@@ -565,11 +567,11 @@ export class Tramites {
       } else if (e.tipo === 'actividad') {
         actual = null;
         const previo = r.conversacion.find(
-          (i): i is ItemActividad => i.tipo === 'actividad' && i.id === e.id,
+          (i): i is ItemActividad => i.tipo === 'actividad' && i.id === `${turno}:${e.id}`,
         );
         const item: ItemActividad = {
           tipo: 'actividad',
-          id: e.id,
+          id: `${turno}:${e.id}`,
           herramienta: e.herramienta,
           resumen: e.resumen,
           estado: e.estado,
@@ -583,13 +585,13 @@ export class Tramites {
         const usuario = r.conversacion.findLast((i) => i.tipo === 'usuario');
         if (usuario) usuario.protegidos = e.cantidad;
       } else if (e.tipo === 'fuentes') {
-        // Las webs nuevas cuelgan de la acción que las ha encontrado.
-        const nuevas = e.fuentes.filter((f) => !r.estado.fuentes.some((p) => p.id === f.id));
-        const accion = r.conversacion.findLast(
-          (i): i is ItemActividad => i.tipo === 'actividad' && i.estado === 'inicio',
+        const accion = r.conversacion.find(
+          (i): i is ItemActividad => i.tipo === 'actividad' && i.id === `${turno}:${e.actividad}`,
         );
-        if (accion && nuevas.length)
-          accion.fuentes = [...(accion.fuentes ?? []), ...nuevas.map((f) => f.id)];
+        if (accion)
+          accion.fuentes = [
+            ...new Set([...(accion.fuentes ?? []), ...e.consultadas.map((f) => f.id)]),
+          ];
         r.estado.fuentes = e.fuentes;
       } else if (e.tipo === 'uso') r.estado.uso = e.uso;
       this.cambio(r.id);

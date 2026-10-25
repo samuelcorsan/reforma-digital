@@ -4,6 +4,7 @@ import type { ComponentType } from 'react';
 import {
   IconAlarmClockOutline18,
   IconArrowDottedRotateAnticlockwiseOutline18,
+  IconBookOpenOutline18,
   IconCheckOutline18,
   IconChevronDownOutline18,
   IconChevronLeftOutline18,
@@ -77,6 +78,7 @@ const iconos = {
   huella: IconFingerprintOutline18,
   ajustes: IconGear2Outline18,
   web: IconGlobePointerOutline18,
+  libro: IconBookOpenOutline18,
   mano: IconHandOutline18,
   candado: IconLockOutline18,
   buscar: IconMagnifierOutline18,

@@ -35,7 +35,7 @@ jobs:
           path: artifacts/*.zip
   desktop:
     # La app de escritorio compilada (Electron, detector local y capas de privacidad) con un
-    # proveedor simulado: tests/e2e/escritorio.spec.ts. En macOS, con el llavero de prueba.
+    # proveedor simulado, incluidas las fuentes. En macOS, con el llavero de prueba.
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -52,6 +52,6 @@ jobs:
           key: detector-${{ hashFiles('packages/agent/scripts/detector.mjs') }}
       - run: pnpm --filter @reforma-digital/agent detector
       - run: pnpm --filter @reforma-digital/desktop build
-      - run: pnpm exec playwright test tests/e2e/escritorio.spec.ts
+      - run: pnpm exec playwright test tests/e2e/escritorio.spec.ts tests/e2e/escritorio-fuentes.spec.ts
         env:
           RD_ESCRITORIO: '1'

@@ -28,6 +28,7 @@ import {
   type Formulario,
   type Detector,
   type EstadoAgente,
+  type EventoAgente,
   type InfoElemento,
   type Navegador,
   type Proveedor,
@@ -112,6 +113,14 @@ describe('privacidad', () => {
 });
 
 describe('fuentes', () => {
+  it('resuelve la misma fuente por su ID y por su URL con fragmento', () => {
+    const fuentes = new Fuentes();
+    const fuente = fuentes.añadir('https://www.boe.es/prueba#requisitos', 'Requisitos', 'pagina');
+    expect(fuentes.obtener('https://www.boe.es/prueba#documentacion')).toBe(fuente);
+    expect(fuentes.obtener(' f1 ')).toBe(fuente);
+    expect(fuentes.obtener('desconocida')).toBeUndefined();
+  });
+
   it('marca como no oficiales las webs que no están en la lista', () => {
     const f = new Fuentes();
     expect(f.añadir('http://www.ayto-villacanada.es/padron', 'Padrón', 'busqueda')).toBe(undefined);
@@ -427,6 +436,44 @@ const turno = (
   });
 
 describe('agente', () => {
+  it.each(['', '#requisitos'])(
+    'atribuye una fuente revisitada con URL terminada en "%s" sin duplicarla',
+    async (fragmento) => {
+      const f = navegadorFalso(`https://sede.policia.gob.es/tramite${fragmento}`);
+      f.estado.textos = ['Información pública del trámite'];
+      const eventos: EventoAgente[] = [];
+      const leer = async (estado: EstadoAgente) => {
+        const { model } = modeloGuionado([
+          () => ({
+            llamadas: [
+              { herramienta: 'leer_texto', entrada: { desde: estado.fuentes.length ? 1 : 0 } },
+            ],
+          }),
+          () => ({ texto: 'Respuesta con fuentes' }),
+        ]);
+        return ejecutarTurno({
+          proveedor: () => proveedorDe(model),
+          anfitrion: anfitrion(f.nav),
+          estado,
+          texto: 'Lee la página',
+          evento: (e) => eventos.push(structuredClone(e)),
+          detector: detectorDePrueba,
+          signal: new AbortController().signal,
+        });
+      };
+      const primero = await leer(estadoInicial());
+      const segundo = await leer(primero.estado);
+      expect(segundo.fin).toBe('respondido');
+      expect(segundo.estado.fuentes).toHaveLength(1);
+      const consultas = eventos.filter((e) => e.tipo === 'fuentes');
+      expect(consultas).toHaveLength(2);
+      for (const consulta of consultas) {
+        expect(consulta.actividad).toBe('c1-0');
+        expect(consulta.consultadas).toMatchObject([{ id: 'F1', origen: 'pagina' }]);
+      }
+    },
+  );
+
   it('nunca envía al modelo los identificadores que escribe la persona', async () => {
     const { model, prompts } = modeloGuionado([() => ({ texto: 'Vale' })]);
     const { nav } = navegadorFalso('https://sede.policia.gob.es/cita');

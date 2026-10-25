@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button } from '@reforma-digital/design/ui/button';
+import { Sheet, SheetTrigger } from '@reforma-digital/design/ui/sheet';
 import { Notice, Response, Shimmer } from '@reforma-digital/design/chat';
 import {
   Collapsible,
@@ -10,7 +11,7 @@ import { cn } from '@reforma-digital/design/lib/utils';
 import type { Fuente, ItemConversacion, TramiteVista } from '../shared/api';
 import { cargarTramite, useEstado } from './estado';
 import { duracion, host } from './formato';
-import { Favicon } from './fuentes';
+import { Favicon, PanelFuentes } from './fuentes';
 import { Icono } from './icono';
 import { Compositor } from './inicio';
 import { Pregunta } from './preguntas';
@@ -27,6 +28,7 @@ const DE_NAVEGADOR = new Set([
 ]);
 
 type ItemActividad = Extract<ItemConversacion, { tipo: 'actividad' }>;
+type VerFuentes = (fuentes: Fuente[]) => void;
 
 /** `clave`: el elemento al que sigue, para que el «Pensando» previo y sus acciones sean el mismo. */
 type Bloque =
@@ -92,11 +94,13 @@ function Paso({
   items,
   fuentes,
   abrir,
+  verFuentes,
   conLinea,
 }: {
   items: ItemActividad[];
   fuentes: Fuente[];
   abrir: (url: string) => void;
+  verFuentes: VerFuentes;
   conLinea: boolean;
 }) {
   const herramienta = items[0]!.herramienta;
@@ -159,9 +163,13 @@ function Paso({
               </button>
             ))}
             {encontradas.length > 4 && (
-              <span className="px-1 text-sm text-muted-foreground">
-                +{encontradas.length - 4} más
-              </span>
+              <SheetTrigger
+                render={<Button variant="outline" className="min-h-11 cursor-pointer" />}
+                onClick={() => verFuentes(encontradas)}
+              >
+                Ver las {encontradas.length} fuentes
+                <Icono nombre="siguiente" />
+              </SheetTrigger>
             )}
           </div>
         )}
@@ -179,11 +187,13 @@ function Actividad({
   enCurso,
   fuentes,
   abrir,
+  verFuentes,
 }: {
   items: ItemActividad[];
   enCurso: boolean;
   fuentes: Fuente[];
   abrir: (url: string) => void;
+  verFuentes: VerFuentes;
 }) {
   const [abierta, setAbierta] = useState(enCurso);
   useSegundero(enCurso && items.length > 0);
@@ -228,6 +238,7 @@ function Actividad({
               items={g}
               fuentes={fuentes}
               abrir={abrir}
+              verFuentes={verFuentes}
               conLinea={!enCurso || n < grupos.length - 1}
             />
           ))}
@@ -251,11 +262,13 @@ function Conversacion({
   vista,
   verNavegador,
   abrirFuente,
+  verFuentes,
   alVolver,
 }: {
   vista: TramiteVista;
   verNavegador: () => void;
   abrirFuente: (url: string) => void;
+  verFuentes: VerFuentes;
   /** Tras volver a antes de un mensaje, su texto vuelve al compositor. */
   alVolver: (texto: string) => void;
 }) {
@@ -307,6 +320,7 @@ function Conversacion({
                 enCurso={trabajando && n === bloques.length - 1}
                 fuentes={vista.fuentes}
                 abrir={abrirFuente}
+                verFuentes={verFuentes}
               />
             );
           const i = b.item;
@@ -461,13 +475,13 @@ function Cola({ vista }: { vista: TramiteVista }) {
   );
 }
 
-function PanelNavegador({ vista }: { vista: TramiteVista }) {
+function PanelNavegador({ vista, oculto }: { vista: TramiteVista; oculto: boolean }) {
   const hueco = useRef<HTMLDivElement>(null);
   const nav = vista.navegador;
   const hayVista = Boolean(nav?.url);
   useLayoutEffect(() => {
     const el = hueco.current;
-    if (!el || !hayVista) return;
+    if (!el || !hayVista || oculto) return;
     const colocar = () => {
       const r = el.getBoundingClientRect();
       void window.rd.colocarNavegador(vista.id, {
@@ -487,7 +501,7 @@ function PanelNavegador({ vista }: { vista: TramiteVista }) {
       window.removeEventListener('resize', colocar);
       void window.rd.colocarNavegador(vista.id, null);
     };
-  }, [vista.id, hayVista]);
+  }, [vista.id, hayVista, oculto]);
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex items-center gap-1.5 border-b border-border px-3 py-2">
@@ -532,6 +546,8 @@ export function Tramite({ id, alBorrar }: { id: string; alBorrar: () => void }) 
   const { tramites } = useEstado();
   const vista = tramites[id];
   const [verNavegador, setVerNavegador] = useState(false);
+  const [fuentesVisibles, setFuentesVisibles] = useState(false);
+  const [seleccionFuentes, setSeleccionFuentes] = useState<Fuente[]>([]);
   const [borrador, setBorrador] = useState<{ texto: string }>();
   useEffect(() => {
     if (!vista) void cargarTramite(id);
@@ -560,94 +576,108 @@ export function Tramite({ id, alBorrar }: { id: string; alBorrar: () => void }) 
   // Mientras espera una respuesta tampoco acepta mensajes nuevos, pero se puede detener.
   const ocupado = vista.ejecucion !== 'inactivo';
   return (
-    <div className="flex h-full min-h-0">
-      <section
-        className={cn('flex min-w-0 flex-col', verNavegador ? 'w-[400px] shrink-0' : 'flex-1')}
-        aria-label="Conversación"
-      >
-        <header
-          className={cn(
-            'arrastrar flex h-[52px] shrink-0 items-center gap-2 px-6',
-            !verNavegador && 'hueco-botones',
-          )}
+    <Sheet
+      // La vista nativa queda sobre el DOM: se oculta hasta que termina de cerrarse el panel.
+      onOpenChange={(abierta) => {
+        if (abierta) setFuentesVisibles(true);
+      }}
+      onOpenChangeComplete={(abierta) => {
+        if (!abierta) setFuentesVisibles(false);
+      }}
+    >
+      <div className="flex h-full min-h-0">
+        <section
+          className={cn('flex min-w-0 flex-col', verNavegador ? 'w-[400px] shrink-0' : 'flex-1')}
+          aria-label="Conversación"
         >
-          <h1 className="m-0 truncate text-[15px] font-medium">{vista.titulo}</h1>
-          {!verNavegador && (
-            <Button
-              variant="ghost"
-              size="lg"
-              className="ml-auto hover:bg-foreground/[0.06]"
-              onClick={() => setVerNavegador(true)}
-            >
-              <Icono nombre="web" />
-              Navegador
-            </Button>
-          )}
-          <Button
-            variant="ghost"
-            size="icon-lg"
-            className={cn('hover:bg-foreground/[0.06]', verNavegador && 'ml-auto')}
-            aria-label="Borrar este trámite"
-            onClick={() => {
-              if (
-                confirm(
-                  '¿Borrar este trámite? Se borran la conversación y la sesión del navegador. Los documentos descargados se quedan en tu carpeta de Descargas.',
-                )
-              )
-                void window.rd.borrarTramite(vista.id).then(alBorrar);
-            }}
+          <header
+            className={cn(
+              'arrastrar flex h-[52px] shrink-0 items-center gap-2 px-6',
+              !verNavegador && 'hueco-botones',
+            )}
           >
-            <Icono nombre="papelera" />
-          </Button>
-        </header>
-        <Conversacion
-          vista={vista}
-          verNavegador={() => setVerNavegador(true)}
-          abrirFuente={abrirFuente}
-          alVolver={(texto) => setBorrador({ texto })}
-        />
-        {/* La conversación se funde con el lienzo justo encima del compositor. */}
-        <div className="relative mx-auto w-full max-w-[720px] px-8 pt-2 pb-6 before:pointer-events-none before:absolute before:inset-x-0 before:-top-8 before:h-8 before:bg-linear-to-b before:from-transparent before:to-muted">
-          <Cola vista={vista} />
-          <Compositor
-            placeholder={
-              trabajando
-                ? 'Añade otra petición para cuando termine'
-                : vista.aviso === 'oferta'
-                  ? 'Responde a la tarjeta o escribe otra cosa'
-                  : ocupado
-                    ? 'Responde a la tarjeta o añade otra petición'
-                    : 'Escribe al asistente'
-            }
-            borrador={borrador}
-            ocupado={ocupado}
-            alEnviar={(t) => window.rd.enviar(vista.id, t)}
-            alDetener={() => void window.rd.detener(vista.id)}
-            razonamiento={vista.razonamiento}
-            alRazonar={(razonamiento) => void window.rd.ajustarTramite(vista.id, { razonamiento })}
-          />
-        </div>
-      </section>
-      {verNavegador && (
-        <aside
-          aria-label="Navegador del trámite"
-          className="flex min-w-0 flex-1 flex-col border-l border-border bg-background"
-        >
-          <div className="arrastrar hueco-botones flex h-[52px] shrink-0 items-center gap-2 px-4">
-            <span className="text-[15px] font-medium">Navegador</span>
+            <h1 className="m-0 truncate text-[15px] font-medium">{vista.titulo}</h1>
+            {!verNavegador && (
+              <Button
+                variant="ghost"
+                size="lg"
+                className="ml-auto hover:bg-foreground/[0.06]"
+                onClick={() => setVerNavegador(true)}
+              >
+                <Icono nombre="web" />
+                Navegador
+              </Button>
+            )}
             <Button
               variant="ghost"
-              size="icon"
-              className="ml-auto"
-              aria-label="Ocultar el navegador"
-              onClick={() => setVerNavegador(false)}
+              size="icon-lg"
+              className={cn('hover:bg-foreground/[0.06]', verNavegador && 'ml-auto')}
+              aria-label="Borrar este trámite"
+              onClick={() => {
+                if (
+                  confirm(
+                    '¿Borrar este trámite? Se borran la conversación y la sesión del navegador. Los documentos descargados se quedan en tu carpeta de Descargas.',
+                  )
+                )
+                  void window.rd.borrarTramite(vista.id).then(alBorrar);
+              }}
             >
-              <Icono nombre="cerrar" />
+              <Icono nombre="papelera" />
             </Button>
+          </header>
+          <Conversacion
+            vista={vista}
+            verNavegador={() => setVerNavegador(true)}
+            abrirFuente={abrirFuente}
+            verFuentes={setSeleccionFuentes}
+            alVolver={(texto) => setBorrador({ texto })}
+          />
+          {/* La conversación se funde con el lienzo justo encima del compositor. */}
+          <div className="relative mx-auto w-full max-w-[720px] px-8 pt-2 pb-6 before:pointer-events-none before:absolute before:inset-x-0 before:-top-8 before:h-8 before:bg-linear-to-b before:from-transparent before:to-muted">
+            <Cola vista={vista} />
+            <Compositor
+              placeholder={
+                trabajando
+                  ? 'Añade otra petición para cuando termine'
+                  : vista.aviso === 'oferta'
+                    ? 'Responde a la tarjeta o escribe otra cosa'
+                    : ocupado
+                      ? 'Responde a la tarjeta o añade otra petición'
+                      : 'Escribe al asistente'
+              }
+              borrador={borrador}
+              ocupado={ocupado}
+              alEnviar={(t) => window.rd.enviar(vista.id, t)}
+              alDetener={() => void window.rd.detener(vista.id)}
+              razonamiento={vista.razonamiento}
+              alRazonar={(razonamiento) =>
+                void window.rd.ajustarTramite(vista.id, { razonamiento })
+              }
+            />
           </div>
-          <PanelNavegador vista={vista} />
-        </aside>
-      )}
-    </div>
+        </section>
+        {verNavegador && (
+          <aside
+            aria-label="Navegador del trámite"
+            className="flex min-w-0 flex-1 flex-col border-l border-border bg-background"
+          >
+            <div className="arrastrar hueco-botones flex h-[52px] shrink-0 items-center gap-2 px-4">
+              <span className="text-[15px] font-medium">Navegador</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="ml-auto"
+                aria-label="Ocultar el navegador"
+                onClick={() => setVerNavegador(false)}
+              >
+                <Icono nombre="cerrar" />
+              </Button>
+            </div>
+            <PanelNavegador vista={vista} oculto={fuentesVisibles} />
+          </aside>
+        )}
+      </div>
+      <PanelFuentes fuentes={seleccionFuentes} abrir={abrirFuente} />
+    </Sheet>
   );
 }
