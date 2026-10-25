@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@reforma-digital/design/ui/button';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { Logotipo } from '@reforma-digital/design/ui/logotipo';
@@ -184,7 +184,13 @@ function Barra({ vista, ir }: { vista: Vista; ir: (v: Vista) => void }) {
 
 export function App() {
   const { app } = useEstado();
-  const [vista, ir] = useState<Vista>({ tipo: 'inicio' });
+  const [vista, irA] = useState<Vista>({ tipo: 'inicio' });
+  const sinGuardar = useRef(false);
+  const ir = (v: Vista) => {
+    if (sinGuardar.current && !confirm('Tienes cambios sin guardar. ¿Salir sin guardarlos?'))
+      return;
+    irA(v);
+  };
   const [bienvenida, setBienvenida] = useState(() => !localStorage.getItem('bienvenida'));
   useEffect(
     () =>
@@ -212,7 +218,10 @@ export function App() {
           <Tramite key={vista.id} id={vista.id} alBorrar={() => ir({ tipo: 'inicio' })} />
         )}
         {vista.tipo === 'datos' && (
-          <MisDatos verPrivacidad={() => ir({ tipo: 'ajustes', privacidad: true })} />
+          <MisDatos
+            verPrivacidad={() => ir({ tipo: 'ajustes', privacidad: true })}
+            sinGuardar={sinGuardar}
+          />
         )}
         {vista.tipo === 'ajustes' && <Ajustes privacidad={vista.privacidad ?? false} />}
       </main>

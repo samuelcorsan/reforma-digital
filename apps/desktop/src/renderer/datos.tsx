@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@reforma-digital/design/ui/button';
 import { Input } from '@reforma-digital/design/ui/input';
 import type { CampoPerfil } from '../shared/api';
@@ -20,12 +20,29 @@ export function Cabecera({ titulo, entradilla }: { titulo: string; entradilla: s
 
 const GRUPOS: CampoPerfil['grupo'][] = ['Identidad', 'Documento', 'Contacto', 'Domicilio', 'Otros'];
 
-export function MisDatos({ verPrivacidad }: { verPrivacidad: () => void }) {
+export function MisDatos({
+  verPrivacidad,
+  sinGuardar,
+}: {
+  verPrivacidad: () => void;
+  /** Se marca mientras haya cambios sin guardar, para avisar antes de cambiar de pantalla. */
+  sinGuardar: { current: boolean };
+}) {
   const { app } = useEstado();
   const [edicion, setEdicion] = useState<Record<string, string> | null>(null);
+  const [original, setOriginal] = useState<Record<string, string>>({});
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [aviso, setAviso] = useState('');
+  useEffect(() => {
+    sinGuardar.current = Boolean(
+      edicion && app?.campos.some((c) => (edicion[c.clave] ?? '') !== (original[c.clave] ?? '')),
+    );
+    return () => {
+      sinGuardar.current = false;
+    };
+  }, [edicion, original, app, sinGuardar]);
   if (!app) return null;
+  const hayDatos = app.perfil.some((d) => d.guardado);
   const vista = new Map(app.perfil.map((d) => [d.clave, d]));
   const editar = async () => {
     const valores = await window.rd.revelarPerfil();
@@ -33,6 +50,7 @@ export function MisDatos({ verPrivacidad }: { verPrivacidad: () => void }) {
     if (!valores)
       return setAviso(app.touchId ? 'No se ha podido comprobar tu identidad con Touch ID.' : '');
     setAviso('');
+    setOriginal(valores);
     setEdicion(valores);
   };
   const guardar = async () => {
@@ -60,22 +78,27 @@ export function MisDatos({ verPrivacidad }: { verPrivacidad: () => void }) {
           </Button>
         </div>
         <div className="mb-6 flex items-center gap-3">
-          {edicion ? (
-            <>
-              <Button variant="sunset" size="lg" onClick={() => void guardar()}>
-                Guardar cambios
-              </Button>
-              <Button variant="ghost" size="lg" onClick={() => setEdicion(null)}>
-                Cancelar
-              </Button>
-            </>
-          ) : (
+          {!edicion && (
             <Button variant="outline" size="lg" onClick={() => void editar()}>
               {app.touchId && <Icono nombre="huella" />}
               Ver y editar
             </Button>
           )}
           {aviso && <p className="m-0 text-sm text-destructive">{aviso}</p>}
+          {hayDatos && (
+            <Button
+              variant="destructive"
+              size="lg"
+              className="ml-auto"
+              onClick={() => {
+                if (confirm('¿Borrar todos tus datos guardados? Los trámites se conservan.'))
+                  void window.rd.borrarDatos('perfil');
+              }}
+            >
+              <Icono nombre="papelera" />
+              Borrar mis datos
+            </Button>
+          )}
         </div>
         {GRUPOS.map((grupo) => (
           <section key={grupo} className="mb-3 rounded-[24px] bg-background p-6">
@@ -93,6 +116,25 @@ export function MisDatos({ verPrivacidad }: { verPrivacidad: () => void }) {
                       <dt className="mb-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
                         {c.privacidad === 'identificador' && <Icono nombre="candado" size={14} />}
                         {edicion ? <label htmlFor={id}>{c.etiqueta}</label> : c.etiqueta}
+                        {edicion && c.ayuda && (
+                          <span className="group/ayuda relative ml-auto">
+                            <button
+                              type="button"
+                              aria-label={`Ayuda: ${c.etiqueta}`}
+                              aria-describedby={`${id}-ayuda`}
+                              className="grid size-6 place-items-center rounded-full hover:text-foreground focus-visible:text-foreground"
+                            >
+                              <Icono nombre="info" size={16} />
+                            </button>
+                            <span
+                              id={`${id}-ayuda`}
+                              role="tooltip"
+                              className="pointer-events-none absolute right-0 bottom-full z-10 mb-1 hidden w-64 rounded-lg bg-foreground p-3 text-sm leading-snug font-normal text-background group-focus-within/ayuda:block group-hover/ayuda:block"
+                            >
+                              {c.ayuda}
+                            </span>
+                          </span>
+                        )}
                       </dt>
                       <dd className="m-0">
                         {edicion ? (
@@ -142,20 +184,19 @@ export function MisDatos({ verPrivacidad }: { verPrivacidad: () => void }) {
             </dl>
           </section>
         ))}
-        <section className="pt-5">
-          <Button
-            variant="destructive"
-            size="lg"
-            onClick={() => {
-              if (confirm('¿Borrar todos tus datos guardados? Los trámites se conservan.'))
-                void window.rd.borrarDatos('perfil');
-            }}
-          >
-            <Icono nombre="papelera" />
-            Borrar mis datos
-          </Button>
-        </section>
       </div>
+      {edicion && (
+        <div className="sticky bottom-0 border-t border-border bg-muted/95 py-4 backdrop-blur">
+          <div className="mx-auto flex max-w-[820px] items-center gap-3 px-10">
+            <Button variant="sunset" size="lg" onClick={() => void guardar()}>
+              Guardar cambios
+            </Button>
+            <Button variant="ghost" size="lg" onClick={() => setEdicion(null)}>
+              Cancelar
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
