@@ -168,7 +168,12 @@ function Entrada({
         )}
       </label>
       {c.tipo === 'varias' && c.opciones?.length ? (
-        <div id={id} role="group" aria-label={c.etiqueta} className="grid gap-2 sm:grid-cols-2">
+        <div
+          id={id}
+          role="group"
+          aria-label={c.etiqueta}
+          className="grid grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-2"
+        >
           {c.opciones.map((o) => (
             <label
               key={o}
@@ -211,7 +216,7 @@ function Entrada({
           aria-label={c.etiqueta}
           value={valor}
           onValueChange={(v) => fijar(String(v))}
-          className="grid gap-2 sm:grid-cols-2"
+          className="grid grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-2"
         >
           {(c.tipo === 'si_no' ? ['Sí', 'No'] : (c.opciones ?? [])).map((o) => (
             <label
