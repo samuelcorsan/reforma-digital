@@ -13,6 +13,7 @@ from datetime import date
 
 from . import diputados as mod_diputados, hemiciclo as mod_hemiciclo, organos as mod_organos
 from . import agenda as mod_agenda, intereses as mod_intereses, leyes as mod_leyes, preguntas as mod_preguntas
+from . import bienes as mod_bienes
 from . import explora as mod_explora, semanas as mod_semanas, temas as mod_temas, votaciones as mod_votaciones
 from .analisis import analizar, resumir_sesion, solo_cache
 from .config import DATOS, INFO_GRUPOS, LEGISLATURA_ROMANA, SESIONES, SITIO
@@ -435,6 +436,14 @@ def extras_diputados(nombres: list[str]) -> dict:
     for n in nombres:
         if (i := intereses.get(n)) and any(i[k] for k in ("actividades", "aportaciones", "regalos", "observaciones")):
             salida[n]["intereses"] = i
+    # Declaraciones de bienes del BOCG
+    bienes = mod_bienes.leer()["declaraciones"]
+    claves = {n: mod_bienes.clave(n) for n in nombres}
+    comunes = Counter(k.split(",")[0] for k in claves.values())
+    for n, k in claves.items():
+        ap = k.split(",")[0]
+        if decl := [d for b, v in bienes.items() if b == k or comunes[ap] == 1 and b.split(",")[0] == ap for d in v]:
+            salida[n]["bienes"] = sorted(decl, key=lambda d: d["fecha"])
     for comision, miembros in mod_organos.leer().items():
         for m in miembros:
             if m["nombre"] in salida and m.get("codigo") and not m.get("baja"):
@@ -451,7 +460,8 @@ def extras_diputados(nombres: list[str]) -> dict:
             if len(candidatos) == 1:
                 t = salida[candidatos[0]]["turnos"]
                 t[ses["organo"]] = t.get(ses["organo"], 0) + 1
-    return {n: e for n, e in salida.items() if e["bio"] or e["comisiones"] or e["turnos"] or e.get("intereses")}
+    return {n: e for n, e in salida.items()
+            if e["bio"] or e["comisiones"] or e["turnos"] or e.get("intereses") or e.get("bienes")}
 
 
 def resumen_preguntas(preguntas: list[dict], diputados: list[list], hoy: date | None = None) -> tuple[dict, dict]:

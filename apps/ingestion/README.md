@@ -65,7 +65,7 @@ También se mantienen `geography`, `elections`, `promises` y `reparse`. Los coma
 
 La política de encuestas importada se aplica tanto en UI como en API; la descarga completa se bloquea durante esa ventana porque contiene encuestas. El recolector deja de actualizarlas desde el inicio de la ventana, como upstream. Al cambiar de convocatoria/legislatura hay que actualizar las constantes de los módulos correspondientes, revisar los parsers y hacer una migración deliberada; no se infiere una legislatura nueva automáticamente.
 
-Los objetos originales se conservan. Se conservan las siete publicaciones más recientes y el checkpoint de recuperación; el runner elimina snapshots antiguos al publicar. Los originales se conservan por hash con su historial en el manifiesto. Configura el presupuesto de Blob según el histórico y el tráfico. El volumen de una descarga completa crece con el histórico y el coste depende de almacenamiento y transferencia, no del número de ficheros en Git.
+Los objetos originales se conservan, salvo los PDF de la Serie D del BOCG (hasta 100 MB): solo se lee su índice y la web enlaza al original. La primera ejecución lee unos 600 números; las siguientes, solo los nuevos. Se conservan las siete publicaciones más recientes y el checkpoint de recuperación; el runner elimina snapshots antiguos al publicar. Los originales se conservan por hash con su historial en el manifiesto. Configura el presupuesto de Blob según el histórico y el tráfico. El volumen de una descarga completa crece con el histórico y el coste depende de almacenamiento y transferencia, no del número de ficheros en Git.
 
 ## API y web
 

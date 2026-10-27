@@ -10,6 +10,7 @@ const config: NextConfig = {
     remotePatterns: [
       new URL('https://avatars.githubusercontent.com/u/*?s=640'),
       new URL('https://avatars.githubusercontent.com/u/*?s=160'),
+      new URL('https://www.congreso.es/docu/imgweb/diputados/*'),
     ],
   },
   // Para toda la web: nadie la mete en un iframe, el navegador no adivina tipos y los enlaces a
