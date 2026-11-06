@@ -111,9 +111,17 @@ export function sourceById(id: string): Source {
   if (!s) throw new Error('Fuente no aprobada: ' + id);
   return s;
 }
+/** decodeURI throws on a literal "%" ("IVA del 21%") or a non-UTF-8 escape; keep the raw text. */
+function safeDecodeURI(value: string): string {
+  try {
+    return decodeURI(value);
+  } catch {
+    return value;
+  }
+}
 export function documentJurisdiction(source: Source, title: string, url: string): string {
   if (source.jurisdictionValue !== 'ES') return source.jurisdictionValue;
-  const scope = decodeURI(title + ' ' + url)
+  const scope = `${safeDecodeURI(title)} ${safeDecodeURI(url)}`
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
     .toLowerCase();
