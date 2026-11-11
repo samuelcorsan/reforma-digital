@@ -166,6 +166,7 @@ const legend: [Mark['kind'], string][] = [
   ['momento', 'Momento clave'],
   ['completa', 'Propuesta completa'],
   ['casi', 'Propuesta casi completa'],
+  ['incompleta', 'Propuesta incompleta'],
   ['legal', 'Cierto'],
   ['amarilla', 'Con matices'],
   ['fuera', 'Engañoso'],
@@ -234,7 +235,6 @@ export function InterviewPlayer({
   speakers,
   marks,
   lanes,
-  empty,
   minutes,
   topics,
   color,
@@ -248,8 +248,6 @@ export function InterviewPlayer({
   speakers: Record<Interview['segmentos'][number]['hablante'], string>;
   marks: Mark[];
   lanes: typeof laneNames;
-  // Qué decir en una fila sin ninguna marca en toda la entrevista.
-  empty: Record<string, string>;
   minutes: Minute[];
   topics: Interview['temas'];
   // El color de su partido, para su tiempo de palabra.
@@ -841,6 +839,8 @@ export function InterviewPlayer({
                           className={cn(
                             'size-6',
                             !m.color && 'bg-transparent text-muted-foreground ring-0',
+                            // Sin revisar: atenuado. La etiqueta lo dice con palabras.
+                            m.provisional && 'opacity-50',
                           )}
                         />
                       </button>
@@ -848,7 +848,7 @@ export function InterviewPlayer({
                   </div>
                 ) : (
                   <span className="py-2 text-sm leading-tight text-muted-foreground">
-                    {empty[id]}
+                    Ninguna en esta entrevista
                   </span>
                 )}
               </div>
@@ -939,6 +939,10 @@ export function InterviewPlayer({
                   {name}
                 </li>
               ))}
+              <li className="flex items-center gap-2">
+                <MarkIcon kind="momento" className="opacity-50" />
+                Atenuado: propuesto por la IA, sin revisar todavía
+              </li>
             </ul>
           </CollapsibleContent>
         </Collapsible>

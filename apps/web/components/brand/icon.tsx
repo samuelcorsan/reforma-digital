@@ -10,6 +10,7 @@ import {
   IconClipboardOutline18,
   IconCreditCardOutline18,
   IconHandOutline18,
+  IconLightbulb3Outline18,
   IconEyeClosedOutline18,
   IconFileContentOutline18,
   IconInboxArrowDownOutline18,
@@ -62,6 +63,7 @@ const iconos = {
   silencio: IconMicrophoneSlashOutline18,
   pantalla: IconPresentationScreenOutline18,
   mano: IconHandOutline18,
+  idea: IconLightbulb3Outline18,
 } satisfies Record<string, Svg>;
 
 const pixelTurn = { derecha: 0, abajo: 90, izquierda: 180, arriba: 270 } as const;

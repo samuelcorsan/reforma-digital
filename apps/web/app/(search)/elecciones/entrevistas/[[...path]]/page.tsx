@@ -103,7 +103,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         og: ogOf(interview.candidato),
         title: `${verdicts[verification.veredicto].name}: «${verification.cita}» · ${interviewName(interview)}`,
         description: verification.explicacion,
-        index: !interview.ficticio,
+        // Lo que nadie ha revisado no se indexa: puede cambiar.
+        index: !interview.ficticio && verification.estado !== 'propuesta',
       });
     }
   }

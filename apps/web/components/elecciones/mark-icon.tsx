@@ -8,6 +8,7 @@ export const markIcons: Record<Mark['kind'], IconName> = {
   momento: 'estrella',
   completa: 'diana',
   casi: 'casi',
+  incompleta: 'idea',
   legal: 'hecho',
   amarilla: 'balanza',
   fuera: 'aviso',

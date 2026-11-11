@@ -236,22 +236,21 @@ const interviewSchema = z.object({
 const validSource = (f: z.infer<typeof source>) =>
   f.titulo.trim().length > 0 && /^https?:\/\/\S+\.\S+/.test(f.url);
 
-// Lo que se publica de una entrevista: solo las verificaciones aprobadas por una persona y con al
-// menos una fuente, y los momentos aprobados. Lo que la IA propuso y nadie ha revisado cuenta como
-// pendiente: mientras quede algo, el informe es provisional.
+// Lo que se publica de una entrevista: todo menos lo que una persona ha descartado, y las
+// verificaciones, solo con al menos una fuente. Lo que la IA propuso y nadie ha revisado sale como
+// provisional (`estado: 'propuesta'`) y cuenta como pendiente: mientras quede algo, el informe y su
+// valoración son provisionales.
 export function publish(raw: unknown) {
   const a = interviewSchema.parse(raw);
   const id = a.id ?? `${a.jornada}-${a.candidato}`;
-  const waiting = (list: { estado: string }[]) =>
-    list.filter((x) => x.estado === 'propuesta').length;
   return {
     ...a,
     id,
-    revisiones: a.revisiones.filter((r) => r.estado === 'aprobada' && r.fuentes.some(validSource)),
-    momentos: a.momentos.filter((m) => m.estado === 'aprobada'),
-    pending: waiting(a.revisiones) + waiting(a.momentos),
-    // Lo que falta por revisar de cada fila de la línea de tiempo.
-    waiting: { verificaciones: waiting(a.revisiones), momentos: waiting(a.momentos) },
+    revisiones: a.revisiones.filter(
+      (r) => r.estado !== 'descartada' && r.fuentes.some(validSource),
+    ),
+    momentos: a.momentos.filter((m) => m.estado !== 'descartada'),
+    pending: [...a.revisiones, ...a.momentos].filter((x) => x.estado === 'propuesta').length,
   };
 }
 export type Interview = ReturnType<typeof publish>;
@@ -286,23 +285,6 @@ export const lanes = {
   criticas: 'Críticas e interrupciones',
   plato: 'En plató',
 } as const;
-// Por qué una fila de la línea de tiempo está vacía en toda la entrevista: sin explicarlo, parece
-// un fallo.
-export function emptyLanes(a: Interview): Record<keyof typeof lanes, string> {
-  const pending = (n: number, otherwise: string) =>
-    n ? `${n} por revisar: se verán cuando una persona los confirme` : otherwise;
-  return {
-    momentos: pending(a.waiting.momentos, 'Ninguno'),
-    verificaciones: pending(a.waiting.verificaciones, 'Ninguna afirmación comprobable'),
-    propuestas: a.propuestas.length
-      ? 'Ninguna completa ni casi completa: solo entran las que dicen al menos tres de qué, cuánto, cuándo y cómo'
-      : 'Ninguna propuesta',
-    preguntas: 'Ninguna',
-    criticas: 'Ninguna',
-    plato: 'Nada en plató',
-  };
-}
-
 export type Mark = {
   id: string;
   second: number;
@@ -311,6 +293,7 @@ export type Mark = {
     | 'momento'
     | 'completa'
     | 'casi'
+    | 'incompleta'
     | z.infer<typeof verdict>
     | 'repregunta'
     | 'evasiva'
@@ -323,6 +306,8 @@ export type Mark = {
   text: string;
   detail?: string;
   color?: string;
+  // Propuesto por la IA y sin revisar todavía.
+  provisional?: boolean;
 };
 
 const missing = {
@@ -332,6 +317,31 @@ const missing = {
   como: 'el cómo',
 } as const;
 
+// La etiqueta de lo que la IA propuso y nadie ha revisado todavía.
+export const unreviewed = (label: string, estado: string) =>
+  estado === 'propuesta' ? `${label} · sin revisar` : label;
+
+// Cómo de completa es una propuesta: dice qué, cuánto, cuándo y cómo (completa), tres de esas
+// cuatro cosas (casi completa) o menos (incompleta). Todas se publican, con lo que les falta.
+export const proposalKinds = {
+  completa: 'Propuesta completa',
+  casi: 'Casi completa',
+  incompleta: 'Propuesta incompleta',
+} as const;
+export const proposalKind = (p: Interview['propuestas'][number]): keyof typeof proposalKinds => {
+  const score = proposalScore(p);
+  return score === 4 ? 'completa' : score === 3 ? 'casi' : 'incompleta';
+};
+// «Le falta el cuándo y el cómo», o qué dice si no le falta nada.
+export function lacking(p: Interview['propuestas'][number]) {
+  const lacks = (['que', 'cuanto', 'cuando', 'como'] as const)
+    .filter((k) => !p[k])
+    .map((k) => missing[k]);
+  const last = lacks.pop();
+  if (!last) return 'Dice qué, cuánto, cuándo y cómo';
+  return `Le falta ${lacks.length ? `${lacks.join(', ')} y ${last}` : last}`;
+}
+
 export function marks(a: Interview): Mark[] {
   const list: Mark[] = [
     ...a.momentos.map((m) => ({
@@ -339,22 +349,21 @@ export function marks(a: Interview): Mark[] {
       second: m.segundo,
       lane: 'momentos' as const,
       kind: 'momento' as const,
-      label: moments[m.tipo].name,
+      label: unreviewed(moments[m.tipo].name, m.estado),
       text: m.titulo,
       detail: `«${m.cita}»`,
+      provisional: m.estado === 'propuesta',
     })),
-    ...a.propuestas.flatMap((p) => {
-      const score = proposalScore(p);
-      if (score < 3) return [];
-      const lacks = (['que', 'cuanto', 'cuando', 'como'] as const).find((k) => !p[k]);
+    ...a.propuestas.map((p) => {
+      const kind = proposalKind(p);
       return {
         id: p.id,
         second: p.segundo,
         lane: 'propuestas' as const,
-        kind: lacks ? ('casi' as const) : ('completa' as const),
-        label: lacks ? 'Casi completa' : 'Propuesta completa',
+        kind,
+        label: proposalKinds[kind],
         text: p.texto,
-        detail: lacks ? `Le falta ${missing[lacks]}` : 'Qué, cuánto, cuándo y cómo',
+        detail: lacking(p),
       };
     }),
     ...a.revisiones.map((r) => ({
@@ -362,10 +371,11 @@ export function marks(a: Interview): Mark[] {
       second: r.segundo,
       lane: 'verificaciones' as const,
       kind: r.veredicto,
-      label: verdicts[r.veredicto].name,
+      label: unreviewed(verdicts[r.veredicto].name, r.estado),
       text: `«${r.cita}»`,
       detail: r.explicacion,
       color: verdicts[r.veredicto].color,
+      provisional: r.estado === 'propuesta',
     })),
     ...a.preguntas.flatMap((p) =>
       p.repregunta

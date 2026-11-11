@@ -94,8 +94,8 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
               {upcoming
                 ? `Su próxima entrevista: ${upcoming.title}, el ${longDate(upcoming.date)}. `
                 : ''}
-              Cuando una persona haya revisado el análisis, aquí estarán su valoración, lo que
-              afirma verificado, lo que propone y cómo habla.
+              En cuanto se analice, aquí estarán su valoración, lo que afirma verificado, lo que
+              propone y cómo habla.
             </p>
           )}
           {latest && (

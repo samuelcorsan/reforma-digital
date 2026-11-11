@@ -4,17 +4,18 @@ Cada entrevista es un JSON que genera el pipeline de El VAR Electoral (repositor
 solo se valida y se pinta. El contrato está en `../interviews.ts` (`interviewSchema`): si un JSON no
 lo cumple, la web falla al arrancar en lugar de publicar algo a medias.
 
-Aquí solo entra lo que ha pasado por una persona. Nunca se copian los ensayos ni la vista previa
-(`data/raw/` del VAR): son análisis de la IA sin revisar.
+Nunca se copian los ensayos ni la vista previa (`data/raw/` del VAR): son pruebas, no la entrevista
+de la ronda.
 
 ## Qué se ve en cuanto se publica
 
-- Lo que la IA saca con reglas fijas se ve desde el primer momento: transcripción, temas, preguntas y
-  cómo se respondieron, propuestas, críticas, línea de tiempo y la valoración, marcada como
-  **provisional**.
-- Las **verificaciones** y los **momentos clave** solo se ven si una persona los aprobó (`estado:
-"aprobada"`) y, las verificaciones, con al menos una fuente enlazada. Lo que queda en `propuesta`
-  cuenta como pendiente y la cabecera avisa de cuántos quedan.
+- Todo lo que saca la IA: transcripción, temas, preguntas y cómo se respondieron, propuestas (cada
+  una con lo que dice y lo que le falta), críticas, línea de tiempo, verificaciones y momentos clave.
+- Lo que nadie ha revisado (`estado: "propuesta"`) sale marcado como **sin revisar**: atenuado en la
+  línea de tiempo, con una etiqueta en las tarjetas y un aviso en la página de cada verificación,
+  que no se indexa. Mientras quede algo así, el informe y la valoración son **provisionales**.
+- Lo que una persona descarta en `/admin` desaparece. Una verificación sin ninguna fuente enlazada
+  no se publica nunca.
 
 ## El día de una ronda (13N)
 
@@ -53,9 +54,10 @@ tests/elecciones-entrevistas.test.ts`.
 9. **Publicar:** commit (`feat(elecciones): publica la entrevista del 13N a <candidato>`), push y
    despliegue, con las reglas de `AGENTS.md`.
 
-Cada tanda de revisiones en `/admin` repite los pasos 5, 6, 8 y 9: se vuelve a copiar el JSON entero
-y el historial de Git guarda cada corrección. Cuando no queda nada pendiente, la valoración deja de
-ser provisional sola.
+Con prisa, se puede publicar justo después del paso 2 (o del 3): todo sale como sin revisar. Cada
+tanda de revisiones en `/admin` repite los pasos 5, 6, 8 y 9: se vuelve a copiar el JSON entero y el
+historial de Git guarda cada corrección. Cuando no queda nada pendiente, la valoración deja de ser
+provisional sola.
 
 ## Preguntas comunes
 

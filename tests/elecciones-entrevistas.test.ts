@@ -4,6 +4,7 @@ import example from '../apps/web/lib/elecciones/entrevistas/ejemplo.json';
 import {
   intensityScale,
   interviewsOf,
+  marks,
   perMinute,
   publish,
   publishedOn,
@@ -16,7 +17,7 @@ import { candidates } from '../apps/web/lib/elecciones/candidates';
 const params = (path: string[]) => ({ params: Promise.resolve({ path }) });
 
 describe('las entrevistas', () => {
-  it('publica solo lo aprobado por una persona y con fuente, y cuenta lo pendiente', () => {
+  it('publica lo que no se ha descartado, avisa de lo que no se ha revisado y exige fuente', () => {
     const [first, second, third, ...rest] = example.revisiones;
     const raw = {
       ...example,
@@ -29,9 +30,32 @@ describe('las entrevistas', () => {
       momentos: example.momentos.map((m, i) => (i ? m : { ...m, estado: 'propuesta' })),
     };
     const a = publish(raw);
-    expect(a.revisiones.map((r) => r.id)).toEqual(rest.map((r) => r.id));
-    expect(a.momentos).toHaveLength(example.momentos.length - 1);
+    expect(a.revisiones.map((r) => r.id)).toEqual([first.id, ...rest.map((r) => r.id)]);
+    expect(a.momentos).toHaveLength(example.momentos.length);
     expect(a.pending).toBe(2);
+    const unreviewed = marks(a).filter((m) => m.provisional);
+    expect(unreviewed.map((m) => m.id).sort()).toEqual([first.id, example.momentos[0]?.id].sort());
+    expect(unreviewed.every((m) => m.label.endsWith('· sin revisar'))).toBe(true);
+  });
+
+  it('pone todas las propuestas en la línea de tiempo, con lo que les falta', () => {
+    const a = publish({
+      ...example,
+      propuestas: [
+        { id: 'p1', segundo: 10, texto: 'x', que: true, cuanto: true, cuando: true, como: true },
+        { id: 'p2', segundo: 20, texto: 'y', que: true, cuanto: true, cuando: false, como: true },
+        { id: 'p3', segundo: 30, texto: 'z', que: true, cuanto: false, cuando: false, como: false },
+      ],
+    });
+    expect(
+      marks(a)
+        .filter((m) => m.lane === 'propuestas')
+        .map((m) => [m.kind, m.detail]),
+    ).toEqual([
+      ['completa', 'Dice qué, cuánto, cuándo y cómo'],
+      ['casi', 'Le falta el cuándo'],
+      ['incompleta', 'Le falta el cuánto, el cuándo y el cómo'],
+    ]);
   });
 
   it('no mezcla la entrevista de ejemplo con los candidatos reales', async () => {

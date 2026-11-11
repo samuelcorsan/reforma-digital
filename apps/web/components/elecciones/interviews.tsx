@@ -7,7 +7,6 @@ import { Card } from '@reforma-digital/design/ui/card';
 import { decimal, formatDate, longDate, minute } from '../../lib/elecciones/format';
 import {
   allVerifications,
-  emptyLanes,
   answerIds,
   answers,
   criteria,
@@ -20,7 +19,10 @@ import {
   lanes,
   marks,
   moments,
+  proposalKind,
+  proposalKinds,
   proposalScore,
+  unreviewed,
   commonQuestions,
   comparableRound,
   compareRound,
@@ -100,6 +102,16 @@ function Verdict({ id }: { id: keyof typeof verdicts }) {
   );
 }
 
+// Lo que la IA propuso y nadie ha revisado todavía: se publica, pero avisado.
+function Unreviewed({ estado }: { estado: string }) {
+  if (estado !== 'propuesta') return null;
+  return (
+    <Badge variant="outline" className="font-mono uppercase">
+      Sin revisar
+    </Badge>
+  );
+}
+
 // Una etiqueta con el icono de su marca delante.
 function MarkLabel({
   kind,
@@ -158,7 +170,7 @@ const steps: { title: string; text: string; by?: 'IA' | 'Persona' }[] = [
   },
   {
     title: 'Revisión humana',
-    text: 'Una persona confirma cada decisión. Sin eso no se publica nada.',
+    text: 'Una persona confirma, corrige o descarta cada decisión. Hasta entonces, sale marcada como sin revisar.',
     by: 'Persona',
   },
   { title: 'El informe', text: 'Cada calificación, con su explicación y sus fuentes enlazadas.' },
@@ -437,6 +449,7 @@ function VerificationCard({
         <span className="font-mono text-sm text-muted-foreground tabular-nums">
           minuto {minute(r.segundo)}
         </span>
+        <Unreviewed estado={r.estado} />
       </p>
       {named && <p className="m-0 -mb-2 font-medium">{interviewName(a)}</p>}
       <blockquote className="m-0 font-heading text-xl leading-snug">«{r.cita}»</blockquote>
@@ -458,8 +471,11 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
     <>
       {a.revisiones.length > 0 && (
         <ReportSection title="Lo que afirma, verificado">
-          <AI label="Propuesto con IA · confirmado por una persona">
-            <p>Cada afirmación comprobable, contrastada con fuentes oficiales enlazadas.</p>
+          <AI label="Propuesto con IA · revisado por una persona">
+            <p>
+              Cada afirmación comprobable, contrastada con fuentes oficiales enlazadas. Las que
+              llevan «Sin revisar» son de la IA y una persona aún no las ha confirmado.
+            </p>
           </AI>
           <ul className="m-0 mt-6 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
             {a.revisiones.map((r) => (
@@ -480,7 +496,7 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                 span={4}
                 label={
                   <MarkLabel kind="momento">
-                    {moments[m.tipo].name} · {minute(m.segundo)}
+                    {unreviewed(moments[m.tipo].name, m.estado)} · {minute(m.segundo)}
                   </MarkLabel>
                 }
               >
@@ -497,19 +513,15 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
         <ReportSection title="Lo que propone">
           <Grid>
             {proposals.map((p) => {
-              const score = proposalScore(p);
+              const kind = proposalKind(p);
               return (
                 <Cell
                   key={p.id}
                   span={6}
                   label={
-                    score >= 3 ? (
-                      <MarkLabel kind={score === 4 ? 'completa' : 'casi'}>
-                        {score === 4 ? 'Propuesta completa' : 'Casi completa'} · {minute(p.segundo)}
-                      </MarkLabel>
-                    ) : (
-                      `Propuesta · ${minute(p.segundo)}`
-                    )
+                    <MarkLabel kind={kind}>
+                      {proposalKinds[kind]} · {minute(p.segundo)}
+                    </MarkLabel>
                   }
                 >
                   <p className="m-0 text-lg leading-snug">{p.texto}</p>
@@ -876,7 +888,6 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
           }}
           marks={marks(a)}
           lanes={lanes}
-          empty={emptyLanes(a)}
           minutes={perMinute(a)}
           topics={a.temas}
           color={candidate?.color ?? 'var(--foreground)'}
@@ -1031,6 +1042,12 @@ export function VerificationPage({
           <b className="font-medium">Ejemplo con un candidato ficticio y datos inventados.</b>
         </Notice>
       )}
+      {r.estado === 'propuesta' && (
+        <Notice>
+          <b className="font-medium">Sin revisar.</b> La calificación y las fuentes son de la IA y
+          una persona aún no las ha confirmado: pueden cambiar.
+        </Notice>
+      )}
       <Grid>
         <Cell span={8} label={`Verificación · minuto ${minute(r.segundo)}`}>
           {candidate ? (
@@ -1125,8 +1142,8 @@ export function VerificationsIndex({
     <>
       <ReportIntro title="Todo lo verificado">
         <p>
-          Cada afirmación comprobable de las entrevistas, contrastada con fuentes oficiales. Solo
-          aparece lo que una persona ha confirmado.
+          Cada afirmación comprobable de las entrevistas, contrastada con fuentes oficiales. Las que
+          llevan «Sin revisar» son de la IA y una persona aún no las ha confirmado.
         </p>
       </ReportIntro>
       {all.length === 0 ? (
@@ -1517,17 +1534,14 @@ const footprintAxes: { name: string; text: string; value: (a: Interview) => numb
 const rules: [Mark['kind'], string, string][] = [
   ['completa', 'Propuesta completa', 'Dice qué, cuánto, cuándo y cómo'],
   ['casi', 'Casi completa', 'Dice tres de esas cuatro cosas'],
+  ['incompleta', 'Propuesta incompleta', 'Dice menos: se indica lo que le falta'],
   ['repregunta', 'Repregunta', 'El entrevistador insiste porque no le han contestado'],
   ['evasiva', 'Evasiva', 'Respuesta evasiva o cambio de tema'],
   ['critica', 'Crítica política', 'Crítica a la política de otro'],
   ['ataque', 'Ataque personal', 'Ataque personal o descalificación'],
   ['interrumpe', 'Interrumpe', 'El candidato corta a quien habla antes de que termine'],
   ['interrumpido', 'Le interrumpen', 'El entrevistador corta al candidato antes de que termine'],
-  [
-    'momento',
-    'Momento clave',
-    'Anuncio, choque, titular o rectificación, aprobado por una persona',
-  ],
+  ['momento', 'Momento clave', 'Anuncio, choque, titular o rectificación, con su cita literal'],
 ];
 
 const officialSources = [
@@ -1604,7 +1618,8 @@ export function InterviewsMethod() {
           <VerdictList />
           <p className="m-0 text-sm text-muted-foreground">
             Cada afirmación comprobable se contrasta con fuentes oficiales y se publica con sus
-            enlaces. Ninguna sale sin que una persona la confirme ni sin al menos una fuente.
+            enlaces. Ninguna sale sin al menos una fuente, y hasta que una persona la confirma va
+            marcada como sin revisar.
           </p>
           <ul className="m-0 flex list-none flex-wrap gap-2 p-0 text-sm">
             {officialSources.map((name) => (
@@ -1643,8 +1658,9 @@ export function InterviewsMethod() {
             ))}
           </dl>
           <p className="m-0 text-sm text-muted-foreground">
-            Los propone la IA con una cita literal y una persona los aprueba. Se eligen por su
-            interés informativo, nunca por si favorecen o perjudican a alguien.
+            Los propone la IA con una cita literal y una persona los confirma; hasta entonces van
+            marcados como sin revisar. Se eligen por su interés informativo, nunca por si favorecen
+            o perjudican a alguien.
           </p>
         </Cell>
       </Grid>
