@@ -207,14 +207,19 @@ const at = (share: number) => `calc(${edge}px + (100% - ${2 * edge}px) * ${share
 // Los temas, en una escala de grises; el que suena va en tinta.
 const greys = ['#8f8a83', '#b3aea6', '#a29c94', '#c9c5be', '#7d7871', '#d3cfc8'];
 
-// Las marcas que se pisarían bajan a otra fila de su carril: así se ven todas.
+// Las marcas que se pisarían bajan a otra fila de su carril, hasta tres; si no caben, se
+// solapan en la fila que antes queda libre (con zoom se ven por separado).
+const maxRows = 3;
 function stack(list: Mark[], pixelsPerSecond: number) {
   const ends: number[] = [];
   const placed = list.map((mark) => {
     const x = mark.second * pixelsPerSecond;
     let row = ends.findIndex((end) => x - end >= gap);
-    if (row === -1) row = ends.push(x) - 1;
-    else ends[row] = x;
+    if (row === -1 && ends.length < maxRows) row = ends.push(x) - 1;
+    else {
+      if (row === -1) row = ends.indexOf(Math.min(...ends));
+      ends[row] = x;
+    }
     return { mark, row };
   });
   return { placed, height: 2 * half + Math.max(ends.length - 1, 0) * gap };

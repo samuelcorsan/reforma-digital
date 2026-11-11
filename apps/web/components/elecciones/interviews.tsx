@@ -25,6 +25,7 @@ import {
   interviewerOf,
   outlet,
   pendingRound,
+  publishedDay,
   perMinute,
   roundInterviews,
   roundOf,
@@ -684,6 +685,7 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
   const video = videoUrl(a);
   const where = outlet(a);
   const who = interviewerOf(a);
+  const day = publishedDay(a);
   const round = roundOf(a);
   const candidate = getCandidate(a.candidato);
   return (
@@ -720,7 +722,7 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
         <div className="grid content-start justify-items-start gap-6">
           <p className="m-0 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
             <span className="text-foreground">
-              {[where, formatDate(a.publicado.slice(0, 10), { day: 'numeric', month: 'long' })]
+              {[where, day && formatDate(day, { day: 'numeric', month: 'long' })]
                 .filter(Boolean)
                 .join(' · ')}
             </span>
@@ -731,7 +733,8 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
             {candidate && (
               <p className="m-0 flex items-center gap-2 font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
                 <Dot color={candidate.color} />
-                <b className="font-medium text-foreground">{candidate.short}</b> · {candidate.party}
+                <b className="font-medium text-foreground">{candidate.short}</b>
+                {candidate.party !== candidate.short && ` · ${candidate.party}`}
               </p>
             )}
             <h1 className="m-0 font-heading text-4xl leading-[1.05] font-normal lg:text-[56px]">

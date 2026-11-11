@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import example from '../apps/web/lib/elecciones/entrevistas/ejemplo.json';
-import { interviewsOf, publish } from '../apps/web/lib/elecciones/interviews';
+import { interviewsOf, publish, publishedOn } from '../apps/web/lib/elecciones/interviews';
 import { generateMetadata } from '../apps/web/app/(search)/elecciones/entrevistas/[[...path]]/page';
 import sitemap from '../apps/web/app/sitemap';
 
@@ -44,5 +44,10 @@ describe('las entrevistas', () => {
     expect(paths).toContain('/elecciones/entrevistas');
     expect(paths).toContain('/elecciones/entrevistas/metodologia');
     expect(paths).toContain('/elecciones/entrevistas/comparar');
+  });
+
+  it('acepta entrevistas sin fecha de publicación, como las de RTVE Play', () => {
+    expect(publishedOn(publish({ ...example, publicado: '' }))).toBeNull();
+    expect(publishedOn(publish(example))).toBe('13 de noviembre de 2026');
   });
 });

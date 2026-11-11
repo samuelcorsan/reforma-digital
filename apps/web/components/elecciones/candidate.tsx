@@ -12,6 +12,7 @@ import {
   proposalScore,
   outlet,
   pendingRound,
+  publishedOn,
   roundOf,
   topicShare,
 } from '../../lib/elecciones/interviews';
@@ -29,6 +30,7 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
   // Su entrevista más reciente hace de informe; las demás quedan listadas debajo.
   const mine = interviewsOf(c.slug);
   const latest = mine[0];
+  const latestOn = latest && publishedOn(latest);
   const upcoming = pendingRound(c.slug);
   const round = latest && roundOf(latest);
   const status = latest
@@ -91,8 +93,8 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
           {latest && (
             <div className="grid gap-3">
               <p className="m-0 text-sm text-muted-foreground">
-                Informe de su entrevista en {outlet(latest) || latest.titulo} (
-                {longDate(latest.publicado.slice(0, 10))})
+                Informe de su entrevista en {outlet(latest) || latest.titulo}
+                {latestOn && ` (${latestOn})`}
                 {round && !round.comparable
                   ? '. Sus cifras no se comparan con las de los demás: los formatos son distintos.'
                   : '.'}
@@ -153,7 +155,9 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
                   >
                     <b className="font-medium">{outlet(a) || a.titulo}</b>
                     <span className="text-sm text-muted-foreground">
-                      {longDate(a.publicado.slice(0, 10))} · {Math.round(a.duracion / 60)} min
+                      {[publishedOn(a), `${Math.round(a.duracion / 60)} min`]
+                        .filter(Boolean)
+                        .join(' · ')}
                       {i === 0 ? ' · la más reciente, su informe está debajo' : ''}
                     </span>
                   </Card>

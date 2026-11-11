@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { longDate } from './format';
 import { candidates } from './candidates';
 import example from './entrevistas/ejemplo.json';
 
@@ -395,6 +396,14 @@ export function marks(a: Interview): Mark[] {
 export const outlet = (a: Interview) =>
   [a.entrevista?.medio, a.entrevista?.programa].filter(Boolean).join(' · ');
 export const interviewerOf = (a: Interview) => a.entrevista?.entrevistador || null;
+// El día en que se publicó (AAAA-MM-DD), o nada si el pipeline no lo sabe: los vídeos fuera de
+// YouTube, como los de RTVE Play, llegan sin fecha.
+export const publishedDay = (a: Interview) => /^\d{4}-\d{2}-\d{2}/.exec(a.publicado)?.[0] ?? null;
+// «22 de octubre de 2026», o nada.
+export const publishedOn = (a: Interview) => {
+  const day = publishedDay(a);
+  return day && longDate(day);
+};
 export const roundOf = (a: Interview) => rounds.find((r) => r.id === a.jornada);
 
 // La ronda más reciente a la que aún le falta alguna entrevista (o la de un candidato, con `slug`):
