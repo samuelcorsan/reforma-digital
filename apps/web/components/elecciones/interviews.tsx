@@ -25,6 +25,7 @@ import {
   unreviewed,
   commonQuestions,
   comparableRound,
+  cancelledRound,
   compareRound,
   interviewerOf,
   outlet,
@@ -232,7 +233,8 @@ const features: { icon: IconName; color?: string; title: string; text: string }[
 export function InterviewsHome() {
   const upcoming = pendingRound();
   const compared = comparableRound();
-  const complete = !!compared && roundInterviews(compared.id).every((e) => e.interview);
+  const complete =
+    !!compared && roundInterviews(compared.id).every((e) => e.interview || e.cancelled);
   const status = upcoming ? (
     roundInterviews(upcoming.id).some((e) => e.interview) ? (
       `En revisión · ${upcoming.title}`
@@ -286,7 +288,9 @@ export function InterviewsHome() {
             {[...rounds]
               .sort((x, y) => y.date.localeCompare(x.date))
               .map((r) => {
-                const published = roundInterviews(r.id).filter((e) => e.interview).length;
+                const entries = roundInterviews(r.id);
+                const published = entries.filter((e) => e.interview).length;
+                const cancelled = entries.filter((e) => e.cancelled).map((e) => e.candidate.name);
                 return (
                   <li
                     key={r.id}
@@ -300,7 +304,8 @@ export function InterviewsHome() {
                     </span>
                     <span className="text-muted-foreground">{r.text}</span>
                     <span className="mt-1 text-sm">
-                      {published} de {candidates.length} entrevistas publicadas
+                      {published} de {entries.length - cancelled.length} entrevistas publicadas
+                      {cancelled.length > 0 && ` · Cancelada la de ${cancelled.join(' y la de ')}`}
                       {r.comparable ? '' : ` · ${r.note ?? 'No se comparan entre sí'}`}
                     </span>
                   </li>
@@ -315,6 +320,7 @@ export function InterviewsHome() {
           {candidates.map((c) => {
             const latest = interviewsOf(c.slug)[0];
             const next = pendingRound(c.slug);
+            const cancelled = cancelledRound(c.slug);
             return (
               <Card
                 key={c.slug}
@@ -335,7 +341,9 @@ export function InterviewsHome() {
                       ? `${decimal(latest.nota.global)} sobre 10${latest.pending ? ', provisional' : ''}`
                       : next
                         ? `Pendiente · ${shortDay(next.date)}`
-                        : 'Sin entrevistas'}
+                        : cancelled
+                          ? `Cancelada · ${cancelled.title}`
+                          : 'Sin entrevistas'}
                     <Icon name="derecha" size={16} />
                   </p>
                 </div>
@@ -457,6 +465,7 @@ function VerificationCard({
   verification: Verification;
   named?: boolean;
 }) {
+  const day = publishedDay(a);
   return (
     <Cell className="gap-4">
       <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -466,7 +475,19 @@ function VerificationCard({
         </span>
         <Unreviewed estado={r.estado} />
       </p>
-      {named && <p className="m-0 -mb-2 font-medium">{interviewName(a)}</p>}
+      {named && (
+        <p className="m-0 -mb-2 grid">
+          <Link
+            href={interviewsHref(a.id)}
+            className="font-medium underline-offset-4 hover:underline"
+          >
+            {interviewName(a)}
+          </Link>
+          <span className="text-sm text-muted-foreground">
+            {[outlet(a) || a.titulo, day && shortDay(day)].filter(Boolean).join(' · ')}
+          </span>
+        </p>
+      )}
       <blockquote className="m-0 font-heading text-xl leading-snug">«{r.cita}»</blockquote>
       <p className="m-0 text-muted-foreground">{r.explicacion}</p>
       <Sources items={r.fuentes} />
@@ -1371,11 +1392,12 @@ export function InterviewsCompare({ roundId }: { roundId?: string }) {
   const all = entries.flatMap(({ candidate, interview }) =>
     interview ? [{ candidate, interview }] : [],
   );
-  const people: Person[] = entries.map(({ candidate, interview }) => ({
+  const people: Person[] = entries.map(({ candidate, interview, cancelled }) => ({
     candidate,
     score: interview ? decimal(interview.nota.global) : null,
     provisional: !!interview?.pending,
     interviewId: interview?.id ?? null,
+    cancelled,
   }));
   const figures: Figure[] = metricGroups.flatMap((group) =>
     group.metrics.map((m) => {

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { longDate } from './format';
-import { candidates } from './candidates';
+import { candidates, type Candidate } from './candidates';
 import example from './entrevistas/ejemplo.json';
 
 // Las entrevistas a los candidatos del 29N, revisadas con IA y confirmadas por una persona.
@@ -21,14 +21,17 @@ type Round = {
   text: string;
   comparable: boolean;
   note?: string;
+  // Los candidatos cuya entrevista de esta ronda se canceló.
+  cancelled?: Candidate['slug'][];
 };
 export const rounds: Round[] = [
   {
     id: '13n',
     title: 'The Wild Project',
     date: '2026-11-13',
-    text: 'Jordi Wild entrevista a los cuatro candidatos por separado, sin preguntas pactadas y con dos periodistas comprobando datos en el plató. Se publican el mismo día.',
+    text: 'Jordi Wild entrevista a los candidatos por separado, sin preguntas pactadas y con dos periodistas comprobando datos en el plató. Se publican el mismo día.',
     comparable: true,
+    cancelled: ['santiago-abascal'],
   },
 ];
 
@@ -457,8 +460,15 @@ export const pendingRound = (slug?: string) =>
   [...rounds]
     .sort((x, y) => y.date.localeCompare(x.date))
     .find((r) =>
-      roundInterviews(r.id).some((e) => !e.interview && (!slug || e.candidate.slug === slug)),
+      roundInterviews(r.id).some(
+        (e) => !e.interview && !e.cancelled && (!slug || e.candidate.slug === slug),
+      ),
     );
+// La ronda más reciente en la que se canceló la entrevista a ese candidato.
+export const cancelledRound = (slug: string) =>
+  [...rounds]
+    .sort((x, y) => y.date.localeCompare(x.date))
+    .find((r) => r.cancelled?.some((s) => s === slug));
 // La ronda comparable más reciente.
 export const comparableRound = () =>
   [...rounds].sort((x, y) => y.date.localeCompare(x.date)).find((r) => r.comparable);
@@ -490,6 +500,7 @@ export const roundInterviews = (round: string) =>
   candidates.map((c) => ({
     candidate: c,
     interview: interviews.find((a) => !a.ficticio && a.jornada === round && a.candidato === c.slug),
+    cancelled: !!rounds.find((r) => r.id === round)?.cancelled?.includes(c.slug),
   }));
 
 // Qué parte del tiempo hablado es de quien se pida, en %.

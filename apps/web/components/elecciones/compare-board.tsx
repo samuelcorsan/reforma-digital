@@ -15,6 +15,7 @@ export type Person = {
   score: string | null;
   provisional: boolean;
   interviewId: string | null;
+  cancelled: boolean;
 };
 export type Figure = {
   group: string;
@@ -135,7 +136,7 @@ export function CompareBoard({
           Pulsa en uno para destacarlo en todos los gráficos.
         </p>
         <div className="grid grid-cols-2 gap-1 rounded-xl bg-background/90 p-1.5 ring-1 ring-foreground/10 backdrop-blur sm:grid-cols-4">
-          {people.map(({ candidate: c, score, provisional, interviewId }) => (
+          {people.map(({ candidate: c, score, provisional, interviewId, cancelled }) => (
             <button
               key={c.slug}
               type="button"
@@ -148,7 +149,11 @@ export function CompareBoard({
               <span className="grid min-w-0 leading-tight">
                 <b className="truncate text-sm font-medium">{surname(c)}</b>
                 <span className="text-xs text-muted-foreground">
-                  {score ? `${score} sobre 10${provisional ? ' · prov.' : ''}` : 'Pendiente'}
+                  {score
+                    ? `${score} sobre 10${provisional ? ' · prov.' : ''}`
+                    : cancelled
+                      ? 'Cancelada'
+                      : 'Pendiente'}
                 </span>
               </span>
             </button>

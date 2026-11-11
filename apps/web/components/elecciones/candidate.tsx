@@ -11,6 +11,7 @@ import {
   interviewsOf,
   proposalScore,
   outlet,
+  cancelledRound,
   pendingRound,
   publishedOn,
   roundOf,
@@ -33,6 +34,7 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
   const latest = mine[0];
   const latestOn = latest && publishedOn(latest);
   const upcoming = pendingRound(c.slug);
+  const cancelled = cancelledRound(c.slug);
   const round = latest && roundOf(latest);
   const status = latest ? (
     latest.pending ? (
@@ -45,6 +47,8 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
       Pendiente · {shortDay(upcoming.date)}
       <DaysUntil date={upcoming.date} />
     </>
+  ) : cancelled ? (
+    `Cancelada · ${cancelled.title}`
   ) : (
     'Sin entrevistas'
   );
@@ -91,11 +95,17 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
             </dl>
           ) : (
             <p className="m-0 max-w-[60ch] border-t border-border pt-6">
-              {upcoming
-                ? `Su próxima entrevista: ${upcoming.title}, el ${longDate(upcoming.date)}. `
-                : ''}
-              En cuanto se analice, aquí estarán su valoración, lo que afirma verificado, lo que
-              propone y cómo habla.
+              {upcoming ? (
+                <>
+                  Su próxima entrevista: {upcoming.title}, el {longDate(upcoming.date)}. En cuanto
+                  se analice, aquí estarán su valoración, lo que afirma verificado, lo que propone y
+                  cómo habla.
+                </>
+              ) : cancelled ? (
+                `Su entrevista en ${cancelled.title}, prevista para el ${longDate(cancelled.date)}, se canceló.`
+              ) : (
+                'Todavía no tiene ninguna entrevista revisada.'
+              )}
             </p>
           )}
           {latest && (

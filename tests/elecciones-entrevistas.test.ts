@@ -2,12 +2,15 @@ import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import example from '../apps/web/lib/elecciones/entrevistas/ejemplo.json';
 import {
+  cancelledRound,
   intensityScale,
   interviewsOf,
   marks,
   perMinute,
   publish,
+  pendingRound,
   publishedOn,
+  roundInterviews,
   speech,
 } from '../apps/web/lib/elecciones/interviews';
 import { generateMetadata } from '../apps/web/app/(search)/elecciones/entrevistas/[[...path]]/page';
@@ -92,6 +95,16 @@ describe('las entrevistas', () => {
       expect(JSON.stringify(openGraph?.images)).toContain(image);
       expect(existsSync(new URL(`../apps/web/public${image}`, import.meta.url))).toBe(true);
     }
+  });
+
+  it('no espera la entrevista cancelada de Abascal en el 13N', () => {
+    expect(pendingRound('santiago-abascal')).toBeUndefined();
+    expect(cancelledRound('santiago-abascal')?.id).toBe('13n');
+    expect(
+      roundInterviews('13n')
+        .filter((e) => e.cancelled)
+        .map((e) => e.candidate.slug),
+    ).toEqual(['santiago-abascal']);
   });
 
   it('acepta entrevistas sin fecha de publicación, como las de RTVE Play', () => {
