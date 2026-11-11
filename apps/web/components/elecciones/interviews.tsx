@@ -103,7 +103,7 @@ function Verdict({ id }: { id: keyof typeof verdicts }) {
   );
 }
 
-// Lo que la IA propuso y nadie ha revisado todavía: se publica, pero avisado.
+// Lo que aún no ha pasado la segunda revisión de IA: se publica, pero avisado.
 function Unreviewed({ estado }: { estado: string }) {
   if (estado !== 'propuesta') return null;
   return (
@@ -167,27 +167,29 @@ function Sources({ items }: { items: { titulo: string; url: string }[] }) {
   );
 }
 
-// El proceso, con quién hace cada paso: la IA propone y una persona decide.
-const steps: { title: string; text: string; by?: 'IA' | 'Persona' }[] = [
+// El proceso, con lo que hace la IA en cada paso. Nadie lo revisa a mano: lo comprueba una segunda
+// pasada de IA, y la web lo dice así.
+const steps: { title: string; text: string; ai?: boolean }[] = [
   { title: 'La entrevista entera', text: 'El vídeo completo, sin cortes ni clips.' },
   {
     title: 'Transcripción',
     text: 'Quién habla y en qué segundo: el entrevistador, el candidato u otras personas.',
+    ai: true,
   },
   {
     title: 'Análisis',
     text: 'Temas, cifras, propuestas, críticas, interrupciones y preguntas sin responder.',
-    by: 'IA',
+    ai: true,
   },
   {
     title: 'Contraste con fuentes',
     text: 'Cada afirmación comprobable, frente al INE, Eurostat, el BOE, el Banco de España…',
-    by: 'IA',
+    ai: true,
   },
   {
-    title: 'Revisión humana',
-    text: 'Una persona confirma, corrige o descarta cada decisión. Hasta entonces, sale marcada como sin revisar.',
-    by: 'Persona',
+    title: 'Segunda revisión',
+    text: 'Otra pasada de IA abre cada fuente, busca la oficial por su cuenta y confirma, corrige o descarta cada calificación. Nadie la revisa a mano.',
+    ai: true,
   },
   { title: 'El informe', text: 'Cada calificación, con su explicación y sus fuentes enlazadas.' },
 ];
@@ -393,12 +395,9 @@ export function InterviewsHome() {
                     <span className="font-mono text-sm text-muted-foreground tabular-nums">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    {step.by && (
-                      <Badge
-                        variant={step.by === 'Persona' ? 'default' : 'outline'}
-                        className="font-mono uppercase"
-                      >
-                        {step.by === 'Persona' ? 'Lo decide una persona' : 'IA'}
+                    {step.ai && (
+                      <Badge variant="outline" className="font-mono uppercase">
+                        IA
                       </Badge>
                     )}
                   </span>
@@ -507,10 +506,11 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
     <>
       {a.revisiones.length > 0 && (
         <ReportSection title="Lo que afirma, verificado">
-          <AI label="Propuesto con IA · revisado por una persona">
+          <AI label="Verificado y revisado con IA">
             <p>
-              Cada afirmación comprobable, contrastada con fuentes oficiales enlazadas. Las que
-              llevan «Sin revisar» son de la IA y una persona aún no las ha confirmado.
+              Cada afirmación comprobable, contrastada con fuentes oficiales enlazadas y comprobada
+              por una segunda revisión de IA. Nadie la revisa a mano. Las que llevan «Sin revisar»
+              aún no han pasado esa segunda revisión.
             </p>
           </AI>
           <ul className="m-0 mt-6 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
@@ -1081,8 +1081,8 @@ export function VerificationPage({
       )}
       {r.estado === 'propuesta' && (
         <Notice>
-          <b className="font-medium">Sin revisar.</b> La calificación y las fuentes son de la IA y
-          una persona aún no las ha confirmado: pueden cambiar.
+          <b className="font-medium">Sin revisar.</b> La segunda revisión de IA aún no ha comprobado
+          esta calificación ni sus fuentes: pueden cambiar.
         </Notice>
       )}
       <Grid>
@@ -1179,8 +1179,9 @@ export function VerificationsIndex({
     <>
       <ReportIntro title="Todo lo verificado">
         <p>
-          Cada afirmación comprobable de las entrevistas, contrastada con fuentes oficiales. Las que
-          llevan «Sin revisar» son de la IA y una persona aún no las ha confirmado.
+          Cada afirmación comprobable de las entrevistas, contrastada con fuentes oficiales y
+          comprobada por una segunda revisión de IA. Las que llevan «Sin revisar» aún no han pasado
+          por ella.
         </p>
       </ReportIntro>
       {all.length === 0 ? (
@@ -1632,7 +1633,8 @@ export function InterviewsMethod() {
       <ReportIntro title="Cómo se revisan las entrevistas">
         <p>
           Se mide cómo responde cada candidato, no si tiene razón: rigor, claridad y sustancia, con
-          los mismos criterios para los cuatro. La IA acelera el trabajo; las personas deciden.
+          los mismos criterios para los cuatro. Todo lo hace la IA y lo comprueba una segunda
+          revisión de IA: nadie lo revisa a mano, por eso cada dato lleva su fuente enlazada.
         </p>
       </ReportIntro>
       <Grid>
@@ -1656,8 +1658,9 @@ export function InterviewsMethod() {
           <VerdictList />
           <p className="m-0 text-sm text-muted-foreground">
             Cada afirmación comprobable se contrasta con fuentes oficiales y se publica con sus
-            enlaces. Ninguna sale sin al menos una fuente, y hasta que una persona la confirma va
-            marcada como sin revisar.
+            enlaces. Ninguna sale sin al menos una fuente. Una segunda revisión de IA abre cada
+            fuente y confirma, corrige o descarta la calificación; lo que aún no ha pasado por ella
+            va marcado como sin revisar.
           </p>
           <ul className="m-0 flex list-none flex-wrap gap-2 p-0 text-sm">
             {officialSources.map((name) => (
@@ -1696,9 +1699,9 @@ export function InterviewsMethod() {
             ))}
           </dl>
           <p className="m-0 text-sm text-muted-foreground">
-            Los propone la IA con una cita literal y una persona los confirma; hasta entonces van
-            marcados como sin revisar. Se eligen por su interés informativo, nunca por si favorecen
-            o perjudican a alguien.
+            Los elige la IA con una cita literal, que se comprueba palabra por palabra en la
+            transcripción. Se eligen por su interés informativo, nunca por si favorecen o perjudican
+            a alguien.
           </p>
         </Cell>
       </Grid>

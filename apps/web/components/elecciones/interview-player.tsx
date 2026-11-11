@@ -941,7 +941,7 @@ export function InterviewPlayer({
               ))}
               <li className="flex items-center gap-2">
                 <MarkIcon kind="momento" className="opacity-50" />
-                Atenuado: propuesto por la IA, sin revisar todavía
+                Atenuado: sin la segunda revisión de IA todavía
               </li>
             </ul>
           </CollapsibleContent>

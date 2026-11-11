@@ -939,7 +939,7 @@ export async function ElectionsHome() {
         insight={
           <>
             Cuatro candidatos y las mismas reglas: cada afirmación comprobable se contrasta con{' '}
-            <b>fuentes oficiales</b> y una persona confirma cada decisión.
+            <b>fuentes oficiales</b> y una segunda revisión de IA comprueba cada una.
           </>
         }
       >

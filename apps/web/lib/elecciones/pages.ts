@@ -104,7 +104,7 @@ export const electionPages = {
   'entrevistas/metodologia': {
     short: 'Metodología',
     title: 'Cómo se revisan las entrevistas',
-    text: 'La valoración sobre 10, sus seis criterios y sus pesos, las cuatro calificaciones de una afirmación y qué hace la IA y qué decide una persona.',
+    text: 'La valoración sobre 10, sus seis criterios y sus pesos, las cuatro calificaciones de una afirmación y cómo se verifica y se revisa con IA.',
     cta: 'Ver la metodología',
   },
 } as const;
@@ -149,7 +149,7 @@ export const electionGroups: {
   {
     name: 'Las entrevistas',
     title: 'Los candidatos, entrevista a entrevista',
-    text: 'Cuatro candidatos y las mismas reglas: cada afirmación comprobable se contrasta con fuentes oficiales y una persona confirma cada decisión.',
+    text: 'Cuatro candidatos y las mismas reglas: cada afirmación comprobable se contrasta con fuentes oficiales y una segunda revisión de IA comprueba cada una.',
     pages: [
       'entrevistas',
       'entrevistas/verificaciones',
