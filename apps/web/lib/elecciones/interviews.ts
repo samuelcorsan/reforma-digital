@@ -472,7 +472,7 @@ export const cancelledRound = (slug: string) =>
 // La ronda comparable más reciente.
 export const comparableRound = () =>
   [...rounds].sort((x, y) => y.date.localeCompare(x.date)).find((r) => r.comparable);
-// La que abre «Los cuatro, lado a lado»: la más reciente con al menos dos entrevistas o, si no
+// La que abre «Lado a lado»: la más reciente con al menos dos entrevistas o, si no
 // hay ninguna, la próxima.
 export const compareRound = () => {
   const recent = [...rounds].sort((x, y) => y.date.localeCompare(x.date));
