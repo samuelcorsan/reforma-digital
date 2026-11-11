@@ -148,7 +148,7 @@ class ClienteGemini:
 
         clave = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
         if not clave:
-            raise SystemExit("Falta GEMINI_API_KEY (ver pipeline/.env.example).")
+            raise SystemExit("Falta GEMINI_API_KEY en el .env de la raíz del repositorio (ver .env.example).")
         self.genai = genai
         self.cliente = genai.Client(api_key=clave)
         self.modelo = modelo

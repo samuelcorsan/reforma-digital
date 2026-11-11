@@ -1,23 +1,28 @@
-# Las entrevistas: el análisis
+# Cómo analizar una entrevista
 
-Convierte una entrevista en vídeo en el JSON que pinta `/elecciones/entrevistas`, lo verifica, lo revisa y lo da de
-alta en la web. Viene de El VAR Electoral, donde se probó con las entrevistas de octubre.
+Este pipeline convierte una entrevista en vídeo en lo que se ve en `/elecciones/entrevistas`: la transcripción, las
+preguntas y cómo se responden, las propuestas, las críticas, la línea de tiempo, los momentos clave y las
+afirmaciones verificadas con sus fuentes. Escribe el resultado directamente en la web y lo da de alta: para
+publicarlo solo hay que hacer commit y push.
+
+Viene de El VAR Electoral, donde se probó con las entrevistas de octubre.
+
+## Qué hace, paso a paso
 
 ```
-YouTube → yt-dlp (audio) → ffmpeg (trozos de 5 min) → Gemini: transcripción con hablantes
-       (en paralelo, Gemini lee el vídeo: contrasta las citas y anota lo que solo se ve)
-       → Gemini: temas, preguntas, propuestas, críticas, afirmaciones comprobables y momentos clave
-       → cada cita se busca literal en la transcripción: si no aparece, se descarta
-       → verificación: Gemini + búsqueda de Google, con fuentes oficiales y el dato concreto citado
-       → segunda revisión: otro paso de Gemini abre cada fuente, busca la oficial por su cuenta y
-         confirma, corrige o descarta
-       → métricas y valoración calculadas con código
-       → apps/web/lib/elecciones/entrevistas/<ronda>-<candidato>.json y su alta en index.ts
+YouTube ─► yt-dlp (audio) ─► ffmpeg (trozos de 5 min) ─► Gemini: transcripción con quién habla
+                           (a la vez, Gemini ve el vídeo: contrasta las citas y anota lo que solo se ve)
+        ─► Gemini: temas, preguntas, propuestas, críticas, afirmaciones comprobables y momentos clave
+        ─► cada cita se busca palabra por palabra en la transcripción: si no está, se descarta
+        ─► verificación: Gemini busca en Google y lee las páginas, con fuentes oficiales
+        ─► segunda revisión: otro paso de Gemini abre cada fuente, busca la oficial por su cuenta
+           y confirma, corrige o descarta
+        ─► valoración y cifras calculadas con código
+        ─► apps/web/lib/elecciones/entrevistas/<ronda>-<candidato>.json + su alta en index.ts
 ```
 
-**Nadie revisa a mano lo que sale.** Lo publicado es lo que confirma la segunda revisión de IA, y la web lo dice
-así. Por eso los prompts ([`prompts.py`](prompts.py)) piden ser exhaustivo, contrastar cada dato con su fuente
-primaria y citar de dónde sale cada cifra, con las mismas reglas en las dos pasadas (`REGLAS_FUENTES`):
+**Nadie revisa a mano lo que sale**, y la web lo dice así. Por eso las dos pasadas de IA siguen las mismas reglas
+estrictas (`REGLAS_FUENTES` en [`prompts.py`](prompts.py)):
 
 - Las anécdotas (lo que alguien dice haber visto u oído, lo que pasó en privado) no se verifican: ninguna fuente
   puede confirmarlas ni desmentirlas.
@@ -25,99 +30,161 @@ primaria y citar de dónde sale cada cifra, con las mismas reglas en las dos pas
 - Una verificación sin ninguna fuente que la respalde no se publica nunca.
 - Un Falso o un Engañoso necesita al menos un enlace a una fuente oficial o primaria (los dominios de `OFICIALES`
   en [`modelo.py`](modelo.py)). Si no lo hay, se descarta aunque la explicación parezca buena.
-  Las métricas que no decide el modelo (tiempo de palabra, intensidad, interrupciones) salen con reglas fijas.
+
+El tiempo de palabra, la intensidad y las interrupciones no los decide el modelo: salen de reglas fijas.
 
 Usa Gemini y no NaN, como el resto de Reforma Digital, porque necesita un modelo que escuche el audio, vea el vídeo y
 busque en la web. Solo recibe vídeos públicos de entrevistas, nunca datos de nadie.
 
-## Instalación
+## 1. Lo que necesitas
 
-Necesitas Python 3.12+ y `ffmpeg` (`brew install ffmpeg`). Desde la raíz del repositorio:
+- macOS o Linux con **Python 3.12 o más** (`python3 --version`). En macOS, si sale una versión vieja:
+  `brew install python@3.14`.
+- **ffmpeg**: `brew install ffmpeg` (en Linux, `apt install ffmpeg`).
+- **Node 24 y pnpm**, para ver el resultado en la web (`pnpm install` en la raíz, como para el resto del repo).
+- Una **clave de Gemini** con la facturación activa. Se crea en [Google AI Studio](https://aistudio.google.com/).
+  Con el plan gratuito (cinco peticiones por minuto) el pipeline se para en seco con un aviso.
+
+## 2. Instalación (una vez)
+
+Desde la raíz del repositorio:
 
 ```sh
 python3 -m venv .cache/congreso-python
 .cache/congreso-python/bin/python -m pip install -r apps/ingestion/requirements.txt
 ```
 
-Pon `GEMINI_API_KEY` en el `.env` de la raíz (ver `.env.example`). La clave necesita facturación activa: el plan
-gratuito permite cinco peticiones por minuto y el pipeline se para en seco.
+Añade la clave al `.env` de la raíz (cópialo de `.env.example` si no lo tienes). El `.env` no se sube nunca: está
+en `.gitignore`.
 
-Todos los comandos se lanzan desde `apps/ingestion`:
+```sh
+GEMINI_API_KEY=tu-clave
+```
+
+A partir de aquí, todos los comandos se lanzan desde `apps/ingestion`:
 
 ```sh
 cd apps/ingestion
 PY=../../.cache/congreso-python/bin/python
 ```
 
-## El día de una ronda
-
-1. **El día antes**, actualiza yt-dlp (YouTube cambia a menudo y las versiones viejas reciben un 403):
-
-   ```sh
-   $PY -m pip install -U "yt-dlp[default,curl-cffi]"
-   ```
-
-2. **Analiza** cada entrevista. En el ensayo de La Revuelta (103 min de vídeo) tardó 6,5 min y costó 1,70 USD,
-   antes de añadir la segunda revisión, que suma unos minutos y algunos céntimos más:
-
-   ```sh
-   $PY -m entrevistas analizar "https://www.youtube.com/watch?v=…" --candidato pedro-sanchez
-   ```
-
-   - Por defecto es la ronda `13n` en The Wild Project. Otra ronda u otro medio:
-     `--jornada octubre --medio "Cadena SER" --programa "Hoy por Hoy" --entrevistador "Aimar Bretos"`. La ronda
-     tiene que existir en `rounds` (`apps/web/lib/elecciones/interviews.ts`).
-   - Los `--candidato` son los `slug` de `apps/web/lib/elecciones/candidates.ts`.
-   - Escribe `apps/web/lib/elecciones/entrevistas/13n-pedro-sanchez.json` y lo da de alta en `index.ts`.
-
-3. **Mira el log.** Si sale **⚠ LOS TIEMPOS NO CUADRAN CON EL VÍDEO**, la transcripción va desplazada respecto al
-   vídeo: no lo publiques y repite con `--modo audio`. Fuera de YouTube no hay subtítulos con los que comparar:
-   compara a mano la transcripción con el vídeo en tres puntos.
-4. **Compruébalo** en local: `pnpm dev` y abre `/elecciones/entrevistas/13n-pedro-sanchez`.
-5. **Publícalo**: commit (`feat(elecciones): publica la entrevista del 13N a <candidato>`), push y despliegue, con
-   las reglas de `AGENTS.md`.
-6. **Con dos o más entrevistas de la ronda**, agrupa las preguntas que se hicieron a varios y vuelve a publicar:
-
-   ```sh
-   $PY -m entrevistas comunes --jornada 13n
-   ```
-
-Si la segunda revisión se corta (red, límite de la API), repítela sobre lo que quedó pendiente:
-`$PY -m entrevistas revisar 13n-pedro-sanchez`. Lo pendiente sale en la web marcado como sin revisar hasta entonces.
-
-## Otros comandos
-
-- `sincronia <id>`: vuelve a comparar los tiempos con los subtítulos de YouTube.
-- `reanalizar <id>`: repite el análisis, la verificación y la segunda revisión sobre la transcripción ya hecha, sin
-  volver a transcribir (lo caro). Para aplicar un cambio en los prompts o las reglas a una entrevista ya analizada.
-  Con un ensayo, `--nombre "Nombre"`. Con 90 min de vídeo cuesta unos 0,40 USD.
-- `nota <id>`: recalcula la valoración (por ejemplo, tras cambiar los pesos en `metricas.py`).
-- `analizar … --ensayo "Nombre"`: analiza cualquier otra entrevista para probar. Todo se queda en
-  `apps/ingestion/.cache/entrevistas/`, fuera de Git, y nunca se publica. `--hasta 30` analiza solo los primeros
-  30 min y `--sin-comprobar` se salta la verificación.
-- `ensayo-general URL1 URL2 … --hasta 90`: varias entrevistas a la vez, como el día de una ronda, con el tiempo y
-  el coste totales.
-- `--video`: Gemini lee el vídeo de YouTube por tramos, sin descargar nada. Es el plan B si YouTube bloquea la
-  descarga del audio: cuesta más y sus tiempos son menos precisos.
-
-## Comprobación a mano, opcional
-
-Con Claude Code, `/segunda-revision 13n-pedro-sanchez` repasa las verificaciones publicadas: abre cada fuente, busca
-la oficial si falta y deja una nota en cada una con `anotar`. No cambia nada de lo publicado: si encuentra un
-error, lo dice para corregirlo y volver a publicar.
-
-## Costes y errores
-
-Cada análisis guarda en `.cache/entrevistas/<id>/coste-<modo>.json` lo consumido en cada paso (audio, texto,
-salida, razonamiento, búsquedas y segundos) y lo resume en la consola. Los precios están en
-[`costes.py`](costes.py). Los errores pasajeros de la API se reintentan solos, y los enlaces de Google que no llevan
-a una web real se descartan.
-
-## Pruebas sin clave ni coste
+## 3. Comprueba que funciona, sin gastar nada
 
 ```sh
 $PY -m pytest -q tests/test_entrevistas.py
 $PY -m entrevistas simular
 ```
 
-La simulación usa la entrevista de ejemplo (candidato ficticio) y nunca escribe en la carpeta de la web.
+Las dos usan la entrevista de ejemplo (candidato ficticio) y un modelo simulado: no llaman a Gemini ni escriben
+en la web. Si pasan, la instalación está bien.
+
+## 4. Un ensayo, antes del día
+
+Analiza cualquier otra entrevista para ver que la clave, la descarga y los tiempos funcionan. Con `--hasta 15`
+solo procesa los primeros 15 minutos (unos céntimos):
+
+```sh
+$PY -m entrevistas analizar "https://www.youtube.com/watch?v=…" --ensayo "Nombre de la persona" --hasta 15
+```
+
+Un ensayo nunca se publica: todo se queda en `apps/ingestion/.cache/entrevistas/ensayo-<nombre>/` (el JSON en
+`analisis.json`), fuera de Git. Mira en el log los avisos (sección 6) y el coste del final.
+
+## 5. El día de la ronda
+
+**El día antes**, actualiza yt-dlp: YouTube cambia a menudo y las versiones viejas reciben un error 403.
+
+```sh
+$PY -m pip install -U "yt-dlp[default,curl-cffi]"
+```
+
+**Para cada entrevista:**
+
+1. **Analízala** en cuanto esté publicada:
+
+   ```sh
+   $PY -m entrevistas analizar "https://www.youtube.com/watch?v=…" --candidato pedro-sanchez
+   ```
+
+   - Los candidatos son `ada-colau`, `pedro-sanchez` y `alberto-nunez-feijoo` (y `santiago-abascal`, aunque su
+     entrevista del 13N se canceló). Son los `slug` de `apps/web/lib/elecciones/candidates.ts`.
+   - Por defecto es la ronda `13n` en The Wild Project. Para otra ronda u otro medio:
+     `--jornada octubre --medio "Cadena SER" --programa "Hoy por Hoy" --entrevistador "Aimar Bretos"`. La ronda
+     tiene que existir en `rounds`, en `apps/web/lib/elecciones/interviews.ts`.
+   - Con 100 minutos de vídeo tarda unos 7 minutos y cuesta unos 2 USD. Puedes lanzar las tres a la vez, en
+     terminales distintas.
+   - Al acabar escribe `apps/web/lib/elecciones/entrevistas/13n-pedro-sanchez.json` y actualiza `index.ts`.
+
+2. **Lee el final del log.** Debe decir cuántas afirmaciones se verificaron, cuántas aprobó la segunda revisión y
+   la comprobación de tiempos. Si sale **⚠ LOS TIEMPOS NO CUADRAN CON EL VÍDEO**, no lo publiques: repite con
+   `--modo audio` (sección 6).
+
+3. **Míralo en la web.** En otra terminal, desde la raíz:
+
+   ```sh
+   pnpm dev
+   ```
+
+   Abre `http://localhost:3000/elecciones/entrevistas/13n-pedro-sanchez` y comprueba que la transcripción, en
+   dos o tres puntos de la línea de tiempo, dice lo mismo que el vídeo en ese minuto.
+
+4. **Publícalo.** Se suben el JSON y el `index.ts`, nada más:
+
+   ```sh
+   git add apps/web/lib/elecciones/entrevistas/13n-pedro-sanchez.json apps/web/lib/elecciones/entrevistas/index.ts
+   git commit -m "feat(elecciones): publica la entrevista del 13N a Pedro Sánchez"
+   git push
+   ```
+
+   Después, el despliegue habitual, con las reglas de `AGENTS.md`.
+
+**Cuando haya dos o más entrevistas de la ronda**, agrupa las preguntas que se hicieron a varios candidatos y
+publica el resultado (`comunes-13n.json` e `index.ts`). Aparecen en «Lado a lado»:
+
+```sh
+$PY -m entrevistas comunes --jornada 13n
+```
+
+## 6. Si algo sale mal
+
+| Lo que ves                                             | Qué hacer                                                                                                                                                           |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Falta GEMINI_API_KEY`                                 | La clave no está en el `.env` de la raíz.                                                                                                                           |
+| «La clave de Gemini está en el plan gratuito»          | Activa la facturación del proyecto en Google AI Studio y vuelve a lanzarlo.                                                                                         |
+| Error 403 o fallo al descargar el audio                | Actualiza yt-dlp (arriba). Si sigue, `--video`: Gemini lee el vídeo de YouTube sin descargarlo. Cuesta más y sus tiempos son algo menos precisos.                   |
+| ⚠ LOS TIEMPOS NO CUADRAN CON EL VÍDEO                  | La transcripción va desplazada. Repite con `--modo audio`. Para volver a comprobarlo: `$PY -m entrevistas sincronia 13n-pedro-sanchez`.                             |
+| El vídeo no está en YouTube (RTVE Play…)               | Funciona con su URL, pero no hay subtítulos con los que comparar los tiempos: compara a mano la transcripción con el vídeo en tres puntos.                          |
+| Se cortó durante la verificación o la segunda revisión | `$PY -m entrevistas revisar 13n-pedro-sanchez` repite la segunda revisión de lo pendiente. Hasta entonces, la web lo marca como «sin revisar».                      |
+| Has cambiado un prompt o una regla                     | `$PY -m entrevistas reanalizar 13n-pedro-sanchez` repite análisis, verificación y revisión sin volver a transcribir (lo caro). Con 90 min, unos 0,40 USD.           |
+| Una verificación está mal                              | No retoques el JSON a mano: ajusta el prompt o la regla y usa `reanalizar`. Para una segunda opinión, `/segunda-revision 13n-pedro-sanchez` en Claude Code (abajo). |
+
+Los errores pasajeros de la API (límite de ritmo, sobrecarga, cortes de red) se reintentan solos. Los enlaces de
+Google que no llevan a una web real se descartan.
+
+## 7. Qué se sube y qué no
+
+- **Sí:** `apps/web/lib/elecciones/entrevistas/<ronda>-<candidato>.json`, `comunes-<ronda>.json` e `index.ts`.
+- **Nunca:** el `.env` ni nada de `apps/ingestion/.cache/` (audio, vídeo, trozos, costes y ensayos). Los dos están
+  en `.gitignore`, y el índice nunca da de alta un ensayo.
+- **No se publica nada nuevo en la jornada de reflexión** (28 de noviembre).
+
+## Otros comandos
+
+- `nota <id>`: recalcula la valoración, por ejemplo tras cambiar los pesos en `metricas.py`.
+- `ensayo-general URL1 URL2 … --hasta 90`: varios ensayos a la vez, como el día de una ronda, con el tiempo y el
+  coste totales.
+- `analizar … --sin-comprobar`: sin verificación ni revisión, para ensayos rápidos.
+- `$PY -m entrevistas --help` y `$PY -m entrevistas analizar --help`: todas las opciones.
+
+## Comprobación a mano, opcional
+
+Con Claude Code, `/segunda-revision 13n-pedro-sanchez` repasa las verificaciones publicadas: abre cada fuente,
+busca la oficial si falta y deja una nota en cada una con `anotar`. No cambia nada de lo publicado: si encuentra
+un error, lo dice para corregirlo con `reanalizar` y volver a publicar.
+
+## Costes
+
+Cada análisis guarda en `.cache/entrevistas/<id>/coste-<modo>.json` lo consumido en cada paso (audio, texto,
+salida, razonamiento, búsquedas y segundos) y lo resume al final del log. Los precios están en
+[`costes.py`](costes.py). Como referencia, La Revuelta (103 min) costó 1,70 USD sin la segunda revisión, y
+`reanalizar` sobre 90 min de Vaquero, 0,41 USD con todo.
