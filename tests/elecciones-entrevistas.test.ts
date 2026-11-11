@@ -33,6 +33,10 @@ describe('las entrevistas', () => {
     expect(a.revisiones.map((r) => r.id)).toEqual([first.id, ...rest.map((r) => r.id)]);
     expect(a.momentos).toHaveLength(example.momentos.length);
     expect(a.pending).toBe(2);
+    expect(a.review).toEqual({
+      reviewed: example.revisiones.length - 3 + example.momentos.length - 1,
+      total: example.revisiones.length - 2 + example.momentos.length,
+    });
     const unreviewed = marks(a).filter((m) => m.provisional);
     expect(unreviewed.map((m) => m.id).sort()).toEqual([first.id, example.momentos[0]?.id].sort());
     expect(unreviewed.every((m) => m.label.endsWith('· sin revisar'))).toBe(true);

@@ -21,7 +21,7 @@ import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon } from '../brand/icon';
 import { DataLoading } from '../congreso/loading';
 import { DaysUntil } from './days-until';
-import { Dot, interviewsHref, ReportSections, shortDay } from './interviews';
+import { Dot, interviewsHref, ReportSections, ReviewBar, shortDay } from './interviews';
 import { PhotoCredits, Portrait } from './portrait';
 import { Cell, Grid, Label, ReportSection, Stat } from './report';
 
@@ -108,8 +108,10 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
                   : '.'}
               </p>
               {latest.pending > 0 && (
-                <p className="m-0 text-sm text-muted-foreground">
-                  Informe provisional: quedan {latest.pending} afirmaciones o momentos por revisar.
+                <p className="m-0 flex items-center gap-3 text-sm text-muted-foreground">
+                  <ReviewBar review={latest.review} />
+                  Informe provisional: revisadas {latest.review.reviewed} de {latest.review.total}{' '}
+                  verificaciones y momentos.
                 </p>
               )}
               <p className="m-0 flex flex-wrap items-center gap-2 text-sm">

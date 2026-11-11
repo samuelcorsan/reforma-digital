@@ -112,6 +112,21 @@ function Unreviewed({ estado }: { estado: string }) {
   );
 }
 
+// Cuánto se ha revisado, en una barra corta. Decorativa: el texto de al lado da las cifras.
+export function ReviewBar({ review }: { review: Interview['review'] }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="block h-1.5 w-12 shrink-0 overflow-hidden rounded-full bg-muted"
+    >
+      <span
+        className="block h-full origin-left rounded-full bg-foreground"
+        style={{ transform: `scaleX(${review.total ? review.reviewed / review.total : 1})` }}
+      />
+    </span>
+  );
+}
+
 // Una etiqueta con el icono de su marca delante.
 function MarkLabel({
   kind,
@@ -807,13 +822,14 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
             ))}
           </dl>
           {a.pending > 0 && (
-            <p className="m-0 inline-flex items-center gap-2 rounded-2xl border border-dashed border-foreground/30 px-3.5 py-1.5 text-sm sm:rounded-full">
-              <i
-                aria-hidden="true"
-                className="block size-1.5 shrink-0 rounded-full bg-foreground"
-              />
-              Quedan {a.pending} afirmaciones o momentos por revisar. La valoración puede cambiar
-              según se aprueben.
+            <p className="m-0 inline-flex items-center gap-3 rounded-2xl border border-dashed border-foreground/30 px-3.5 py-1.5 text-sm sm:rounded-full">
+              <ReviewBar review={a.review} />
+              <span>
+                <b className="font-medium">
+                  Revisadas {a.review.reviewed} de {a.review.total}
+                </b>{' '}
+                verificaciones y momentos. El resto, sin revisar: la valoración puede cambiar.
+              </span>
             </p>
           )}
           {round && !round.comparable && (

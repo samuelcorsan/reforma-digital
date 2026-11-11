@@ -243,14 +243,20 @@ const validSource = (f: z.infer<typeof source>) =>
 export function publish(raw: unknown) {
   const a = interviewSchema.parse(raw);
   const id = a.id ?? `${a.jornada}-${a.candidato}`;
+  const revisiones = a.revisiones.filter(
+    (r) => r.estado !== 'descartada' && r.fuentes.some(validSource),
+  );
+  const momentos = a.momentos.filter((m) => m.estado !== 'descartada');
+  // Cuánto de lo publicado ha confirmado ya una persona.
+  const total = revisiones.length + momentos.length;
+  const reviewed = [...revisiones, ...momentos].filter((x) => x.estado === 'aprobada').length;
   return {
     ...a,
     id,
-    revisiones: a.revisiones.filter(
-      (r) => r.estado !== 'descartada' && r.fuentes.some(validSource),
-    ),
-    momentos: a.momentos.filter((m) => m.estado !== 'descartada'),
-    pending: [...a.revisiones, ...a.momentos].filter((x) => x.estado === 'propuesta').length,
+    revisiones,
+    momentos,
+    review: { reviewed, total },
+    pending: total - reviewed,
   };
 }
 export type Interview = ReturnType<typeof publish>;
