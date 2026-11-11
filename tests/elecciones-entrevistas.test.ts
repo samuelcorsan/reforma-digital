@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import example from '../apps/web/lib/elecciones/entrevistas/ejemplo.json';
-import { interviewsOf, publish, publishedOn } from '../apps/web/lib/elecciones/interviews';
+import {
+  intensityScale,
+  interviewsOf,
+  perMinute,
+  publish,
+  publishedOn,
+  speech,
+} from '../apps/web/lib/elecciones/interviews';
 import { generateMetadata } from '../apps/web/app/(search)/elecciones/entrevistas/[[...path]]/page';
 import sitemap from '../apps/web/app/sitemap';
 
@@ -51,5 +58,70 @@ describe('las entrevistas', () => {
   it('acepta entrevistas sin fecha de publicación, como las de RTVE Play', () => {
     expect(publishedOn(publish({ ...example, publicado: '' }))).toBeNull();
     expect(publishedOn(publish(example))).toBe('13 de noviembre de 2026');
+  });
+
+  // Una entrevista mínima: sin preguntas, marcas ni silencios, para contar a mano.
+  const quiet = {
+    ...example,
+    duracion: 180,
+    preguntas: [],
+    propuestas: [],
+    ataques: [],
+    revisiones: [],
+    momentos: [],
+    interrupciones: [],
+    silencios: [],
+  };
+
+  it('mide la intensidad de cada minuto: turnos, 3 × interrupciones y 2 × tensión', () => {
+    const [verification] = example.revisiones;
+    const a = publish({
+      ...quiet,
+      segmentos: [
+        { inicio: 0, fin: 30, hablante: 'jordi', texto: '¿Qué hará con la vivienda?' },
+        {
+          inicio: 31,
+          fin: 90,
+          hablante: 'candidato',
+          texto: 'Construiremos cien mil pisos públicos al año.',
+        },
+        // Un cambio de turno de menos de cuatro palabras no suma.
+        { inicio: 90, fin: 92, hablante: 'jordi', texto: 'Ya.' },
+      ],
+      interrupciones: [{ segundo: 70, quien: 'jordi' }],
+      revisiones: [{ ...verification, segundo: 150, veredicto: 'roja', estado: 'aprobada' }],
+    });
+    expect(perMinute(a)).toEqual([
+      { start: 0, candidate: 29, interviewer: 30, intensity: 1 / intensityScale },
+      { start: 60, candidate: 30, interviewer: 2, intensity: 3 / intensityScale },
+      { start: 120, candidate: 0, interviewer: 0, intensity: 2 / intensityScale },
+    ]);
+  });
+
+  it('cuenta muletillas, titubeos y la pausa antes de responder', () => {
+    const a = publish({
+      ...quiet,
+      segmentos: [
+        { inicio: 0, fin: 10, hablante: 'jordi', texto: '¿Y la vivienda?' },
+        {
+          inicio: 12,
+          fin: 72,
+          hablante: 'candidato',
+          texto: 'Eh, pues, o sea, la la vivienda es clave, ¿no?',
+        },
+      ],
+      silencios: [[10, 12]],
+    });
+    expect(speech(a)).toEqual({
+      pace: 10,
+      fillers: 3,
+      stutters: 1,
+      pause: 2,
+      top: [
+        ['eh', 1],
+        ['o sea', 1],
+        ['¿no?', 1],
+      ],
+    });
   });
 });
