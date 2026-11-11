@@ -57,6 +57,7 @@ import { InterviewPlayer } from './interview-player';
 import { answerStyles, IconChip, MarkIcon, markIcons } from './mark-icon';
 import { PhotoCredits, Portrait } from './portrait';
 import { ScoreSimulator } from './score-simulator';
+import { ShareButton } from './share-button';
 import { Bars, Cell, Explore, Grid, Label, ReportIntro, ReportSection, Stat } from './report';
 
 export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
@@ -846,6 +847,7 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
                 Ver su ficha <Icon name="derecha" size={16} />
               </Link>
             )}
+            <ShareButton title={`La entrevista a ${interviewName(a)}, revisada`} />
           </div>
         </div>
       </Card>
@@ -1045,6 +1047,9 @@ export function VerificationPage({
           </div>
           <Sources items={r.fuentes} />
           {video && <Source url={video}>Verlo en el vídeo, minuto {minute(r.segundo)}</Source>}
+          <div>
+            <ShareButton title={`${verdicts[r.veredicto].name}: «${r.cita}»`} />
+          </div>
         </Cell>
       </Grid>
       <div className="mt-8">
