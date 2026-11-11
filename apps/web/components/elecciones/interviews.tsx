@@ -6,6 +6,7 @@ import { buttonVariants } from '@reforma-digital/design/ui/button';
 import { Card } from '@reforma-digital/design/ui/card';
 import { decimal, formatDate, longDate, minute } from '../../lib/elecciones/format';
 import {
+  allVerifications,
   answerIds,
   answers,
   criteria,
@@ -407,6 +408,40 @@ function VerdictList() {
 
 // Lo que trae el informe de una entrevista: lo que afirma verificado, los momentos clave, lo que
 // propone, sus críticas y su perfil. Lo comparten el informe y la ficha del candidato.
+type Verification = Interview['revisiones'][number];
+
+// Una verificación en una tarjeta: en el informe, sin el nombre; en la lista de todas, con él.
+function VerificationCard({
+  interview: a,
+  verification: r,
+  named,
+}: {
+  interview: Interview;
+  verification: Verification;
+  named?: boolean;
+}) {
+  return (
+    <Cell className="gap-4">
+      <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <Verdict id={r.veredicto} />
+        <span className="font-mono text-sm text-muted-foreground tabular-nums">
+          minuto {minute(r.segundo)}
+        </span>
+      </p>
+      {named && <p className="m-0 -mb-2 font-medium">{interviewName(a)}</p>}
+      <blockquote className="m-0 font-heading text-xl leading-snug">«{r.cita}»</blockquote>
+      <p className="m-0 text-muted-foreground">{r.explicacion}</p>
+      <Sources items={r.fuentes} />
+      <Link
+        href={interviewsHref(`${a.id}/${r.id}`)}
+        className="mt-auto self-start text-sm underline underline-offset-4"
+      >
+        Enlace a esta verificación
+      </Link>
+    </Cell>
+  );
+}
+
 export function ReportSections({ interview: a }: { interview: Interview }) {
   const proposals = [...a.propuestas].sort((x, y) => proposalScore(y) - proposalScore(x));
   return (
@@ -419,25 +454,7 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
           <ul className="m-0 mt-6 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
             {a.revisiones.map((r) => (
               <li key={r.id} className="grid">
-                <Cell className="gap-4">
-                  <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
-                    <Verdict id={r.veredicto} />
-                    <span className="font-mono text-sm text-muted-foreground tabular-nums">
-                      minuto {minute(r.segundo)}
-                    </span>
-                  </p>
-                  <blockquote className="m-0 font-heading text-xl leading-snug">
-                    «{r.cita}»
-                  </blockquote>
-                  <p className="m-0 text-muted-foreground">{r.explicacion}</p>
-                  <Sources items={r.fuentes} />
-                  <Link
-                    href={interviewsHref(`${a.id}/${r.id}`)}
-                    className="mt-auto self-start text-sm underline underline-offset-4"
-                  >
-                    Enlace a esta verificación
-                  </Link>
-                </Cell>
+                <VerificationCard interview={a} verification={r} />
               </li>
             ))}
           </ul>
@@ -991,7 +1008,7 @@ export function VerificationPage({
   verification: r,
 }: {
   interview: Interview;
-  verification: Interview['revisiones'][number];
+  verification: Verification;
 }) {
   const video = videoUrl(a, r.segundo);
   const candidate = getCandidate(a.candidato);
@@ -1033,6 +1050,130 @@ export function VerificationPage({
       <div className="mt-8">
         <Explore links={[{ href: interviewsHref(a.id), text: 'El informe completo' }]} />
       </div>
+    </>
+  );
+}
+
+// Un filtro de la lista: enlaces, para que cada vista tenga su dirección y funcione sin JavaScript.
+function FilterLinks({
+  label,
+  options,
+}: {
+  label: string;
+  options: { href: string; active: boolean; count: number; children: ReactNode }[];
+}) {
+  return (
+    <nav aria-label={label} className="flex flex-wrap items-center gap-2">
+      <span className="mr-2 text-sm text-muted-foreground">{label}</span>
+      {options.map((o) => (
+        <Link
+          key={o.href}
+          href={o.href}
+          scroll={false}
+          aria-current={o.active ? 'page' : undefined}
+          className={buttonVariants({
+            variant: o.active ? 'default' : 'outline',
+            size: 'lg',
+            className: 'h-11 px-4 text-sm',
+          })}
+        >
+          {o.children}
+          <span className="font-mono tabular-nums opacity-70">{o.count}</span>
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+export function VerificationsIndex({
+  verdict,
+  candidate,
+}: {
+  verdict?: Verification['veredicto'];
+  candidate?: string;
+}) {
+  const all = allVerifications();
+  const ofCandidate = all.filter((v) => !candidate || v.interview.candidato === candidate);
+  const ofVerdict = all.filter((v) => !verdict || v.verification.veredicto === verdict);
+  const shown = ofCandidate.filter((v) => !verdict || v.verification.veredicto === verdict);
+  const href = (q: { calificacion?: string; candidato?: string }) => {
+    const query = new URLSearchParams(
+      Object.entries(q).filter((e): e is [string, string] => !!e[1]),
+    ).toString();
+    return interviewsHref(`verificaciones${query ? `?${query}` : ''}`);
+  };
+  const people = [...new Set(all.map((v) => v.interview.candidato))].map((slug) => {
+    const interview = all.find((v) => v.interview.candidato === slug)?.interview;
+    return { slug, name: interview ? interviewName(interview) : slug };
+  });
+  return (
+    <>
+      <ReportIntro title="Todo lo verificado">
+        <p>
+          Cada afirmación comprobable de las entrevistas, contrastada con fuentes oficiales. Solo
+          aparece lo que una persona ha confirmado.
+        </p>
+      </ReportIntro>
+      {all.length === 0 ? (
+        <p>Todavía no hay ninguna verificación publicada.</p>
+      ) : (
+        <>
+          <div className="mb-8 grid gap-4">
+            <FilterLinks
+              label="Calificación"
+              options={[
+                {
+                  href: href({ candidato: candidate }),
+                  active: !verdict,
+                  count: ofCandidate.length,
+                  children: 'Todas',
+                },
+                ...verdictIds.map((id) => ({
+                  href: href({ calificacion: id, candidato: candidate }),
+                  active: verdict === id,
+                  count: ofCandidate.filter((v) => v.verification.veredicto === id).length,
+                  children: (
+                    <>
+                      <MarkIcon kind={id} color={verdicts[id].color} />
+                      {verdicts[id].name}
+                    </>
+                  ),
+                })),
+              ]}
+            />
+            {people.length > 1 && (
+              <FilterLinks
+                label="Candidato"
+                options={[
+                  {
+                    href: href({ calificacion: verdict }),
+                    active: !candidate,
+                    count: ofVerdict.length,
+                    children: 'Todos',
+                  },
+                  ...people.map((p) => ({
+                    href: href({ calificacion: verdict, candidato: p.slug }),
+                    active: candidate === p.slug,
+                    count: ofVerdict.filter((v) => v.interview.candidato === p.slug).length,
+                    children: p.name,
+                  })),
+                ]}
+              />
+            )}
+          </div>
+          {shown.length === 0 ? (
+            <p>Ninguna verificación con estos filtros.</p>
+          ) : (
+            <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
+              {shown.map(({ interview, verification }) => (
+                <li key={`${interview.id}/${verification.id}`} className="grid">
+                  <VerificationCard interview={interview} verification={verification} named />
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
     </>
   );
 }

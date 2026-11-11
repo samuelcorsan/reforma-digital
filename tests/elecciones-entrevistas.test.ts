@@ -36,6 +36,7 @@ describe('las entrevistas', () => {
       ['nadie'],
       ['metodologia', 'x'],
       ['comparar', 'x'],
+      ['verificaciones', 'x'],
       ['pedro-sanchez', 'r1'],
       ['ejemplo', 'r99'],
     ])
@@ -44,6 +45,7 @@ describe('las entrevistas', () => {
     expect(paths).toContain('/elecciones/entrevistas');
     expect(paths).toContain('/elecciones/entrevistas/metodologia');
     expect(paths).toContain('/elecciones/entrevistas/comparar');
+    expect(paths).toContain('/elecciones/entrevistas/verificaciones');
   });
 
   it('acepta entrevistas sin fecha de publicación, como las de RTVE Play', () => {

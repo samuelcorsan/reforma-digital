@@ -255,6 +255,14 @@ export type Interview = ReturnType<typeof publish>;
 const interviews = files.map(publish);
 
 export const getInterview = (id: string) => interviews.find((a) => a.id === id);
+// Todas las verificaciones publicadas: de la entrevista más reciente a la más antigua y, dentro de
+// cada una, en el orden en que se dijeron.
+export const allVerifications = () =>
+  [...interviews]
+    .sort((x, y) => y.publicado.localeCompare(x.publicado))
+    .flatMap((interview) =>
+      interview.revisiones.map((verification) => ({ interview, verification })),
+    );
 export const getCandidate = (slug: string) => candidates.find((c) => c.slug === slug);
 // El nombre del candidato, o el título de la entrevista de ejemplo.
 export const interviewName = (a: Interview) => getCandidate(a.candidato)?.name ?? a.titulo;

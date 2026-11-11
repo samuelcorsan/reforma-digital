@@ -8,6 +8,7 @@ import {
   InterviewsMethod,
   interviewsHref,
   VerificationPage,
+  VerificationsIndex,
 } from '../../../../../components/elecciones/interviews';
 import { CandidateProfile } from '../../../../../components/elecciones/candidate';
 import { ElectionsFrame } from '../../../../../components/elecciones/nav';
@@ -16,6 +17,7 @@ import {
   getInterview,
   interviewName,
   rounds,
+  verdictIds,
   verdicts,
 } from '../../../../../lib/elecciones/interviews';
 import { electionPages } from '../../../../../lib/elecciones/pages';
@@ -26,17 +28,22 @@ const sectionPage = {
   home: 'entrevistas',
   method: 'entrevistas/metodologia',
   compare: 'entrevistas/comparar',
+  verifications: 'entrevistas/verificaciones',
 } as const;
 
-type Props = { params: Promise<{ path?: string[] }> };
+type Props = {
+  params: Promise<{ path?: string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
-// /entrevistas, /entrevistas/metodologia, /entrevistas/comparar(/<ronda>), /entrevistas/<candidato>, /entrevistas/<entrevista> y
+// /entrevistas, /entrevistas/metodologia, /entrevistas/verificaciones, /entrevistas/comparar(/<ronda>), /entrevistas/<candidato>, /entrevistas/<entrevista> y
 // /entrevistas/<entrevista>/<verificación>.
 function route(path: string[] = []) {
   const [id, detail, ...rest] = path;
   if (rest.length) return null;
   if (!id) return detail ? null : { kind: 'home' as const };
   if (id === 'metodologia') return detail ? null : { kind: 'method' as const };
+  if (id === 'verificaciones') return detail ? null : { kind: 'verifications' as const };
   if (id === 'comparar') {
     if (detail && !rounds.some((r) => r.id === detail)) return null;
     return { kind: 'compare' as const, round: detail };
@@ -58,6 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   switch (match.kind) {
     case 'home':
     case 'method':
+    case 'verifications':
     case 'compare': {
       const page = electionPages[sectionPage[match.kind]];
       return pageMetadata({
@@ -93,7 +101,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function Page({ params }: Props) {
+// Los filtros de /entrevistas/verificaciones: lo que no es una calificación o un candidato se ignora.
+async function filters(searchParams: Props['searchParams']) {
+  const { calificacion, candidato } = await searchParams;
+  return {
+    verdict: verdictIds.find((id) => id === calificacion),
+    candidate: typeof candidato === 'string' ? candidato : undefined,
+  };
+}
+
+export default async function Page({ params, searchParams }: Props) {
   const match = route((await params).path);
   if (!match) notFound();
   const crumb =
@@ -113,7 +130,7 @@ export default async function Page({ params }: Props) {
     >
       <ElectionsFrame
         current={
-          match.kind === 'method' || match.kind === 'compare'
+          match.kind === 'method' || match.kind === 'compare' || match.kind === 'verifications'
             ? sectionPage[match.kind]
             : 'entrevistas'
         }
@@ -121,6 +138,7 @@ export default async function Page({ params }: Props) {
       >
         {match.kind === 'home' && <InterviewsHome />}
         {match.kind === 'method' && <InterviewsMethod />}
+        {match.kind === 'verifications' && <VerificationsIndex {...await filters(searchParams)} />}
         {match.kind === 'compare' && <InterviewsCompare roundId={match.round} />}
         {match.kind === 'candidate' && <CandidateProfile candidate={match.candidate} />}
         {match.kind === 'interview' && <InterviewReport interview={match.interview} />}
