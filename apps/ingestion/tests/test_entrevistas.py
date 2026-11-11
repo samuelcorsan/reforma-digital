@@ -499,3 +499,48 @@ def test_cita_mal_copiada_se_recupera_literal_de_la_transcripcion():
     )
     # Lo que no se parece a nada sigue descartándose
     assert recuperar("la inflación subió un cuatro por ciento en Francia el año pasado", segmentos) is None
+
+
+def test_un_fallo_de_la_api_no_tumba_el_analisis():
+    from entrevistas.esquema import Fuente
+
+    revisiones = [
+        Revision(id=c, candidato="X", segundo=0, cita=c, veredicto="legal", explicacion="e",
+                 fuentes=[Fuente(titulo="INE", url="https://www.ine.es/x")])
+        for c in "ab"
+    ]
+
+    class Cliente(ClienteSimulado):
+        def __init__(self):
+            pass
+
+        def revisar(self, cita, contexto, candidato, fecha, propuesta):
+            if cita == "a":
+                raise RuntimeError("500 de la API")
+            return ClienteSimulado.revisar(self, cita, contexto, candidato, fecha, propuesta)
+
+    a, b = proceso.segunda_revision(Cliente(), revisiones, [seg(0, "hola")], "X", "2026-11-13", 2)
+    # La que falló queda pendiente («sin revisar» en la web) para repetirla con `revisar`; la otra sigue su curso
+    assert (a.estado, b.estado) == ("propuesta", "aprobada")
+
+
+def test_volver_a_analizar_quita_las_preguntas_comunes_de_su_ronda(tmp_path, monkeypatch):
+    from entrevistas import __main__ as cli
+
+    (tmp_path / "comunes-13n.json").write_text("[]")
+    (tmp_path / "comunes-octubre.json").write_text("[]")
+    monkeypatch.setattr(cli, "DATOS_WEB", tmp_path)
+    cli.quitar_comunes("13n")
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["comunes-octubre.json"]
+
+
+def test_analizar_y_reanalizar_presentan_igual_al_entrevistador():
+    from entrevistas import __main__ as cli
+    from entrevistas.esquema import FichaEntrevista
+
+    wild = FichaEntrevista(entrevistador="Jordi Wild", medio=cli.WILD)
+    ser = FichaEntrevista(entrevistador="Aimar Bretos", medio="Cadena SER")
+    assert cli.presentador(wild, ensayo=False) is None  # el prompt de Jordi, con verificadores
+    assert cli.presentador(wild, ensayo=True) == "Jordi Wild"
+    assert cli.presentador(ser, ensayo=False) == "Aimar Bretos"
+    assert cli.presentador(None, ensayo=True) == ""

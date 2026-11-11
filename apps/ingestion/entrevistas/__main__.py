@@ -88,6 +88,23 @@ def registrar() -> Path:
     return indice
 
 
+def presentador(ficha: FichaEntrevista | None, ensayo: bool) -> str | None:
+    """Quién conduce, para el prompt. None: la entrevista de Jordi en The Wild Project, con verificadores en plató.
+    En un ensayo o en otro medio, quien la conduzca ("" si no se sabe). Igual en analizar y en reanalizar."""
+    if ficha is None:
+        return ""
+    return None if not ensayo and ficha.medio == WILD else ficha.entrevistador
+
+
+def quitar_comunes(jornada: str) -> None:
+    """Las preguntas comunes apuntan a los ids de pregunta de cada entrevista (p1, p2…). Al volver a analizar una, se
+    renumeran: las comunes de su ronda dejan de cuadrar y se quitan hasta que se vuelvan a agrupar."""
+    ruta = DATOS_WEB / f"comunes-{jornada}.json"
+    if jornada and ruta.exists():
+        ruta.unlink()
+        logging.warning("⚠ Quitadas las preguntas comunes de %s: vuelve a lanzar `comunes --jornada %s`", jornada, jornada)
+
+
 def slug_de(nombre: str) -> str:
     base = unicodedata.normalize("NFD", nombre.lower()).encode("ascii", "ignore").decode()
     return re.sub(r"[^a-z0-9]+", "-", base).strip("-")
@@ -118,9 +135,8 @@ def cmd_analizar(args):
     if args.ensayo and salida.resolve().parent == DATOS_WEB.resolve():
         sys.exit("Un ensayo no escribe en la carpeta de la web: nunca se publica.")
     inicio = time.time()
-    cliente = ClienteGemini(args.modelo or os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"))
-    # En The Wild Project, el prompt de Jordi (con verificadores); en otra entrevista, quien la conduzca
-    cliente.entrevistador = None if wild and not args.ensayo else ficha.entrevistador
+    cliente = ClienteGemini(args.modelo)
+    cliente.entrevistador = presentador(ficha, ensayo=bool(args.ensayo))
 
     hasta = args.hasta * 60 if args.hasta else None
     modo = "video" if args.video else args.modo
@@ -195,6 +211,7 @@ def cmd_analizar(args):
     if audio.es_youtube(args.url):
         comprobar_sincronia(a, args.url, carpeta)
     if not args.ensayo:
+        quitar_comunes(jornada)
         registrar()
 
     # Coste real según lo que la API dice que ha consumido (se guarda junto al audio, fuera del repo)
@@ -253,12 +270,7 @@ def _mmss(segundo: float) -> str:
 
 def cmd_sincronia(args):
     """Comprueba los tiempos de una entrevista ya analizada (publicada o un ensayo de .cache)."""
-    ruta = DATOS_WEB / f"{args.slug}.json"
-    if not ruta.exists():
-        ruta = BRUTOS / args.slug / "analisis.json"
-    if not ruta.exists():
-        sys.exit(f"No encuentro {args.slug} en {DATOS_WEB} ni en {BRUTOS}.")
-    a = Analisis.model_validate_json(ruta.read_text(encoding="utf-8"))
+    a = Analisis.model_validate_json(_ruta(args.slug).read_text(encoding="utf-8"))
     if not a.youtubeId:
         sys.exit("No está en YouTube: sin subtítulos con los que comparar. Compruébalo a mano en tres puntos.")
     s = comprobar_sincronia(a, f"https://www.youtube.com/watch?v={a.youtubeId}", BRUTOS / args.slug)
@@ -290,14 +302,11 @@ def cmd_anotar(args):
     veredicto. El slug es una entrevista publicada (<ronda>-<candidato>) o la carpeta de un ensayo (ensayo-…)."""
     import fcntl
 
-    if re.fullmatch(r"ensayo-[a-z0-9-]+", args.slug):
-        ruta = BRUTOS / args.slug / "analisis.json"
-    elif (DATOS_WEB / f"{args.slug}.json").exists():
-        ruta = DATOS_WEB / f"{args.slug}.json"
-    else:
-        sys.exit(f"Slug desconocido: {args.slug}")
-    # Varios subagentes anotan a la vez: cada uno lee y escribe el archivo entero, así que van por turnos
-    with open(ruta.with_suffix(".lock"), "w") as cerrojo:
+    ruta = _ruta(args.slug)
+    # Varios subagentes anotan a la vez: cada uno lee y escribe el archivo entero, así que van por turnos. El cerrojo,
+    # en .cache: nunca en la carpeta de la web, donde se podría subir sin querer
+    BRUTOS.mkdir(parents=True, exist_ok=True)
+    with open(BRUTOS / f"{args.slug}.lock", "w") as cerrojo:
         fcntl.flock(cerrojo, fcntl.LOCK_EX)
         a = Analisis.model_validate_json(ruta.read_text(encoding="utf-8"))
         r = next((x for x in a.revisiones if x.id == args.id), None)
@@ -357,7 +366,7 @@ def cmd_comunes(args):
     entrevistas = de_jornada(args.jornada)
     if len(entrevistas) < 2:
         sys.exit(f"Hacen falta al menos dos entrevistas analizadas de la jornada {args.jornada}.")
-    cliente = ClienteGemini(args.modelo or os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"))
+    cliente = ClienteGemini(args.modelo)
     comunes = proceso.agrupar_comunes(cliente, entrevistas)
     salida = DATOS_WEB / f"comunes-{args.jornada}.json"
     salida.write_text(json.dumps(comunes, indent=2, ensure_ascii=False) + "\n")
@@ -388,10 +397,9 @@ def cmd_reanalizar(args):
     nombre = args.nombre or CANDIDATOS.get(a.candidato)
     if not nombre:
         sys.exit("No es uno de los candidatos: di cómo se llama con --nombre.")
-    cliente = ClienteGemini(args.modelo or os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"))
-    ficha = a.entrevista
-    # Como en analizar: en The Wild Project, el prompt de Jordi; en otra entrevista, quien la conduzca
-    cliente.entrevistador = None if ficha and ficha.medio == WILD else (ficha.entrevistador if ficha else "")
+    cliente = ClienteGemini(args.modelo)
+    publicada = ruta.parent == DATOS_WEB
+    cliente.entrevistador = presentador(a.entrevista, ensayo=not publicada)
     nuevo = proceso.analizar(
         cliente,
         a.segmentos,
@@ -405,6 +413,8 @@ def cmd_reanalizar(args):
         visuales=a.visuales,
     )
     nuevo.silencios, nuevo.id, nuevo.jornada, nuevo.entrevista = a.silencios, a.id, a.jornada, a.entrevista
+    if publicada:
+        quitar_comunes(a.jornada or "")
     _guardar(nuevo, ruta)
     logging.info("Consumo:\n%s", cliente.contador.tabla())
 
@@ -414,7 +424,7 @@ def cmd_revisar(args):
     recalcula la nota. Lo ya aprobado o descartado no se toca."""
     ruta = _ruta(args.slug)
     a = Analisis.model_validate_json(ruta.read_text(encoding="utf-8"))
-    cliente = ClienteGemini(args.modelo or os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"))
+    cliente = ClienteGemini(args.modelo)
     nombre = CANDIDATOS.get(a.candidato, a.titulo)
     revisiones = proceso.segunda_revision(cliente, a.revisiones, a.segmentos, nombre, a.publicado, args.hilos)
     _guardar(proceso.recalcular(a.model_copy(update={"revisiones": revisiones})), ruta)

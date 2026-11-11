@@ -50,7 +50,27 @@ def localizar(cita: str, segmentos: list[Segmento]) -> Segmento | None:
     return None
 
 
-def recuperar(cita: str, segmentos: list[Segmento], umbral: float = 0.8) -> tuple[Segmento, str] | None:
+Flujo = list[tuple[Segmento, str, str]]
+
+
+def flujos(segmentos: list[Segmento]) -> list[Flujo]:
+    """Todo lo que dice cada persona, seguido y sin los «mhm» de los demás: (segmento, palabra tal cual, palabra
+    normalizada). Se calcula una vez por análisis y sirve para recuperar todas sus citas."""
+    return [
+        [
+            (s, m.group(), normal)
+            for s in segmentos
+            if s.hablante == h
+            for m in re.finditer(r"\S+", s.texto)
+            if (normal := normalizar(m.group()))
+        ]
+        for h in dict.fromkeys(s.hablante for s in segmentos)
+    ]
+
+
+def recuperar(
+    cita: str, segmentos: list[Segmento], umbral: float = 0.8, por_hablante: list[Flujo] | None = None
+) -> tuple[Segmento, str] | None:
     """La cita y el segmento donde empieza. Si el modelo la copió con alguna palabra cambiada o partida entre dos
     trozos de la transcripción, el tramo que más se le parece, con las palabras tal como se dijeron: lo publicado
     sigue siendo literal. Se busca en todo lo que dice cada persona seguido (sin los «mhm» de los demás), con las
@@ -68,15 +88,7 @@ def recuperar(cita: str, segmentos: list[Segmento], umbral: float = 0.8) -> tupl
     if not claves:
         return None
     mejor: tuple[int, Segmento, str] | None = None
-    for hablante in dict.fromkeys(s.hablante for s in segmentos):
-        # Todo lo que dice esa persona, seguido: (segmento, palabra tal cual, palabra normalizada)
-        flujo = [
-            (s, m.group(), normalizar(m.group()))
-            for s in segmentos
-            if s.hablante == hablante
-            for m in re.finditer(r"\S+", s.texto)
-            if normalizar(m.group())
-        ]
+    for flujo in por_hablante if por_hablante is not None else flujos(segmentos):
         normales = [p for _, _, p in flujo]
         vistos: set[int] = set()
         for k, p in enumerate(normales):

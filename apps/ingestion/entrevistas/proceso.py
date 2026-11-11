@@ -9,7 +9,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 from .audio import Trozo
-from .citas import coincidencia, en_contraste, localizar, normalizar, recuperar
+from .citas import coincidencia, en_contraste, flujos, localizar, normalizar, recuperar
 from .esquema import (
     Analisis,
     Dictamen,
@@ -286,11 +286,12 @@ def analizar(
     # Antiinvención: solo pasan las afirmaciones cuya cita está en la transcripción. Si el modelo la copió con alguna
     # palabra cambiada, se publica el tramo literal que más se le parece; si no se parece a nada, se descarta
     validas = []
+    por_hablante = flujos(segmentos)  # una vez para todas las citas
     for af in e.afirmaciones:
         if len(af.cita.split()) < 6:
             log.warning("Descartada (cita demasiado corta para comprobarla): %s", af.cita)
             continue
-        hallada = recuperar(af.cita, segmentos)
+        hallada = recuperar(af.cita, segmentos, por_hablante=por_hablante)
         if hallada is None:
             log.warning("Descartada (cita que no está en la transcripción): %s", af.cita)
             continue
@@ -301,9 +302,11 @@ def analizar(
 
     def revisar(par):
         af, seg = par
-        k = segmentos.index(seg)
-        contexto = " ".join(s.texto for s in segmentos[max(0, k - 2) : k + 1])
-        c = cliente.comprobar(af.cita, contexto, candidato, publicado)
+        try:
+            c = cliente.comprobar(af.cita, contexto_de(segmentos, seg.inicio), candidato, publicado)
+        except Exception as error:  # un fallo de la API no tumba el análisis: la segunda revisión la vuelve a buscar
+            log.warning("Verificación fallida (%s), queda sin fuente para la segunda revisión: %s", error, af.cita[:80])
+            c = Comprobacion(dictamen=Dictamen(veredicto="sinfuente", explicacion=""), fuentes=[])
         return Revision(
             id="",
             candidato=candidato,
@@ -320,7 +323,7 @@ def analizar(
     # Momentos clave: misma barrera antiinvención. Los elige la IA (elegir_momentos) y se publican sin más revisión
     momentos: list[Momento] = []
     for m in e.momentos:
-        hallada = recuperar(m.cita, segmentos)
+        hallada = recuperar(m.cita, segmentos, por_hablante=por_hablante)
         if hallada is None:
             log.warning("Momento descartado (cita que no está en la transcripción): %s", m.cita)
             continue
@@ -501,7 +504,11 @@ def segunda_revision(
         if r.estado != "propuesta":
             return r  # ya revisada: no se repite
         propuesta = Comprobacion(dictamen=Dictamen(veredicto=r.veredicto, explicacion=r.explicacion), fuentes=r.fuentes)
-        hecho = cliente.revisar(r.cita, contexto_de(segmentos, r.segundo), candidato, fecha, propuesta)
+        try:
+            hecho = cliente.revisar(r.cita, contexto_de(segmentos, r.segundo), candidato, fecha, propuesta)
+        except Exception as error:  # se queda pendiente («sin revisar» en la web) y se repite con `revisar`
+            log.warning("Segunda revisión fallida (%s), queda pendiente: %s", error, r.cita[:80])
+            return r
         d = hecho.decision
         # Si las propuestas valen, se suman las que encontró la revisión (las oficiales, primero)
         fuentes = ordenar_fuentes(r.fuentes + hecho.fuentes)[:4] if d.fuentes_ok else hecho.fuentes
@@ -537,8 +544,10 @@ def segunda_revision(
         len(aprobadas),
         sum(r.segundaRevision is not None and r.segundaRevision.sugerencia is not None for r in aprobadas),
         sum(r.veredicto == "sinfuente" for r in aprobadas),
-        len(hechas) - len(aprobadas),
+        sum(r.estado == "descartada" for r in hechas),
     )
+    if pendientes := sum(r.estado == "propuesta" for r in hechas):
+        log.warning("⚠ %d sin la segunda revisión por errores de la API: repítela con `revisar`", pendientes)
     return hechas
 
 

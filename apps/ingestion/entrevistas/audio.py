@@ -75,15 +75,18 @@ def _video(carpeta: Path) -> Video | None:
     audios = [p for p in carpeta.glob("audio.*") if not p.name.endswith((".json", ".part", ".ytdl"))]
     if not ruta_info.exists() or not audios:
         return None
-    info = json.loads(ruta_info.read_text())
+    return _video_de(json.loads(ruta_info.read_text()), audios[0])
+
+
+def _video_de(info: dict, audio: Path) -> Video:
+    """El vídeo a partir de los metadatos de yt-dlp (la fecha llega como AAAAMMDD, o sin ella)."""
     fecha = info.get("upload_date") or ""
-    publicado = f"{fecha[:4]}-{fecha[4:6]}-{fecha[6:8]}" if len(fecha) == 8 else ""
     return Video(
         id=info["id"],
         titulo=info.get("title", ""),
         duracion=float(info.get("duration") or 0),
-        publicado=publicado,
-        audio=audios[0],
+        publicado=f"{fecha[:4]}-{fecha[4:6]}-{fecha[6:8]}" if len(fecha) == 8 else "",
+        audio=audio,
     )
 
 
@@ -99,15 +102,7 @@ def informacion(url: str) -> dict:
 
 
 def video_sin_descarga(url: str) -> Video:
-    info = informacion(url)
-    fecha = info.get("upload_date") or ""
-    return Video(
-        id=info["id"],
-        titulo=info.get("title", ""),
-        duracion=float(info.get("duration") or 0),
-        publicado=f"{fecha[:4]}-{fecha[4:6]}-{fecha[6:8]}" if len(fecha) == 8 else "",
-        audio=Path(),
-    )
+    return _video_de(informacion(url), Path())
 
 
 def trozos_video(url: str, duracion: float, minutos: int = 5) -> list[Trozo]:
@@ -228,5 +223,6 @@ def trocear(audio: Path, minutos: int = 5, hasta: float | None = None) -> list[T
         ],
         check=True,
     )
-    trozos = sorted(destino.glob("trozo_*.m4a"))
-    return [Trozo(desfase=k * minutos * 60.0, largo=duracion_de(t), audio=t) for k, t in enumerate(trozos)]
+    trozos = [(k, t, duracion_de(t)) for k, t in enumerate(sorted(destino.glob("trozo_*.m4a")))]
+    # ffmpeg puede dejar al final un trozo de una fracción de segundo: no merece una llamada al modelo
+    return [Trozo(desfase=k * minutos * 60.0, largo=largo, audio=t) for k, t, largo in trozos if largo >= 2]

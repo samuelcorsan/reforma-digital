@@ -33,7 +33,6 @@ from .esquema import (
 
 log = logging.getLogger("entrevistas")
 
-MODELO_POR_DEFECTO = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
 
 # Cuánto razona el modelo en cada paso (el razonamiento se cobra como salida y añade espera).
 # Transcribir no necesita razonar; clasificar la entrevista sí. None = lo que el modelo haga por defecto.
@@ -145,7 +144,7 @@ class Cliente(Protocol):
 
 
 class ClienteGemini:
-    def __init__(self, modelo: str = MODELO_POR_DEFECTO):
+    def __init__(self, modelo: str | None = None):
         from google import genai
 
         clave = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
@@ -153,8 +152,9 @@ class ClienteGemini:
             raise SystemExit("Falta GEMINI_API_KEY en el .env de la raíz del repositorio (ver .env.example).")
         self.genai = genai
         self.cliente = genai.Client(api_key=clave)
-        self.modelo = modelo
-        self.contador = Contador(modelo)
+        # Se lee al crear el cliente, no al importar: el .env se carga después (cargar_env)
+        self.modelo = modelo or os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+        self.contador = Contador(self.modelo)
         self._sin_razonar = False  # si el modelo no acepta thinking_level, se deja de enviar
         # None: entrevista de Jordi. En ensayos con otras entrevistas, quien la conduce ("" si no se sabe)
         self.entrevistador: str | None = None

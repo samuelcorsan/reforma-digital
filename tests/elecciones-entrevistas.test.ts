@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import example from '../apps/web/lib/elecciones/entrevistas/ejemplo.json';
 import {
+  allVerifications,
   cancelledRound,
   intensityScale,
   interviewsOf,
@@ -54,6 +55,20 @@ describe('las entrevistas', () => {
     expect(a.revisiones.map((r) => r.id)).toContain(first.id);
     const unsourced = marks(a).find((m) => m.id === first.id);
     expect(unsourced?.label).toBe('Sin fuente');
+  });
+
+  it('publica solo las fuentes válidas de cada verificación', () => {
+    const [first, ...rest] = example.revisiones;
+    const valid = first.fuentes[0];
+    const a = publish({
+      ...example,
+      revisiones: [{ ...first, fuentes: [valid, { titulo: '', url: 'no es una url' }] }, ...rest],
+    });
+    expect(a.revisiones.find((r) => r.id === first.id)?.fuentes).toEqual([valid]);
+  });
+
+  it('deja la entrevista de ejemplo fuera de la lista de todas las verificaciones', () => {
+    expect(allVerifications().filter(({ interview }) => interview.ficticio)).toEqual([]);
   });
 
   it('pone todas las propuestas en la línea de tiempo, con lo que les falta', () => {

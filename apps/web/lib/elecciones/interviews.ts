@@ -251,10 +251,12 @@ const validSource = (f: z.infer<typeof source>) =>
 export function publish(raw: unknown) {
   const a = interviewSchema.parse(raw);
   const id = a.id ?? `${a.jornada}-${a.candidato}`;
-  const revisiones = a.revisiones.filter(
-    (r) =>
-      r.estado !== 'descartada' && (r.veredicto === 'sinfuente' || r.fuentes.some(validSource)),
-  );
+  // De cada verificación, solo las fuentes con título y enlace web: las demás no se pintan.
+  const revisiones = a.revisiones
+    .map((r) => ({ ...r, fuentes: r.fuentes.filter(validSource) }))
+    .filter(
+      (r) => r.estado !== 'descartada' && (r.veredicto === 'sinfuente' || r.fuentes.length > 0),
+    );
   const momentos = a.momentos.filter((m) => m.estado !== 'descartada');
   // Cuánto de lo publicado ha pasado ya la segunda revisión.
   const total = revisiones.length + momentos.length;
@@ -273,10 +275,11 @@ export type Interview = ReturnType<typeof publish>;
 const interviews = files.map(publish);
 
 export const getInterview = (id: string) => interviews.find((a) => a.id === id);
-// Todas las verificaciones publicadas: de la entrevista más reciente a la más antigua y, dentro de
-// cada una, en el orden en que se dijeron.
+// Todas las verificaciones publicadas de candidatos reales (la entrevista de ejemplo nunca entra): de
+// la más reciente a la más antigua y, dentro de cada una, en el orden en que se dijeron.
 export const allVerifications = () =>
-  [...interviews]
+  interviews
+    .filter((a) => !a.ficticio)
     .sort((x, y) => y.publicado.localeCompare(x.publicado))
     .flatMap((interview) =>
       interview.revisiones.map((verification) => ({ interview, verification })),
