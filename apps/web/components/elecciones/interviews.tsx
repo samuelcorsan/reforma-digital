@@ -1658,9 +1658,10 @@ export function InterviewsMethod() {
           <VerdictList />
           <p className="m-0 text-sm text-muted-foreground">
             Cada afirmación comprobable se contrasta con fuentes oficiales y se publica con sus
-            enlaces. Ninguna sale sin al menos una fuente. Una segunda revisión de IA abre cada
-            fuente y confirma, corrige o descarta la calificación; lo que aún no ha pasado por ella
-            va marcado como sin revisar.
+            enlaces. Ninguna sale sin al menos una fuente, y un Falso o un Engañoso necesita una
+            fuente oficial. Las anécdotas, lo que nadie puede comprobar, no se califican. Una
+            segunda revisión de IA abre cada fuente y confirma, corrige o descarta la calificación;
+            lo que aún no ha pasado por ella va marcado como sin revisar.
           </p>
           <ul className="m-0 flex list-none flex-wrap gap-2 p-0 text-sm">
             {officialSources.map((name) => (

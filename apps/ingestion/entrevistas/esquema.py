@@ -269,6 +269,8 @@ class Agrupacion(BaseModel):
 class Dictamen(BaseModel):
     veredicto: Veredicto
     explicacion: str
+    # False: anécdota, sin fuentes que permitan concluir, o Falso/Engañoso sin fuente oficial. No se publica
+    comprobable: bool = True
 
 
 class Decision(BaseModel):

@@ -58,7 +58,8 @@ REDIRECCION_GOOGLE = "vertexaisearch.cloud.google.com"
 OFICIALES = (
     ".gob.es", "ine.es", "boe.es", "congreso.es", "senado.es", "bde.es", "airef.es", "seg-social.es", "cis.es",
     "poderjudicial.es", "tribunalconstitucional.es", "europa.eu", "oecd.org", "un.org", "who.int", "imf.org",
-    "worldbank.org", ".gov", ".gob.mx",
+    "worldbank.org", ".gov", ".gob.mx", "sepe.es", "cnmc.es", "tcu.es", "defensordelpueblo.es", "gencat.cat",
+    "juntadeandalucia.es", "comunidad.madrid", "madrid.org", "euskadi.eus", "xunta.gal", "gva.es",
 )
 # Ni vídeos ni redes; tampoco Wikipedia (no es fuente primaria) ni webs que transcriben podcasts (prueba circular)
 NO_VALEN = (
@@ -299,12 +300,13 @@ class ClienteGemini:
     def comprobar(self, cita: str, contexto: str, candidato: str, fecha: str) -> Comprobacion:
         from google.genai import types
 
-        # 1) Búsqueda con Google para encontrar los datos oficiales (texto libre + fuentes)
+        # 1) Búsqueda con Google y lectura de las páginas: los datos oficiales (texto libre + fuentes). Las mismas
+        # herramientas y reglas que la segunda revisión, para que lo dudoso se descarte ya aquí
         r = self._generar(
             "verificacion",
             prompts.VERIFICAR.format(candidato=candidato, cita=cita, contexto=contexto, fecha=fecha),
             temperature=0.0,
-            tools=[types.Tool(google_search=types.GoogleSearch())],
+            tools=[types.Tool(url_context=types.UrlContext()), types.Tool(google_search=types.GoogleSearch())],
         )
         fuentes = self._fuentes(r)
         # 2) Veredicto estructurado a partir de lo encontrado

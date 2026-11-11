@@ -421,11 +421,13 @@ def test_segunda_revision_confirma_corrige_o_descarta():
 
     oficial = Fuente(titulo="INE", url="https://www.ine.es/x")
     nueva = Fuente(titulo="BOE", url="https://www.boe.es/y")
+    prensa = Fuente(titulo="Un periódico", url="https://www.periodico.es/z")
     decisiones = {
         "a": (Decision(decision="confirmar", veredicto="legal", explicacion="e", fuentes_ok=True, nota="n"), []),
         "b": (Decision(decision="corregir", veredicto="fuera", explicacion="otra", fuentes_ok=False, nota="n"), [nueva]),
         "c": (Decision(decision="descartar", veredicto="roja", explicacion="e", fuentes_ok=False, nota="n"), [nueva]),
         "d": (Decision(decision="confirmar", veredicto="legal", explicacion="e", fuentes_ok=False, nota="n"), []),
+        "e": (Decision(decision="corregir", veredicto="roja", explicacion="e", fuentes_ok=False, nota="n"), [prensa]),
     }
 
     class Cliente:
@@ -435,9 +437,9 @@ def test_segunda_revision_confirma_corrige_o_descarta():
 
     revisiones = [
         Revision(id=c, candidato="X", segundo=0, cita=c, veredicto="legal", explicacion="e", fuentes=[oficial])
-        for c in "abcd"
+        for c in "abcde"
     ]
-    a, b, c, d = proceso.segunda_revision(Cliente(), revisiones, [seg(0, "hola")], "X", "2026-11-13", 2)
+    a, b, c, d, e = proceso.segunda_revision(Cliente(), revisiones, [seg(0, "hola")], "X", "2026-11-13", 2)
     assert (a.estado, a.fuentes, a.segundaRevision.sugerencia) == ("aprobada", [oficial], None)
     # Corregida: otro veredicto, con las fuentes que encontró la segunda revisión, y queda el que se propuso
     assert (b.estado, b.veredicto, b.explicacion, b.fuentes) == ("aprobada", "fuera", "otra", [nueva])
@@ -445,6 +447,8 @@ def test_segunda_revision_confirma_corrige_o_descarta():
     assert c.estado == "descartada"
     # Sin ninguna fuente que lo respalde no se publica, aunque la decisión fuera confirmar
     assert d.estado == "descartada"
+    # Falso o Engañoso solo con prensa: no se publica, y la nota dice por qué
+    assert e.estado == "descartada" and "sin fuente oficial" in e.segundaRevision.nota
 
 
 def test_indice_de_la_web_da_de_alta_lo_publicado_y_nunca_los_ensayos(tmp_path, monkeypatch):
@@ -458,3 +462,38 @@ def test_indice_de_la_web_da_de_alta_lo_publicado_y_nunca_los_ensayos(tmp_path, 
     assert "export const files: unknown[] = [entrevista13nPedroSanchez, ejemplo];" in texto
     assert "export const commonFiles: Record<string, unknown> = { '13n': comunes13n };" in texto
     assert "ensayo" not in texto
+
+
+def test_lo_no_comprobable_se_descarta_en_la_primera_pasada():
+    from entrevistas.esquema import Dictamen
+    from entrevistas.modelo import Comprobacion
+
+    transcripcion = Transcripcion(segmentos=EJEMPLO["segmentos"])
+    extraccion = Extraccion(
+        temas=[], preguntas=[], propuestas=[], ataques=[], momentos=[], interrupciones=[],
+        afirmaciones=[{"segundo": r["segundo"], "cita": r["cita"], "por_que_comprobable": "x"} for r in EJEMPLO["revisiones"]],
+    )
+    primera = EJEMPLO["revisiones"][0]["cita"]
+
+    class Cliente(ClienteSimulado):
+        revisadas: list[str] = []
+
+        def comprobar(self, cita, contexto, candidato, fecha):
+            c = super().comprobar(cita, contexto, candidato, fecha)
+            if cita == primera:  # una anécdota: la verificación ya ve que no se puede comprobar
+                return Comprobacion(dictamen=Dictamen(veredicto="roja", explicacion="", comprobable=False), fuentes=[])
+            return c
+
+        def revisar(self, cita, contexto, candidato, fecha, propuesta):
+            self.revisadas.append(cita)
+            return super().revisar(cita, contexto, candidato, fecha, propuesta)
+
+    cliente = Cliente(transcripcion, extraccion)
+    segmentos = [Segmento(**s) for s in EJEMPLO["segmentos"]]
+    a = proceso.analizar(
+        cliente, segmentos, slug="ejemplo", candidato="C", titulo="t", youtube_id=None, publicado="2026-11-13",
+        duracion=EJEMPLO["duracion"],
+    )
+    descartada = next(r for r in a.revisiones if r.cita == primera)
+    assert descartada.estado == "descartada"
+    assert primera not in cliente.revisadas  # no gasta una segunda revisión en ella

@@ -17,8 +17,15 @@ YouTube → yt-dlp (audio) → ffmpeg (trozos de 5 min) → Gemini: transcripci�
 
 **Nadie revisa a mano lo que sale.** Lo publicado es lo que confirma la segunda revisión de IA, y la web lo dice
 así. Por eso los prompts ([`prompts.py`](prompts.py)) piden ser exhaustivo, contrastar cada dato con su fuente
-primaria y citar de dónde sale cada cifra. Una verificación sin ninguna fuente que la respalde no se publica nunca.
-Las métricas que no decide el modelo (tiempo de palabra, intensidad, interrupciones) salen con reglas fijas.
+primaria y citar de dónde sale cada cifra, con las mismas reglas en las dos pasadas (`REGLAS_FUENTES`):
+
+- Las anécdotas (lo que alguien dice haber visto u oído, lo que pasó en privado) no se verifican: ninguna fuente
+  puede confirmarlas ni desmentirlas.
+- Lo que la primera pasada ya ve que no es comprobable se descarta ahí, sin gastar una segunda revisión.
+- Una verificación sin ninguna fuente que la respalde no se publica nunca.
+- Un Falso o un Engañoso necesita al menos un enlace a una fuente oficial o primaria (los dominios de `OFICIALES`
+  en [`modelo.py`](modelo.py)). Si no lo hay, se descarta aunque la explicación parezca buena.
+  Las métricas que no decide el modelo (tiempo de palabra, intensidad, interrupciones) salen con reglas fijas.
 
 Usa Gemini y no NaN, como el resto de Reforma Digital, porque necesita un modelo que escuche el audio, vea el vídeo y
 busque en la web. Solo recibe vídeos públicos de entrevistas, nunca datos de nadie.
@@ -81,6 +88,9 @@ Si la segunda revisión se corta (red, límite de la API), repítela sobre lo qu
 ## Otros comandos
 
 - `sincronia <id>`: vuelve a comparar los tiempos con los subtítulos de YouTube.
+- `reanalizar <id>`: repite el análisis, la verificación y la segunda revisión sobre la transcripción ya hecha, sin
+  volver a transcribir (lo caro). Para aplicar un cambio en los prompts o las reglas a una entrevista ya analizada.
+  Con un ensayo, `--nombre "Nombre"`. Con 90 min de vídeo cuesta unos 0,40 USD.
 - `nota <id>`: recalcula la valoración (por ejemplo, tras cambiar los pesos en `metricas.py`).
 - `analizar … --ensayo "Nombre"`: analiza cualquier otra entrevista para probar. Todo se queda en
   `apps/ingestion/.cache/entrevistas/`, fuera de Git, y nunca se publica. `--hasta 30` analiza solo los primeros

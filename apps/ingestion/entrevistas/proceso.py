@@ -24,7 +24,7 @@ from .esquema import (
     Visual,
 )
 from .metricas import estadisticas, nota
-from .modelo import Cliente, Comprobacion, es_oficial
+from .modelo import Cliente, Comprobacion, es_oficial, ordenar_fuentes
 
 log = logging.getLogger("entrevistas")
 
@@ -310,7 +310,8 @@ def analizar(
             fuentes=c.fuentes,
             pilladoEnDirecto=af.pillado_en_directo,
             enVideo=en_contraste(af.cita, seg.inicio, contraste) if contraste is not None else None,
-            estado="propuesta",  # la segunda revisión de IA la confirma, corrige o descarta
+            # Lo que la verificación ya ve que no es comprobable no pasa a la segunda revisión; el resto, sí
+            estado="propuesta" if c.dictamen.comprobable else "descartada",
         )
 
     # Momentos clave: misma barrera antiinvención. Los elige la IA (elegir_momentos) y se publican sin más revisión
@@ -359,7 +360,12 @@ def analizar(
         log.info("Verificando %d afirmaciones (%d a la vez)…", len(validas), hilos)
         with ThreadPoolExecutor(max_workers=max(1, hilos)) as ex:
             revisiones = list(ex.map(revisar, validas))
-        log.info("Verificadas %d afirmaciones en %.0f s", len(revisiones), time.time() - inicio)
+        log.info(
+            "Verificadas %d afirmaciones en %.0f s (%d no comprobables, descartadas)",
+            len(revisiones),
+            time.time() - inicio,
+            sum(r.estado == "descartada" for r in revisiones),
+        )
         if segunda:
             revisiones = segunda_revision(cliente, revisiones, segmentos, candidato, publicado, hilos)
     for k, r in enumerate(sorted(revisiones, key=lambda r: r.segundo)):
@@ -483,8 +489,14 @@ def segunda_revision(
         propuesta = Comprobacion(dictamen=Dictamen(veredicto=r.veredicto, explicacion=r.explicacion), fuentes=r.fuentes)
         hecho = cliente.revisar(r.cita, contexto_de(segmentos, r.segundo), candidato, fecha, propuesta)
         d = hecho.decision
-        fuentes = r.fuentes if d.fuentes_ok else hecho.fuentes
+        # Si las propuestas valen, se suman las que encontró la revisión (las oficiales, primero)
+        fuentes = ordenar_fuentes(r.fuentes + hecho.fuentes)[:4] if d.fuentes_ok else hecho.fuentes
+        nota = d.nota
         aprobada = d.decision != "descartar" and bool(fuentes)
+        # Regla fija: nadie acusa de falso o engañoso sin una fuente oficial o primaria enlazada
+        if aprobada and d.veredicto in ("roja", "fuera") and not any(es_oficial(f.url) for f in fuentes):
+            aprobada = False
+            nota = f"{nota} Descartada: {d.veredicto} sin fuente oficial enlazada.".strip()
         return r.model_copy(
             update={
                 "veredicto": d.veredicto if aprobada else r.veredicto,
@@ -494,7 +506,7 @@ def segunda_revision(
                 "segundaRevision": SegundaRevision(
                     sugerencia=r.veredicto if d.veredicto != r.veredicto else None,
                     fuentesOk=d.fuentes_ok,
-                    nota=d.nota,
+                    nota=nota,
                 ),
             }
         )
@@ -510,9 +522,6 @@ def segunda_revision(
         sum(r.segundaRevision is not None and r.segundaRevision.sugerencia is not None for r in aprobadas),
         len(hechas) - len(aprobadas),
     )
-    for r in aprobadas:
-        if r.veredicto in ("roja", "fuera") and not any(es_oficial(f.url) for f in r.fuentes):
-            log.warning("%s sin fuente oficial: %s", r.veredicto, r.cita[:80])
     return hechas
 
 

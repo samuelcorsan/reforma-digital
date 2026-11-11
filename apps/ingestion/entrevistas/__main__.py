@@ -364,23 +364,59 @@ def cmd_comunes(args):
     logging.info("%d preguntas comunes entre %d entrevistas → %s", len(comunes), len(entrevistas), salida)
 
 
-def cmd_revisar(args):
-    """Repite la segunda revisión de IA sobre lo que quedó pendiente (por ejemplo, si se cortó la conexión) y
-    recalcula la nota. Lo ya aprobado o descartado no se toca."""
-    ruta = DATOS_WEB / f"{args.slug}.json"
-    if not ruta.exists():
-        ruta = BRUTOS / args.slug / "analisis.json"
-    if not ruta.exists():
-        sys.exit(f"No encuentro {args.slug} en {DATOS_WEB} ni en {BRUTOS}.")
-    a = Analisis.model_validate_json(ruta.read_text(encoding="utf-8"))
-    cliente = ClienteGemini(args.modelo or os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"))
-    nombre = CANDIDATOS.get(a.candidato, a.titulo)
-    revisiones = proceso.segunda_revision(cliente, a.revisiones, a.segmentos, nombre, a.publicado, args.hilos)
-    a = proceso.recalcular(a.model_copy(update={"revisiones": revisiones}))
+def _ruta(slug: str) -> Path:
+    """El JSON de una entrevista publicada (<ronda>-<candidato>) o de un ensayo (su carpeta en .cache)."""
+    for ruta in (DATOS_WEB / f"{slug}.json", BRUTOS / slug / "analisis.json"):
+        if ruta.exists():
+            return ruta
+    sys.exit(f"No encuentro {slug} en {DATOS_WEB} ni en {BRUTOS}.")
+
+
+def _guardar(a: Analisis, ruta: Path) -> None:
     ruta.write_text(a.a_json() + "\n", encoding="utf-8")
     if ruta.parent == DATOS_WEB:
         registrar()
     logging.info("Nota %.1f ± %.1f → %s", a.nota.global_, a.nota.margen, ruta)
+
+
+def cmd_reanalizar(args):
+    """Repite el análisis (extracción, verificación y segunda revisión) sobre la transcripción ya hecha, sin volver
+    a transcribir, que es lo caro: para aplicar un cambio en los prompts o las reglas a una entrevista ya analizada."""
+    ruta = _ruta(args.slug)
+    a = Analisis.model_validate_json(ruta.read_text(encoding="utf-8"))
+    nombre = args.nombre or CANDIDATOS.get(a.candidato)
+    if not nombre:
+        sys.exit("No es uno de los candidatos: di cómo se llama con --nombre.")
+    cliente = ClienteGemini(args.modelo or os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"))
+    ficha = a.entrevista
+    # Como en analizar: en The Wild Project, el prompt de Jordi; en otra entrevista, quien la conduzca
+    cliente.entrevistador = None if ficha and ficha.medio == WILD else (ficha.entrevistador if ficha else "")
+    nuevo = proceso.analizar(
+        cliente,
+        a.segmentos,
+        slug=a.candidato,
+        candidato=nombre,
+        titulo=a.titulo,
+        youtube_id=a.youtubeId,
+        publicado=a.publicado,
+        duracion=a.duracion,
+        hilos=args.hilos,
+        visuales=a.visuales,
+    )
+    nuevo.silencios, nuevo.id, nuevo.jornada, nuevo.entrevista = a.silencios, a.id, a.jornada, a.entrevista
+    _guardar(nuevo, ruta)
+    logging.info("Consumo:\n%s", cliente.contador.tabla())
+
+
+def cmd_revisar(args):
+    """Repite la segunda revisión de IA sobre lo que quedó pendiente (por ejemplo, si se cortó la conexión) y
+    recalcula la nota. Lo ya aprobado o descartado no se toca."""
+    ruta = _ruta(args.slug)
+    a = Analisis.model_validate_json(ruta.read_text(encoding="utf-8"))
+    cliente = ClienteGemini(args.modelo or os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"))
+    nombre = CANDIDATOS.get(a.candidato, a.titulo)
+    revisiones = proceso.segunda_revision(cliente, a.revisiones, a.segmentos, nombre, a.publicado, args.hilos)
+    _guardar(proceso.recalcular(a.model_copy(update={"revisiones": revisiones})), ruta)
 
 
 def cmd_simular(args):
@@ -476,6 +512,13 @@ def main():
     n = sub.add_parser("nota", help="Recalcula nota y estadísticas con las verificaciones aprobadas")
     n.add_argument("slug")
     n.set_defaults(f=cmd_nota)
+
+    ra = sub.add_parser("reanalizar", help="Repite análisis, verificación y revisión sin volver a transcribir")
+    ra.add_argument("slug", help="<ronda>-<candidato> o la carpeta de un ensayo (ensayo-…)")
+    ra.add_argument("--nombre", help="Nombre de la persona entrevistada, si no es uno de los candidatos")
+    ra.add_argument("--modelo", default=None)
+    ra.add_argument("--hilos", type=int, default=8)
+    ra.set_defaults(f=cmd_reanalizar)
 
     r = sub.add_parser("revisar", help="Repite la segunda revisión de IA de lo pendiente y recalcula la nota")
     r.add_argument("slug", help="<ronda>-<candidato> o la carpeta de un ensayo (ensayo-…)")
