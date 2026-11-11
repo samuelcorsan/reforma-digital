@@ -8,7 +8,6 @@ import { decimal, formatDate, longDate, minute } from '../../lib/elecciones/form
 import {
   answerIds,
   answers,
-  candidates,
   criteria,
   criterionIds,
   getCandidate,
@@ -38,10 +37,10 @@ import {
   visuals,
   verdicts,
   videoUrl,
-  type Candidate,
   type Interview,
   type Mark,
 } from '../../lib/elecciones/interviews';
+import { candidates, type Candidate } from '../../lib/elecciones/candidates';
 import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon, type IconName } from '../brand/icon';
 import { AI, Source } from '../congreso/common';

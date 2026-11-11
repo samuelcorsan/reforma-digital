@@ -8,15 +8,14 @@ import { getPolls } from '../../lib/congreso/data';
 import { pollsHidden } from '../../lib/congreso/polls';
 import { decimal, longDate, signed } from '../../lib/elecciones/format';
 import {
-  candidates,
   interviewsOf,
   proposalScore,
   outlet,
   pendingRound,
   roundOf,
   topicShare,
-  type Candidate,
 } from '../../lib/elecciones/interviews';
+import { candidates, type Candidate } from '../../lib/elecciones/candidates';
 import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon } from '../brand/icon';
 import { DataLoading } from '../congreso/loading';

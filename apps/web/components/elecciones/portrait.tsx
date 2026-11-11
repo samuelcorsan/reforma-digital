@@ -6,7 +6,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@reforma-digital/design/ui/collapsible';
-import type { Candidate } from '../../lib/elecciones/interviews';
+import type { Candidate } from '../../lib/elecciones/candidates';
 import { Icon } from '../brand/icon';
 import abascal from './candidatos/abascal.png';
 import colau from './candidatos/colau.png';
