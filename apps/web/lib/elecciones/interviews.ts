@@ -1,15 +1,12 @@
 import { z } from 'zod';
 import { longDate } from './format';
 import { candidates, type Candidate } from './candidates';
-import example from './entrevistas/ejemplo.json';
+import { commonFiles, files } from './entrevistas';
 
-// Las entrevistas a los candidatos del 29N, revisadas con IA y confirmadas por una persona.
-// El análisis sale del pipeline de El VAR Electoral: un JSON por entrevista en ./entrevistas/
-// (`<ronda>-<candidato>.json`). Para publicar una, copia el JSON revisado ahí y añádelo a `files`.
-const files: unknown[] = [example];
-// Las preguntas que se hicieron a varios candidatos de una ronda (comando `comunes` del pipeline):
-// ./entrevistas/comunes-<ronda>.json, añadido aquí con su ronda.
-const commonFiles: Record<string, unknown> = {};
+// Las entrevistas a los candidatos del 29N, analizadas y revisadas con IA. Las publica el pipeline de
+// apps/ingestion/entrevistas: un JSON por entrevista en ./entrevistas/ (`<ronda>-<candidato>.json`),
+// las preguntas comunes de cada ronda (`comunes-<ronda>.json`) y su alta en ./entrevistas/index.ts,
+// que genera él.
 
 // Una ronda: una entrevista larga a cada uno de los cuatro, en un medio nacional, que se revisan
 // juntas. Puede ser el mismo programa para los cuatro o medios distintos; solo las `comparable`
@@ -120,7 +117,8 @@ export const visuals = {
   },
 } as const;
 
-// La IA propone y una persona aprueba o descarta. Sin estado, el pipeline lo da por aprobado.
+// La segunda revisión de IA aprueba o descarta lo que propone la verificación. Sin estado, se da por
+// aprobado.
 const state = z.enum(['propuesta', 'aprobada', 'descartada']).default('aprobada');
 const source = z.object({ titulo: z.string(), url: z.string() });
 
@@ -239,8 +237,8 @@ const interviewSchema = z.object({
 const validSource = (f: z.infer<typeof source>) =>
   f.titulo.trim().length > 0 && /^https?:\/\/\S+\.\S+/.test(f.url);
 
-// Lo que se publica de una entrevista: todo menos lo que una persona ha descartado, y las
-// verificaciones, solo con al menos una fuente. Lo que la IA propuso y nadie ha revisado sale como
+// Lo que se publica de una entrevista: todo menos lo que la segunda revisión de IA ha descartado, y
+// las verificaciones, solo con al menos una fuente. Lo que aún no ha pasado por ella sale como
 // provisional (`estado: 'propuesta'`) y cuenta como pendiente: mientras quede algo, el informe y su
 // valoración son provisionales.
 export function publish(raw: unknown) {
@@ -250,7 +248,7 @@ export function publish(raw: unknown) {
     (r) => r.estado !== 'descartada' && r.fuentes.some(validSource),
   );
   const momentos = a.momentos.filter((m) => m.estado !== 'descartada');
-  // Cuánto de lo publicado ha confirmado ya una persona.
+  // Cuánto de lo publicado ha pasado ya la segunda revisión.
   const total = revisiones.length + momentos.length;
   const reviewed = [...revisiones, ...momentos].filter((x) => x.estado === 'aprobada').length;
   return {

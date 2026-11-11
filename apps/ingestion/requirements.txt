@@ -5,3 +5,7 @@ psycopg[binary]==3.3.6
 jsonschema==4.26.0
 pytest==9.1.1
 python-dotenv==1.2.4
+# Entrevistas (apps/ingestion/entrevistas). YouTube cambia a menudo: actualiza yt-dlp el día antes de usarlo.
+google-genai==2.33.0
+pydantic==2.14.1
+yt-dlp[default,curl-cffi]==2026.10.21
