@@ -242,12 +242,16 @@ const validSource = (f: z.infer<typeof source>) =>
 export function publish(raw: unknown) {
   const a = interviewSchema.parse(raw);
   const id = a.id ?? `${a.jornada}-${a.candidato}`;
+  const waiting = (list: { estado: string }[]) =>
+    list.filter((x) => x.estado === 'propuesta').length;
   return {
     ...a,
     id,
     revisiones: a.revisiones.filter((r) => r.estado === 'aprobada' && r.fuentes.some(validSource)),
     momentos: a.momentos.filter((m) => m.estado === 'aprobada'),
-    pending: [...a.revisiones, ...a.momentos].filter((x) => x.estado === 'propuesta').length,
+    pending: waiting(a.revisiones) + waiting(a.momentos),
+    // Lo que falta por revisar de cada fila de la línea de tiempo.
+    waiting: { verificaciones: waiting(a.revisiones), momentos: waiting(a.momentos) },
   };
 }
 export type Interview = ReturnType<typeof publish>;
@@ -282,6 +286,23 @@ export const lanes = {
   criticas: 'Críticas e interrupciones',
   plato: 'En plató',
 } as const;
+// Por qué una fila de la línea de tiempo está vacía en toda la entrevista: sin explicarlo, parece
+// un fallo.
+export function emptyLanes(a: Interview): Record<keyof typeof lanes, string> {
+  const pending = (n: number, otherwise: string) =>
+    n ? `${n} por revisar: se verán cuando una persona los confirme` : otherwise;
+  return {
+    momentos: pending(a.waiting.momentos, 'Ninguno'),
+    verificaciones: pending(a.waiting.verificaciones, 'Ninguna afirmación comprobable'),
+    propuestas: a.propuestas.length
+      ? 'Ninguna completa ni casi completa: solo entran las que dicen al menos tres de qué, cuánto, cuándo y cómo'
+      : 'Ninguna propuesta',
+    preguntas: 'Ninguna',
+    criticas: 'Ninguna',
+    plato: 'Nada en plató',
+  };
+}
+
 export type Mark = {
   id: string;
   second: number;

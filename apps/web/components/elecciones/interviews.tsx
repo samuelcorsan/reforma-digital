@@ -7,6 +7,7 @@ import { Card } from '@reforma-digital/design/ui/card';
 import { decimal, formatDate, longDate, minute } from '../../lib/elecciones/format';
 import {
   allVerifications,
+  emptyLanes,
   answerIds,
   answers,
   criteria,
@@ -875,6 +876,7 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
           }}
           marks={marks(a)}
           lanes={lanes}
+          empty={emptyLanes(a)}
           minutes={perMinute(a)}
           topics={a.temas}
           color={candidate?.color ?? 'var(--foreground)'}

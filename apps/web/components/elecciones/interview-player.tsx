@@ -234,6 +234,7 @@ export function InterviewPlayer({
   speakers,
   marks,
   lanes,
+  empty,
   minutes,
   topics,
   color,
@@ -247,6 +248,8 @@ export function InterviewPlayer({
   speakers: Record<Interview['segmentos'][number]['hablante'], string>;
   marks: Mark[];
   lanes: typeof laneNames;
+  // Qué decir en una fila sin ninguna marca en toda la entrevista.
+  empty: Record<string, string>;
   minutes: Minute[];
   topics: Interview['temas'];
   // El color de su partido, para su tiempo de palabra.
@@ -815,33 +818,39 @@ export function InterviewPlayer({
                 className="grid grid-cols-[var(--label)_minmax(0,1fr)] items-start gap-3 border-t border-border"
               >
                 <span className="py-2 text-sm leading-tight text-muted-foreground">{name}</span>
-                <div className="relative" style={{ height: lane.height }}>
-                  {lane.placed.map(({ mark: m, row: level }) => (
-                    <button
-                      key={m.id}
-                      type="button"
-                      aria-label={`${minute(m.second)} · ${m.label}: ${m.text}`}
-                      aria-pressed={selected?.id === m.id}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        pick(m);
-                      }}
-                      onMouseEnter={() => setHovered(m)}
-                      onMouseLeave={() => setHovered(null)}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-transform hover:z-10 hover:scale-125 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground aria-pressed:ring-offset-2 aria-pressed:ring-offset-background motion-reduce:transition-none"
-                      style={{ left: at(share(m.second)), top: half + level * gap }}
-                    >
-                      <MarkIcon
-                        kind={m.kind}
-                        color={m.color}
-                        className={cn(
-                          'size-6',
-                          !m.color && 'bg-transparent text-muted-foreground ring-0',
-                        )}
-                      />
-                    </button>
-                  ))}
-                </div>
+                {marks.some((m) => m.lane === id) ? (
+                  <div className="relative" style={{ height: lane.height }}>
+                    {lane.placed.map(({ mark: m, row: level }) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        aria-label={`${minute(m.second)} · ${m.label}: ${m.text}`}
+                        aria-pressed={selected?.id === m.id}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          pick(m);
+                        }}
+                        onMouseEnter={() => setHovered(m)}
+                        onMouseLeave={() => setHovered(null)}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-transform hover:z-10 hover:scale-125 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground aria-pressed:ring-offset-2 aria-pressed:ring-offset-background motion-reduce:transition-none"
+                        style={{ left: at(share(m.second)), top: half + level * gap }}
+                      >
+                        <MarkIcon
+                          kind={m.kind}
+                          color={m.color}
+                          className={cn(
+                            'size-6',
+                            !m.color && 'bg-transparent text-muted-foreground ring-0',
+                          )}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="py-2 text-sm leading-tight text-muted-foreground">
+                    {empty[id]}
+                  </span>
+                )}
               </div>
             );
           })}
