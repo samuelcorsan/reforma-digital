@@ -402,8 +402,11 @@ def test_sincronia_avisa_si_la_transcripcion_va_desplazada(tmp_path):
 
     # Treinta frases distintas entre sí (las que se repiten se descartan por ambiguas)
     frases = [" ".join(f"p{n}x{k}" for k in range(10)) for n in range(30)]
-    # Los subtítulos de YouTube: una frase cada 20 s
-    eventos = [{"tStartMs": n * 20_000, "segs": [{"utf8": f}]} for n, f in enumerate(frases)]
+    # Los subtítulos de YouTube: una frase cada 20 s, una palabra por segundo, como los automáticos
+    eventos = [
+        {"tStartMs": n * 20_000, "segs": [{"utf8": f"{p} ", "tOffsetMs": k * 1000} for k, p in enumerate(f.split())]}
+        for n, f in enumerate(frases)
+    ]
     subtitulos = tmp_path / "subtitulos.es.json3"
     subtitulos.write_text(json.dumps({"events": eventos}), encoding="utf-8")
 

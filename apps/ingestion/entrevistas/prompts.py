@@ -46,8 +46,9 @@ def presentacion(entrevistador: str | None, candidato: str) -> dict[str, str]:
 VISUAL = """
 Además, en "visual", anota SOLO hechos que se ven en pantalla (inicio en MM:SS, como los segmentos):
 - "verificador": los periodistas verificadores aparecen en plano, o el entrevistador les pide que comprueben un dato.
-- "rotulo": texto con información que aparece sobreimpreso en pantalla (titulares, datos, cifras, gráficos). Copia \
-el texto. No anotes el nombre del invitado, el del programa ni logos de la cadena.
+- "rotulo": texto con información que aparece sobreimpreso en pantalla sobre lo que se habla en la entrevista \
+(titulares, datos, cifras, gráficos). Copia el texto. No anotes el nombre del invitado, el del programa, logos de la \
+cadena ni el teletipo con titulares de otras noticias que pasa por la parte de abajo.
 - "documento": alguien muestra a cámara un papel, gráfico, móvil, libro u otro objeto. Di qué es, sin interpretarlo.
 - "accion": SOLO acciones relacionadas con lo que se está hablando: consulta sus notas para responder, lee un \
 papel, señala una pantalla o un gráfico, se levanta o abandona el plató. Describe solo lo que hace, en pocas palabras.

@@ -85,6 +85,10 @@ def _palabras(ruta: Path) -> list[tuple[str, float]]:
 
 
 def medir(segmentos: list[Segmento], subtitulos: Path) -> Sincronia:
+    """Para cada frase, dónde suenan sus trozos de cuatro palabras en los subtítulos frente a dónde deberían sonar
+    dentro de su intervención (una intervención larga dura un minuto: su final no suena en su segundo inicial). De
+    cada trozo cuenta la aparición más cercana, porque las muletillas se repiten en toda la entrevista; el desfase de
+    la frase es la mediana de los de sus trozos."""
     palabras = _palabras(subtitulos)
     indice: dict[tuple[str, ...], list[float]] = {}
     for i in range(len(palabras) - 3):
@@ -94,13 +98,17 @@ def medir(segmentos: list[Segmento], subtitulos: Path) -> Sincronia:
         texto = normalizar(s.texto).split()
         if len(texto) < 8:
             continue  # frases cortas («sí, claro») se repiten en toda la entrevista
-        hallados = sorted(t for j in range(len(texto) - 3) for t in indice.get(tuple(texto[j : j + 4]), []))
-        if not hallados:
+        propios = []
+        for j in range(len(texto) - 3):
+            veces = indice.get(tuple(texto[j : j + 4]))
+            if veces:
+                esperado = s.inicio + (s.fin - s.inicio) * j / len(texto)
+                propios.append(min((t - esperado for t in veces), key=abs))
+        # Hacen falta varios trozos para fiarse: con uno solo, una coincidencia casual decide
+        if len(propios) < 3:
             continue
-        sitio = hallados[len(hallados) // 2]
-        # Solo si los trozos coinciden entre sí: si no, la frase se dice varias veces y no se sabe cuál es
-        if all(abs(t - sitio) < LEJOS for t in hallados[:3]):
-            desfases.append((s.inicio, sitio - s.inicio, s.texto))
+        propios.sort()
+        desfases.append((s.inicio, propios[len(propios) // 2], s.texto))
     if not desfases:
         return Sincronia(comparables=0, dentro=0, mediana=0)
     absolutos = sorted(abs(d) for _, d, _ in desfases)

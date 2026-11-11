@@ -190,6 +190,7 @@ def cmd_analizar(args):
     )
     a.silencios = silencios
     a.id, a.jornada, a.entrevista = ident, jornada, ficha
+    salida.parent.mkdir(parents=True, exist_ok=True)  # en modo vídeo, la carpeta del ensayo aún no existe
     salida.write_text(a.a_json() + "\n", encoding="utf-8")
     if audio.es_youtube(args.url):
         comprobar_sincronia(a, args.url, carpeta)
@@ -205,7 +206,7 @@ def cmd_analizar(args):
     (carpeta / f"coste-{coste['modo']}.json").write_text(json.dumps(coste, indent=2, ensure_ascii=False) + "\n")
     logging.info("Consumo:\n%s", cliente.contador.tabla())
     logging.info(
-        "Listo en %d min: %d segmentos, %d revisiones propuestas → %s",
+        "Listo en %d min: %d segmentos, %d verificaciones → %s",
         (time.time() - inicio) / 60,
         len(a.segmentos),
         len(a.revisiones),

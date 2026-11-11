@@ -113,7 +113,7 @@ $PY -m pip install -U "yt-dlp[default,curl-cffi]"
    - Por defecto es la ronda `13n` en The Wild Project. Para otra ronda u otro medio:
      `--jornada octubre --medio "Cadena SER" --programa "Hoy por Hoy" --entrevistador "Aimar Bretos"`. La ronda
      tiene que existir en `rounds`, en `apps/web/lib/elecciones/interviews.ts`.
-   - Con 100 minutos de vídeo tarda unos 12 minutos y cuesta unos 3 USD. Puedes lanzar las tres a la vez, en
+   - Con 55 minutos de vídeo tardó 11 minutos y costó 3 USD: una entrevista de 100 minutos, unos 5 USD. Puedes lanzar las tres a la vez, en
      terminales distintas.
    - Al acabar escribe `apps/web/lib/elecciones/entrevistas/13n-pedro-sanchez.json` y actualiza `index.ts`.
 
@@ -188,6 +188,6 @@ un error, lo dice para corregirlo con `reanalizar` y volver a publicar.
 
 Cada análisis guarda en `.cache/entrevistas/<id>/coste-<modo>.json` lo consumido en cada paso (audio, texto,
 salida, razonamiento, búsquedas y segundos) y lo resume al final del log. Los precios están en
-[`costes.py`](costes.py). Como referencia: transcribir La Revuelta (103 min) costó unos 1,30 USD, y analizar,
-verificar y revisar 90 min de Vaquero con `reanalizar`, 1,41 USD (la verificación, que busca a fondo cada
-afirmación, es casi la mitad).
+[`costes.py`](costes.py). Como referencia, 55 minutos de Feijóo en la SER costaron 2,98 USD: 0,61 la
+transcripción, 1,30 la verificación y 0,89 la segunda revisión. Lo caro es leer páginas web enteras para comprobar
+cada afirmación (unos 850.000 tokens en cada pasada).

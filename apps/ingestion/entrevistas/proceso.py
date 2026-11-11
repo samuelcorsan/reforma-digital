@@ -449,10 +449,19 @@ def _palabras(texto: str) -> set[str]:
 
 def filtrar_visuales(visuales: list[Visual], candidato: str, segmentos: list[Segmento]) -> list[Visual]:
     """Deja solo lo que aporta: sin rótulos vacíos, de promoción o de teletipo, sin repetir el mismo rótulo (en las
-    teles se queda minutos en pantalla) y sin rótulos que solo resumen lo que el candidato acaba de decir."""
+    teles se queda minutos en pantalla), sin rótulos que solo resumen lo que el candidato acaba de decir y sin anotar
+    dos veces lo mismo en un minuto. El teletipo con titulares de otras noticias lo evita el prompt (VISUAL)."""
     quedan: list[Visual] = []
     for v in sorted(visuales, key=lambda v: v.segundo):
         if rotulo_vacio(v, candidato) or not neutral(v):
+            continue
+        # Lo mismo, otra vez en el mismo minuto (el modelo lo anota en dos tramos o con otras palabras)
+        if any(
+            q.tipo == v.tipo
+            and v.segundo - q.segundo <= 60
+            and len(_palabras(v.descripcion) & _palabras(q.descripcion)) >= 0.5 * max(1, len(_palabras(v.descripcion)))
+            for q in quedan
+        ):
             continue
         if v.tipo == "rotulo":
             texto = normalizar(v.descripcion)
