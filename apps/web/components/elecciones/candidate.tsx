@@ -20,6 +20,7 @@ import { candidates, type Candidate } from '../../lib/elecciones/candidates';
 import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon } from '../brand/icon';
 import { DataLoading } from '../congreso/loading';
+import { DaysUntil } from './days-until';
 import { Dot, interviewsHref, ReportSections, shortDay } from './interviews';
 import { PhotoCredits, Portrait } from './portrait';
 import { Cell, Grid, Label, ReportSection, Stat } from './report';
@@ -33,13 +34,20 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
   const latestOn = latest && publishedOn(latest);
   const upcoming = pendingRound(c.slug);
   const round = latest && roundOf(latest);
-  const status = latest
-    ? latest.pending
-      ? 'En revisión'
-      : 'Revisada'
-    : upcoming
-      ? `Pendiente · ${shortDay(upcoming.date)}`
-      : 'Sin entrevistas';
+  const status = latest ? (
+    latest.pending ? (
+      'En revisión'
+    ) : (
+      'Revisada'
+    )
+  ) : upcoming ? (
+    <>
+      Pendiente · {shortDay(upcoming.date)}
+      <DaysUntil date={upcoming.date} />
+    </>
+  ) : (
+    'Sin entrevistas'
+  );
   const figures: [string, string][] = latest
     ? [
         [

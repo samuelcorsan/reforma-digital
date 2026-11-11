@@ -58,6 +58,7 @@ import { answerStyles, IconChip, MarkIcon, markIcons } from './mark-icon';
 import { PhotoCredits, Portrait } from './portrait';
 import { ScoreSimulator } from './score-simulator';
 import { ShareButton } from './share-button';
+import { DaysUntil } from './days-until';
 import { Bars, Cell, Explore, Grid, Label, ReportIntro, ReportSection, Stat } from './report';
 
 export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
@@ -204,11 +205,18 @@ export function InterviewsHome() {
   const upcoming = pendingRound();
   const compared = comparableRound();
   const complete = !!compared && roundInterviews(compared.id).every((e) => e.interview);
-  const status = upcoming
-    ? roundInterviews(upcoming.id).some((e) => e.interview)
-      ? `En revisión · ${upcoming.title}`
-      : `Próxima ronda · ${shortDay(upcoming.date)}`
-    : 'Rondas publicadas';
+  const status = upcoming ? (
+    roundInterviews(upcoming.id).some((e) => e.interview) ? (
+      `En revisión · ${upcoming.title}`
+    ) : (
+      <>
+        Próxima ronda · {shortDay(upcoming.date)}
+        <DaysUntil date={upcoming.date} />
+      </>
+    )
+  ) : (
+    'Rondas publicadas'
+  );
   return (
     <>
       <Grid>
