@@ -32,7 +32,8 @@ export const rounds: Round[] = [
   },
 ];
 
-const verdict = z.enum(['legal', 'amarilla', 'fuera', 'roja']);
+// `sinfuente`: nada encontrado la confirma ni la desmiente. Se publica sin calificar y no cuenta en la nota.
+const verdict = z.enum(['legal', 'amarilla', 'fuera', 'roja', 'sinfuente']);
 const criterion = z.enum([
   'veracidad',
   'alGrano',
@@ -54,6 +55,11 @@ export const verdicts = {
   amarilla: { name: 'Con matices', text: 'Impreciso o incompleto', color: 'var(--brand-yellow)' },
   fuera: { name: 'Engañoso', text: 'Fuera de contexto o engañoso', color: 'var(--brand-orange)' },
   roja: { name: 'Falso', text: 'Es falso', color: 'var(--brand)' },
+  sinfuente: {
+    name: 'Sin fuente',
+    text: 'No hay ninguna fuente que lo confirme o lo desmienta',
+    color: 'var(--muted-foreground)',
+  },
 } as const satisfies Record<z.infer<typeof verdict>, object>;
 
 export const criteria = {
@@ -238,14 +244,16 @@ const validSource = (f: z.infer<typeof source>) =>
   f.titulo.trim().length > 0 && /^https?:\/\/\S+\.\S+/.test(f.url);
 
 // Lo que se publica de una entrevista: todo menos lo que la segunda revisión de IA ha descartado, y
-// las verificaciones, solo con al menos una fuente. Lo que aún no ha pasado por ella sale como
+// las verificaciones calificadas, solo con al menos una fuente (las «Sin fuente», sin ella). Lo que
+// aún no ha pasado por ella sale como
 // provisional (`estado: 'propuesta'`) y cuenta como pendiente: mientras quede algo, el informe y su
 // valoración son provisionales.
 export function publish(raw: unknown) {
   const a = interviewSchema.parse(raw);
   const id = a.id ?? `${a.jornada}-${a.candidato}`;
   const revisiones = a.revisiones.filter(
-    (r) => r.estado !== 'descartada' && r.fuentes.some(validSource),
+    (r) =>
+      r.estado !== 'descartada' && (r.veredicto === 'sinfuente' || r.fuentes.some(validSource)),
   );
   const momentos = a.momentos.filter((m) => m.estado !== 'descartada');
   // Cuánto de lo publicado ha pasado ya la segunda revisión.
@@ -598,7 +606,7 @@ export function perMinute(a: Interview) {
       (p) => p.repregunta || p.respuesta === 'evasiva' || p.respuesta === 'cambio',
     ),
     ...a.ataques.filter((x) => x.tipo === 'personal'),
-    ...a.revisiones.filter((r) => r.veredicto !== 'legal'),
+    ...a.revisiones.filter((r) => r.veredicto !== 'legal' && r.veredicto !== 'sinfuente'),
     ...a.momentos.filter((m) => m.tipo === 'choque'),
   ];
   for (const t of tension) bump(t.segundo, 2);

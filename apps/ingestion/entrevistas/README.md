@@ -24,12 +24,14 @@ YouTube ─► yt-dlp (audio) ─► ffmpeg (trozos de 5 min) ─► Gemini: tra
 **Nadie revisa a mano lo que sale**, y la web lo dice así. Por eso las dos pasadas de IA siguen las mismas reglas
 estrictas (`REGLAS_FUENTES` en [`prompts.py`](prompts.py)):
 
-- Las anécdotas (lo que alguien dice haber visto u oído, lo que pasó en privado) no se verifican: ninguna fuente
-  puede confirmarlas ni desmentirlas.
-- Lo que la primera pasada ya ve que no es comprobable se descarta ahí, sin gastar una segunda revisión.
-- Una verificación sin ninguna fuente que la respalde no se publica nunca.
-- Un Falso o un Engañoso necesita al menos un enlace a una fuente oficial o primaria (los dominios de `OFICIALES`
-  en [`modelo.py`](modelo.py)). Si no lo hay, se descarta aunque la explicación parezca buena.
+- Todas las afirmaciones sobre hechos se buscan a fondo, también las anécdotas sobre hechos o personas públicas.
+- Fuente oficial y primaria siempre que exista (los dominios de `OFICIALES` en [`modelo.py`](modelo.py) van
+  primero); si no, prensa de referencia, citando el medio.
+- Si no aparece ninguna fuente que la confirme o la desmienta, la afirmación sale como **Sin fuente**: sin
+  calificar y sin contar en la valoración. Nunca se califica algo sin al menos una fuente enlazada.
+- Si el modelo copia mal una cita, se usa el tramo de la transcripción que más se le parece, tal como se dijo. Solo
+  se descarta lo que no se parece a nada, y lo que la segunda revisión ve que no es una afirmación (una opinión,
+  una promesa).
 
 El tiempo de palabra, la intensidad y las interrupciones no los decide el modelo: salen de reglas fijas.
 
@@ -111,7 +113,7 @@ $PY -m pip install -U "yt-dlp[default,curl-cffi]"
    - Por defecto es la ronda `13n` en The Wild Project. Para otra ronda u otro medio:
      `--jornada octubre --medio "Cadena SER" --programa "Hoy por Hoy" --entrevistador "Aimar Bretos"`. La ronda
      tiene que existir en `rounds`, en `apps/web/lib/elecciones/interviews.ts`.
-   - Con 100 minutos de vídeo tarda unos 7 minutos y cuesta unos 2 USD. Puedes lanzar las tres a la vez, en
+   - Con 100 minutos de vídeo tarda unos 12 minutos y cuesta unos 3 USD. Puedes lanzar las tres a la vez, en
      terminales distintas.
    - Al acabar escribe `apps/web/lib/elecciones/entrevistas/13n-pedro-sanchez.json` y actualiza `index.ts`.
 
@@ -155,7 +157,7 @@ $PY -m entrevistas comunes --jornada 13n
 | ⚠ LOS TIEMPOS NO CUADRAN CON EL VÍDEO                  | La transcripción va desplazada. Repite con `--modo audio`. Para volver a comprobarlo: `$PY -m entrevistas sincronia 13n-pedro-sanchez`.                             |
 | El vídeo no está en YouTube (RTVE Play…)               | Funciona con su URL, pero no hay subtítulos con los que comparar los tiempos: compara a mano la transcripción con el vídeo en tres puntos.                          |
 | Se cortó durante la verificación o la segunda revisión | `$PY -m entrevistas revisar 13n-pedro-sanchez` repite la segunda revisión de lo pendiente. Hasta entonces, la web lo marca como «sin revisar».                      |
-| Has cambiado un prompt o una regla                     | `$PY -m entrevistas reanalizar 13n-pedro-sanchez` repite análisis, verificación y revisión sin volver a transcribir (lo caro). Con 90 min, unos 0,40 USD.           |
+| Has cambiado un prompt o una regla                     | `$PY -m entrevistas reanalizar 13n-pedro-sanchez` repite análisis, verificación y revisión sin volver a transcribir. Con 90 min, unos 1,40 USD.                     |
 | Una verificación está mal                              | No retoques el JSON a mano: ajusta el prompt o la regla y usa `reanalizar`. Para una segunda opinión, `/segunda-revision 13n-pedro-sanchez` en Claude Code (abajo). |
 
 Los errores pasajeros de la API (límite de ritmo, sobrecarga, cortes de red) se reintentan solos. Los enlaces de
@@ -186,5 +188,6 @@ un error, lo dice para corregirlo con `reanalizar` y volver a publicar.
 
 Cada análisis guarda en `.cache/entrevistas/<id>/coste-<modo>.json` lo consumido en cada paso (audio, texto,
 salida, razonamiento, búsquedas y segundos) y lo resume al final del log. Los precios están en
-[`costes.py`](costes.py). Como referencia, La Revuelta (103 min) costó 1,70 USD sin la segunda revisión, y
-`reanalizar` sobre 90 min de Vaquero, 0,41 USD con todo.
+[`costes.py`](costes.py). Como referencia: transcribir La Revuelta (103 min) costó unos 1,30 USD, y analizar,
+verificar y revisar 90 min de Vaquero con `reanalizar`, 1,41 USD (la verificación, que busca a fondo cada
+afirmación, es casi la mitad).

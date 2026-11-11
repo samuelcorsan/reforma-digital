@@ -45,6 +45,17 @@ describe('las entrevistas', () => {
     expect(unreviewed.every((m) => m.label.endsWith('· sin revisar'))).toBe(true);
   });
 
+  it('publica sin fuentes lo que no tiene ninguna, como «Sin fuente»', () => {
+    const [first, ...rest] = example.revisiones;
+    const a = publish({
+      ...example,
+      revisiones: [{ ...first, veredicto: 'sinfuente', fuentes: [] }, ...rest],
+    });
+    expect(a.revisiones.map((r) => r.id)).toContain(first.id);
+    const unsourced = marks(a).find((m) => m.id === first.id);
+    expect(unsourced?.label).toBe('Sin fuente');
+  });
+
   it('pone todas las propuestas en la línea de tiempo, con lo que les falta', () => {
     const a = publish({
       ...example,

@@ -42,7 +42,7 @@ RAZONAR = {
     "analisis": None,
     "momentos": None,
     "comunes": None,
-    "verificacion": "medium",
+    "verificacion": "high",  # buscar a fondo cada afirmación, aunque cueste algo más
     "dictamen": "low",
     "revision": "medium",
     "decision": "low",
@@ -94,8 +94,10 @@ def es_oficial(url: str) -> bool:
 
 
 def ordenar_fuentes(fuentes: list[Fuente]) -> list[Fuente]:
-    """Quita vídeos y redes, y pone primero las fuentes oficiales (manteniendo el orden dentro de cada grupo)."""
-    validas = [f for f in fuentes if not any(dominio(f.url) == d or dominio(f.url).endswith("." + d) for d in NO_VALEN)]
+    """Quita vídeos, redes y repetidas, y pone primero las fuentes oficiales (manteniendo el orden dentro de cada
+    grupo)."""
+    unicas = list({f.url: f for f in reversed(fuentes)}.values())[::-1]  # la primera de cada URL
+    validas = [f for f in unicas if not any(dominio(f.url) == d or dominio(f.url).endswith("." + d) for d in NO_VALEN)]
     return sorted(validas, key=lambda f: not es_oficial(f.url))
 
 
@@ -399,12 +401,12 @@ class ClienteSimulado:
         )
 
     def revisar(self, cita: str, contexto: str, candidato: str, fecha: str, propuesta: Comprobacion) -> Revisado:
-        # Simulado: confirma lo que trae fuente y descarta lo que no
+        # Simulado: confirma lo que trae fuente; lo que no, queda sin fuente
         d = propuesta.dictamen
         return Revisado(
             decision=Decision(
-                decision="confirmar" if propuesta.fuentes else "descartar",
-                veredicto=d.veredicto,
+                decision="confirmar" if propuesta.fuentes else "corregir",
+                veredicto=d.veredicto if propuesta.fuentes else "sinfuente",
                 explicacion=d.explicacion,
                 fuentes_ok=bool(propuesta.fuentes),
                 nota="Revisión simulada.",

@@ -104,7 +104,7 @@ export const electionPages = {
   'entrevistas/metodologia': {
     short: 'Metodología',
     title: 'Cómo se revisan las entrevistas',
-    text: 'La valoración sobre 10, sus seis criterios y sus pesos, las cuatro calificaciones de una afirmación y cómo se verifica y se revisa con IA.',
+    text: 'La valoración sobre 10, sus seis criterios y sus pesos, las calificaciones de una afirmación y cómo se verifica y se revisa con IA.',
     cta: 'Ver la metodología',
   },
 } as const;

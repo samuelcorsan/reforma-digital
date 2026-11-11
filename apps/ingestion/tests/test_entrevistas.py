@@ -423,7 +423,7 @@ def test_segunda_revision_confirma_corrige_o_descarta():
     nueva = Fuente(titulo="BOE", url="https://www.boe.es/y")
     prensa = Fuente(titulo="Un periódico", url="https://www.periodico.es/z")
     decisiones = {
-        "a": (Decision(decision="confirmar", veredicto="legal", explicacion="e", fuentes_ok=True, nota="n"), []),
+        "a": (Decision(decision="confirmar", veredicto="legal", explicacion="e", fuentes_ok=True, nota="n"), [oficial]),
         "b": (Decision(decision="corregir", veredicto="fuera", explicacion="otra", fuentes_ok=False, nota="n"), [nueva]),
         "c": (Decision(decision="descartar", veredicto="roja", explicacion="e", fuentes_ok=False, nota="n"), [nueva]),
         "d": (Decision(decision="confirmar", veredicto="legal", explicacion="e", fuentes_ok=False, nota="n"), []),
@@ -440,15 +440,17 @@ def test_segunda_revision_confirma_corrige_o_descarta():
         for c in "abcde"
     ]
     a, b, c, d, e = proceso.segunda_revision(Cliente(), revisiones, [seg(0, "hola")], "X", "2026-11-13", 2)
+    # Las fuentes de las dos pasadas se juntan sin repetir
     assert (a.estado, a.fuentes, a.segundaRevision.sugerencia) == ("aprobada", [oficial], None)
     # Corregida: otro veredicto, con las fuentes que encontró la segunda revisión, y queda el que se propuso
     assert (b.estado, b.veredicto, b.explicacion, b.fuentes) == ("aprobada", "fuera", "otra", [nueva])
     assert b.segundaRevision.sugerencia == "legal"
+    # Solo se descarta lo que no es una afirmación
     assert c.estado == "descartada"
-    # Sin ninguna fuente que lo respalde no se publica, aunque la decisión fuera confirmar
-    assert d.estado == "descartada"
-    # Falso o Engañoso solo con prensa: no se publica, y la nota dice por qué
-    assert e.estado == "descartada" and "sin fuente oficial" in e.segundaRevision.nota
+    # Sin ninguna fuente, no se califica: sale publicada como «Sin fuente», aunque la decisión fuera confirmar
+    assert (d.estado, d.veredicto) == ("aprobada", "sinfuente")
+    # Falso solo con prensa: sale con su calificación y la prensa enlazada
+    assert (e.estado, e.veredicto, e.fuentes) == ("aprobada", "roja", [prensa])
 
 
 def test_indice_de_la_web_da_de_alta_lo_publicado_y_nunca_los_ensayos(tmp_path, monkeypatch):
@@ -464,36 +466,33 @@ def test_indice_de_la_web_da_de_alta_lo_publicado_y_nunca_los_ensayos(tmp_path, 
     assert "ensayo" not in texto
 
 
-def test_lo_no_comprobable_se_descarta_en_la_primera_pasada():
-    from entrevistas.esquema import Dictamen
-    from entrevistas.modelo import Comprobacion
+def test_lo_que_no_tiene_fuente_se_publica_y_no_cuenta_en_la_nota():
+    base = Revision(id="r1", candidato="X", segundo=0, cita="c", veredicto="legal", explicacion="", fuentes=[])
+    cierta = base.model_copy(update={"estado": "aprobada"})
+    sin_fuente = base.model_copy(update={"estado": "aprobada", "veredicto": "sinfuente"})
+    veracidad = lambda revisiones: metricas.criterios([], [], [], [], revisiones)["veracidad"]  # noqa: E731
+    assert veracidad([cierta, sin_fuente]) == veracidad([cierta])
 
-    transcripcion = Transcripcion(segmentos=EJEMPLO["segmentos"])
-    extraccion = Extraccion(
-        temas=[], preguntas=[], propuestas=[], ataques=[], momentos=[], interrupciones=[],
-        afirmaciones=[{"segundo": r["segundo"], "cita": r["cita"], "por_que_comprobable": "x"} for r in EJEMPLO["revisiones"]],
+
+def test_cita_mal_copiada_se_recupera_literal_de_la_transcripcion():
+    from entrevistas.citas import recuperar
+
+    segmentos = [
+        seg(0, "Hola, buenas tardes."),
+        seg(10, "Mira, el paro juvenil en España ha bajado al veintiséis por ciento este año, eso es así."),
+    ]
+    # El modelo cambió una palabra («bajado» por «caído»): se publica el tramo tal como se dijo
+    hallada = recuperar("el paro juvenil en España ha caído al veintiséis por ciento este año", segmentos)
+    assert hallada == (segmentos[1], "el paro juvenil en España ha bajado al veintiséis por ciento este año,")
+    # Partida entre dos trozos, con un «mhm» del entrevistador en medio: se une lo que dijo, sin el «mhm»
+    partida = [
+        seg(0, "Hombre, yo cuando mataron al Pollo,"),
+        seg(5, "Mhm.", h="jordi"),
+        seg(6, "que nosotros estábamos allí."),
+    ]
+    assert recuperar("yo cuando mataron al Pollo, que nosotros estábamos allí", partida) == (
+        partida[0],
+        "yo cuando mataron al Pollo, que nosotros estábamos allí.",
     )
-    primera = EJEMPLO["revisiones"][0]["cita"]
-
-    class Cliente(ClienteSimulado):
-        revisadas: list[str] = []
-
-        def comprobar(self, cita, contexto, candidato, fecha):
-            c = super().comprobar(cita, contexto, candidato, fecha)
-            if cita == primera:  # una anécdota: la verificación ya ve que no se puede comprobar
-                return Comprobacion(dictamen=Dictamen(veredicto="roja", explicacion="", comprobable=False), fuentes=[])
-            return c
-
-        def revisar(self, cita, contexto, candidato, fecha, propuesta):
-            self.revisadas.append(cita)
-            return super().revisar(cita, contexto, candidato, fecha, propuesta)
-
-    cliente = Cliente(transcripcion, extraccion)
-    segmentos = [Segmento(**s) for s in EJEMPLO["segmentos"]]
-    a = proceso.analizar(
-        cliente, segmentos, slug="ejemplo", candidato="C", titulo="t", youtube_id=None, publicado="2026-11-13",
-        duracion=EJEMPLO["duracion"],
-    )
-    descartada = next(r for r in a.revisiones if r.cita == primera)
-    assert descartada.estado == "descartada"
-    assert primera not in cliente.revisadas  # no gasta una segunda revisión en ella
+    # Lo que no se parece a nada sigue descartándose
+    assert recuperar("la inflación subió un cuatro por ciento en Francia el año pasado", segmentos) is None

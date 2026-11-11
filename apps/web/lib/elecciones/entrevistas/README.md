@@ -13,8 +13,8 @@ candidato ficticio.
 
 - Todo lo que saca el análisis: transcripción, temas, preguntas y cómo se respondieron, propuestas (cada una con lo
   que dice y lo que le falta), críticas, línea de tiempo, verificaciones y momentos clave.
-- Las verificaciones son las que confirmó o corrigió la segunda revisión de IA, siempre con al menos una fuente.
-  Lo que descartó no se publica. Nadie las revisa a mano, y la web lo dice así.
+- Las verificaciones son las que confirmó o corrigió la segunda revisión de IA, con sus fuentes. Las que no
+  tienen ninguna salen como «Sin fuente», sin calificar. Nadie las revisa a mano, y la web lo dice así.
 - Si la segunda revisión no llegó a terminar, lo pendiente (`estado: "propuesta"`) sale marcado como **sin
   revisar** y la valoración como **provisional**, hasta repetirla con `revisar`.
 

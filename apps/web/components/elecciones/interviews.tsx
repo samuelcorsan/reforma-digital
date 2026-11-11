@@ -155,6 +155,7 @@ function Notice({ children }: { children: ReactNode }) {
 }
 
 function Sources({ items }: { items: { titulo: string; url: string }[] }) {
+  if (!items.length) return null;
   return (
     <p className="m-0 flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground">
       {items.length === 1 ? 'Fuente:' : 'Fuentes:'}
@@ -1657,11 +1658,11 @@ export function InterviewsMethod() {
         <Cell span={5} label="Las calificaciones">
           <VerdictList />
           <p className="m-0 text-sm text-muted-foreground">
-            Cada afirmación comprobable se contrasta con fuentes oficiales y se publica con sus
-            enlaces. Ninguna sale sin al menos una fuente, y un Falso o un Engañoso necesita una
-            fuente oficial. Las anécdotas, lo que nadie puede comprobar, no se califican. Una
-            segunda revisión de IA abre cada fuente y confirma, corrige o descarta la calificación;
-            lo que aún no ha pasado por ella va marcado como sin revisar.
+            Cada afirmación se busca a fondo, con fuentes oficiales siempre que existan y, si no,
+            prensa de referencia, y se publica con sus enlaces. Si no aparece ninguna fuente que la
+            confirme o la desmienta, sale como «Sin fuente»: no se califica ni cuenta en la
+            valoración. Una segunda revisión de IA abre cada fuente y confirma o corrige la
+            calificación; lo que aún no ha pasado por ella va marcado como sin revisar.
           </p>
           <ul className="m-0 flex list-none flex-wrap gap-2 p-0 text-sm">
             {officialSources.map((name) => (

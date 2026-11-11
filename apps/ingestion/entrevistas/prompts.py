@@ -80,10 +80,9 @@ descalifica a personas (insultos, "mentirosos", "sinvergüenzas"…).
 datos oficiales: estadísticas, leyes, votaciones, presupuestos, decisiones de gobierno, sucesos públicos. Sé \
 exhaustivo: recorre el bloque frase a frase y no te saltes ninguna aunque parezca menor, obvia o ya dicha antes \
 (si la repite con otra cifra, son dos). Cada cifra, porcentaje, comparación («más que nunca», «el primero de \
-Europa») o atribución («la ley X dice», «el Gobierno aprobó») cuenta. No: opiniones, promesas, detalles \
-biográficos menores (qué estudió, quién fue su profesor, a quién conoció) ni anécdotas: lo que dice haber visto u \
-oído («yo vi», «me dijeron»), lo que pasó en privado o cualquier cosa que ninguna fuente pública pueda confirmar \
-ni desmentir. \
+Europa») o atribución («la ley X dice», «el Gobierno aprobó») cuenta. También las anécdotas sobre hechos o \
+personas públicas («yo vi a…», «me dijeron que el ministro…»): si nada las puede comprobar, se dirá. No: \
+opiniones, promesas ni detalles biográficos menores (qué estudió, quién fue su profesor, a quién conoció). \
 La cita debe contener la afirmación completa (al menos ocho palabras), no un fragmento suelto. cita = copia LITERAL \
 del texto de la transcripción, sin cambiar ni una palabra. pillado_en_directo = true si un verificador lo corrige \
 en la entrevista.
@@ -105,15 +104,15 @@ TRANSCRIPCIÓN DEL BLOQUE:
 {transcripcion}"""
 
 # Lo que vale como prueba, igual en la verificación y en la segunda revisión.
-REGLAS_FUENTES = """- Una afirmación solo es comprobable si alguna fuente pública puede confirmarla o desmentirla. Las anécdotas \
-(lo que alguien dice haber visto u oído, lo que pasó en privado) no lo son, aunque mencionen hechos públicos: que \
-un documento no recoja algo no prueba que no ocurriera.
+REGLAS_FUENTES = """- Busca a fondo cada afirmación, también las que parecen menores: varias búsquedas, con otras palabras si la \
+primera no da nada.
 - Fuente primaria y oficial siempre que exista: INE, Eurostat, Banco de España, BOE, Diario de Sesiones del \
-Congreso, Seguridad Social, AIReF, ministerios, CIS, CGPJ y tribunales, OCDE… Prensa o verificadores solo si no hay \
-fuente oficial, y nunca vídeos, redes sociales, blogs ni Wikipedia.
+Congreso, Seguridad Social, AIReF, ministerios, CIS, CGPJ y tribunales, OCDE… Si no la hay, prensa o \
+verificadores de referencia, citando el medio. Nunca vídeos, redes sociales, blogs ni Wikipedia.
 - Abre las páginas que cites y comprueba que dicen lo que afirmas, con el dato, el periodo y el organismo exactos.
-- Para calificar algo como Falso o Engañoso hace falta al menos una fuente oficial o primaria que lo muestre. Si \
-solo hay prensa, o las fuentes no permiten concluir, no es comprobable: no se califica."""
+- Si no encuentras ninguna fuente que la confirme o la desmienta, la afirmación queda «sin fuente»: no la califiques \
+ni supongas. Pasa siempre con las anécdotas (lo que alguien dice haber visto u oído, lo que pasó en privado): que un \
+documento no recoja algo no prueba que no ocurriera."""
 
 VERIFICAR = """Comprueba esta afirmación de {candidato} en una entrevista ({fecha}):
 
@@ -159,21 +158,22 @@ Devuelve sus números."""
 ESCALA = """- "legal" (Cierto): es verdad.
 - "amarilla" (Con matices): es verdad pero con matices importantes, o es impreciso o exagerado.
 - "fuera" (Engañoso): engañosa o fuera de contexto (dato cierto usado de forma que confunde, comparación tramposa…).
-- "roja" (Falso): falsa."""
+- "roja" (Falso): falsa.
+- "sinfuente" (Sin fuente): ninguna fuente encontrada la confirma ni la desmiente. No es una calificación: se \
+publica para decir que no hay fuente."""
 
 DICTAMINAR = """A partir de esta comprobación, decide el veredicto con esta escala:
 """ + ESCALA + """
-comprobable = false si es una anécdota, si las fuentes no permiten concluir o si sería Falso o Engañoso sin \
-ninguna fuente oficial o primaria: entonces no se publica (el veredicto da igual). explicacion: máximo dos frases, \
-neutral, sin adjetivos, con la cifra y la fuente que lo sostienen («Según la EPA del INE, el paro fue del 11,2 % en \
-el tercer trimestre»).
+Si las fuentes no permiten concluir, o es una anécdota, usa "sinfuente". explicacion: máximo dos frases, neutral, \
+sin adjetivos, con la cifra y la fuente que lo sostienen («Según la EPA del INE, el paro fue del 11,2 % en el tercer \
+trimestre»). Con "sinfuente", qué se ha buscado y que no hay fuente, sin insinuar si es verdad o no.
 
 AFIRMACIÓN: "{cita}"
 COMPROBACIÓN:
 {comprobacion}"""
 
 SEGUNDA_REVISION = """Eres la segunda revisión de una verificación hecha por otro modelo. Nadie más la revisará \
-antes de publicarse: tu trabajo es que no salga nada que no se sostenga.
+antes de publicarse: tu trabajo es que no salga nada que no se sostenga y que, si hay fuente, se encuentre.
 
 AFIRMACIÓN de {candidato} ({fecha}): "{cita}"
 Contexto en la entrevista: {contexto}
@@ -186,19 +186,19 @@ FUENTES PROPUESTAS:
 Haz esto:
 1. Abre cada fuente propuesta y comprueba si dice exactamente lo que afirma la explicación: el dato, el periodo y \
 el organismo. Si una fuente no carga, no trata de eso o no contiene el dato, dilo.
-2. Busca por tu cuenta la fuente primaria oficial para contrastar el dato de forma independiente.
-3. Comprueba que la afirmación es de verdad comprobable con estas reglas:
+2. Busca por tu cuenta la fuente primaria oficial para contrastar el dato de forma independiente. Si el veredicto \
+propuesto es "sinfuente", busca de nuevo y a fondo: puede que la primera búsqueda no la encontrara.
+3. Sigue estas reglas:
 """ + REGLAS_FUENTES + """
 4. Decide con esta escala si el veredicto se sostiene o cuál debería ser:
 """ + ESCALA + """
 
-Explica en tres o cuatro frases qué has comprobado, en qué fuentes y con qué cifras, y si confirmas, corriges o \
-no se puede publicar (porque ninguna fuente fiable respalda la explicación)."""
+Explica en tres o cuatro frases qué has comprobado, en qué fuentes y con qué cifras, y si confirmas o corriges."""
 
 DECIDIR_REVISION = """A partir de esta segunda revisión, decide:
 - decision: "confirmar" (el veredicto y la explicación se sostienen con las fuentes), "corregir" (las fuentes \
-respaldan otro veredicto o hay que precisar la explicación) o "descartar" (es una anécdota o no es comprobable, \
-ninguna fuente fiable permite concluir, o sería Falso o Engañoso sin ninguna fuente oficial o primaria).
+respaldan otro veredicto, no hay fuente y debe ser "sinfuente", o hay que precisar la explicación) o "descartar" \
+(solo si la cita no es una afirmación sobre hechos: una opinión, una promesa o una pregunta).
 - veredicto: el veredicto final (el propuesto si confirmas). Escala:
 """ + ESCALA + """
 - explicacion: la explicación final, máximo dos frases, neutral, con la cifra y su fuente.

@@ -13,6 +13,7 @@ export const markIcons: Record<Mark['kind'], IconName> = {
   amarilla: 'balanza',
   fuera: 'aviso',
   roja: 'nunca',
+  sinfuente: 'info',
   repregunta: 'repetir',
   evasiva: 'esquiva',
   critica: 'contacto',

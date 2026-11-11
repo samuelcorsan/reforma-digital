@@ -9,7 +9,8 @@ from pydantic import BaseModel, Field
 
 Hablante = Literal["jordi", "candidato", "verificador", "otro"]
 Respuesta = Literal["directa", "parcial", "evasiva", "cambio"]
-Veredicto = Literal["legal", "amarilla", "fuera", "roja"]
+# "sinfuente": nada público la confirma ni la desmiente. Se publica, sin calificar, y no cuenta en la valoración
+Veredicto = Literal["legal", "amarilla", "fuera", "roja", "sinfuente"]
 Estado = Literal["propuesta", "aprobada", "descartada"]
 TipoMomento = Literal["anuncio", "choque", "titular", "rectificacion"]
 TipoVisual = Literal["verificador", "rotulo", "documento", "accion"]
@@ -269,8 +270,6 @@ class Agrupacion(BaseModel):
 class Dictamen(BaseModel):
     veredicto: Veredicto
     explicacion: str
-    # False: anécdota, sin fuentes que permitan concluir, o Falso/Engañoso sin fuente oficial. No se publica
-    comprobable: bool = True
 
 
 class Decision(BaseModel):

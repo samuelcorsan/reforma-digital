@@ -381,7 +381,7 @@ def _guardar(a: Analisis, ruta: Path) -> None:
 
 def cmd_reanalizar(args):
     """Repite el análisis (extracción, verificación y segunda revisión) sobre la transcripción ya hecha, sin volver
-    a transcribir, que es lo caro: para aplicar un cambio en los prompts o las reglas a una entrevista ya analizada."""
+    a transcribir: para aplicar un cambio en los prompts o las reglas a una entrevista ya analizada."""
     ruta = _ruta(args.slug)
     a = Analisis.model_validate_json(ruta.read_text(encoding="utf-8"))
     nombre = args.nombre or CANDIDATOS.get(a.candidato)

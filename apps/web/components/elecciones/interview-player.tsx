@@ -171,6 +171,7 @@ const legend: [Mark['kind'], string][] = [
   ['amarilla', 'Con matices'],
   ['fuera', 'Engañoso'],
   ['roja', 'Falso'],
+  ['sinfuente', 'Sin fuente'],
   ['repregunta', 'Repregunta'],
   ['evasiva', 'Evasiva o cambio de tema'],
   ['critica', 'Crítica política'],

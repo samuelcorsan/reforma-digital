@@ -9,7 +9,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 from .audio import Trozo
-from .citas import coincidencia, en_contraste, localizar, normalizar
+from .citas import coincidencia, en_contraste, localizar, normalizar, recuperar
 from .esquema import (
     Analisis,
     Dictamen,
@@ -24,7 +24,7 @@ from .esquema import (
     Visual,
 )
 from .metricas import estadisticas, nota
-from .modelo import Cliente, Comprobacion, es_oficial, ordenar_fuentes
+from .modelo import Cliente, Comprobacion, ordenar_fuentes
 
 log = logging.getLogger("entrevistas")
 
@@ -283,17 +283,21 @@ def analizar(
         for k, x in enumerate(lista):
             x.id = f"{prefijo}{k + 1}"
 
-    # Antiinvención: solo pasan las afirmaciones cuya cita aparece literal en la transcripción
+    # Antiinvención: solo pasan las afirmaciones cuya cita está en la transcripción. Si el modelo la copió con alguna
+    # palabra cambiada, se publica el tramo literal que más se le parece; si no se parece a nada, se descarta
     validas = []
     for af in e.afirmaciones:
         if len(af.cita.split()) < 6:
             log.warning("Descartada (cita demasiado corta para comprobarla): %s", af.cita)
             continue
-        seg = localizar(af.cita, segmentos)
-        if seg is None:
-            log.warning("Descartada (cita no literal): %s", af.cita)
+        hallada = recuperar(af.cita, segmentos)
+        if hallada is None:
+            log.warning("Descartada (cita que no está en la transcripción): %s", af.cita)
             continue
-        validas.append((af, seg))
+        seg, literal = hallada
+        if literal != af.cita:
+            log.info("Cita corregida con la transcripción: «%s» → «%s»", af.cita[:60], literal[:60])
+        validas.append((af.model_copy(update={"cita": literal}), seg))
 
     def revisar(par):
         af, seg = par
@@ -310,17 +314,18 @@ def analizar(
             fuentes=c.fuentes,
             pilladoEnDirecto=af.pillado_en_directo,
             enVideo=en_contraste(af.cita, seg.inicio, contraste) if contraste is not None else None,
-            # Lo que la verificación ya ve que no es comprobable no pasa a la segunda revisión; el resto, sí
-            estado="propuesta" if c.dictamen.comprobable else "descartada",
+            estado="propuesta",  # la segunda revisión la confirma, la corrige o la descarta
         )
 
     # Momentos clave: misma barrera antiinvención. Los elige la IA (elegir_momentos) y se publican sin más revisión
     momentos: list[Momento] = []
     for m in e.momentos:
-        seg = localizar(m.cita, segmentos)
-        if seg is None:
-            log.warning("Momento descartado (cita no literal): %s", m.cita)
+        hallada = recuperar(m.cita, segmentos)
+        if hallada is None:
+            log.warning("Momento descartado (cita que no está en la transcripción): %s", m.cita)
             continue
+        seg, literal = hallada
+        m = m.model_copy(update={"cita": literal})
         momentos.append(
             Momento(
                 id="",
@@ -361,10 +366,10 @@ def analizar(
         with ThreadPoolExecutor(max_workers=max(1, hilos)) as ex:
             revisiones = list(ex.map(revisar, validas))
         log.info(
-            "Verificadas %d afirmaciones en %.0f s (%d no comprobables, descartadas)",
+            "Verificadas %d afirmaciones en %.0f s (%d sin fuente)",
             len(revisiones),
             time.time() - inicio,
-            sum(r.estado == "descartada" for r in revisiones),
+            sum(r.veredicto == "sinfuente" for r in revisiones),
         )
         if segunda:
             revisiones = segunda_revision(cliente, revisiones, segmentos, candidato, publicado, hilos)
@@ -492,19 +497,21 @@ def segunda_revision(
         # Si las propuestas valen, se suman las que encontró la revisión (las oficiales, primero)
         fuentes = ordenar_fuentes(r.fuentes + hecho.fuentes)[:4] if d.fuentes_ok else hecho.fuentes
         nota = d.nota
-        aprobada = d.decision != "descartar" and bool(fuentes)
-        # Regla fija: nadie acusa de falso o engañoso sin una fuente oficial o primaria enlazada
-        if aprobada and d.veredicto in ("roja", "fuera") and not any(es_oficial(f.url) for f in fuentes):
-            aprobada = False
-            nota = f"{nota} Descartada: {d.veredicto} sin fuente oficial enlazada.".strip()
+        veredicto = d.veredicto
+        # Sin ninguna fuente, nunca se califica: se publica como «Sin fuente»
+        if not fuentes and veredicto != "sinfuente":
+            veredicto = "sinfuente"
+            nota = f"{nota} Sin ninguna fuente enlazada: sale sin calificar.".strip()
+        # Solo se descarta lo que no es una afirmación (una opinión, una promesa, una repetición)
+        aprobada = d.decision != "descartar"
         return r.model_copy(
             update={
-                "veredicto": d.veredicto if aprobada else r.veredicto,
+                "veredicto": veredicto if aprobada else r.veredicto,
                 "explicacion": d.explicacion if aprobada else r.explicacion,
                 "fuentes": fuentes if aprobada else r.fuentes,
                 "estado": "aprobada" if aprobada else "descartada",
                 "segundaRevision": SegundaRevision(
-                    sugerencia=r.veredicto if d.veredicto != r.veredicto else None,
+                    sugerencia=r.veredicto if veredicto != r.veredicto else None,
                     fuentesOk=d.fuentes_ok,
                     nota=nota,
                 ),
@@ -516,10 +523,11 @@ def segunda_revision(
         hechas = list(ex.map(una, revisiones))
     aprobadas = [r for r in hechas if r.estado == "aprobada"]
     log.info(
-        "Segunda revisión en %.0f s: %d aprobadas (%d con el veredicto corregido), %d descartadas",
+        "Segunda revisión en %.0f s: %d publicadas (%d corregidas, %d sin fuente), %d descartadas",
         time.time() - inicio,
         len(aprobadas),
         sum(r.segundaRevision is not None and r.segundaRevision.sugerencia is not None for r in aprobadas),
+        sum(r.veredicto == "sinfuente" for r in aprobadas),
         len(hechas) - len(aprobadas),
     )
     return hechas

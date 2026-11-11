@@ -40,7 +40,8 @@ def criterios(
     revisiones: list[Revision],
 ) -> dict[str, float]:
     publicadas = [r for r in revisiones if r.estado == "aprobada"]
-    veracidad = encoger([PUNTOS_VEREDICTO[r.veredicto] for r in publicadas])
+    # Lo que no tiene fuente no dice nada de su veracidad: no cuenta
+    veracidad = encoger([PUNTOS_VEREDICTO[r.veredicto] for r in publicadas if r.veredicto in PUNTOS_VEREDICTO])
     al_grano = encoger([PUNTOS_RESPUESTA[p.respuesta] for p in preguntas])
     concrecion = encoger([(p.que + p.cuanto + p.cuando + p.como) / 4 for p in propuestas], previo=0.5, k=3)
 
