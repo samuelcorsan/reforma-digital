@@ -31,6 +31,11 @@ En el repositorio del VAR (`pipeline/`):
    Sale `web/data/entrevistas/13n-<candidato>.json`. Los `<candidato>` son los `slug` de
    `../candidates.ts`.
 
+   Al acabar compara los tiempos de la transcripción con los subtítulos de YouTube. Si el log
+   avisa con **⚠ LOS TIEMPOS NO CUADRAN**, no se publica: se repite con `--modo audio`. Se puede
+   volver a comprobar con `.venv/bin/python -m var_electoral sincronia 13n-<candidato>`. Fuera de
+   YouTube no hay subtítulos: hay que comparar a mano la transcripción con el vídeo en tres puntos.
+
 3. **Segundo VAR:** en Claude Code, `/segundo-var 13n-<candidato>` deja una sugerencia en cada
    verificación. Nunca aprueba nada.
 4. **Revisar** en `/admin` del VAR (`npm run dev` en `web/`): aprobar, corregir o descartar cada
