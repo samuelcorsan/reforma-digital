@@ -246,6 +246,19 @@ El Congreso (`/congreso`) es una sección pública de Reforma Digital y usa Sol 
 - La cabecera de Reforma Digital lleva «El Congreso» como un enlace más, marcado como actual dentro de la sección. Desde 1100 px, las vistas van en una columna a la izquierda de 232 px, agrupadas y todas a la vista, con la actual sobre `--superficie`; se queda pegada al bajar y una ficha mantiene marcada la vista de la que sale. Por debajo de 1100 px, las vistas están en una barra con desplegables bajo la cabecera.
 - Los colores de un hemiciclo o de un resultado son datos (sí, no, abstención). Detrás no va el sol ni otro fondo de color.
 
+### 8.8 Las entrevistas
+
+Las entrevistas (`/elecciones/entrevistas`) usan las piezas de los informes de Elecciones (`Cell`, `Grid`, `ReportSection`) y Sol sin tokens propios. Aquí solo se recoge lo que deciden por su cuenta.
+
+- Cada calificación (Cierto, Con matices, Engañoso, Falso) y cada marca de la línea de tiempo se pinta con `MarkIcon` ([`mark-icon.tsx`](apps/web/components/elecciones/mark-icon.tsx)): un icono Nucleo en un círculo tintado con el color de la calificación, siempre junto a su nombre. Nunca un punto de color ni el nombre solo. El icono es el mismo en la línea de tiempo, en la leyenda, en las tarjetas y en los filtros.
+- Cómo responde a cada pregunta se ve por la trama del cuadrado, de tinta llena (directa) a trama (cambio de tema), no por el color.
+- La línea de tiempo tiene filas fijas: Intensidad (curva suave), Tiene la palabra, Temas y una fila por tipo de marca. Las marcas que se solapan se apilan en tres filas como mucho. Una línea vertical continua marca lo que suena y otra, discontinua, dónde está el puntero. El zoom (Entera y ventanas de minutos) es un `TabsList` segmentado. Con zoom, debajo hay un minimapa: la ventana se centra donde se pulsa, se arrastra y se mueve con el teclado.
+- Las marcas de tiempo, los ticks del eje, la etiqueta del puntero y los nombres de «Tiene la palabra» miden 12 px, aunque no sean mayúsculas: van dentro de filas de la línea de tiempo y a 14 px se pisan.
+- Reproducir y pausa son glifos de píxel, como los chevrons.
+- El vídeo de YouTube no se carga hasta pulsar (youtube-nocookie). Sin vídeo, el reproductor recorre la entrevista con su propio reloj.
+- Las fotos de los candidatos se encuadran por la cara (`Portrait`), con el mismo tamaño y altura en los cuatro, y se funden por abajo. Los créditos van enlazados al original.
+- Los filtros de una lista son enlaces con su dirección, no estado de la página: la vista filtrada se puede compartir y funciona sin JavaScript.
+
 ## 9. App de escritorio
 
 La app de escritorio (`apps/desktop`) usa los mismos tokens y primitivas, con la composición de un cliente de chat de escritorio.
