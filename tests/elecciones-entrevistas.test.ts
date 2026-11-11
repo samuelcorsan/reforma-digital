@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import example from '../apps/web/lib/elecciones/entrevistas/ejemplo.json';
 import {
@@ -10,6 +11,7 @@ import {
 } from '../apps/web/lib/elecciones/interviews';
 import { generateMetadata } from '../apps/web/app/(search)/elecciones/entrevistas/[[...path]]/page';
 import sitemap from '../apps/web/app/sitemap';
+import { candidates } from '../apps/web/lib/elecciones/candidates';
 
 const params = (path: string[]) => ({ params: Promise.resolve({ path }) });
 
@@ -53,6 +55,15 @@ describe('las entrevistas', () => {
     expect(paths).toContain('/elecciones/entrevistas/metodologia');
     expect(paths).toContain('/elecciones/entrevistas/comparar');
     expect(paths).toContain('/elecciones/entrevistas/verificaciones');
+  });
+
+  it('comparte cada candidato con su imagen, generada con pnpm landing:og', async () => {
+    for (const c of candidates) {
+      const { openGraph } = await generateMetadata(params([c.slug]));
+      const image = `/og/entrevistas-${c.slug}.jpg`;
+      expect(JSON.stringify(openGraph?.images)).toContain(image);
+      expect(existsSync(new URL(`../apps/web/public${image}`, import.meta.url))).toBe(true);
+    }
   });
 
   it('acepta entrevistas sin fecha de publicación, como las de RTVE Play', () => {

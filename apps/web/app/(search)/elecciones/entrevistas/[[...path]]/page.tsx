@@ -61,7 +61,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { path } = await params;
   const match = route(path);
   if (!match) notFound();
-  const base = { path: interviewsHref(path?.join('/')), og: 'elecciones' as const };
+  const base = { path: interviewsHref(path?.join('/')), og: 'entrevistas' as const };
+  // La ficha, las entrevistas y las verificaciones de un candidato llevan su imagen.
+  const ogOf = (slug: string) => {
+    const candidate = getCandidate(slug);
+    return candidate ? (`entrevistas-${candidate.slug}` as const) : base.og;
+  };
   switch (match.kind) {
     case 'home':
     case 'method':
@@ -77,6 +82,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     case 'candidate':
       return pageMetadata({
         ...base,
+        og: ogOf(match.candidate.slug),
         title: `${match.candidate.name} · Las entrevistas · Reforma Digital`,
         description: `La entrevista a ${match.candidate.name} (${match.candidate.party}), revisada: qué afirma y si es cierto, qué propone y si responde a lo que se le pregunta.`,
       });
@@ -84,6 +90,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       const name = interviewName(match.interview);
       return pageMetadata({
         ...base,
+        og: ogOf(match.interview.candidato),
         title: `${name} · Las entrevistas · Reforma Digital`,
         description: `El informe de la entrevista a ${name}: valoración, afirmaciones verificadas con sus fuentes, propuestas y cómo responde.`,
         index: !match.interview.ficticio,
@@ -93,6 +100,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       const { interview, verification } = match;
       return pageMetadata({
         ...base,
+        og: ogOf(interview.candidato),
         title: `${verdicts[verification.veredicto].name}: «${verification.cita}» · ${interviewName(interview)}`,
         description: verification.explicacion,
         index: !interview.ficticio,
