@@ -153,7 +153,7 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
               data-variant="outline"
               className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
             >
-              Comparar a los cuatro <Icon name="derecha" size={16} />
+              Comparar las entrevistas <Icon name="derecha" size={16} />
             </Link>
           </div>
         </Cell>

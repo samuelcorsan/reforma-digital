@@ -91,8 +91,8 @@ export const electionPages = {
   },
   'entrevistas/comparar': {
     short: 'Comparar',
-    title: 'Los cuatro, lado a lado',
-    text: 'Las cifras de las cuatro entrevistas de una ronda con la misma escala y en el mismo orden: valoración, respuestas, propuestas, verificaciones y tono.',
+    title: 'Lado a lado',
+    text: 'Las cifras de las entrevistas de una ronda con la misma escala y en el mismo orden: valoración, respuestas, propuestas, verificaciones y tono.',
     cta: 'Comparar las entrevistas',
   },
   'entrevistas/verificaciones': {

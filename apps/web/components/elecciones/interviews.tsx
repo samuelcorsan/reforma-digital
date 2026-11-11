@@ -270,7 +270,7 @@ export function InterviewsHome() {
               data-variant="sunset"
               className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
             >
-              {complete ? 'Comparar a los cuatro' : 'Ver un informe de ejemplo'}{' '}
+              {complete ? 'Comparar las entrevistas' : 'Ver un informe de ejemplo'}{' '}
               <Icon name="derecha" size={16} />
             </Link>
             <Link
@@ -1377,14 +1377,14 @@ const metricGroups: { title: string; metrics: Metric[] }[] = [
   },
 ];
 
-// «Los cuatro, lado a lado», como el comparador de El VAR Electoral: una ronda a la vez, con la
+// «Lado a lado», como el comparador de El VAR Electoral: una ronda a la vez, con la
 // misma escala y siempre en el mismo orden. Las entrevistas que faltan quedan como pendientes y,
 // si la ronda no es comparable, se avisa.
 export function InterviewsCompare({ roundId }: { roundId?: string }) {
   const round = rounds.find((r) => r.id === roundId) ?? compareRound();
   if (!round)
     return (
-      <ReportIntro title="Los cuatro, lado a lado">
+      <ReportIntro title="Lado a lado">
         <p>Todavía no hay ninguna ronda de entrevistas.</p>
       </ReportIntro>
     );
@@ -1450,11 +1450,11 @@ export function InterviewsCompare({ roundId }: { roundId?: string }) {
 
   return (
     <>
-      <ReportIntro title="Los cuatro, lado a lado">
+      <ReportIntro title="Lado a lado">
         <p>
           El perfil de cada candidato, las preguntas que se hicieron a varios y todas las cifras de
-          cada entrevista. Mismas reglas y misma escala para los cuatro, sin ganador. Solo se
-          comparan entrevistas de la misma ronda.
+          cada entrevista. Mismas reglas y misma escala para todos, sin ganador. Solo se comparan
+          entrevistas de la misma ronda.
         </p>
       </ReportIntro>
 

@@ -74,7 +74,7 @@ import comunes13n from './entrevistas/comunes-13n.json';
 const commonFiles: Record<string, unknown> = { '13n': comunes13n };
 ```
 
-Aparecen en «Los cuatro, lado a lado» de esa ronda.
+Aparecen en «Lado a lado» de esa ronda.
 
 ## Otra ronda u otro medio
 

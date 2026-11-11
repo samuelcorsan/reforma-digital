@@ -130,7 +130,7 @@ export function CompareBoard({
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-20">
-      {/* Los cuatro, siempre a mano: pulsar en uno lo destaca en todos los gráficos. */}
+      {/* Todos, siempre a mano: pulsar en uno lo destaca en todos los gráficos. */}
       <div className="sticky top-22 z-20 grid grid-cols-[minmax(0,1fr)] gap-2">
         <p className="m-0 text-sm text-muted-foreground">
           Pulsa en uno para destacarlo en todos los gráficos.
@@ -162,9 +162,9 @@ export function CompareBoard({
       </div>
 
       <section className="grid grid-cols-[minmax(0,1fr)] gap-8">
-        <Heading label="La huella" title="Cuatro formas de hacer una entrevista">
-          Cada eje va de cero al mismo tope para los cuatro. Más grande no es mejor ni peor: es más
-          de esa cosa.
+        <Heading label="La huella" title="Formas de hacer una entrevista">
+          Cada eje va de cero al mismo tope para todos. Más grande no es mejor ni peor: es más de
+          esa cosa.
         </Heading>
         <Grid>
           <Cell span={6} className="items-center">
@@ -381,7 +381,7 @@ export function CompareBoard({
           >
             <TabsList aria-label="Comparar">
               <TabsTrigger value="todos" className="px-3">
-                Los cuatro
+                Todos
               </TabsTrigger>
               <TabsTrigger value="duelo" className="px-3" disabled={present.length < 2}>
                 1 contra 1
