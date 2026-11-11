@@ -43,6 +43,7 @@ Para probar con un ensayo, el argumento puede ser su carpeta (`ensayo-…`): el 
    - `--fuentes ok` si las fuentes respaldan la explicación; `mal` si no, o si no hay.
    - `--sugerencia` solo si propones un veredicto distinto al publicado.
    - La nota: dos frases como máximo, neutral, sin adjetivos, en español. Si citas una fuente nueva, incluye su URL.
+
 4. Termina con un resumen: qué verificaciones se sostienen, cuáles habría que corregir y por qué, en una lista corta
    ordenada por urgencia.
 
