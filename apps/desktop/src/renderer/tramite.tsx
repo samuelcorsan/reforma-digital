@@ -14,6 +14,9 @@ import { Favicon } from './fuentes';
 import { Icono } from './icono';
 import { Compositor } from './inicio';
 import { Pregunta } from './preguntas';
+/** Anchos mínimos al repartir la ventana entre la conversación y el navegador. */
+const MIN_CHAT = 320;
+const MIN_NAVEGADOR = 360;
 const DE_NAVEGADOR = new Set([
   'abrir',
   'pulsar',
@@ -532,6 +535,10 @@ export function Tramite({ id, alBorrar }: { id: string; alBorrar: () => void }) 
   const { tramites } = useEstado();
   const vista = tramites[id];
   const [verNavegador, setVerNavegador] = useState(false);
+  const [ancho, setAncho] = useState(MIN_CHAT + 80);
+  const contenedor = useRef<HTMLDivElement>(null);
+  const limitar = (a: number) =>
+    Math.min(Math.max(a, MIN_CHAT), (contenedor.current?.clientWidth ?? 1200) - MIN_NAVEGADOR);
   const [borrador, setBorrador] = useState<{ texto: string }>();
   useEffect(() => {
     if (!vista) void cargarTramite(id);
@@ -560,9 +567,13 @@ export function Tramite({ id, alBorrar }: { id: string; alBorrar: () => void }) 
   // Mientras espera una respuesta tampoco acepta mensajes nuevos, pero se puede detener.
   const ocupado = vista.ejecucion !== 'inactivo';
   return (
-    <div className="flex h-full min-h-0">
+    <div ref={contenedor} className="flex h-full min-h-0">
       <section
-        className={cn('flex min-w-0 flex-col', verNavegador ? 'w-[400px] shrink-0' : 'flex-1')}
+        className={cn(
+          'flex min-w-0 flex-col',
+          verNavegador ? 'max-w-[calc(100%-22.5rem)] shrink-0' : 'flex-1',
+        )}
+        style={verNavegador ? { width: ancho } : undefined}
         aria-label="Conversación"
       >
         <header
@@ -629,24 +640,44 @@ export function Tramite({ id, alBorrar }: { id: string; alBorrar: () => void }) 
         </div>
       </section>
       {verNavegador && (
-        <aside
-          aria-label="Navegador del trámite"
-          className="flex min-w-0 flex-1 flex-col border-l border-border bg-background"
-        >
-          <div className="arrastrar hueco-botones flex h-[52px] shrink-0 items-center gap-2 px-4">
-            <span className="text-[15px] font-medium">Navegador</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-auto"
-              aria-label="Ocultar el navegador"
-              onClick={() => setVerNavegador(false)}
-            >
-              <Icono nombre="cerrar" />
-            </Button>
-          </div>
-          <PanelNavegador vista={vista} />
-        </aside>
+        <>
+          <div
+            role="separator"
+            tabIndex={0}
+            aria-orientation="vertical"
+            aria-label="Ancho del navegador"
+            aria-valuemin={MIN_CHAT}
+            aria-valuenow={ancho}
+            className="z-10 -mr-1 w-1 shrink-0 cursor-col-resize touch-none hover:bg-foreground/10 focus-visible:bg-foreground/20"
+            onPointerDown={(e) => e.currentTarget.setPointerCapture(e.pointerId)}
+            onPointerMove={(e) => {
+              if (e.buttons && contenedor.current)
+                setAncho(limitar(e.clientX - contenedor.current.getBoundingClientRect().left));
+            }}
+            onKeyDown={(e) => {
+              const paso = { ArrowLeft: -24, ArrowRight: 24 }[e.key];
+              if (paso) setAncho(limitar(ancho + paso));
+            }}
+          />
+          <aside
+            aria-label="Navegador del trámite"
+            className="flex min-w-0 flex-1 flex-col border-l border-border bg-background"
+          >
+            <div className="arrastrar hueco-botones flex h-[52px] shrink-0 items-center gap-2 px-4">
+              <span className="text-[15px] font-medium">Navegador</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="ml-auto"
+                aria-label="Ocultar el navegador"
+                onClick={() => setVerNavegador(false)}
+              >
+                <Icono nombre="cerrar" />
+              </Button>
+            </div>
+            <PanelNavegador vista={vista} />
+          </aside>
+        </>
       )}
     </div>
   );
