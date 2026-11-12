@@ -337,6 +337,10 @@ export class NavegadorTramite implements Navegador {
     ses.webRequest.onBeforeRequest((d, responder) => {
       const url = new URL(d.url);
       if (url.protocol === 'http:' || url.protocol === 'ws:') return responder({ cancel: true });
+      // AutoFirma escucha en un wss://127.0.0.1 (puerto variable): solo una web oficial puede hablarle.
+      // ponytail: sin fijar el puerto; acotarlo si AutoFirma publica un rango estable.
+      if (url.protocol === 'wss:' && /^(127\.0\.0\.1|localhost)$/.test(url.hostname))
+        return responder({ cancel: !isOfficial(d.webContents?.getURL() ?? '') });
       void enRedLocal(ses, url.hostname).then((cancel) => responder({ cancel }));
     });
     // AutoFirma lanzada desde un iframe no pasa por will-navigate: llega como permiso para abrir
