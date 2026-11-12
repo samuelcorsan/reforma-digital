@@ -1,11 +1,20 @@
 import type { Metadata } from 'next';
+import type { Candidate } from './elecciones/candidates';
 import { links, siteUrl } from './site';
 
 export const siteName = 'Reforma Digital';
 
 // Imágenes de public/og/, generadas con `pnpm landing:og` a partir de og/template.html.
 type OgImage =
-  'portada' | 'equipo' | 'privacidad' | 'escritorio' | 'api' | 'congreso' | 'elecciones';
+  | 'portada'
+  | 'equipo'
+  | 'privacidad'
+  | 'escritorio'
+  | 'api'
+  | 'congreso'
+  | 'elecciones'
+  | 'entrevistas'
+  | `entrevistas-${Candidate['slug']}`;
 
 export function pageMetadata({
   title,

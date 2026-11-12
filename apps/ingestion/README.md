@@ -2,6 +2,9 @@
 
 Recolector Python adaptado de [Escaño Abierto](https://github.com/jorgegarcelan/escano-abierto), revisión `ba240791820b423503f69bb88406b51a25487083`, licencia MIT incluida en `LICENSE`. Conserva los parsers, las fuentes, la verificación de citas, las estadísticas, las encuestas y las proyecciones. Se sustituyen el generador HTML, Gemini/Anthropic y los commits diarios por Next.js, NaN, Postgres y Vercel Blob.
 
+El análisis de las entrevistas a los candidatos es aparte y usa Gemini, no NaN: ver
+[`entrevistas/README.md`](entrevistas/README.md).
+
 ## Dónde vive cada cosa
 
 - Git: código, esquema SQL y workflows. Ningún histórico descargado.

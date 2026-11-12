@@ -82,6 +82,31 @@ export const electionPages = {
     text: 'Las encuestas de las cinco últimas generales frente al resultado: quién falló, cuánto y hacia dónde.',
     cta: 'Ver el ranking',
   },
+  // Viven en su propia ruta (/elecciones/entrevistas/...), con candidatos y entrevistas debajo.
+  entrevistas: {
+    short: 'Entrevistas',
+    title: 'Las entrevistas',
+    text: 'Las entrevistas a los cuatro candidatos, revisadas una a una: qué afirman y si es cierto, qué proponen y si responden a lo que se les pregunta.',
+    cta: 'Ver las entrevistas',
+  },
+  'entrevistas/comparar': {
+    short: 'Comparar',
+    title: 'Lado a lado',
+    text: 'Las cifras de las entrevistas de una ronda con la misma escala y en el mismo orden: valoración, respuestas, propuestas, verificaciones y tono.',
+    cta: 'Comparar las entrevistas',
+  },
+  'entrevistas/verificaciones': {
+    short: 'Verificaciones',
+    title: 'Todo lo verificado',
+    text: 'Cada afirmación comprobable de las entrevistas, con su calificación y sus fuentes oficiales. Filtra por calificación y por candidato.',
+    cta: 'Ver las verificaciones',
+  },
+  'entrevistas/metodologia': {
+    short: 'Metodología',
+    title: 'Cómo se revisan las entrevistas',
+    text: 'La valoración sobre 10, sus seis criterios y sus pesos, las calificaciones de una afirmación y cómo se verifica y se revisa con IA.',
+    cta: 'Ver la metodología',
+  },
 } as const;
 export type ElectionPage = keyof typeof electionPages;
 
@@ -120,6 +145,17 @@ export const electionGroups: {
     title: 'Lo que dicen las encuestas',
     text: 'Las encuestas y su media hasta el 23 de noviembre: desde el 24, la ley prohíbe publicarlas.',
     pages: ['encuestas', 'proyeccion', 'mercados', 'acierto'],
+  },
+  {
+    name: 'Las entrevistas',
+    title: 'Los candidatos, entrevista a entrevista',
+    text: 'Cuatro candidatos y las mismas reglas: cada afirmación comprobable se contrasta con fuentes oficiales y una segunda revisión de IA comprueba cada una.',
+    pages: [
+      'entrevistas',
+      'entrevistas/verificaciones',
+      'entrevistas/comparar',
+      'entrevistas/metodologia',
+    ],
   },
 ];
 export const electionOrder = electionGroups.flatMap((group) => group.pages);

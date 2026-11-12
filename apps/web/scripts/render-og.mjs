@@ -56,6 +56,29 @@ const pages = [
     texto:
       'Lo que deja la legislatura, cómo se reparten los 350 escaños, cuarenta y nueve años de elecciones y las encuestas.',
   },
+  {
+    slug: 'entrevistas',
+    escena: 'horizonte',
+    etiqueta: 'Las entrevistas · 29N',
+    titular: 'Cuatro candidatos, las mismas reglas.',
+    texto:
+      'Sus entrevistas, revisadas una a una: qué afirman y si es cierto, qué proponen y si responden a lo que se les pregunta.',
+  },
+  // Una por candidato, para su ficha, sus entrevistas y sus verificaciones. Los nombres y los
+  // partidos, como en lib/elecciones/candidates.ts.
+  ...[
+    ['ada-colau', 'Ada Colau', 'Frente Amplio'],
+    ['santiago-abascal', 'Santiago Abascal', 'Vox'],
+    ['pedro-sanchez', 'Pedro Sánchez', 'PSOE'],
+    ['alberto-nunez-feijoo', 'Alberto Núñez Feijóo', 'Partido Popular'],
+  ].map(([slug, name, party]) => ({
+    slug: `entrevistas-${slug}`,
+    escena: 'horizonte',
+    etiqueta: `Las entrevistas · ${party}`,
+    titular: `${name}, entrevista a entrevista.`,
+    texto:
+      'Qué afirma y si es cierto, qué propone y si responde a lo que se le pregunta. Con fuentes oficiales.',
+  })),
 ];
 
 // Logo principal: R blanca sobre cuadrado rojo, con el doblez en negro al 15 % (DESIGN.md §8.2). `r` es el alto de la R en px;
