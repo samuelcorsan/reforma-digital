@@ -254,7 +254,6 @@ export function InterviewsHome() {
     <>
       <Grid>
         <Cell span={7} className="gap-10">
-          <Label>Elecciones generales · 29 de noviembre de 2026</Label>
           <div className="grid justify-items-start gap-4">
             <Badge className="font-mono uppercase">{status}</Badge>
             <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
@@ -743,9 +742,6 @@ function Profile({ interview: a }: { interview: Interview }) {
             { name: 'Veces que le corta', value: i.cuts, scale: 20 },
             { name: 'Palabras por pregunta', value: i.wordsPerQuestion, scale: 60 },
           ])}
-          <p className="m-0 text-sm text-muted-foreground">
-            Mismas reglas y escalas para los cuatro.
-          </p>
         </Cell>
       </Grid>
     </ReportSection>
@@ -1030,9 +1026,6 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
                 return { label, value, display: `${value} %` };
               })}
             />
-            <p className="m-0 text-sm text-muted-foreground">
-              Qué parte de sus propuestas lo dice de forma explícita.
-            </p>
           </Cell>
           <Cell label="A quién critica">
             <Bars
@@ -1486,11 +1479,6 @@ export function InterviewsCompare({ roundId }: { roundId?: string }) {
             : las cifras no se pueden comparar entre candidatos.
           </p>
         )}
-        {all.length < entries.length && (
-          <p className="m-0 text-sm text-muted-foreground">
-            Las entrevistas que faltan aparecen como pendientes.
-          </p>
-        )}
       </div>
 
       {all.length ? (
@@ -1778,8 +1766,8 @@ export function InterviewsMethod() {
 
       <ReportSection title="Para que sea comparable">
         <Grid>
-          {fairness.map(([title, text], i) => (
-            <Cell key={title} span={4} label={String(i + 1).padStart(2, '0')}>
+          {fairness.map(([title, text]) => (
+            <Cell key={title} span={4}>
               <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{title}</h3>
               <p className="m-0 text-muted-foreground">{text}</p>
             </Cell>

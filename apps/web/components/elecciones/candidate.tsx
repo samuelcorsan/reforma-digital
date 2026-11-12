@@ -24,7 +24,7 @@ import { DataLoading } from '../congreso/loading';
 import { DaysUntil } from './days-until';
 import { Dot, interviewsHref, ReportSections, ReviewBar, shortDay } from './interviews';
 import { PhotoCredits, Portrait } from './portrait';
-import { Cell, Grid, Label, ReportSection, Stat } from './report';
+import { Cell, Grid, ReportSection, Stat } from './report';
 
 // La ficha de un candidato: su estado en la ronda, las cifras de su entrevista cuando las hay, su
 // partido en las encuestas y el paso a los otros tres.
@@ -73,7 +73,6 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
           <Portrait candidate={c} sizes="(min-width: 768px) 500px, 100vw" />
         </div>
         <Cell span={8} className="gap-8">
-          <Label>Elecciones generales · 29 de noviembre de 2026</Label>
           <div className="grid justify-items-start gap-4">
             <Badge className="font-mono uppercase">{status}</Badge>
             <h1 className="m-0 font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
