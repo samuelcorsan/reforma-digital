@@ -249,7 +249,7 @@ export function InterviewsHome() {
   return (
     <>
       <Grid>
-        <Cell className="items-center gap-10 py-12 text-center lg:py-16">
+        <div className="col-span-12 flex flex-col items-center gap-10 pt-4 pb-12 text-center lg:pt-8 lg:pb-16">
           <div className="grid justify-items-center gap-4">
             <Badge className="font-mono uppercase">{status}</Badge>
             <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
@@ -279,7 +279,7 @@ export function InterviewsHome() {
               Cómo se revisa <Icon name="derecha" size={16} />
             </Link>
           </div>
-        </Cell>
+        </div>
         <Cell label="Las rondas">
           <ol className="m-0 grid list-none gap-5 p-0">
             {[...rounds]
