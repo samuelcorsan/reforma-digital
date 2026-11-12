@@ -171,12 +171,8 @@ function Sources({ items }: { items: { titulo: string; url: string }[] }) {
 // El proceso, con lo que hace la IA en cada paso. Nadie lo revisa a mano: lo comprueba una segunda
 // pasada de IA, y la web lo dice así.
 const steps: { title: string; text: string; ai?: boolean }[] = [
-  { title: 'La entrevista entera', text: 'El vídeo completo, sin cortes ni clips.' },
-  {
-    title: 'Transcripción',
-    text: 'Quién habla y en qué segundo: el entrevistador, el candidato u otras personas.',
-    ai: true,
-  },
+  { title: 'La entrevista entera', text: 'El vídeo completo, sin cortes.' },
+  { title: 'Transcripción', text: 'Quién habla y en qué segundo.', ai: true },
   {
     title: 'Análisis',
     text: 'Temas, cifras, propuestas, críticas, interrupciones y preguntas sin responder.',
@@ -184,15 +180,15 @@ const steps: { title: string; text: string; ai?: boolean }[] = [
   },
   {
     title: 'Contraste con fuentes',
-    text: 'Cada afirmación comprobable, frente al INE, Eurostat, el BOE, el Banco de España…',
+    text: 'Cada dato, contra el INE, Eurostat, el BOE o el Banco de España.',
     ai: true,
   },
   {
     title: 'Segunda revisión',
-    text: 'Otra pasada de IA abre cada fuente, busca la oficial por su cuenta y confirma, corrige o descarta cada calificación. Nadie la revisa a mano.',
+    text: 'Otra IA abre cada fuente y confirma, corrige o descarta la calificación. Nadie la revisa a mano.',
     ai: true,
   },
-  { title: 'El informe', text: 'Cada calificación, con su explicación y sus fuentes enlazadas.' },
+  { title: 'El informe', text: 'Cada calificación con su explicación y sus fuentes.' },
 ];
 
 // «13 nov»: el día y el mes de una fecha ISO.
@@ -203,33 +199,33 @@ const features: { icon: IconName; color?: string; title: string; text: string }[
   {
     icon: markIcons.legal,
     color: verdicts.legal.color,
-    title: 'Lo que afirma, verificado',
-    text: 'Cada afirmación comprobable, con su calificación y sus fuentes oficiales enlazadas.',
+    title: 'Si dice la verdad',
+    text: 'Cada dato que se puede comprobar, calificado y con la fuente oficial enlazada.',
   },
   {
     icon: markIcons.completa,
-    title: 'Lo que propone',
+    title: 'Si concreta lo que propone',
     text: 'Si cada propuesta dice qué, cuánto, cuándo y cómo.',
   },
   {
     icon: markIcons.repregunta,
-    title: 'Cómo responde',
-    text: 'Respuestas directas, evasivas, cambios de tema y las veces que le repreguntan.',
+    title: 'Si contesta a lo que le preguntan',
+    text: 'Respuestas directas, evasivas, cambios de tema y repreguntas.',
   },
   {
     icon: markIcons.momento,
     title: 'Momentos clave',
-    text: 'Anuncios, choques, titulares y rectificaciones, con su cita literal.',
+    text: 'Lo que anuncia, los choques y las rectificaciones, con la cita exacta.',
   },
   {
     icon: markIcons.critica,
-    title: 'El tono',
+    title: 'Si critica o ataca',
     text: 'Críticas a la política de otros frente a ataques personales e interrupciones.',
   },
   {
     icon: 'documento',
     title: 'Minuto a minuto',
-    text: 'La transcripción entera y una línea de tiempo con cada marca, junto al vídeo.',
+    text: 'La transcripción completa y una línea de tiempo junto al vídeo.',
   },
 ];
 
@@ -253,26 +249,25 @@ export function InterviewsHome() {
   return (
     <>
       <Grid>
-        <Cell span={7} className="gap-10">
-          <div className="grid justify-items-start gap-4">
+        <Cell className="items-center gap-10 py-12 text-center lg:py-16">
+          <div className="grid justify-items-center gap-4">
             <Badge className="font-mono uppercase">{status}</Badge>
             <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
-              Cuatro candidatos, las mismas reglas
+              Qué dicen los candidatos y si es verdad
             </h1>
-            <p className="m-0 max-w-[58ch] text-lg leading-relaxed text-muted-foreground">
-              Sus entrevistas largas en medios nacionales, revisadas una a una: qué afirman y si es
-              cierto, qué proponen y si responden a lo que se les pregunta. Cada informe trae una
-              valoración sobre 10, con sus criterios y sus pesos a la vista.
+            <p className="m-0 max-w-[52ch] text-lg leading-relaxed text-muted-foreground">
+              Sus entrevistas largas, analizadas con IA. Cada dato que dan se contrasta con fuentes
+              oficiales y cada entrevista acaba con una nota sobre 10, con los pesos a la vista.
             </p>
           </div>
-          <div className="mt-auto flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             <Link
               href={interviewsHref(complete ? 'comparar' : 'ejemplo')}
               data-slot="button"
               data-variant="sunset"
               className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
             >
-              {complete ? 'Comparar las entrevistas' : 'Ver un informe de ejemplo'}{' '}
+              {complete ? 'Comparar las entrevistas' : 'Ver un ejemplo'}{' '}
               <Icon name="derecha" size={16} />
             </Link>
             <Link
@@ -285,7 +280,7 @@ export function InterviewsHome() {
             </Link>
           </div>
         </Cell>
-        <Cell span={5} label="Las rondas">
+        <Cell label="Las rondas">
           <ol className="m-0 grid list-none gap-5 p-0">
             {[...rounds]
               .sort((x, y) => y.date.localeCompare(x.date))
@@ -304,9 +299,9 @@ export function InterviewsHome() {
                         {shortDay(r.date)}
                       </span>
                     </span>
-                    <span className="text-muted-foreground">{r.text}</span>
+                    <span className="max-w-[65ch] text-muted-foreground">{r.text}</span>
                     <span className="mt-1 text-sm">
-                      {published} de {entries.length - cancelled.length} entrevistas publicadas
+                      {published} de {entries.length - cancelled.length} publicadas
                       {cancelled.length > 0 && ` · Cancelada la de ${cancelled.join(' y la de ')}`}
                       {r.comparable ? '' : ` · ${r.note ?? 'No se comparan entre sí'}`}
                     </span>
@@ -360,7 +355,7 @@ export function InterviewsHome() {
         </div>
       </ReportSection>
 
-      <ReportSection title="Qué tiene cada informe">
+      <ReportSection title="Qué trae cada informe">
         <Grid>
           {features.map((f) => (
             <Cell key={f.title} span={4} className="gap-4">
@@ -409,7 +404,7 @@ export function InterviewsHome() {
               ))}
             </ol>
           </Cell>
-          <Cell label="Cómo se califica una afirmación">
+          <Cell label="Las calificaciones">
             <ul className="m-0 grid list-none gap-6 p-0 sm:grid-cols-2 lg:grid-cols-4">
               {verdictIds.map((id) => (
                 <li key={id} className="grid content-start gap-2">
