@@ -2,6 +2,8 @@ import { z } from 'zod';
 import adaColau from './comunicacion/13n-ada-colau.json';
 import albertoNunezFeijoo from './comunicacion/13n-alberto-nunez-feijoo.json';
 import pedroSanchez from './comunicacion/13n-pedro-sanchez.json';
+import { decimal } from './format';
+import type { Mark } from './interviews';
 
 // El análisis de comunicación de una entrevista: cómo se pregunta y se responde, la voz, las trabas,
 // los silencios y los movimientos de la cara, con las mismas medidas para todos. Un JSON por
@@ -89,16 +91,36 @@ const schema = z.object({
   // Cada intervención del entrevistador que pide respuesta, y cómo se respondió.
   preguntas: z.array(
     z.object({
+      // El número de la pregunta en la lectura (`c12`): lo usan las preguntas comunes de la ronda.
+      id: z.string(),
       segundo: z.number(),
       tema: z.string(),
       texto: z.string(),
       dureza: hardness,
       respuesta: reply,
+      // Si la respuesta propone algo propio, critica a otros, las dos cosas o ninguna.
+      orientacion: z.enum(['propone', 'critica', 'ambas', 'ninguna']),
+      // A quién critica la respuesta, si critica a alguien.
+      aQuienCritica: z.array(z.string()),
+      // Quién cierra el intercambio: el invitado o el entrevistador, con un corte o un comentario suyo.
+      cierra: who,
     }),
   ),
   temas: z.array(z.object({ inicio: z.number(), fin: z.number(), tema: z.string(), quien: who })),
   // Los compromisos que recoge y cuántos tienen un objeto que se podrá comprobar.
   promesas: z.object({ total: z.number(), verificables: z.number() }),
+  // Cada compromiso: verificable si tiene un objeto que se podrá comprobar (una cifra, una ley o una
+  // decisión de sí o no), con su plazo y su condición si los dice.
+  compromisos: z.array(
+    z.object({
+      segundo: z.number(),
+      cita: z.string(),
+      compromiso: z.string(),
+      verificable: z.boolean(),
+      plazo: z.string().nullable(),
+      condicion: z.string().nullable(),
+    }),
+  ),
   // Los momentos de relación entre los dos, y quién inicia cada uno.
   sintonia: z.array(z.object({ tipo: rapport, quien: who })),
   // Del invitado: repeticiones y frases que se cortan, y pausas de más de 0,4 s.
@@ -124,7 +146,10 @@ const schema = z.object({
   cara: z.array(
     z.object({ au: z.string(), nombre: z.string(), invitado: z.number(), jordi: z.number() }),
   ),
-  momentos: z.array(z.object({ segundo: z.number(), quien: who, titulo: z.string() })),
+  // Donde coinciden varias señales. `cita`: lo que se oye en ese minuto.
+  momentos: z.array(
+    z.object({ segundo: z.number(), quien: who, titulo: z.string(), cita: z.string().nullable() }),
+  ),
   // Los paquetes de datos para descargar, en /datos/comunicacion/<archivo>.
   datos: z.array(
     z.object({
@@ -204,4 +229,79 @@ export function topicMinutes(c: Communication) {
   return [...seconds]
     .map(([topic, total]) => ({ topic, minutes: total / 60 }))
     .sort((x, y) => y.minutes - x.minutes);
+}
+
+// El plazo y la condición de un compromiso, si los dice: «Plazo: el primer año · Si gana con mayoría».
+export const commitmentDetail = (x: Communication['compromisos'][number]) =>
+  [x.plazo && `Plazo: ${x.plazo}`, x.condicion && `Condición: ${x.condicion}`]
+    .filter(Boolean)
+    .join(' · ') || 'Sin plazo ni condición';
+
+// Una pausa larga: de un segundo o más, como las cuenta el análisis.
+const longPause = 1;
+
+// Lo que el análisis de comunicación pone en el minuto a minuto de la entrevista: las preguntas duras
+// que no se contestan del todo, las pausas largas y las trabas, y los minutos que más cita el público.
+export function communicationMarks(c: Communication): Mark[] {
+  return [
+    ...c.momentos.map((m, i) => ({
+      id: `cm${i + 1}`,
+      second: m.segundo,
+      lane: 'momentos' as const,
+      kind: 'momento' as const,
+      label: m.quien === 'jordi' ? 'Momento clave · del entrevistador' : 'Momento clave',
+      text: m.titulo,
+      detail: m.cita ? `«${m.cita}»` : undefined,
+    })),
+    ...c.compromisos.map((x, i) => ({
+      id: `cc${i + 1}`,
+      second: x.segundo,
+      lane: 'propuestas' as const,
+      kind: x.verificable ? ('comprobable' as const) : ('compromiso' as const),
+      label: x.verificable ? 'Compromiso comprobable' : 'Compromiso sin objeto comprobable',
+      text: x.compromiso,
+      detail: commitmentDetail(x),
+    })),
+    ...c.preguntas.flatMap((q, i) =>
+      isHard(q) && q.respuesta !== 'responde'
+        ? {
+            id: `cq${i + 1}`,
+            second: q.segundo,
+            lane: 'preguntas' as const,
+            kind: 'dura' as const,
+            label: replyNames[q.respuesta],
+            text: q.texto,
+            detail: `Pregunta ${hardnessNames[q.dureza].toLowerCase()} · ${q.tema}`,
+          }
+        : [],
+    ),
+    ...c.pausas.flatMap((p, i) =>
+      p.duracion >= longPause
+        ? {
+            id: `cp${i + 1}`,
+            second: p.segundo,
+            lane: 'pausas' as const,
+            kind: 'pausa' as const,
+            label: `Pausa de ${decimal(p.duracion)} s`,
+            text: p.carga ? 'Antes de una frase con carga' : 'Un silencio largo en su respuesta',
+          }
+        : [],
+    ),
+    ...c.trabas.map((t, i) => ({
+      id: `ct${i + 1}`,
+      second: t.segundo,
+      lane: 'trabas' as const,
+      kind: 'traba' as const,
+      label: `Traba: ${t.tipo}`,
+      text: `«${t.contexto}»`,
+    })),
+    ...(c.publico?.citados ?? []).map((x, i) => ({
+      id: `cv${i + 1}`,
+      second: x.segundo,
+      lane: 'comentados' as const,
+      kind: 'comentado' as const,
+      label: 'Lo más comentado',
+      text: `${x.veces} comentarios de YouTube citan este minuto`,
+    })),
+  ];
 }

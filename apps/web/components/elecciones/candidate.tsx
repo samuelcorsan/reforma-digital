@@ -9,7 +9,7 @@ import { pollsHidden } from '../../lib/congreso/polls';
 import { decimal, longDate, signed } from '../../lib/elecciones/format';
 import {
   interviewsOf,
-  proposalScore,
+  checkable,
   outlet,
   cancelledRound,
   pendingRound,
@@ -60,10 +60,7 @@ export function CandidateProfile({ candidate: c }: { candidate: Candidate }) {
         ],
         [`${latest.stats.alGrano} %`, 'de respuestas al grano'],
         [String(latest.revisiones.length), 'afirmaciones verificadas'],
-        [
-          String(latest.propuestas.filter((p) => proposalScore(p) === 4).length),
-          'propuestas completas',
-        ],
+        [String(checkable(latest)), 'compromisos comprobables'],
       ]
     : [];
   return (

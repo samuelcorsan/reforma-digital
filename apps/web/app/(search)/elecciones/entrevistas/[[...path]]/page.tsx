@@ -123,12 +123,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-// Los filtros de /entrevistas/verificaciones: lo que no es una calificación o un candidato se ignora.
+// Los filtros de /entrevistas/verificaciones: una calificación que no existe se ignora; un candidato o
+// un tema que no existen dejan la lista vacía.
 async function filters(searchParams: Props['searchParams']) {
-  const { calificacion, candidato } = await searchParams;
+  const { calificacion, candidato, tema, pagina } = await searchParams;
   return {
     verdict: verdictIds.find((id) => id === calificacion),
     candidate: typeof candidato === 'string' ? candidato : undefined,
+    topic: typeof tema === 'string' ? tema : undefined,
+    // Una página que no es un número va a la primera; una que se pasa, a la última.
+    page: Number(pagina) || 1,
   };
 }
 

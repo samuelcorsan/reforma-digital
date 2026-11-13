@@ -1,5 +1,5 @@
 import { cn } from '@reforma-digital/design/lib/utils';
-import type { Mark } from '../../lib/elecciones/interviews';
+import { verdicts, type Mark } from '../../lib/elecciones/interviews';
 import { Icon, type IconName } from '../brand/icon';
 
 // El icono de cada marca de una entrevista: el mismo en la línea de tiempo, en la leyenda y en las
@@ -24,6 +24,12 @@ export const markIcons: Record<Mark['kind'], IconName> = {
   rotulo: 'pantalla',
   documento: 'documento',
   accion: 'mano',
+  comprobable: 'diana',
+  compromiso: 'idea',
+  dura: 'esquiva',
+  pausa: 'pausa',
+  traba: 'repetir',
+  comentado: 'usuario',
 };
 
 // Cómo responde a cada pregunta: un cuadrado de tinta (directa) a trama (cambio de tema).
@@ -34,6 +40,25 @@ export const answerStyles = {
   cambio:
     'bg-[repeating-linear-gradient(45deg,var(--border)_0_3px,transparent_3px_6px)] ring-1 ring-border',
 } as const;
+
+// Cómo responde a cada pregunta: cada clase con su icono y un color, del verde (contesta a lo
+// preguntado) al rojo, con los colores de las calificaciones. El icono la distingue sin el color.
+export type AnswerMark = { icon: IconName; color: string };
+export const replyMarks = {
+  responde: { icon: 'hecho', color: verdicts.legal.color },
+  en_parte: { icon: 'casi', color: verdicts.amarilla.color },
+  otra_pregunta: { icon: 'esquiva', color: verdicts.fuera.color },
+  ataca_pregunta: { icon: 'rayo', color: verdicts.roja.color },
+  cambia_tema: { icon: 'externo', color: verdicts.roja.color },
+  sin_respuesta: { icon: 'silencio', color: verdicts.sinfuente.color },
+} as const satisfies Record<string, AnswerMark>;
+// Las del análisis, sin análisis de comunicación.
+export const answerMarks = {
+  directa: replyMarks.responde,
+  parcial: replyMarks.en_parte,
+  evasiva: replyMarks.otra_pregunta,
+  cambio: replyMarks.cambia_tema,
+} as const satisfies Record<string, AnswerMark>;
 
 // Un icono en su círculo. Con color (las calificaciones), una pastilla tintada: fondo claro del
 // color, icono en su tono oscuro y un canto fino del mismo tono. Sin color, blanca con canto gris.
