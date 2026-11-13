@@ -6,21 +6,19 @@ import { useEffect, useRef, useState } from 'react';
 // la que se está leyendo: la última cuyo título ya ha pasado bajo el índice.
 export function PageIndex({ items }: { items: [string | false, string][] }) {
   const shown = items.filter((item): item is [string, string] => !!item[0]);
-  const ids = shown.map(([id]) => id).join(' ');
   const [current, setCurrent] = useState<string | null>(null);
   const nav = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const sections = ids
-      .split(' ')
-      .map((id) => document.getElementById(id))
-      .filter((section) => section !== null);
+    const sections = items
+      .map(([id]) => id && document.getElementById(id))
+      .filter((section) => !!section);
     const update = () =>
       setCurrent(sections.filter((s) => s.getBoundingClientRect().top <= 200).at(-1)?.id ?? null);
     update();
     window.addEventListener('scroll', update, { passive: true });
     return () => window.removeEventListener('scroll', update);
-  }, [ids]);
+  }, [items]);
 
   // En el móvil el índice se desplaza de lado: la sección marcada queda a la vista.
   useEffect(() => {

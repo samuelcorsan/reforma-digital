@@ -535,99 +535,9 @@ function Fold({ summary, children }: { summary: ReactNode; children: ReactNode }
   );
 }
 
-// Cuántas hay de cada calificación, y un enlace a su grupo.
-function VerdictLinks({ interview: a }: { interview: Interview }) {
-  return (
-    <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
-      {verdictOrder.map((id) => {
-        const n = a.revisiones.filter((r) => r.veredicto === id).length;
-        return (
-          n > 0 && (
-            <li key={id}>
-              <a
-                href={`#v-${id}`}
-                className="inline-flex min-h-11 items-center gap-2 rounded-full py-1 pr-4 pl-1.5 no-underline ring-1 ring-border transition-colors hover:bg-muted motion-reduce:transition-none"
-              >
-                <MarkIcon kind={id} color={verdicts[id].color} className="size-8" />
-                {verdicts[id].name}
-                <span className="font-mono text-sm text-muted-foreground tabular-nums">{n}</span>
-              </a>
-            </li>
-          )
-        );
-      })}
-    </ul>
-  );
-}
-
-// Una verificación en una fila: la cita a la vista; el porqué y las fuentes, al desplegar.
-function VerificationItem({
-  interview: a,
-  verification: r,
-}: {
-  interview: Interview;
-  verification: Verification;
-}) {
-  return (
-    <li className="grid gap-2 border-b border-border py-4 last:border-0">
-      <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
-        <Jump interview={a} second={r.segundo} />
-        <Unreviewed estado={r.estado} />
-      </p>
-      <blockquote className="m-0 font-heading text-lg leading-snug">«{r.cita}»</blockquote>
-      <Fold summary={<span className="text-sm font-medium">Por qué y fuentes</span>}>
-        <p className="m-0 text-muted-foreground">{r.explicacion}</p>
-        <Sources items={r.fuentes} />
-        <Link
-          href={interviewsHref(`${a.id}/${r.id}`)}
-          className="self-start text-sm underline underline-offset-4"
-        >
-          Enlace a esta verificación
-        </Link>
-      </Fold>
-    </li>
-  );
-}
-
-type Question = Interview['preguntas'][number];
-function QuestionItem({
-  interview: a,
-  question: q,
-  shared,
-}: {
-  interview: Interview;
-  question: Question;
-  // Si está en un grupo de preguntas comunes de su ronda.
-  shared: boolean;
-}) {
-  return (
-    <li className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-b border-border py-4 last:border-0">
-      <Jump interview={a} second={q.segundo} />
-      <span className="grid gap-2">
-        <span className="leading-snug">{q.texto}</span>
-        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5">
-            <i
-              aria-hidden="true"
-              className={cn('block size-3 rounded-[3px]', answerStyles[q.respuesta])}
-            />
-            {answers[q.respuesta]}
-          </span>
-          {q.repregunta && (
-            <span className="inline-flex items-center gap-1.5">
-              <MarkIcon kind="repregunta" className="size-5" /> Repregunta
-            </span>
-          )}
-          {shared && <span>También se la hicieron a otros candidatos</span>}
-        </span>
-      </span>
-    </li>
-  );
-}
-
 // Las preguntas por tema, en el orden en que salen: el tema es el que suena en ese segundo.
 function questionsByTopic(a: Interview) {
-  const groups = new Map<string, Question[]>();
+  const groups = new Map<string, Interview['preguntas']>();
   for (const q of [...a.preguntas].sort((x, y) => x.segundo - y.segundo)) {
     const topic =
       a.temas.find((t) => t.inicio <= q.segundo && q.segundo < t.fin)?.tema ?? 'Otros temas';
@@ -638,6 +548,9 @@ function questionsByTopic(a: Interview) {
 
 export function ReportSections({ interview: a }: { interview: Interview }) {
   const proposals = [...a.propuestas].sort((x, y) => proposalScore(y) - proposalScore(x));
+  const byVerdict = verdictOrder
+    .map((id) => [id, a.revisiones.filter((r) => r.veredicto === id)] as const)
+    .filter(([, list]) => list.length > 0);
   const shared = new Set(
     (a.jornada ? commonQuestions(a.jornada) : []).flatMap((q) => q.respuestas[a.candidato] ?? []),
   );
@@ -653,29 +566,64 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
             </p>
           </AI>
           <div className="mt-6 grid gap-4">
-            <VerdictLinks interview={a} />
-            {verdictOrder.map((id) => {
-              const list = a.revisiones.filter((r) => r.veredicto === id);
-              return (
-                list.length > 0 && (
-                  <div key={id} id={`v-${id}`} className="grid scroll-mt-40">
-                    <Cell className="gap-2">
-                      <h3 className="m-0 flex items-center gap-3 font-heading text-2xl leading-tight font-normal">
-                        <MarkIcon kind={id} color={verdicts[id].color} />
-                        {verdicts[id].name}
-                        <span className="text-muted-foreground tabular-nums">{list.length}</span>
-                      </h3>
-                      <p className="m-0 text-sm text-muted-foreground">{verdicts[id].text}</p>
-                      <ul className="m-0 grid list-none gap-x-10 p-0 md:grid-cols-2">
-                        {list.map((r) => (
-                          <VerificationItem key={r.id} interview={a} verification={r} />
-                        ))}
-                      </ul>
-                    </Cell>
-                  </div>
-                )
-              );
-            })}
+            {/* Cuántas hay de cada calificación, y un enlace a su grupo. */}
+            <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
+              {byVerdict.map(([id, list]) => (
+                <li key={id}>
+                  <a
+                    href={`#v-${id}`}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full py-1 pr-4 pl-1.5 no-underline ring-1 ring-border transition-colors hover:bg-muted motion-reduce:transition-none"
+                  >
+                    <MarkIcon kind={id} color={verdicts[id].color} className="size-8" />
+                    {verdicts[id].name}
+                    <span className="font-mono text-sm text-muted-foreground tabular-nums">
+                      {list.length}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            {byVerdict.map(([id, list]) => (
+              <div key={id} id={`v-${id}`} className="grid scroll-mt-40">
+                <Cell className="gap-2">
+                  <h3 className="m-0 flex items-center gap-3 font-heading text-2xl leading-tight font-normal">
+                    <MarkIcon kind={id} color={verdicts[id].color} />
+                    {verdicts[id].name}
+                    <span className="text-muted-foreground tabular-nums">{list.length}</span>
+                  </h3>
+                  <p className="m-0 text-sm text-muted-foreground">{verdicts[id].text}</p>
+                  {/* Cada una en una fila: la cita a la vista; el porqué y las fuentes, al desplegar. */}
+                  <ul className="m-0 grid list-none gap-x-10 p-0 md:grid-cols-2">
+                    {list.map((r) => (
+                      <li
+                        key={r.id}
+                        className="grid gap-2 border-b border-border py-4 last:border-0"
+                      >
+                        <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
+                          <Jump interview={a} second={r.segundo} />
+                          <Unreviewed estado={r.estado} />
+                        </p>
+                        <blockquote className="m-0 font-heading text-lg leading-snug">
+                          «{r.cita}»
+                        </blockquote>
+                        <Fold
+                          summary={<span className="text-sm font-medium">Por qué y fuentes</span>}
+                        >
+                          <p className="m-0 text-muted-foreground">{r.explicacion}</p>
+                          <Sources items={r.fuentes} />
+                          <Link
+                            href={interviewsHref(`${a.id}/${r.id}`)}
+                            className="self-start text-sm underline underline-offset-4"
+                          >
+                            Enlace a esta verificación
+                          </Link>
+                        </Fold>
+                      </li>
+                    ))}
+                  </ul>
+                </Cell>
+              </div>
+            ))}
           </div>
         </ReportSection>
       )}
@@ -812,12 +760,35 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                   >
                     <ol className="m-0 grid list-none gap-x-10 p-0 md:grid-cols-2">
                       {list.map((q) => (
-                        <QuestionItem
+                        <li
                           key={q.id}
-                          interview={a}
-                          question={q}
-                          shared={shared.has(q.id)}
-                        />
+                          className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-b border-border py-4 last:border-0"
+                        >
+                          <Jump interview={a} second={q.segundo} />
+                          <span className="grid gap-2">
+                            <span className="leading-snug">{q.texto}</span>
+                            <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                              <span className="inline-flex items-center gap-1.5">
+                                <i
+                                  aria-hidden="true"
+                                  className={cn(
+                                    'block size-3 rounded-[3px]',
+                                    answerStyles[q.respuesta],
+                                  )}
+                                />
+                                {answers[q.respuesta]}
+                              </span>
+                              {q.repregunta && (
+                                <span className="inline-flex items-center gap-1.5">
+                                  <MarkIcon kind="repregunta" className="size-5" /> Repregunta
+                                </span>
+                              )}
+                              {shared.has(q.id) && (
+                                <span>También se la hicieron a otros candidatos</span>
+                              )}
+                            </span>
+                          </span>
+                        </li>
                       ))}
                     </ol>
                   </Fold>

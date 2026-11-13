@@ -196,17 +196,7 @@ const tally: [Mark['kind'], string][] = [
   ['interrumpe', 'Interrumpe'],
 ];
 // Los avisos sobre el vídeo: verificaciones, propuestas y momentos clave, unos segundos cada uno.
-const alerts = new Set<Mark['kind']>([
-  'momento',
-  'completa',
-  'casi',
-  'incompleta',
-  'legal',
-  'amarilla',
-  'fuera',
-  'roja',
-  'sinfuente',
-]);
+const alertLanes = new Set<Mark['lane']>(['momentos', 'propuestas', 'verificaciones']);
 const alertSeconds = 8;
 // Un «ding» corto para cada aviso, generado en el navegador: sin archivos de audio.
 let audio: AudioContext | undefined;
@@ -532,7 +522,7 @@ export function InterviewPlayer({
   const [sound, setSound] = useState(true);
   const popups = alertsOn
     ? marks
-        .filter((m) => alerts.has(m.kind) && m.second <= time && time - m.second < alertSeconds)
+        .filter((m) => alertLanes.has(m.lane) && m.second <= time && time - m.second < alertSeconds)
         .slice(-2)
     : [];
   // Suena al pasar por un aviso mientras se reproduce, no al saltar a él.
@@ -546,7 +536,7 @@ export function InterviewPlayer({
       playing &&
       time > before &&
       time - before < 2 &&
-      marks.some((m) => alerts.has(m.kind) && m.second > before && m.second <= time)
+      marks.some((m) => alertLanes.has(m.lane) && m.second > before && m.second <= time)
     )
       ding();
   }, [time, alertsOn, sound, playing, marks]);
