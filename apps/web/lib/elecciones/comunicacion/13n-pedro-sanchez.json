@@ -1,0 +1,3305 @@
+{
+  "id": "13n-pedro-sanchez",
+  "inicio": 83,
+  "fin": 6726,
+  "titular": "Sánchez ante Jordi Wild: 131 de 152 preguntas fueron duras, contestó a lo preguntado en 89 y su voz no cambió al apretar",
+  "entrada": [
+    "De las 152 intervenciones de Jordi Wild que pedían respuesta, 131 (86 %) fueron incómodas, repreguntas o insistencias, y 111 (73 %) partían de una premisa adversa al invitado. A esas 131, Sánchez contestó a lo preguntado en 89, contestó en parte en 23 y contestó a otra pregunta en 14 (en 5 más, Jordi no dejó contestar). Su tono, su volumen y su velocidad son prácticamente iguales con pregunta dura que sin ella. Este informe cuenta lo que se puede medir y qué dice la investigación sobre su efecto probable en quien escucha. No valora ideas ni dice quién estuvo mejor.",
+    "Dos avisos. La cara se describe solo con unidades de acción (AU) del sistema FACS, que nombra movimientos musculares y no emociones (**Ekman y Friesen, 1978**). Y, dicho una sola vez: **ni las pausas, ni la voz, ni los gestos, ni las trabas sirven para saber si alguien dice la verdad**. La revisión de 158 señales de **DePaulo y otros (2003)** encontró que la mayoría no distingue a quien miente y que las que lo hacen tienen efectos pequeños, y las personas detectan mentiras poco mejor que al azar (**Bond y DePaulo, 2006**). Aquí esas medidas describen esfuerzo o tensión al hablar, nada más."
+  ],
+  "frase": null,
+  "claves": [
+    "**Repreguntas con premisa en contra.** 131 de 152 intervenciones de Jordi fueron duras (86 %) y 111 partían de una premisa adversa (73 %, frente a la mitad con Colau y Feijóo).",
+    "**Sánchez contestó a lo preguntado en 89 de las 131 duras** y nunca atacó la pregunta ni cambió de tema. Donde menos contestó fue en los trenes (7 de 20).",
+    "**No se puede decir que eludiera menos que los otros dos:** sin la regla de la clase más favorable, aplicada 12 veces, su 10 % de respuestas que no contestan subiría hasta el 16 %.",
+    "**Su voz no cambia bajo presión.** Tono, volumen y velocidad apenas difieren entre preguntas duras y el resto (d = +0,07, −0,04 y +0,02), las diferencias menores de los tres invitados.",
+    "**Los logros, en *nosotros*; los fracasos, en *ellos*.** 16 de 28 logros con *nosotros* y 17 de 27 fracasos con *ellos*, que incluye a rivales y a personas de su entorno; 3 fracasos con *yo*.",
+    "**Con otro entrevistador y otro formato, otras cifras.** Con Jordi se traba tres veces menos que en *La Revuelta* (0,33 frente a 0,98 por 100 palabras) y responde más largo (66 palabras de mediana frente a 19); su parte de la conversación apenas cambia (63,4 % y 60,1 %).",
+    "**En los datos, 71 afirmaciones suyas se sostienen, 18 son verdad a medias y 1 no se sostiene** (la de Pablo Iglesias, pendiente de segunda revisión); solo 41 de 166 filas tienen la fuente abierta, y no es una nota."
+  ],
+  "limites": [
+    "**Transcripción automática.** Tiene cuatro huecos sin texto (unos 94 segundos en total) y muchos nombres mal escritos («Coldo», «Damuz», «Feijó»), que se citan tal cual. Donde se pisan las voces hay bastantes turnos mal atribuidos, sobre todo en 41:15–42:50, 68:27–68:35, 99:30–100:30 y 109:15–110:30. Solo se usan las palabras verificadas por huella de voz (86 % de las del invitado, 81 % de las de Jordi). No transcribe risas ni titubeos.",
+    "**Pausas.** Se miden entre palabras transcritas. El detector acústico confirma 17 de las 112 del invitado y 4 de las 51 de Jordi.",
+    "**Cara.** La realización decide a quién se ve, y al invitado casi no se le ve escuchar. Las caras se asignaron a mano sobre diez grupos formados por parecido: dos se descartaron y otros dos incluyen algún recorte suelto de la otra persona. Las AU las estima un modelo estadístico, no un codificador humano. No se midieron la mirada ni el parpadeo.",
+    "**Lectura de preguntas y respuestas.** La hizo un solo codificador, con 16 entradas dudosas y 12 aplicaciones de la regla de la clase más favorable. Las diferencias de evasión entre los tres invitados caben dentro de ese margen.",
+    "**Comprobación de datos.** Tres de cada cuatro veredictos descansan en extractos, no en la fuente abierta, y el único negativo no ha pasado segunda revisión.",
+    "**Comparaciones.** Con las otras entrevistas de Jordi cambian la duración y los temas; con *La Revuelta*, además, el formato. Ninguna diferencia se puede atribuir a una causa concreta.",
+    "**Referencias y alcance.** Los estudios describen efectos medios, muchos de laboratorio y en inglés. Es una sola entrevista, y nada de lo medido permite saber si alguien dice la verdad, qué siente o cómo es."
+  ],
+  "referencias": [
+    "Barrett, L. F., Adolphs, R., Marsella, S., Martinez, A. M. y Pollak, S. D. (2019). Emotional expressions reconsidered: Challenges to inferring emotion from human facial movements. *Psychological Science in the Public Interest*, 20(1), 1–68.",
+    "Bavelas, J. B., Black, A., Chovil, N. y Mullett, J. (1990). *Equivocal Communication*. Sage.",
+    "Bond, C. F. y DePaulo, B. M. (2006). Accuracy of deception judgments. *Personality and Social Psychology Review*, 10(3), 214–234.",
+    "Bull, P. y Mayer, K. (1993). How not to answer questions in political interviews. *Political Psychology*, 14(4), 651–666.",
+    "Clayman, S. y Heritage, J. (2002). *The News Interview: Journalists and Public Figures on the Air*. Cambridge University Press.",
+    "DePaulo, B. M., Lindsay, J. J., Malone, B. E., Muhlenbruck, L., Charlton, K. y Cooper, H. (2003). Cues to deception. *Psychological Bulletin*, 129(1), 74–118.",
+    "Ekman, P. y Friesen, W. V. (1978). *Facial Action Coding System*. Consulting Psychologists Press.",
+    "Ekman, P., Davidson, R. J. y Friesen, W. V. (1990). The Duchenne smile: Emotional expression and brain physiology II. *Journal of Personality and Social Psychology*, 58(2), 342–353.",
+    "Entman, R. M. (1993). Framing: Toward clarification of a fractured paradigm. *Journal of Communication*, 43(4), 51–58.",
+    "Goldman-Eisler, F. (1968). *Psycholinguistics: Experiments in Spontaneous Speech*. Academic Press (editorial no confirmada).",
+    "Juslin, P. N. y Laukka, P. (2003). Communication of emotions in vocal expression and music performance: Different channels, same code? *Psychological Bulletin*, 129(5), 770–814.",
+    "Kunda, Z. (1990). The case for motivated reasoning. *Psychological Bulletin*, 108(3), 480–498.",
+    "Lord, C. G., Ross, L. y Lepper, M. R. (1979). Biased assimilation and attitude polarization: The effects of prior theories on subsequently considered evidence. *Journal of Personality and Social Psychology*, 37(11), 2098–2109.",
+    "McCombs, M. E. y Shaw, D. L. (1972). The agenda-setting function of mass media. *Public Opinion Quarterly*, 36(2), 176–187.",
+    "Miller, D. T. y Ross, M. (1975). Self-serving biases in the attribution of causality: Fact or fiction? *Psychological Bulletin*, 82(2), 213–225.",
+    "Nickerson, R. S. (1998). Confirmation bias: A ubiquitous phenomenon in many guises. *Review of General Psychology*, 2(2), 175–220.",
+    "Nyhan, B., Porter, E., Reifler, J. y Wood, T. J. (2020). Taking fact-checks literally but not seriously? The effects of journalistic fact-checking on factual beliefs and candidate favorability. *Political Behavior*, 42(3), 939–960.",
+    "Petrocik, J. R. (1996). Issue ownership in presidential elections, with a 1980 case study. *American Journal of Political Science*, 40(3), 825–850.",
+    "Rogers, T. y Norton, M. I. (2011). The artful dodger: Answering the wrong question the right way. *Journal of Experimental Psychology: Applied*, 17(2), 139–147.",
+    "Sacks, H., Schegloff, E. A. y Jefferson, G. (1974). A simplest systematics for the organization of turn-taking for conversation. *Language*, 50(4), 696–735.",
+    "Scherer, K. R. (2003). Vocal communication of emotion: A review of research paradigms. *Speech Communication*, 40(1–2), 227–256.",
+    "Taber, C. S. y Lodge, M. (2006). Motivated skepticism in the evaluation of political beliefs. *American Journal of Political Science*, 50(3), 755–769.",
+    "Tickle-Degnen, L. y Rosenthal, R. (1990). The nature of rapport and its nonverbal correlates. *Psychological Inquiry*, 1(4), 285–293.",
+    "Vallone, R. P., Ross, L. y Lepper, M. R. (1985). The hostile media phenomenon: Biased perception and perceptions of media bias in coverage of the Beirut massacre. *Journal of Personality and Social Psychology*, 49(3), 577–585.",
+    "Weaver, R. K. (1986). The politics of blame avoidance. *Journal of Public Policy*, 6(4), 371–398.",
+    "Zuckerman, M. (1979). Attribution of success and failure revisited, or: The motivational bias is alive and well in attribution theory. *Journal of Personality*, 47(2), 245–287."
+  ],
+  "secciones": {
+    "habla": [
+      {
+        "tipo": "tabla",
+        "cabecera": ["Medida", "Sánchez", "Jordi Wild"],
+        "filas": [
+          ["Palabras verificadas por huella de voz", "10.840 (63,4 %)", "6.266 (36,6 %)"],
+          ["Tiempo de habla verificado", "58,4 min", "30,6 min"],
+          ["Turnos", "320", "235"],
+          ["Mediana de palabras por turno", "23", "19"],
+          ["Turno más largo", "91,8 s", "42,5 s"],
+          ["Velocidad en tramos de habla continua", "204 palabras/min", "227 palabras/min"],
+          ["Tomas de palabra con menos de 0,2 s de hueco", "72 %", "80 %"],
+          ["Frases interrogativas", "23", "59"],
+          ["*yo* explícito por 1.000 palabras", "13,6 (147 veces)", "9,7 (63 veces)"],
+          ["*nosotros* explícito por 1.000 palabras", "3,0 (33 veces)", "0,3 (2 veces)"],
+          ["*tú* explícito por 1.000 palabras", "3,4 (37 veces)", "5,9 (38 veces)"],
+          ["Solapes de voz que inicia cada uno", "307", "254"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Esta tabla sale del informe técnico de esta entrevista, salvo la última fila. Las comparaciones con otras entrevistas usan otros archivos, con definiciones algo distintas de turno, velocidad y latencia; por eso algunas cifras no coinciden (204 y 189 palabras por minuto, 320 y 265 turnos). No se compara la latencia entre entrevistas."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Reparto.** Sánchez dice el 63,4 % de las palabras, casi lo mismo que Colau con el mismo entrevistador (63,7 %) y menos que Feijóo (72,8 %). En la entrevista periodística los papeles están repartidos de antemano: el entrevistador pregunta y el entrevistado desarrolla la respuesta (**Clayman y Heritage, 2002**)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Quién corta a quién.** En el recuento automático, Jordi corta el 36,8 % de las respuestas (a Colau, el 50,7 %; a Feijóo, el 22,0 %). Es la única de las tres entrevistas en la que el invitado inicia más solapes de voz que Jordi: 307 frente a 254 (Colau, 258 frente a 459; Feijóo, 133 frente a 187). La lectura manual anota seis interrupciones notables, cuatro de Jordi y dos del invitado. La conversación se organiza por turnos que los hablantes se reparten sobre la marcha (**Sacks, Schegloff y Jefferson, 1974**); cómo lee el espectador cada corte no lo dice ese estudio ([sección «Por qué cada espectador vio una entrevista distinta»](#espectador))."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Velocidad.** Jordi habla más deprisa (227 frente a 204 palabras por minuto; diferencia pequeña, d = −0,40). La d de Cohen mide el tamaño de una diferencia: en torno a 0,2 es pequeña, 0,5 media y 0,8 grande."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Cifras y nombres.** Sánchez dice 1,62 cifras por cada 100 palabras (Feijóo, 2,61; Colau, 0,67); la [sección «Comprobación de datos»](#datos) las comprueba. En el recuento automático, sobre una lista fija de nombres, nombra al Gobierno 33 veces, a Abascal 4, a Podemos 4 y a Vox 3. La lectura ([sección «Las preguntas y cómo se responden»](#preguntas)) recoge que de quien más habla es de alguien de su entorno: Ábalos, en 11 respuestas."
+      },
+      {
+        "tipo": "subtitulo",
+        "texto": "Sánchez con dos entrevistadores"
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Hay una segunda entrevista de Sánchez medida con el mismo método: la de David Broncano en *La Revuelta*. Son formatos distintos (plató con público y dos presentadores frente a estudio sin público), así que la tabla describe qué cambia y qué se mantiene, sin atribuir causas."
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": ["Medida de Sánchez", "Con Jordi Wild", "En *La Revuelta*"],
+        "filas": [
+          ["Duración del vídeo", "112,1 min", "102,9 min"],
+          ["% de las palabras", "63,4 %", "60,1 %"],
+          ["Palabras por minuto (con pausas)", "189", "201"],
+          ["Turnos", "265", "289"],
+          ["Mediana de palabras por turno", "25", "16"],
+          ["Mediana de palabras por respuesta", "66", "19"],
+          ["Palabras por frase", "28,4", "19,7"],
+          ["Trabas por 100 palabras", "0,33 (36)", "0,98 (83)"],
+          ["Trabas en el arranque del turno, por 100 palabras", "0,58", "1,72"],
+          ["Pausas de más de 0,4 s", "112", "135"],
+          ["Duración media de la pausa", "0,79 s", "0,95 s"],
+          ["Pausas de 2 s o más", "2", "8"],
+          ["Cifras por 100 palabras", "1,62", "1,34"],
+          ["Expresiones de certeza por 100 palabras", "0,65", "0,55"],
+          ["Expresiones de duda por 100 palabras", "0,97", "0,77"],
+          ["*yo* por 100 palabras (definición amplia)", "2,57", "2,89"],
+          ["*nosotros* por 100 palabras (definición amplia)", "0,67", "0,58"],
+          ["Respuestas cortadas por el presentador", "36,8 %", "35,8 %"],
+          ["Frases interrogativas del presentador", "59", "120"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Qué cambia.** Con Jordi sus respuestas y sus frases son más largas (66 palabras de mediana frente a 19; 28,4 por frase frente a 19,7), se traba tres veces menos (0,33 frente a 0,98) y hace pausas más cortas (0,79 s frente a 0,95 s). Habla algo más despacio y da algo más de cifras. El presentador formula la mitad de preguntas (59 frente a 120)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Qué se mantiene.** Su parte de la conversación (63,4 % y 60,1 %), la proporción de respuestas que le cortan (36,8 % y 35,8 %) y, con diferencias menores, el uso de *yo* y *nosotros*. Que una misma persona tenga 0,33 trabas por cada 100 palabras en una entrevista y 0,98 en otra recuerda que estas medidas describen una conversación concreta, no a la persona."
+      }
+    ],
+    "trabas": [
+      {
+        "tipo": "parrafo",
+        "texto": "Una traba es un tropiezo al hablar: repetir una palabra o un grupo de palabras, o cortarse a media frase."
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": ["Tipo", "Sánchez", "Jordi Wild"],
+        "filas": [
+          ["Se corta (y reformula o no continúa)", "20", "16"],
+          ["Repite un grupo de palabras", "8", "5"],
+          ["Repite una palabra", "8", "7"],
+          ["Total", "36", "28"],
+          ["Por cada 100 palabras", "0,33", "0,45"],
+          ["En las 8 primeras palabras del turno, por 100 palabras", "0,58", "0,23"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Son pocas en los dos (Feijóo, 0,25; Colau, 0,28). El dato propio de Sánchez es el arranque: en las primeras ocho palabras de sus turnos se traba 0,58 veces por cada 100 palabras, más que en el resto y más que Jordi (0,23)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Dónde se concentran.** Por bloques de diez minutos (cálculo propio), hay cinco en el 70–80 (Ábalos y Koldo), cinco en el 80–90 (Zapatero y vivienda) y cinco en el 100–110 (hemeroteca). De las 36, 27 caen tras preguntas duras (0,29 por cada 100 palabras) y 9 en el resto (0,65). Esta comparación es frágil y no debe leerse como que se traba menos bajo presión: el tramo no duro tiene solo 1.394 palabras, y cuatro de sus nueve trabas están en un minuto de anécdota sobre su coche (69:24–70:11)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Ejemplos:"
+      },
+      {
+        "tipo": "lista",
+        "ordenada": false,
+        "items": [
+          "19:28, sobre el primer accidente: «hay una investigación abierta por... Hay una investigación abierta por, en».",
+          "74:31, cuando le piden la fecha de sus elogios a Koldo: «Porque en ese momento... creo que recordar que fue en».",
+          "100:05, sobre Pablo Iglesias: «nunca dije nunca dije».",
+          "Jordi, 84:06: «pues como no te quieres quitar el marrón... Yo quiero saber tu opinión, pero»."
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Once de los veinte cortes de Sánchez son frases que no continúan porque entra la otra voz. La psicolingüística clásica asocia las vacilaciones del habla espontánea, sobre todo las pausas, a la **planificación sobre la marcha (Goldman-Eisler, 1968)**; ese trabajo no estudió en concreto repeticiones ni cortes, que es lo que aquí se cuenta."
+      }
+    ],
+    "silencios": [
+      {
+        "tipo": "parrafo",
+        "texto": "Se cuentan como pausa los huecos de más de 0,4 segundos entre dos palabras seguidas de la misma persona."
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": ["Medida", "Sánchez", "Jordi Wild"],
+        "filas": [
+          ["Pausas de más de 0,4 s", "112", "51"],
+          ["Por 1.000 palabras", "10,3", "8,1"],
+          ["Duración media", "0,79 s", "0,88 s"],
+          ["Duración mediana", "0,68 s", "0,76 s"],
+          ["De 1 s o más", "22", "13"],
+          ["Máxima", "2,4 s (92:20)", "2,3 s (14:34)"],
+          ["Antes de frase con carga (cifra, rival, contraste)", "20", "7"],
+          ["Confirmadas por el detector acústico", "17 de 112 (15 %)", "4 de 51 (8 %)"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Dos advertencias. La transcripción tiene cuatro huecos sin texto (22:21–22:46, 33:06–33:28, 92:47–93:13 y 98:25–98:46). Ninguna pausa de la tabla cae en ellos (la más larga dura 2,4 s), así que no hubo que excluir ninguna. Y el detector acústico solo confirma el 15 % de las pausas de Sánchez y el 8 % de las de Jordi: casi todas son huecos entre palabras transcritas, que pueden contener la voz del otro, una risa o ruido."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "De las 20 pausas de Sánchez que preceden a una frase con carga, 7 van antes de una cifra, 7 antes de una mención política y 6 antes de un contraste; el detector confirma una sola. Duran casi lo mismo que las demás (0,83 s frente a 0,79 s, cálculo propio). Ejemplos:"
+      },
+      {
+        "tipo": "lista",
+        "ordenada": false,
+        "items": [
+          "100:08 (1,5 s), entre «yo nunca dije nunca dije que» y «no quería que Pablo Iglesias estuviera en el gobierno.».",
+          "38:05 (1,6 s), después de la cifra «es que 9 de cada 10 migrantes que entraron, salieron.».",
+          "82:18 (1,1 s), antes de «Nosotros a todas las aerolíneas las rescatamos», cuando la pregunta era por Zapatero."
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "La más larga (2,4 s, 92:20) precede a «Discrepancia que tengo con la derecha y con la ultraderecha.». La más larga de Jordi (2,3 s, 14:34) abre el bloque de los trenes ([sección «Momentos clave»](#momentos))."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Tras preguntas duras Sánchez hace casi las mismas pausas que en el resto: 10,5 por cada 1.000 palabras frente a 9,3."
+      }
+    ],
+    "voz": [
+      {
+        "tipo": "tabla",
+        "cabecera": ["Medida", "Sánchez", "Jordi Wild"],
+        "filas": [
+          ["Frases medidas", "563", "393"],
+          ["Tono medio (F0)", "121 Hz", "123 Hz"],
+          ["Variación del tono dentro de la frase", "3,64 semitonos", "3,40 semitonos"],
+          ["Volumen medio (relativo)", "64,7 dB", "67,0 dB"],
+          ["Frases con el tono claramente fuera de su media (suben / bajan)", "52 / 19", "29 / 17"],
+          [
+            "Frases con el volumen claramente fuera de su media (suben / bajan)",
+            "1 / 47",
+            "3 / 33"
+          ],
+          [
+            "Frases con la velocidad claramente fuera de su media (suben / bajan)",
+            "39 / 20",
+            "32 / 23"
+          ],
+          ["Frases que acaban hacia abajo / hacia arriba", "39 % / 8 %", "42 % / 9 %"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "El tono medio es el de cada voz y el volumen depende del micrófono; no son conductas. Dentro de cada uno, lo que más se repite es subir el tono y bajar el volumen: Sánchez solo sube claramente el volumen en una frase de 563."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Las frases de Sánchez con el tono más alto respecto a su media son réplicas cortas: «No, eso fue otra historia.» (72:13, z = +3,8) y «Tiene que haberla, pero sobre todo pública.» (89:35, z = +3,6). La z indica cuántas desviaciones se aparta una frase de la media de esa persona. La más rápida es «Yo a día de hoy no tengo esa información.» (40:34, z = +4,0), sobre el papel de Marruecos."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**El arco de la entrevista.** Se usa un índice de intensidad vocal que combina tono, volumen y tensión de la voz; 0 es la media de cada persona. El reparto por temas es cálculo propio."
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": [
+          "Tema (frases de Sánchez)",
+          "Intensidad vocal",
+          "Tono",
+          "Velocidad (palabras/min)"
+        ],
+        "filas": [
+          ["Trayectoria y hemeroteca (33)", "+0,46", "129 Hz", "225"],
+          ["Rivales (27)", "+0,28", "122 Hz", "189"],
+          ["Vivienda (62)", "+0,24", "128 Hz", "209"],
+          ["Corrupción (89)", "+0,17", "123 Hz", "205"],
+          ["Inmigración (67)", "+0,02", "122 Hz", "204"],
+          ["Cataluña (26)", "−0,13", "126 Hz", "182"],
+          ["Fronteras y Marruecos (100)", "−0,15", "118 Hz", "197"],
+          ["Asuntos personales (39)", "−0,21", "114 Hz", "221"],
+          ["Trenes e infraestructuras (73)", "−0,38", "114 Hz", "200"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "La voz de Sánchez va de menos a más: el bloque de diez minutos más apagado es el 20–30 (−0,37, accidentes ferroviarios) y el más intenso el 90–100 (+0,30, vivienda y hemeroteca)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Voz bajo presión.** Se comparan las frases que Sánchez dice tras una intervención dura de Jordi con las demás, con la misma definición para los tres invitados."
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": [
+          "",
+          "Tras pregunta dura (476 frases)",
+          "Resto (86 frases)",
+          "Tamaño del efecto (d)"
+        ],
+        "filas": [
+          ["Tono", "120,8 Hz", "119,8 Hz", "+0,07"],
+          ["Volumen", "64,7 dB", "65,0 dB", "−0,04"],
+          ["Velocidad", "204 palabras/min", "203 palabras/min", "+0,02"],
+          ["Trabas por 100 palabras", "0,29 (27 trabas)", "0,65 (9 trabas)", "—"],
+          ["Pausas por 1.000 palabras", "10,5", "9,3", "—"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Las tres diferencias de voz son inapreciables (por debajo de 0,1), las menores de los tres invitados: en Colau el tono daba d = +0,14 y la velocidad +0,24; en Feijóo, el tono +0,19 y el volumen +0,22. La investigación sobre voz y emoción asocia la activación alta del hablante con subidas de tono y de volumen (**Scherer, 2003; Juslin y Laukka, 2003**): aquí no se observan. Límite: como el 86 % de las preguntas son duras, el grupo de comparación es pequeño (86 frases y 1.394 palabras), y la fila de trabas es frágil ([sección «Trabas contadas una a una»](#trabas))."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Tampoco cambian el tono ni el volumen en las 38 frases de respuestas que no contestan a lo preguntado (d = −0,11 y +0,01); la velocidad baja algo (d = −0,25)."
+      }
+    ],
+    "cara": [
+      {
+        "tipo": "parrafo",
+        "texto": "Cada cara se compara con su propia base: se cuentan los tramos de al menos 0,6 segundos en que una zona se aparta con claridad de su posición habitual. La cámara enseña más al invitado: 72,7 minutos con su cara en pantalla frente a 47,1 de Jordi (1,5 veces más; Colau, 1,4; Feijóo, 2,3). A Sánchez casi no se le ve escuchar (7,6 minutos); a Jordi, 12,7."
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": [
+          "Movimiento (episodios por cada 10 min en pantalla)",
+          "Sánchez: nº",
+          "por 10 min",
+          "Jordi: nº",
+          "por 10 min"
+        ],
+        "filas": [
+          [
+            "AU6 + AU12 (sonrisa: mejillas elevadas y comisuras arriba)",
+            "153",
+            "21,1",
+            "138",
+            "29,3"
+          ],
+          ["AU5 (párpado superior arriba, ojos más abiertos)", "108", "14,9", "119", "25,3"],
+          ["AU4 (cejas bajan y se juntan)", "15", "2,1", "0", "0,0"],
+          ["AU1 + AU2 (cejas arriba)", "10", "1,4", "67", "14,2"],
+          ["AU15 (comisuras abajo)", "4", "0,6", "0", "0,0"],
+          ["AU17 (mentón arriba)", "1", "0,1", "37", "7,9"],
+          ["AU23/AU24 (labios apretados)", "0", "0,0", "0", "0,0"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "El movimiento más frecuente en los dos es AU6 + AU12, más en Jordi. En Sánchez aparece igual al hablar que al escuchar (19,6 y 21,1 por 10 minutos); en Jordi, más al hablar (28,7 frente a 16,6). El gesto propio de Jordi es AU1 + AU2: 67 episodios, casi todos mientras habla (21,4 por 10 minutos frente a 1,6 al escuchar), es decir, al preguntar. En Sánchez hay 15 episodios de AU4, todos mientras habla y repartidos por toda la entrevista (del 2:16 al 109:49)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "La cara acompaña poco a la voz: la correlación más alta entre un rasgo facial y la intensidad vocal es 0,21."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "AU6 + AU12 es la configuración que la literatura llama sonrisa de Duchenne (**Ekman, Davidson y Friesen, 1990**), pero de un movimiento facial no se puede deducir con fiabilidad un estado emocional interno (**Barrett y otros, 2019**). Los niveles absolutos no se comparan entre los dos: el programa no está calibrado por persona, cada uno está grabado con la cabeza girada más de 40 grados hacia un lado y Jordi lleva barba."
+      }
+    ],
+    "preguntas": [
+      {
+        "tipo": "parrafo",
+        "texto": "Este apartado sale de una lectura manual de la transcripción, hecha por un solo codificador. De las 152 entradas, 16 son dudosas por problemas de la transcripción."
+      },
+      {
+        "tipo": "subtitulo",
+        "texto": "Cómo pregunta Jordi"
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": ["Dureza de la intervención", "Nº", "%"],
+        "filas": [
+          ["Repregunta (vuelve sobre lo mismo)", "66", "43 %"],
+          ["Incómoda (crítica, contradicción, dato adverso)", "33", "22 %"],
+          ["Insistencia (tercera vez o más)", "32", "21 %"],
+          ["Neutra", "15", "10 %"],
+          ["Cómoda", "6", "4 %"],
+          ["**Duras (repregunta + incómoda + insistencia)**", "**131**", "**86 %**"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Son 13,7 intervenciones por cada diez minutos, 11,8 de ellas duras (Colau, 11,7; Feijóo, 9,9). La proporción de duras es parecida en las tres entrevistas (86 %, 83 % y 77 %). Lo que distingue a esta es la premisa: va en contra del invitado en 111 intervenciones (73 %), frente al 51 % con Colau y el 48 % con Feijóo; es neutra en 38 y a favor en 3. Es el estilo de pregunta adversativa, cuya formulación ya contiene una crítica (**Clayman y Heritage, 2002**). Jordi cierra con un corte o un comentario propio 14 intercambios; el invitado, 138."
+      },
+      {
+        "tipo": "subtitulo",
+        "texto": "Cómo responde Sánchez"
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": ["Clase de respuesta", "Todas (152)", "Solo a duras (131)"],
+        "filas": [
+          ["Responde a lo preguntado", "108 (71 %)", "89 (68 %)"],
+          ["Responde en parte", "24 (16 %)", "23 (18 %)"],
+          ["Contesta a otra pregunta", "15 (10 %)", "14 (11 %)"],
+          ["Cambia de tema", "0", "0"],
+          ["Ataca la pregunta", "0", "0"],
+          ["Jordi no deja contestar", "5 (3 %)", "5 (4 %)"],
+          ["**No contesta a lo preguntado**", "**15 (10 %)**", "**14 (11 %)**"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "El porcentaje de la última fila se calcula sobre las intervenciones en que Jordi dejó contestar. Con el mismo criterio, Colau quedó en el 15 % y el 18 %, y Feijóo en el 18 % y el 20 %. **Esa diferencia está dentro del margen de la clasificación.** La regla «ante la duda entre dos clases, la más favorable al invitado» se aplicó aquí 12 veces, más que en las otras dos lecturas (7 en la de Feijóo). Según las notas del codificador, en 8 de esas 12 la alternativa era «contesta a otra pregunta» (6 están clasificadas «en parte» y 2 «responde»). Sin la regla, las respuestas que no contestan pasarían de 15 a un máximo de 23 (16 %), y de 14 a 22 entre las duras (17 %), cifras como las de los otros dos. No se puede afirmar, por tanto, que Sánchez eludiera menos que ellos."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "La clase mide si la respuesta aborda lo preguntado, no si lo dicho es cierto; negar la premisa dando una versión propia cuenta como responder o responder en parte. En entrevistas políticas una parte grande de las preguntas queda sin respuesta directa (56 % y 59 % en el estudio de **Bull y Mayer, 1993**, sobre Thatcher y Kinnock), y los oyentes a menudo no lo notan cuando la respuesta trata un asunto parecido (**Rogers y Norton, 2011**, en experimentos con vídeos)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Dónde no contesta.** Casi la mitad de las respuestas a otra pregunta están en un solo tema: los trenes, con 7 de 20 intervenciones (35 %). Después, vivienda (2 de 14), fronteras y Marruecos (2 de 34) y corrupción (1 de 30)."
+      },
+      {
+        "tipo": "subtitulo",
+        "texto": "Las cinco secuencias de más tensión"
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**1. El cese de Óscar Puente (27:14–28:30).** Jordi: «Si no hubiera dimitido, ¿lo hubieras cesado?». Sánchez: «Yo creo que ese debate hoy está superado.». Jordi reformula y, a la tercera, dice «pero eso no es lo que te he preguntado». Respuesta: «Oscar Puente fue el que tomó la decisión». No hay un sí o un no en tres intentos. La teoría del **equívoco (Bavelas y otros, 1990)** explica estas respuestas por la situación, no por la persona: toda respuesta directa tiene coste."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**2. Las vacaciones durante la crisis de Ceuta (44:18–50:20).** Jordi: «¿cómo se debe sentir el Zotí [ceutí] cuando su presidente está» de vacaciones. Sánchez niega la premisa: «No, no, perdona, yo no me fui de vacaciones» y «Yo estuve trabajando todos los días.». A «¿Era el mejor momento?» contesta «Para mí el mejor momento era dar la cara como la di ese día»."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**3. El papel de Marruecos (35:58–44:20).** A si Marruecos estuvo detrás de la avalancha responde «Yo a día de hoy no tengo esa información.». Después saca un asunto que no se le había preguntado, el hackeo de su teléfono: «aquí tienes mi móvil.» (41:57). Jordi: «Yo no te digo por el tema del hackeo, yo no te lo he mencionado.» y, al cerrar, «de momento no has dicho si el responsable es Marruecos o no»."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**4. Ábalos y Koldo (71:40–77:25).** Los verificadores del programa sacan elogios antiguos de Sánchez a Koldo García. Jordi: «aquí yo veo que sientes admiración por él». Sánchez: «Es un reconocimiento.». Jordi: «Es una alabanza impresionante.». Sobre Ábalos: «me llevé una tremenda decepción, Jordi»."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**5. Zapatero (81:40–84:30).** Jordi: «¿Tú pondrías la mano en el fuego por él?». Sánchez empieza por el fondo de rescate: «Nosotros a todas las aerolíneas las rescatamos». Jordi: «la pregunta era muy simple». Tras cuatro intervenciones más llega la respuesta: «Yo pongo la mano en el fuego por José Luis.» (84:11)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Fuera de esas cinco: a «A día de hoy, ¿cuántas están entregadas y con gente viviendo en ellas?» (90:17, sobre 184.000 viviendas comprometidas) responde «no te quiero decir ahora mismo el dato exacto porque no lo he buscado y no lo he encontrado» y, tras la insistencia, «vamos a cumplir con ese compromiso»."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Preguntas devueltas.** Sánchez devuelve la pregunta en 5 intercambios (Colau, 6; Feijóo, 18). La más marcada, cuando Jordi le reprocha los cambios de palabra: «Tú, por ejemplo, el 1 de octubre de 2017 votaste.» (102:43)."
+      }
+    ],
+    "temas": [
+      {
+        "tipo": "parrafo",
+        "texto": "Jordi abre 42 de los 48 tramos; el invitado, 6 (12 %; Colau y Feijóo, 19 %), que suman 5,1 minutos, el 5 % del tiempo (cálculo propio): una anécdota de Borrell, el hackeo de su móvil, las inversiones en Ceuta, la decisión de alargar la entrevista, el origen de los migrantes y Pablo Iglesias. No tienen tramo propio economía y empleo, pensiones, impuestos, deuda, política internacional, defensa, sanidad y educación, feminismo, juventud ni clima. Los temas que destacan los medios tienden a ser los que la audiencia considera importantes (**fijación de agenda, McCombs y Shaw, 1972**), y los partidos procuran llevar el debate a los temas en que el público los percibe como más competentes (**propiedad de los temas, Petrocik, 1996**): aquí el invitado solo abre tramos breves, y los asuntos económicos que cita como logros (salario mínimo, pensiones) no llegan a tener tramo."
+      }
+    ],
+    "merito": [
+      {
+        "tipo": "parrafo",
+        "texto": "En 45 respuestas (30 %) dice qué hizo o haría; en 38 (25 %) habla de rivales o terceros; en 18 (12 %), las dos cosas; en 51, ninguna. Aquí «terceros» no equivale a rivales: de las 56 respuestas en que habla de otros, 25 nombran a personas de su propio entorno (Ábalos, Koldo García, Cerdán, Puente, Zapatero, Leire Díez) y 22 a rivales políticos (Abascal, PP, Feijóo, Vox y otros), según un filtro propio sobre los nombres anotados."
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": ["De qué habla", "yo", "nosotros", "ellos", "impersonal", "otros"],
+        "filas": [
+          ["Logros (28)", "4", "16", "3", "3", "2 (Óscar Puente)"],
+          ["Fracasos (27)", "3", "3", "17", "4", "0"],
+          ["Problemas (18)", "0", "2", "9", "6", "1 (todas las administraciones)"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Veinte de los 28 logros van en primera persona, sobre todo en plural: «Hemos multiplicado por 8 el presupuesto en vivienda.» (88:09). Diecisiete de los 27 fracasos se atribuyen a un *ellos*, que incluye a rivales («se recortaron las fuerzas y cuerpos de seguridad del Estado», 64:29, sobre los años de Rajoy) y a su propio entorno («me llevé una tremenda decepción, Jordi», 68:46, sobre Ábalos). Hay seis fracasos en primera persona, tres con *yo*: «Bueno, por supuesto que tengo que hacer las cosas mejor» (43:10, sobre Ceuta), «Oye, yo pedí perdón, asumí esa responsabilidad.» (73:35; la transcripción lo pone en un turno de Jordi) y «Y bueno, pues evidentemente yo cometo errores.» (108:32). Atribuirse los éxitos es un patrón bien documentado; que además se sitúen fuera los fracasos lo está menos (**Miller y Ross, 1975**, lo pusieron en duda; revisiones posteriores, como **Zuckerman, 1979**, sí lo encuentran). En política se ha descrito además la tendencia a priorizar evitar la culpa sobre reclamar el mérito (**Weaver, 1986**)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Pasado frente a futuro.** Con una aproximación por terminaciones verbales, orientativa, Sánchez usa unas 10 formas de pasado por cada forma de futuro (Colau, 11,7; Feijóo, 2,8)."
+      }
+    ],
+    "promesas": [
+      {
+        "tipo": "parrafo",
+        "texto": "Se recogieron 19 compromisos; 7 tienen un objeto que se podrá comprobar (0,6 por cada diez minutos, como Colau; Feijóo, 2,3)."
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": ["Minuto", "Cita", "Compromiso"],
+        "filas": [
+          [
+            "18:13",
+            "«una auditoría extraordinaria de seguridad de la línea Madrid -Sevilla»",
+            "Auditoría de seguridad de la línea Madrid-Sevilla (la presenta como en marcha)"
+          ],
+          [
+            "18:24",
+            "«vamos a invertir 19 .000 millones de euros en el mantenimiento»",
+            "19.000 millones en mantenimiento de vías (2026-2030)"
+          ],
+          [
+            "19:12",
+            "«Bueno, pues, hagámoslo también en el transporte ferroviario.»",
+            "Implantar la doble firma en el ferrocarril"
+          ],
+          [
+            "86:48",
+            "«Pues regular, por ejemplo, el alquiler de habitaciones, los alojamientos temporales»",
+            "Regular el alquiler de habitaciones y de temporada"
+          ],
+          ["89:28", "«por ejemplo, necesitamos modificar la ley»", "Modificar la ley del suelo"],
+          [
+            "91:38",
+            "«nosotros en lo que es la entrega y la construcción vamos a cumplir con ese compromiso»",
+            "Cumplir las 184.000 viviendas públicas y de alquiler asequible"
+          ],
+          [
+            "101:04",
+            "«se ha acabado la legislatura y volverá en la próxima legislatura»",
+            "Volver a llevar al Congreso la derogación de la ley mordaza"
+          ]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Solo dos llevan plazo. Los 12 restantes son intenciones generales o condicionadas, como «Tenemos que construir más vivienda protegida.» (86:41)."
+      }
+    ],
+    "sintonia": [
+      {
+        "tipo": "parrafo",
+        "texto": "La transcripción automática no recoge risas, así que este recuento es de lectura: 66 momentos de relación, entre ellos 15 bromas (10 las inicia Jordi), 12 halagos (7 del invitado), 11 acuerdos explícitos (7 del invitado), 11 roces (6 de Jordi) y 7 anécdotas personales, todas del invitado. Por cada diez minutos hay más halagos y acuerdos que en las otras dos entrevistas (1,1 y 1,0; con Colau, 0,7 y 0,6; con Feijóo, 0,8 y 0,8). Bromas y roces se alternan: «Bueno, tienes un avión, no me jodas.» (70:11), a lo que Sánchez responde «Un día si quieres te subo.»; y Jordi, «Te lo prometo, yo me quedaría aquí tres horas contigo.» (96:50). Atención mutua, tono positivo y coordinación son los tres componentes de la **sintonía entre dos personas (Tickle-Degnen y Rosenthal, 1990)**."
+      }
+    ],
+    "datos": [
+      {
+        "tipo": "parrafo",
+        "texto": "Se extrajeron 188 afirmaciones factuales (137 del invitado y 51 de Jordi). 22 del invitado no eran comprobables (vivencias, conversaciones privadas) y no se buscaron; las otras 166 se contrastaron con buscador web el mismo 13-nov-2026."
+      },
+      {
+        "tipo": "tabla",
+        "cabecera": ["Veredicto", "Sánchez", "Jordi Wild"],
+        "filas": [
+          ["Se sostiene (respaldada)", "71", "42"],
+          ["Verdad a medias (respaldada en parte o imprecisa)", "18", "6"],
+          ["No se sostiene (sin respaldo)", "1", "0"],
+          ["No verificable", "2", "0"],
+          ["No se pudo comprobar", "23", "3"],
+          ["**Total comprobadas**", "**115**", "**51**"]
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Esto no es una nota, y comparar porcentajes entre los dos, o con las otras entrevistas, no es válido:** hablan de cosas distintas (él da cifras de gestión; Jordi lee datos preparados y hemeroteca) y varias filas repiten un mismo dato. Además, **solo 41 de las 166 filas (26 de él y 15 de Jordi) tienen la fuente abierta de verdad**; el resto se apoya en extractos del buscador y de prensa, y hay que abrir el enlace antes de citarlo."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**No se sostiene (1, del invitado).**"
+      },
+      {
+        "tipo": "lista",
+        "ordenada": false,
+        "items": [
+          "100:05 — «yo nunca dije nunca dije que» «no quería que Pablo Iglesias estuviera en el gobierno.». La transcripción oficial de La Moncloa de su entrevista del 18-7-2019 recoge que «no se dan las condiciones» para que Iglesias fuera miembro del Gobierno y que su participación era «el principal escollo». [Fuente](https://www.lamoncloa.gob.es/presidente/intervenciones/Documents/2019/20190718%20PG%20Entrevista%20Al%20rojo%20vivo%20La%20sexta%20ferreras.pdf). Aviso: este veredicto tiene la fuente oficial abierta y leída completa, pero **no ha pasado una segunda revisión independiente**, como sí la pasaron los veredictos negativos de las otras dos entrevistas."
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Verdades a medias (ejemplos).**"
+      },
+      {
+        "tipo": "lista",
+        "ordenada": false,
+        "items": [
+          "Sánchez, 31:04 — «los más de 80 .000 que el 30 y el 31 de julio entraron». No hay cifra oficial única: Interior dio 72.000 y él mismo habló de 70.000 en el Congreso. [Fuente](https://es.ara.cat/politica/gobierno-sanchez-rinde-cuentas-26-dias-despues-crisis-ceuta_1_5831446.html) (abierta).",
+          "Sánchez, 65:26 — «bueno, más o menos es un millón doscientas mil personas.». Son 1.174.978 solicitudes de regularización, no personas ya regularizadas. [Fuente](https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/inclusion/Paginas/2026/020726-balance-regularizacion-extraordinaria.aspx) (abierta).",
+          "Sánchez, 88:13 — «más de 7 .000 millones de euros para la construcción». El plan estatal está dotado con 7.000 millones, de los que el Estado pone el 60 %, y en abril de 2026 no se había transferido nada. [Fuente](https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/vivienda-agenda-urbana/Paginas/2026/280426-reparto-plan-estatal-vivienda.aspx) (abierta).",
+          "Jordi, 31:14 — «se esté moviendo casi 100 .000 personas». Las cifras localizadas van de 70.000 a 80.000. [Fuente](https://es.ara.cat/politica/gobierno-sanchez-rinde-cuentas-26-dias-despues-crisis-ceuta_1_5831446.html) (abierta).",
+          "Jordi, 76:00 — «Le dedicas un post en tu propio Instagram.». Los textos localizados se publicaron en su blog y en Facebook (solo extracto). [Fuente](https://www.vozpopuli.com/espana/politica/koldo-garcia-hombre-durmio-urnas-sanchez-narra-presidente-mision-manual-resistencia.html)."
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Se sostienen (ejemplos, todos con la fuente abierta).**"
+      },
+      {
+        "tipo": "lista",
+        "ordenada": false,
+        "items": [
+          "Sánchez, 35:22 — «Bueno, tuvimos más de 140 muertos.». [Fuente](https://es.ara.cat/politica/gobierno-sanchez-rinde-cuentas-26-dias-despues-crisis-ceuta_1_5831446.html).",
+          "Sánchez, 38:01 — «es que 9 de cada 10 migrantes que entraron, salieron». Es la cifra del Gobierno; la fuente oficial habla de 72 horas. [Fuente](https://www.lamoncloa.gob.es/presidente/actividades/Paginas/2026/030926-sanchez-comparecencia-ceuta.aspx).",
+          "Jordi, 67:41 — «en el caso de Ábalos, ya condenado, 24 años de cárcel». [Fuente](https://www.poderjudicial.es/cgpj/es/Poder-Judicial/Tribunal-Supremo/Noticias-Judiciales/El-Tribunal-Supremo-condena-al-exministro-Jose-Luis-Abalos-y-a-su-exasesor-Koldo-Garcia-a-24-anos-y-19-anos-de-prision--respectivamente--por-delitos-de-organizacion-criminal--cohecho--malversacion-y-trafico-de-influencias)."
+        ]
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Sobre el efecto en la audiencia: una corrección suele mejorar lo que la gente cree sobre el dato, pero apenas cambia su valoración del político corregido (**Nyhan, Porter, Reifler y Wood, 2020**)."
+      }
+    ],
+    "momentos": [
+      {
+        "tipo": "parrafo",
+        "texto": "Son puntos donde coinciden varias señales medidas por separado. Que coincidan no demuestra que estén relacionadas, y de ninguno se deduce una intención."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**27:19 — El cese de Puente.** «Yo creo que ese debate hoy está superado.». La frase va más despacio que su media (z = −1,9), AU23 (labios apretados) queda por encima de su base (z = +2,3) y la respuesta está clasificada como «contesta a otra pregunta»."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**45:18 — Las vacaciones.** «No, no, perdona, yo no me fui de vacaciones». Baja el volumen (z = −2,0) y AU17 (mentón arriba) queda por encima de su base (z = +2,4)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**52:20 — Por qué preocupa la inmigración.** Tras una pausa de 1,1 s, «Yo creo que sobre todo es el desafío de la integración.». Es uno de los tres tonos más altos de su entrevista (z = +3,5), con el volumen abajo (z = −2,2), la velocidad arriba (z = +1,9) y AU7 y AU4 por encima de su base (z = +3,1 y +2,3). La pregunta es neutra."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**107:18 — La hemeroteca.** El único momento con cuatro categorías de señal: «dije que iba a subir el salario mínimo interprofesional y lo he subido». Más rápido que su media (z = +2,2) y con la AU5 más marcada de sus momentos (z = +5,9)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Jordi, 14:34 — Los accidentes.** La pausa más larga de su entrevista (2,3 s) antes de «Vamos primero a Damuz [Adamuz], cuando sucede, en ese momento,». Bajan el tono (z = −1,9), el volumen (z = −3,9) y la velocidad (z = −1,6)."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "**Jordi, 78:01 — Dos secretarios de organización.** «elegidos por ti, tengan este problema, ¿qué dice de». Es la bajada de volumen más fuerte de sus momentos (z = −4,0), con AU24 (labios presionados) por encima de su base (z = +2,4). También baja la voz en «¿Tú sabes algo de esto?» (80:04, z = −3,8)."
+      }
+    ],
+    "espectador": [
+      {
+        "tipo": "parrafo",
+        "texto": "Los mismos 111 minutos permiten dos resúmenes opuestos, los dos con datos ciertos."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Un votante afín a Sánchez puede citar que contestó a lo preguntado en 108 de 152 ocasiones, que 71 de sus afirmaciones se sostienen y que admitió errores en primera persona («Oye, yo pedí perdón, asumí esa responsabilidad.»). Uno contrario puede citar que en tres intentos no dijo si habría cesado a su ministro, que no dio el dato de las viviendas habitadas, que la afirmación sobre Pablo Iglesias no se sostiene y que 17 de sus 27 fracasos van en *ellos*."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "Con Jordi ocurre lo mismo. Quien piense que fue duro tiene el 86 % de preguntas duras, el 73 % con premisa en contra. Quien piense que fue blando tiene los 12 halagos, que cerró él solo 14 de 152 intercambios."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "La psicología describe varios mecanismos. El **sesgo de confirmación (Nickerson, 1998)**: se busca y se recuerda lo que encaja con lo que ya se pensaba. El **razonamiento motivado (Kunda, 1990; Taber y Lodge, 2006)**: la información contraria se examina con más exigencia que la favorable, de modo que cada bando valora como más sólida la evidencia que le favorece (**asimilación sesgada, Lord, Ross y Lepper, 1979**). Y el **efecto de medio hostil (Vallone, Ross y Lepper, 1985)**: los partidarios de cada bando perciben la misma cobertura informativa como sesgada contra el suyo; aplicarlo a un entrevistador es una extensión de ese estudio."
+      },
+      {
+        "tipo": "parrafo",
+        "texto": "También influye el **encuadre (Entman, 1993)**, que consiste en destacar unos aspectos de un asunto frente a otros. La entrevista tiene un ejemplo explícito: sobre los insultos en política, Jordi dice «Sí, pero el juego sucio es bidireccional.» (9:38) y Sánchez, «Yo creo que los insultos son asimétricos» (10:35)."
+      }
+    ]
+  },
+  "habla": {
+    "invitado": {
+      "palabras": 10840,
+      "parte": 63.4,
+      "minutos": 58.4,
+      "palabrasPorMinuto": 204.0,
+      "trabasPor100": 0.33,
+      "pausasPor1000": 10.3,
+      "pantalla": 66.0
+    },
+    "jordi": {
+      "palabras": 6266,
+      "parte": 36.6,
+      "minutos": 30.6,
+      "palabrasPorMinuto": 227.0,
+      "trabasPor100": 0.45,
+      "pausasPor1000": 8.1,
+      "pantalla": 42.0
+    }
+  },
+  "preguntas": [
+    {
+      "segundo": 117,
+      "tema": "Formato y presentación",
+      "texto": "me parece tan surrealista que estés sentado en la misma silla que Joseba Salauténtico",
+      "dureza": "comoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 158,
+      "tema": "Formato y presentación",
+      "texto": "mi misión hoy es ponerte en un aprieto, igual que a todos",
+      "dureza": "comoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 232,
+      "tema": "Asuntos personales",
+      "texto": "¿por qué no decides dar un paso al lado, quizás vivir más tranquilo, quizás vivir más feliz y de alguna forma ceder el testigo",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 351,
+      "tema": "Asuntos personales",
+      "texto": "¿Por qué no decir, mira, ya he cumplido, yo he dado lo que he podido y ahora tranquilidad",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 363,
+      "tema": "Asuntos personales",
+      "texto": "Sí, pero no se puede comparar la responsabilidad de un presidente con un tío como yo",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 485,
+      "tema": "Asuntos personales",
+      "texto": "y sabes cómo van los memes. ¿Tú qué sientes, sinceramente?",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 561,
+      "tema": "Rivales",
+      "texto": "que también es difícil encontrar a un responsable político que directamente te llame hijo de puta a la cara",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 578,
+      "tema": "Rivales",
+      "texto": "Sí, pero el juego sucio es bidireccional. Yo he escuchado cosas vuestras también. A ti te he escuchado la fachosfera, máquina de fango",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 631,
+      "tema": "Rivales",
+      "texto": "Quiero decir que al final todos tenéis parte de culpa en esto.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 726,
+      "tema": "Rivales",
+      "texto": "En campaña han tenido problemas incluso de intentos de asalto durante sus meetings y sus reuniones",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 756,
+      "tema": "Rivales",
+      "texto": "yo escucho a veces un discurso demasiado victimista cuando yo creo que el fango lo estáis repartiendo todos",
+      "dureza": "insistencia",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 796,
+      "tema": "Rivales",
+      "texto": "Pero los dos la habéis cruzado Yo he visto peleas entre comillas en el Congreso que han sido muy verbalmente violentas",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 835,
+      "tema": "Rivales",
+      "texto": "yo a veces las comparaciones son odiosas porque yo prefiero sentarnos en nosotros que no comparar con lo que pasa con los demás",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 882,
+      "tema": "Infraestructuras y transporte",
+      "texto": "¿Por qué no hay ya una dimisión o un cese? Cuando hay un accidente mortal y unos avisos de los sindicatos ferroviarios",
+      "dureza": "incomoda",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 989,
+      "tema": "Infraestructuras y transporte",
+      "texto": "las averías son algo habitual, los retrasos son algo habitual y esto no es serio",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 1069,
+      "tema": "Infraestructuras y transporte",
+      "texto": "O sea, que se repitan dos accidentes en menos de un año es algo",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 1134,
+      "tema": "Infraestructuras y transporte",
+      "texto": "Pero el ser humano vigilado por un sistema mecánico, porque los humanos ya sabes cómo somos, imperfectos.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 1163,
+      "tema": "Infraestructuras y transporte",
+      "texto": "Cuando pasa el primer accidente, ¿por qué no hay claramente un responsable?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 1173,
+      "tema": "Infraestructuras y transporte",
+      "texto": "¿Cómo es posible que te apete tanto en determinar qué pasó?",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 1217,
+      "tema": "Infraestructuras y transporte",
+      "texto": "¿crees que tendría que haber habido más responsabilidad en el primer accidente?",
+      "dureza": "insistencia",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 1241,
+      "tema": "Infraestructuras y transporte",
+      "texto": "Claro, ahora con un segundo accidente, pero ya en el primero mucha gente pidió su cabeza.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 1269,
+      "tema": "Infraestructuras y transporte",
+      "texto": "en agosto de 2025 el sindicato de maquinistas pidió por escrito bajar la velocidad en cuatro líneas. Había avisos técnicos.",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 1335,
+      "tema": "Infraestructuras y transporte",
+      "texto": "O sea, ¿tú crees que no hicisteis nada mal para evitar este segundo accidente?",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 1381,
+      "tema": "Infraestructuras y transporte",
+      "texto": "Creo que la gestión es mala porque si no no pasaría lo que ha pasado.",
+      "dureza": "insistencia",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 1466,
+      "tema": "Infraestructuras y transporte",
+      "texto": "y he escuchado muy poca autocrítica, casi se ha culpado más a los pobres que estaban ahí que al final",
+      "dureza": "insistencia",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 1492,
+      "tema": "Infraestructuras y transporte",
+      "texto": "Y esto hoy un poco habéis propuesto, ¿verdad?",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 1503,
+      "tema": "Infraestructuras y transporte",
+      "texto": "Claro, hemos empezado flojos, ¿eh? Pero hemos empezado cañeros, ¿eh?",
+      "dureza": "comoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 1525,
+      "tema": "Infraestructuras y transporte",
+      "texto": "¿No tendrías que haber dicho, no es que me sorprenda, es que era algo esperable?",
+      "dureza": "incomoda",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 1553,
+      "tema": "Infraestructuras y transporte",
+      "texto": "Solo faltaría que el ministro de un accidente no salga tres o cuatro o veinte horas a dar la cara.",
+      "dureza": "repregunta",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 1597,
+      "tema": "Infraestructuras y transporte",
+      "texto": "Pero es que esto lo usa todo el mundo.",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 1634,
+      "tema": "Infraestructuras y transporte",
+      "texto": "Si no hubiera dimitido, ¿lo hubieras cesado?",
+      "dureza": "incomoda",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 1644,
+      "tema": "Infraestructuras y transporte",
+      "texto": "es también entender cómo funciona el que quiere ser el siguiente o próximo presidente de España",
+      "dureza": "repregunta",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 1667,
+      "tema": "Infraestructuras y transporte",
+      "texto": "pero eso no es lo que te he preguntado si tú",
+      "dureza": "insistencia",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 1739,
+      "tema": "Medios y redes",
+      "texto": "hay un momento en el que estamos tan saturados de noticias que había Ceuta, me parece, que fuera hace 14 años",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 1841,
+      "tema": "Fronteras y Marruecos",
+      "texto": "cosas diferentes, CNI sí, CNI no. ¿Qué sabíais exactamente antes de que sucediera?",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 1881,
+      "tema": "Fronteras y Marruecos",
+      "texto": "no haya una forma de ver que una masa gigante de gente se está desplazando de un punto a otro?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2057,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Si el CNI no pudo prever esto, ¿por qué no ha habido consecuencias en el CNI? ¿Por qué no ha habido responsables?",
+      "dureza": "incomoda",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 2076,
+      "tema": "Fronteras y Marruecos",
+      "texto": "y también de que había unos bulos en redes sociales que estaban haciendo una concentración",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2158,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Y yo quiero ahora saber si tú, a día de hoy, consideras a Marruecos responsable de esto o no.",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2176,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Pero una cosa, simplemente para acabar eso, en esa misma frase culpaste a Rusia y a Israel.",
+      "dureza": "incomoda",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 2235,
+      "tema": "Fronteras y Marruecos",
+      "texto": "quiere frenar eso, no podría haberlo frenado?",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 2268,
+      "tema": "Fronteras y Marruecos",
+      "texto": "fue de tener a una ciudad española en una situación pésima durante semanas",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2292,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Este dato, ¿cómo lo sabéis? Porque yo el baile de cifras ha sido terrible.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2311,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Pero a dedo es poco fiable una información que se cuenta a dedo.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2410,
+      "tema": "Fronteras y Marruecos",
+      "texto": "si los han cometido no lo van a decir, y muchos iban indocumentados",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2429,
+      "tema": "Fronteras y Marruecos",
+      "texto": "entonces tú a día de hoy aún no puedes decir que Marruecos estuvo involucrada",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2471,
+      "tema": "Fronteras y Marruecos",
+      "texto": "a veces hay una especie de pleitesía del gobierno español hacia el gobierno marroquí",
+      "dureza": "incomoda",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 2552,
+      "tema": "Fronteras y Marruecos",
+      "texto": "y lo compran todos los países es un sistema que se ha puesto a la venta",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 2572,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Yo no te digo por el tema del hackeo, yo no te lo he mencionado.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2585,
+      "tema": "Fronteras y Marruecos",
+      "texto": "¿Tú crees que los ceutis están contentos contigo?",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2600,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Entonces, ¿por qué están enfadados contigo?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2603,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Entonces no se gestionó bien.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2658,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Bueno, claro, de momento no has dicho si el responsable es Marruecos o no.",
+      "dureza": "insistencia",
+      "respuesta": "sin_respuesta"
+    },
+    {
+      "segundo": 2708,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Pero en ese momento, ¿cómo se debe sentir el Zotí cuando su presidente está",
+      "dureza": "incomoda",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 2738,
+      "tema": "Fronteras y Marruecos",
+      "texto": "incluso para que la gente de Ceuta esté más tranquila o que tenga la sensación de que su presidente está más involucrado",
+      "dureza": "repregunta",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 2749,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Te hablo de la gestión, ¿eh? En esos días.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2808,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Pero y el tema de imagen, a veces sabes que la percepción es muy importante",
+      "dureza": "insistencia",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 2834,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Claro, faltaría. Bueno, sí, es España.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2872,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Sí, que ha habido un esfuerzo para mejorarla, digamos.",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2894,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Tardaste 25 días aproximadamente en convocar el Consejo de Seguridad Nacional. En cambio, en el apagón lo convocaste inmediatamente.",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2922,
+      "tema": "Fronteras y Marruecos",
+      "texto": "¿Porque no era suficientemente grave?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2947,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Pero aún así durante días estaba colapsada de una forma bestial.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2965,
+      "tema": "Fronteras y Marruecos",
+      "texto": "¿Cuánto tardasteis en crearlo?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2969,
+      "tema": "Fronteras y Marruecos",
+      "texto": "¿Y no habría sido para crearlo al momento, al día siguiente?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 2980,
+      "tema": "Fronteras y Marruecos",
+      "texto": "Eras tú que habías dicho que, bueno, habías anunciado que estabas de vacaciones",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3000,
+      "tema": "Fronteras y Marruecos",
+      "texto": "a veces no tan solo es el hecho de la percepción y eso es muy interesante",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3031,
+      "tema": "Fronteras y Marruecos",
+      "texto": "la duración en la que Ceuta estuvo en un estado lamentable es bastante inaceptable",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3080,
+      "tema": "Fronteras y Marruecos",
+      "texto": "También había mucho hombre joven también había, es decir",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3133,
+      "tema": "Inmigración",
+      "texto": "¿Por qué crees que a la gente le preocupa tanto la inmigración?",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3351,
+      "tema": "Inmigración",
+      "texto": "Mucha gente no reconoce es su barrio. Y eso es un problema, porque eso crea desconfianza.",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3403,
+      "tema": "Inmigración",
+      "texto": "Cuando hay un crecimiento de población muy elevado en poco tiempo, evidentemente las cosas se saturan.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3474,
+      "tema": "Inmigración",
+      "texto": "Esto es algo que tenéis que ir más a raíz, porque si no, lo que pasará es que la gente seguirá enfadada.",
+      "dureza": "insistencia",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 3492,
+      "tema": "Inmigración",
+      "texto": "Esa es la segunda causa de problema en España.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3502,
+      "tema": "Inmigración",
+      "texto": "En los últimos años no ha bajado.",
+      "dureza": "repregunta",
+      "respuesta": "sin_respuesta"
+    },
+    {
+      "segundo": 3519,
+      "tema": "Inmigración",
+      "texto": "Ah, pero Marruecos no lo habías dicho, ¿sí?",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3537,
+      "tema": "Inmigración",
+      "texto": "O sea, a veces yo escucho cosas que digo, es que no es lo que hay en la calle.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3545,
+      "tema": "Inmigración",
+      "texto": "Sí, pero es que aquí tenemos que el marroquí, por ejemplo, es un porcentaje elevadísimo",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3601,
+      "tema": "Inmigración",
+      "texto": "pero ahora algo no está funcionando",
+      "dureza": "repregunta",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 3663,
+      "tema": "Inmigración",
+      "texto": "¿Crees que es algo normal o crees que tenemos que empezar a frenarlo ya?",
+      "dureza": "neutra",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 3732,
+      "tema": "Inmigración",
+      "texto": "No, yo creo que tenemos que tocar más el dinero.",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 3834,
+      "tema": "Inmigración",
+      "texto": "Creo que tenemos que enfrentar este debate, porque yo he visto desde la izquierda que ha dado mucho miedo este debate",
+      "dureza": "insistencia",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 3896,
+      "tema": "Inmigración",
+      "texto": "Por eso han cambiado la fórmula que tienen con la inmigración porque no tenían esto antes",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 3999,
+      "tema": "Inmigración",
+      "texto": "aquí estamos viendo a veces un choque en el que no está funcionando",
+      "dureza": "insistencia",
+      "respuesta": "sin_respuesta"
+    },
+    {
+      "segundo": 4004,
+      "tema": "Formato y presentación",
+      "texto": "vamos a pasar a más cositas, entonces ¿tengo más tiempo?",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4065,
+      "tema": "Corrupción",
+      "texto": "No estamos hablando tan solo de un ministro que se desvió. Se habla de una organización criminal que operó desde el",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4105,
+      "tema": "Corrupción",
+      "texto": "Son dos personas que han sido muy cercanas.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4138,
+      "tema": "Corrupción",
+      "texto": "hay ciertas cosas que a mí me sorprende que no al menos preveyeras",
+      "dureza": "repregunta",
+      "respuesta": "sin_respuesta"
+    },
+    {
+      "segundo": 4151,
+      "tema": "Partido interno",
+      "texto": "¿Y el viaje en que lo hicisteis? ¿En el Peugeot o en el Mercedes?",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4256,
+      "tema": "Corrupción",
+      "texto": "de verdad que me cuesta no pensar que ellos hicieron ese tipo de comentarios",
+      "dureza": "incomoda",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 4276,
+      "tema": "Corrupción",
+      "texto": "Pero Ábalos estaba ahí, hemos escuchado los audios de Ábalos.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4285,
+      "tema": "Corrupción",
+      "texto": "Ni un comentario, ni una broma.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4291,
+      "tema": "Corrupción",
+      "texto": "O sea, ni te lo imaginabas.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4305,
+      "tema": "Corrupción",
+      "texto": "porque hablamos de organización criminal, o mirabas a otro lado. O sea, las dos son horribles.",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4328,
+      "tema": "Corrupción",
+      "texto": "¿Tú qué sabías en ese momento, en 2021?",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4358,
+      "tema": "Corrupción",
+      "texto": "lo sacas del PSOE, del partido también, lo sacas completamente y eso no tiene demasiado sentido",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4365,
+      "tema": "Corrupción",
+      "texto": "No le expulses, pero lo sacas del poder del partido.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4377,
+      "tema": "Corrupción",
+      "texto": "No te imaginabas nada.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4459,
+      "tema": "Corrupción",
+      "texto": "tú decías que casi no tenías trato. Y aquí yo veo un compañerismo y hasta admiración.",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4557,
+      "tema": "Corrupción",
+      "texto": "indica que hay un cierto cariño, que Coldo no era Era un desconocido para ti. Le dedicas un post en tu propio Instagram.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4583,
+      "tema": "Corrupción",
+      "texto": "O sea, aquí yo veo que sientes admiración por él.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4610,
+      "tema": "Corrupción",
+      "texto": "Pero no era un desconocido, era alguien con, seguro, hombre, ese no es muy raro",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4652,
+      "tema": "Corrupción",
+      "texto": "¿Cuál de los dos te sorprendió más cuando te dan la noticia?",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4679,
+      "tema": "Corrupción",
+      "texto": "elegidos por ti, tengan este problema, ¿qué dice de",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4759,
+      "tema": "Corrupción",
+      "texto": "te daban vergüenza, bueno, no me acuerdo. ¿Lo llamaste?",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4799,
+      "tema": "Corrupción",
+      "texto": "La UCO atribuye al partido 43 .225 euros que le llegaron a través de intermediarios. ¿Tú sabes algo de esto?",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4830,
+      "tema": "Corrupción",
+      "texto": "Bueno, es buscar trapos sucios, ¿no? ¿no?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4838,
+      "tema": "Corrupción",
+      "texto": "¿Este caso te tiene tranquilo o te da miedo? Sabes que la UCO interpreta que a Leire Díaz se refería a ti como The One.",
+      "dureza": "incomoda",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 4869,
+      "tema": "Corrupción",
+      "texto": "¿Te has pensado incluso en querellarte contra ella?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4884,
+      "tema": "Corrupción",
+      "texto": "¿A título personal o a título del partido?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 4906,
+      "tema": "Corrupción",
+      "texto": "estamos hablando de un expresidente. ¿Tú pondrías la mano en el fuego por él?",
+      "dureza": "incomoda",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 4965,
+      "tema": "Corrupción",
+      "texto": "la pregunta era muy simple si tú personalmente a",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 5032,
+      "tema": "Corrupción",
+      "texto": "No has hablado con él de este tema.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5043,
+      "tema": "Corrupción",
+      "texto": "Hombre, claro, si te pillan con algo que no está bien, pues como no te quieres quitar el marrón",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5049,
+      "tema": "Corrupción",
+      "texto": "Yo quiero saber tu opinión, pero te lo pido ya como persona.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5054,
+      "tema": "Corrupción",
+      "texto": "Tú pones en la mano que es inocente en ambos casos.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5066,
+      "tema": "Corrupción",
+      "texto": "te sorprendería mucho si esto va a mal y acaba siendo condenado",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5097,
+      "tema": "Vivienda",
+      "texto": "ha dicho que vosotros habéis hecho cero en ocho años, que no habéis mejorado en nada la situación de la vivienda en España",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5113,
+      "tema": "Vivienda",
+      "texto": "Son ocho años en que habéis mejorado la vivienda en España.",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 5226,
+      "tema": "Vivienda",
+      "texto": "¿creéis que habéis hecho suficiente como para que la situación de la vivienda en",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5238,
+      "tema": "Vivienda",
+      "texto": "Pero la gente no quiere bases, quiere realidades, porque hoy en día se está volviendo cada vez más imposible el independizarte.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5247,
+      "tema": "Vivienda",
+      "texto": "tenéis una responsabilidad que son ocho años de gobierno, que se pueden hacer cosas",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5325,
+      "tema": "Vivienda",
+      "texto": "La realidad del país es que habéis tenido dos legislaturas y la situación de la vivienda es dramática.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5372,
+      "tema": "Vivienda",
+      "texto": "Tiene que haber más construcción privada también.",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5417,
+      "tema": "Vivienda",
+      "texto": "A día de hoy, ¿cuántas están entregadas y con gente viviendo en ellas?",
+      "dureza": "incomoda",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 5447,
+      "tema": "Vivienda",
+      "texto": "pero en proceso no es lo mismo que la gente que ya está viviendo",
+      "dureza": "repregunta",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 5488,
+      "tema": "Vivienda",
+      "texto": "Pero no me has dado el dato más o menos exacto de cuánta gente está viviendo ahí",
+      "dureza": "insistencia",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 5506,
+      "tema": "Vivienda",
+      "texto": "Claro, habilitar para mí es ya vivir.",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5514,
+      "tema": "Vivienda",
+      "texto": "Y al final, que una cosa llegue años más tarde es un problema.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5562,
+      "tema": "Vivienda",
+      "texto": "Se está conteniendo a un nivel que es casi inasumible, claro.",
+      "dureza": "repregunta",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 5648,
+      "tema": "Vivienda",
+      "texto": "¿Por qué no empezarlo esto hace años y hoy ya poder estar hablando?",
+      "dureza": "repregunta",
+      "respuesta": "sin_respuesta"
+    },
+    {
+      "segundo": 5671,
+      "tema": "Vivienda",
+      "texto": "Hay mucha gente que está enfadada porque realmente está muy decepcionada contigo y con",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5735,
+      "tema": "Trayectoria y gestión pasada",
+      "texto": "La famosa hemeroteca de Pedro Sánchez. Ya sabes, esos cambios de opinión radicales en ciertos temas importantes.",
+      "dureza": "incomoda",
+      "respuesta": "en_parte"
+    },
+    {
+      "segundo": 5895,
+      "tema": "Cataluña y modelo territorial",
+      "texto": "Pero yo creo que aunque no hubiera habido indultos o amnistías, tampoco lo sería ya",
+      "dureza": "repregunta",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 5929,
+      "tema": "Fronteras y Marruecos",
+      "texto": "libre y decir lo contrario, tú lo has hecho.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 5986,
+      "tema": "Pactos y gobernabilidad",
+      "texto": "pactasteis con Bildu una moción que hizo alcalde de Pamplona",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6025,
+      "tema": "Pactos y gobernabilidad",
+      "texto": "no se dan las condiciones para que el señor Iglesias sea miembro de ese gobierno, esto no es un bulo",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6090,
+      "tema": "Trayectoria y gestión pasada",
+      "texto": "cuando dices literalmente, la vamos a derogar, estás haciendo una promesa",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6133,
+      "tema": "Trayectoria y gestión pasada",
+      "texto": "me duele mucho cómo cambiáis vuestra palabra a veces tan fácilmente",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6228,
+      "tema": "Cataluña y modelo territorial",
+      "texto": "mucha gente contigo, y eso es una realidad",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6316,
+      "tema": "Pactos y gobernabilidad",
+      "texto": "dijiste literalmente que Pablo Iglesias es el principal escollo, no puede estar en el gobierno",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6326,
+      "tema": "Cataluña y modelo territorial",
+      "texto": "Y tú apoyaste la aplicación del 155",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6435,
+      "tema": "Trayectoria y gestión pasada",
+      "texto": "piensa que lo que estás prometiendo hoy en dos años puede cambiar radicalmente, ¿qué le dirías?",
+      "dureza": "incomoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6461,
+      "tema": "Trayectoria y gestión pasada",
+      "texto": "O sea, hay un poco de todo, ¿no?",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6481,
+      "tema": "Trayectoria y gestión pasada",
+      "texto": "tendrían que ser personas intachables, al menos a nivel público, y que su palabra para mí tendría que ser sagrada",
+      "dureza": "insistencia",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6546,
+      "tema": "Rivales",
+      "texto": "Te voy a pedir que me definas a tus rivales en estas elecciones.",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6555,
+      "tema": "Rivales",
+      "texto": "Feijó.",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6562,
+      "tema": "Rivales",
+      "texto": "Abascal.",
+      "dureza": "neutra",
+      "respuesta": "otra_pregunta"
+    },
+    {
+      "segundo": 6579,
+      "tema": "Rivales",
+      "texto": "Si lo tuvieras que definir.",
+      "dureza": "repregunta",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6634,
+      "tema": "Otros",
+      "texto": "Lo del hombre blandén, ¿qué opinas?",
+      "dureza": "comoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6642,
+      "tema": "Otros",
+      "texto": "O sea, hombre, no eras muy fan de las declaraciones del Fari",
+      "dureza": "comoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6674,
+      "tema": "Cierre y alegato",
+      "texto": "¿Te arrepientes de haber venido?",
+      "dureza": "comoda",
+      "respuesta": "responde"
+    },
+    {
+      "segundo": 6684,
+      "tema": "Cierre y alegato",
+      "texto": "si hay un ser humano que es capaz, tú, pues mira, tienes aquí la cámara para intentarlo",
+      "dureza": "neutra",
+      "respuesta": "responde"
+    }
+  ],
+  "temas": [
+    {
+      "inicio": 83,
+      "fin": 218,
+      "tema": "Formato y presentación",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 218,
+      "fin": 440,
+      "tema": "Asuntos personales",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 440,
+      "fin": 558,
+      "tema": "Asuntos personales",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 558,
+      "fin": 844,
+      "tema": "Rivales",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 844,
+      "fin": 1155,
+      "tema": "Infraestructuras y transporte",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 1155,
+      "fin": 1734,
+      "tema": "Infraestructuras y transporte",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 1734,
+      "fin": 1749,
+      "tema": "Fronteras y Marruecos",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 1749,
+      "fin": 1805,
+      "tema": "Medios y redes",
+      "quien": "invitado"
+    },
+    {
+      "inicio": 1805,
+      "fin": 2128,
+      "tema": "Fronteras y Marruecos",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 2128,
+      "fin": 2434,
+      "tema": "Fronteras y Marruecos",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 2434,
+      "fin": 2489,
+      "tema": "Fronteras y Marruecos",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 2489,
+      "fin": 2585,
+      "tema": "Fronteras y Marruecos",
+      "quien": "invitado"
+    },
+    {
+      "inicio": 2585,
+      "fin": 2658,
+      "tema": "Fronteras y Marruecos",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 2658,
+      "fin": 2835,
+      "tema": "Fronteras y Marruecos",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 2835,
+      "fin": 2891,
+      "tema": "Fronteras y Marruecos",
+      "quien": "invitado"
+    },
+    {
+      "inicio": 2891,
+      "fin": 3088,
+      "tema": "Fronteras y Marruecos",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 3088,
+      "fin": 3226,
+      "tema": "Inmigración",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 3226,
+      "fin": 3252,
+      "tema": "Formato y presentación",
+      "quien": "invitado"
+    },
+    {
+      "inicio": 3252,
+      "fin": 3297,
+      "tema": "Inmigración",
+      "quien": "invitado"
+    },
+    {
+      "inicio": 3297,
+      "fin": 3634,
+      "tema": "Inmigración",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 3634,
+      "fin": 3806,
+      "tema": "Inmigración",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 3806,
+      "fin": 4003,
+      "tema": "Inmigración",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 4003,
+      "fin": 4040,
+      "tema": "Formato y presentación",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 4040,
+      "fin": 4144,
+      "tema": "Corrupción",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 4144,
+      "fin": 4240,
+      "tema": "Partido interno",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 4240,
+      "fin": 4415,
+      "tema": "Corrupción",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 4415,
+      "fin": 4652,
+      "tema": "Corrupción",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 4652,
+      "fin": 4785,
+      "tema": "Corrupción",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 4785,
+      "fin": 4900,
+      "tema": "Corrupción",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 4900,
+      "fin": 5074,
+      "tema": "Corrupción",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 5074,
+      "fin": 5402,
+      "tema": "Vivienda",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 5402,
+      "fin": 5562,
+      "tema": "Vivienda",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 5562,
+      "fin": 5710,
+      "tema": "Vivienda",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 5710,
+      "fin": 5725,
+      "tema": "Formato y presentación",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 5725,
+      "fin": 5816,
+      "tema": "Trayectoria y gestión pasada",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 5816,
+      "fin": 5905,
+      "tema": "Cataluña y modelo territorial",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 5905,
+      "fin": 5950,
+      "tema": "Fronteras y Marruecos",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 5950,
+      "fin": 6055,
+      "tema": "Pactos y gobernabilidad",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 6055,
+      "fin": 6117,
+      "tema": "Trayectoria y gestión pasada",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 6117,
+      "fin": 6216,
+      "tema": "Trayectoria y gestión pasada",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 6216,
+      "fin": 6306,
+      "tema": "Cataluña y modelo territorial",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 6306,
+      "fin": 6326,
+      "tema": "Pactos y gobernabilidad",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 6326,
+      "fin": 6408,
+      "tema": "Cataluña y modelo territorial",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 6408,
+      "fin": 6433,
+      "tema": "Pactos y gobernabilidad",
+      "quien": "invitado"
+    },
+    {
+      "inicio": 6433,
+      "fin": 6543,
+      "tema": "Trayectoria y gestión pasada",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 6543,
+      "fin": 6601,
+      "tema": "Rivales",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 6601,
+      "fin": 6655,
+      "tema": "Otros",
+      "quien": "jordi"
+    },
+    {
+      "inicio": 6655,
+      "fin": 6726,
+      "tema": "Cierre y alegato",
+      "quien": "jordi"
+    }
+  ],
+  "promesas": {
+    "total": 19,
+    "verificables": 7
+  },
+  "sintonia": [
+    {
+      "tipo": "halago",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "halago",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "halago",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "anecdota_personal",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "pregunta_devuelta",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "halago",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "anecdota_personal",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "roce",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "roce",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "halago",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "roce",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "interrupcion_notable",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "roce",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "halago",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "roce",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "anecdota_personal",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "interrupcion_notable",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "halago",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "anecdota_personal",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "interrupcion_notable",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "roce",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "halago",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "roce",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "roce",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "anecdota_personal",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "interrupcion_notable",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "pregunta_devuelta",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "halago",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "pregunta_devuelta",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "anecdota_personal",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "pregunta_devuelta",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "roce",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "interrupcion_notable",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "interrupcion_notable",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "roce",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "halago",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "halago",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "roce",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "anecdota_personal",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "halago",
+      "quien": "jordi"
+    },
+    {
+      "tipo": "acuerdo_explicito",
+      "quien": "invitado"
+    },
+    {
+      "tipo": "risa_o_broma",
+      "quien": "jordi"
+    }
+  ],
+  "trabas": [
+    {
+      "segundo": 249,
+      "tipo": "repite un grupo de palabras",
+      "contexto": "me surgió. Me surgió"
+    },
+    {
+      "segundo": 519,
+      "tipo": "repite un grupo de palabras",
+      "contexto": "el mensaje. El mensaje"
+    },
+    {
+      "segundo": 571,
+      "tipo": "se corta y reformula",
+      "contexto": "dictador, me han llamado psicópata, me han llamado… Bueno, hasta incluso Abascal ha dicho,"
+    },
+    {
+      "segundo": 823,
+      "tipo": "repite una palabra",
+      "contexto": "por cierto, creo Creo, honestamente, que,"
+    },
+    {
+      "segundo": 994,
+      "tipo": "repite una palabra",
+      "contexto": "Sí, lo comparto, comparto ese diagnóstico"
+    },
+    {
+      "segundo": 1168,
+      "tipo": "se corta y reformula",
+      "contexto": "transporte ferroviario. Bueno, hay una investigación abierta por... Hay una investigación abierta por, en"
+    },
+    {
+      "segundo": 1278,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "por ejemplo, en el momento en el que... El protocolo lo que te dice"
+    },
+    {
+      "segundo": 1511,
+      "tipo": "se corta y reformula",
+      "contexto": "yo te lo agradezco, Jordi, porque creo que… y esto no significa que yo"
+    },
+    {
+      "segundo": 1630,
+      "tipo": "repite una palabra",
+      "contexto": "es cierto también También que Óscar"
+    },
+    {
+      "segundo": 1687,
+      "tipo": "repite un grupo de palabras",
+      "contexto": "con la guerra Con la guerra,"
+    },
+    {
+      "segundo": 1985,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "otro, estamos hablando de Por tanto, nosotros hemos… Cuando se produce la avalancha, Jordi,"
+    },
+    {
+      "segundo": 2117,
+      "tipo": "se corta y reformula",
+      "contexto": "final, si tú te echas a nadar, pues… Sí, das la vuelta Exactamente, y"
+    },
+    {
+      "segundo": 3212,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "demográfico en donde o bien los nacionales tenemos… pero bueno, yo ya he contribuido"
+    },
+    {
+      "segundo": 3381,
+      "tipo": "repite una palabra",
+      "contexto": "integración, en España España ahora mismo"
+    },
+    {
+      "segundo": 3554,
+      "tipo": "repite un grupo de palabras",
+      "contexto": "a lo que voy, a lo que voy"
+    },
+    {
+      "segundo": 3556,
+      "tipo": "repite un grupo de palabras",
+      "contexto": "a las políticas, a las políticas"
+    },
+    {
+      "segundo": 3757,
+      "tipo": "repite una palabra",
+      "contexto": "activo es Latinoamérica. Latinoamérica, donde tenemos"
+    },
+    {
+      "segundo": 4164,
+      "tipo": "se corta y reformula",
+      "contexto": "darme una buena hostia porque salía de un… claro, iba conduciendo yo solo. Entonces,"
+    },
+    {
+      "segundo": 4175,
+      "tipo": "se corta y reformula",
+      "contexto": "dado casi me dormí y me salí de… me dijeron, oye, te llevamos nosotros"
+    },
+    {
+      "segundo": 4192,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "Peugeot por el Mercedes, pero la historia fue... Yo no tengo ahora ya ni"
+    },
+    {
+      "segundo": 4211,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "ahora ya ni una ni otra, o sea... yo con Koldo no tenía prácticamente"
+    },
+    {
+      "segundo": 4288,
+      "tipo": "se corta y reformula",
+      "contexto": "ningún comentario. Y desde luego yo no sabía… mía prostitución. Yo me quedé muy"
+    },
+    {
+      "segundo": 4319,
+      "tipo": "repite una palabra",
+      "contexto": "que yo cuando Cuando tomé del"
+    },
+    {
+      "segundo": 4471,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "la fecha, lo buscamos. Porque en ese momento... creo que recordar que fue en"
+    },
+    {
+      "segundo": 4622,
+      "tipo": "repite un grupo de palabras",
+      "contexto": "lo he reconocido, lo he reconocido"
+    },
+    {
+      "segundo": 4849,
+      "tipo": "se corta y reformula",
+      "contexto": "que dirimirse. Te quiero decir que es que... Cuando tú estás al frente del"
+    },
+    {
+      "segundo": 5125,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "el ejercicio. A ver, en una plataforma digital… Es que al final acabas hablando"
+    },
+    {
+      "segundo": 5135,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "acabas hablando tú y yo, digo, al final… renta Superior a la de Málaga"
+    },
+    {
+      "segundo": 5178,
+      "tipo": "repite una palabra",
+      "contexto": "la Airbnb, etcétera, etcétera, etcétera. Por"
+    },
+    {
+      "segundo": 5178,
+      "tipo": "repite una palabra",
+      "contexto": "Airbnb, etcétera, etcétera, etcétera. Por tanto,"
+    },
+    {
+      "segundo": 5656,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "vivienda protegida. Ahora mismo está mal, pero fíjate... Y yo no lo discuto y"
+    },
+    {
+      "segundo": 6005,
+      "tipo": "repite un grupo de palabras",
+      "contexto": "nunca dije nunca dije"
+    },
+    {
+      "segundo": 6102,
+      "tipo": "se corta y reformula",
+      "contexto": "con otro grupo. no es algo que depende... Por eso, y aquí meto la"
+    },
+    {
+      "segundo": 6343,
+      "tipo": "repite un grupo de palabras",
+      "contexto": "la política no es la política no es"
+    },
+    {
+      "segundo": 6565,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "diría activista. Feijó, diría conservador. Abascal le diría... Que debería ir a otro sastre,"
+    },
+    {
+      "segundo": 6579,
+      "tipo": "se corta y no continúa (otra voz o silencio)",
+      "contexto": "estrechas. Probablemente sea más un consejo que una... diría que no es bueno el"
+    }
+  ],
+  "pausas": [
+    {
+      "segundo": 183,
+      "duracion": 0.58,
+      "carga": false
+    },
+    {
+      "segundo": 259,
+      "duracion": 1.42,
+      "carga": true
+    },
+    {
+      "segundo": 295,
+      "duracion": 0.52,
+      "carga": false
+    },
+    {
+      "segundo": 298,
+      "duracion": 0.48,
+      "carga": false
+    },
+    {
+      "segundo": 308,
+      "duracion": 1.6,
+      "carga": false
+    },
+    {
+      "segundo": 312,
+      "duracion": 0.66,
+      "carga": false
+    },
+    {
+      "segundo": 332,
+      "duracion": 0.72,
+      "carga": false
+    },
+    {
+      "segundo": 500,
+      "duracion": 0.68,
+      "carga": false
+    },
+    {
+      "segundo": 503,
+      "duracion": 0.98,
+      "carga": false
+    },
+    {
+      "segundo": 511,
+      "duracion": 0.96,
+      "carga": false
+    },
+    {
+      "segundo": 518,
+      "duracion": 0.46,
+      "carga": false
+    },
+    {
+      "segundo": 526,
+      "duracion": 0.64,
+      "carga": false
+    },
+    {
+      "segundo": 530,
+      "duracion": 0.56,
+      "carga": true
+    },
+    {
+      "segundo": 539,
+      "duracion": 0.42,
+      "carga": false
+    },
+    {
+      "segundo": 541,
+      "duracion": 0.6,
+      "carga": false
+    },
+    {
+      "segundo": 685,
+      "duracion": 0.98,
+      "carga": false
+    },
+    {
+      "segundo": 948,
+      "duracion": 1.1,
+      "carga": false
+    },
+    {
+      "segundo": 1077,
+      "duracion": 0.6,
+      "carga": false
+    },
+    {
+      "segundo": 1088,
+      "duracion": 0.48,
+      "carga": false
+    },
+    {
+      "segundo": 1115,
+      "duracion": 0.58,
+      "carga": false
+    },
+    {
+      "segundo": 1122,
+      "duracion": 0.68,
+      "carga": false
+    },
+    {
+      "segundo": 1168,
+      "duracion": 0.74,
+      "carga": false
+    },
+    {
+      "segundo": 1318,
+      "duracion": 0.42,
+      "carga": true
+    },
+    {
+      "segundo": 1408,
+      "duracion": 0.44,
+      "carga": false
+    },
+    {
+      "segundo": 1427,
+      "duracion": 1.7,
+      "carga": false
+    },
+    {
+      "segundo": 1928,
+      "duracion": 0.98,
+      "carga": false
+    },
+    {
+      "segundo": 2012,
+      "duracion": 1.04,
+      "carga": false
+    },
+    {
+      "segundo": 2193,
+      "duracion": 0.9,
+      "carga": false
+    },
+    {
+      "segundo": 2208,
+      "duracion": 0.58,
+      "carga": false
+    },
+    {
+      "segundo": 2214,
+      "duracion": 1.48,
+      "carga": false
+    },
+    {
+      "segundo": 2285,
+      "duracion": 1.58,
+      "carga": true
+    },
+    {
+      "segundo": 2335,
+      "duracion": 0.92,
+      "carga": true
+    },
+    {
+      "segundo": 2369,
+      "duracion": 0.84,
+      "carga": false
+    },
+    {
+      "segundo": 2499,
+      "duracion": 0.46,
+      "carga": false
+    },
+    {
+      "segundo": 2563,
+      "duracion": 0.6,
+      "carga": false
+    },
+    {
+      "segundo": 2774,
+      "duracion": 1.0,
+      "carga": true
+    },
+    {
+      "segundo": 3141,
+      "duracion": 1.1,
+      "carga": false
+    },
+    {
+      "segundo": 3146,
+      "duracion": 0.62,
+      "carga": false
+    },
+    {
+      "segundo": 3172,
+      "duracion": 1.06,
+      "carga": false
+    },
+    {
+      "segundo": 3194,
+      "duracion": 0.44,
+      "carga": true
+    },
+    {
+      "segundo": 3372,
+      "duracion": 0.92,
+      "carga": false
+    },
+    {
+      "segundo": 3392,
+      "duracion": 1.06,
+      "carga": false
+    },
+    {
+      "segundo": 3569,
+      "duracion": 0.78,
+      "carga": false
+    },
+    {
+      "segundo": 3682,
+      "duracion": 0.6,
+      "carga": false
+    },
+    {
+      "segundo": 3758,
+      "duracion": 0.52,
+      "carga": false
+    },
+    {
+      "segundo": 3845,
+      "duracion": 0.58,
+      "carga": false
+    },
+    {
+      "segundo": 3858,
+      "duracion": 0.84,
+      "carga": false
+    },
+    {
+      "segundo": 3933,
+      "duracion": 0.42,
+      "carga": true
+    },
+    {
+      "segundo": 3941,
+      "duracion": 0.76,
+      "carga": false
+    },
+    {
+      "segundo": 3953,
+      "duracion": 0.88,
+      "carga": false
+    },
+    {
+      "segundo": 3966,
+      "duracion": 0.66,
+      "carga": false
+    },
+    {
+      "segundo": 4035,
+      "duracion": 0.46,
+      "carga": true
+    },
+    {
+      "segundo": 4161,
+      "duracion": 0.48,
+      "carga": false
+    },
+    {
+      "segundo": 4184,
+      "duracion": 0.82,
+      "carga": false
+    },
+    {
+      "segundo": 4188,
+      "duracion": 0.44,
+      "carga": true
+    },
+    {
+      "segundo": 4346,
+      "duracion": 1.64,
+      "carga": false
+    },
+    {
+      "segundo": 4349,
+      "duracion": 0.78,
+      "carga": false
+    },
+    {
+      "segundo": 4352,
+      "duracion": 0.64,
+      "carga": false
+    },
+    {
+      "segundo": 4476,
+      "duracion": 0.98,
+      "carga": true
+    },
+    {
+      "segundo": 4486,
+      "duracion": 0.84,
+      "carga": false
+    },
+    {
+      "segundo": 4489,
+      "duracion": 0.52,
+      "carga": false
+    },
+    {
+      "segundo": 4497,
+      "duracion": 0.98,
+      "carga": false
+    },
+    {
+      "segundo": 4509,
+      "duracion": 0.44,
+      "carga": false
+    },
+    {
+      "segundo": 4518,
+      "duracion": 0.76,
+      "carga": false
+    },
+    {
+      "segundo": 4521,
+      "duracion": 0.44,
+      "carga": false
+    },
+    {
+      "segundo": 4538,
+      "duracion": 0.5,
+      "carga": false
+    },
+    {
+      "segundo": 4541,
+      "duracion": 0.58,
+      "carga": false
+    },
+    {
+      "segundo": 4603,
+      "duracion": 0.48,
+      "carga": false
+    },
+    {
+      "segundo": 4645,
+      "duracion": 1.24,
+      "carga": true
+    },
+    {
+      "segundo": 4692,
+      "duracion": 0.42,
+      "carga": false
+    },
+    {
+      "segundo": 4778,
+      "duracion": 1.12,
+      "carga": true
+    },
+    {
+      "segundo": 4817,
+      "duracion": 1.22,
+      "carga": false
+    },
+    {
+      "segundo": 4824,
+      "duracion": 0.96,
+      "carga": false
+    },
+    {
+      "segundo": 4835,
+      "duracion": 0.92,
+      "carga": false
+    },
+    {
+      "segundo": 4933,
+      "duracion": 0.62,
+      "carga": false
+    },
+    {
+      "segundo": 4938,
+      "duracion": 1.12,
+      "carga": true
+    },
+    {
+      "segundo": 5011,
+      "duracion": 0.7,
+      "carga": false
+    },
+    {
+      "segundo": 5122,
+      "duracion": 0.6,
+      "carga": false
+    },
+    {
+      "segundo": 5157,
+      "duracion": 0.96,
+      "carga": false
+    },
+    {
+      "segundo": 5276,
+      "duracion": 0.68,
+      "carga": false
+    },
+    {
+      "segundo": 5282,
+      "duracion": 0.82,
+      "carga": false
+    },
+    {
+      "segundo": 5291,
+      "duracion": 0.54,
+      "carga": true
+    },
+    {
+      "segundo": 5300,
+      "duracion": 0.66,
+      "carga": true
+    },
+    {
+      "segundo": 5540,
+      "duracion": 2.42,
+      "carga": false
+    },
+    {
+      "segundo": 5544,
+      "duracion": 0.64,
+      "carga": false
+    },
+    {
+      "segundo": 5598,
+      "duracion": 0.68,
+      "carga": true
+    },
+    {
+      "segundo": 5605,
+      "duracion": 0.58,
+      "carga": false
+    },
+    {
+      "segundo": 5608,
+      "duracion": 0.74,
+      "carga": false
+    },
+    {
+      "segundo": 5611,
+      "duracion": 0.7,
+      "carga": false
+    },
+    {
+      "segundo": 5689,
+      "duracion": 0.54,
+      "carga": false
+    },
+    {
+      "segundo": 5846,
+      "duracion": 0.42,
+      "carga": false
+    },
+    {
+      "segundo": 5866,
+      "duracion": 0.6,
+      "carga": false
+    },
+    {
+      "segundo": 6008,
+      "duracion": 1.52,
+      "carga": true
+    },
+    {
+      "segundo": 6041,
+      "duracion": 0.64,
+      "carga": true
+    },
+    {
+      "segundo": 6102,
+      "duracion": 1.82,
+      "carga": false
+    },
+    {
+      "segundo": 6111,
+      "duracion": 0.5,
+      "carga": false
+    },
+    {
+      "segundo": 6174,
+      "duracion": 1.0,
+      "carga": false
+    },
+    {
+      "segundo": 6177,
+      "duracion": 0.98,
+      "carga": false
+    },
+    {
+      "segundo": 6204,
+      "duracion": 0.68,
+      "carga": false
+    },
+    {
+      "segundo": 6210,
+      "duracion": 0.52,
+      "carga": true
+    },
+    {
+      "segundo": 6250,
+      "duracion": 0.44,
+      "carga": false
+    },
+    {
+      "segundo": 6251,
+      "duracion": 0.4,
+      "carga": false
+    },
+    {
+      "segundo": 6255,
+      "duracion": 0.86,
+      "carga": false
+    },
+    {
+      "segundo": 6354,
+      "duracion": 0.46,
+      "carga": false
+    },
+    {
+      "segundo": 6359,
+      "duracion": 0.76,
+      "carga": false
+    },
+    {
+      "segundo": 6392,
+      "duracion": 0.66,
+      "carga": false
+    },
+    {
+      "segundo": 6442,
+      "duracion": 0.54,
+      "carga": false
+    },
+    {
+      "segundo": 6446,
+      "duracion": 0.44,
+      "carga": false
+    },
+    {
+      "segundo": 6491,
+      "duracion": 2.12,
+      "carga": false
+    },
+    {
+      "segundo": 6524,
+      "duracion": 0.54,
+      "carga": false
+    },
+    {
+      "segundo": 6592,
+      "duracion": 1.18,
+      "carga": false
+    },
+    {
+      "segundo": 6691,
+      "duracion": 0.62,
+      "carga": false
+    }
+  ],
+  "voz": [
+    null,
+    0.36,
+    0.85,
+    -0.31,
+    -0.49,
+    -0.27,
+    -0.57,
+    null,
+    0.22,
+    0.42,
+    0.28,
+    -0.11,
+    0.43,
+    0.17,
+    null,
+    -0.43,
+    0.1,
+    -0.62,
+    -0.46,
+    -0.55,
+    -0.56,
+    -0.19,
+    -0.15,
+    -0.76,
+    -0.41,
+    0.45,
+    -0.29,
+    -0.25,
+    -0.53,
+    -0.48,
+    -0.38,
+    -0.43,
+    -0.33,
+    -0.7,
+    0.17,
+    0.01,
+    -0.39,
+    -0.19,
+    0.29,
+    -0.37,
+    0.47,
+    -0.06,
+    0.11,
+    -0.12,
+    0.08,
+    -0.4,
+    -0.89,
+    -0.47,
+    0.09,
+    0.4,
+    -0.3,
+    -0.26,
+    0.01,
+    0.4,
+    0.41,
+    0.42,
+    -0.16,
+    1.01,
+    -0.64,
+    0.35,
+    0.64,
+    -0.53,
+    0.7,
+    -0.19,
+    0.17,
+    -0.59,
+    0.31,
+    0.07,
+    0.11,
+    -0.36,
+    1.54,
+    0.25,
+    0.24,
+    0.11,
+    -0.15,
+    0.31,
+    0.97,
+    -0.36,
+    -0.68,
+    0.57,
+    0.04,
+    0.27,
+    0.37,
+    0.44,
+    1.03,
+    0.37,
+    -0.29,
+    -0.09,
+    0.47,
+    0.34,
+    1.16,
+    0.62,
+    0.7,
+    -0.47,
+    0.63,
+    null,
+    0.5,
+    0.03,
+    -0.06,
+    0.64,
+    -0.17,
+    2.1,
+    0.67,
+    0.44,
+    -0.15,
+    -1.14,
+    0.27,
+    0.12,
+    0.1,
+    0.65,
+    0.17,
+    -0.42,
+    null
+  ],
+  "presion": {
+    "medidas": [
+      {
+        "nombre": "Tono",
+        "unidad": "Hz",
+        "duras": 120.8,
+        "resto": 119.8,
+        "d": 0.07
+      },
+      {
+        "nombre": "Volumen",
+        "unidad": "dB",
+        "duras": 64.7,
+        "resto": 65.0,
+        "d": -0.04
+      },
+      {
+        "nombre": "Velocidad",
+        "unidad": "palabras/min",
+        "duras": 204.0,
+        "resto": 203.0,
+        "d": 0.02
+      }
+    ],
+    "trabasPor100": {
+      "duras": 0.29,
+      "resto": 0.65
+    }
+  },
+  "cara": [
+    {
+      "au": "AU6 + AU12",
+      "nombre": "mejillas y comisuras arriba",
+      "invitado": 21.1,
+      "jordi": 29.3
+    },
+    {
+      "au": "AU5",
+      "nombre": "párpado superior arriba",
+      "invitado": 14.9,
+      "jordi": 25.3
+    },
+    {
+      "au": "AU4",
+      "nombre": "cejas bajan y se juntan",
+      "invitado": 2.1,
+      "jordi": 0.0
+    },
+    {
+      "au": "AU1 + AU2",
+      "nombre": "cejas arriba",
+      "invitado": 1.4,
+      "jordi": 14.2
+    },
+    {
+      "au": "AU17",
+      "nombre": "mentón arriba",
+      "invitado": 0.1,
+      "jordi": 7.9
+    },
+    {
+      "au": "AU15",
+      "nombre": "comisuras abajo",
+      "invitado": 0.6,
+      "jordi": 0.0
+    }
+  ],
+  "momentos": [
+    {
+      "segundo": 1639,
+      "quien": "invitado",
+      "titulo": "El cese de Puente"
+    },
+    {
+      "segundo": 2718,
+      "quien": "invitado",
+      "titulo": "Las vacaciones"
+    },
+    {
+      "segundo": 3140,
+      "quien": "invitado",
+      "titulo": "Por qué preocupa la inmigración"
+    },
+    {
+      "segundo": 6438,
+      "quien": "invitado",
+      "titulo": "La hemeroteca"
+    },
+    {
+      "segundo": 874,
+      "quien": "jordi",
+      "titulo": "Los accidentes"
+    },
+    {
+      "segundo": 4681,
+      "quien": "jordi",
+      "titulo": "Dos secretarios de organización"
+    }
+  ],
+  "publico": {
+    "lectura": "2026-11-13T15:04",
+    "vistas": 406353,
+    "meGusta": 37542,
+    "comentarios": 3000,
+    "conMinuto": 64,
+    "citados": [
+      {
+        "segundo": 600,
+        "veces": 5
+      },
+      {
+        "segundo": 240,
+        "veces": 5
+      },
+      {
+        "segundo": 660,
+        "veces": 4
+      },
+      {
+        "segundo": 480,
+        "veces": 3
+      },
+      {
+        "segundo": 1020,
+        "veces": 3
+      },
+      {
+        "segundo": 840,
+        "veces": 3
+      },
+      {
+        "segundo": 300,
+        "veces": 3
+      },
+      {
+        "segundo": 3240,
+        "veces": 2
+      }
+    ]
+  },
+  "datos": [
+    {
+      "nombre": "Los datos de esta entrevista",
+      "archivo": "13n-pedro-sanchez.zip",
+      "bytes": 6689202,
+      "archivos": 56
+    },
+    {
+      "nombre": "La comparación entre las entrevistas",
+      "archivo": "13n-comparacion.zip",
+      "bytes": 537865,
+      "archivos": 44
+    }
+  ]
+}

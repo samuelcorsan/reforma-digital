@@ -52,6 +52,7 @@ import {
   type Mark,
 } from '../../lib/elecciones/interviews';
 import { candidates, type Candidate } from '../../lib/elecciones/candidates';
+import { communicationPath, getCommunication } from '../../lib/elecciones/communication';
 import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon, type IconName } from '../brand/icon';
 import { AI, Source } from '../congreso/common';
@@ -69,7 +70,17 @@ import { PhotoCredits, Portrait } from './portrait';
 import { ScoreSimulator } from './score-simulator';
 import { ShareButton } from './share-button';
 import { DaysUntil } from './days-until';
-import { Bars, Cell, Explore, Grid, Label, ReportIntro, ReportSection, Stat } from './report';
+import {
+  Bars,
+  Cell,
+  Explore,
+  Grid,
+  Label,
+  PageCard,
+  ReportIntro,
+  ReportSection,
+  Stat,
+} from './report';
 
 export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
 
@@ -152,7 +163,7 @@ function MarkLabel({
   );
 }
 
-function Notice({ children }: { children: ReactNode }) {
+export function Notice({ children }: { children: ReactNode }) {
   return (
     <Card className="mb-8 bg-muted p-5 text-base ring-0" role="note">
       <p className="m-0">{children}</p>
@@ -504,7 +515,7 @@ const verdictOrder = ['roja', 'fuera', 'amarilla', 'sinfuente', 'legal'] as cons
 
 // «▶ 20:22»: el vídeo en ese minuto. En el informe, el reproductor intercepta el enlace y lo pone
 // sin mover la página; desde otra página, abre el informe en ese minuto.
-function Jump({ interview: a, second }: { interview: Interview; second: number }) {
+export function Jump({ interview: a, second }: { interview: Interview; second: number }) {
   return (
     <a
       href={`${interviewsHref(a.id)}?t=${Math.floor(second)}#minuto`}
@@ -518,10 +529,10 @@ function Jump({ interview: a, second }: { interview: Interview; second: number }
 }
 
 // Un bloque plegado: se ve el resumen y se despliega el resto.
-function Fold({ summary, children }: { summary: ReactNode; children: ReactNode }) {
+export function Fold({ summary, children }: { summary: ReactNode; children: ReactNode }) {
   return (
     <Collapsible>
-      <CollapsibleTrigger className="group flex min-h-11 w-full items-center gap-3 text-left">
+      <CollapsibleTrigger className="group flex min-h-11 w-full cursor-pointer items-center gap-3 text-left">
         {summary}
         <span
           aria-hidden="true"
@@ -889,6 +900,7 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
   const day = publishedDay(a);
   const round = roundOf(a);
   const candidate = getCandidate(a.candidato);
+  const communication = getCommunication(a.id);
   return (
     <>
       {a.ficticio && (
@@ -1035,6 +1047,16 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
           </div>
         </div>
       </Card>
+      {communication && (
+        <Grid className="-mt-8 mb-12">
+          <PageCard
+            href={interviewsHref(`${a.id}/${communicationPath}`)}
+            title="Análisis de comunicación"
+            text={communication.titular}
+            cta="Ver cómo pregunta, cómo responde y cómo habla"
+          />
+        </Grid>
+      )}
 
       <PageIndex
         items={[
@@ -1905,9 +1927,33 @@ export function InterviewsMethod() {
                 </div>
               ))}
             </dl>
+          </Cell>
+        </Grid>
+      </ReportSection>
+
+      <ReportSection title="El análisis de comunicación">
+        <Grid>
+          <Cell span={7}>
+            <p className="m-0 max-w-[65ch]">
+              Algunas entrevistas tienen, aparte de la revisión, un análisis de comunicación: cómo
+              pregunta el entrevistador y cómo se le responde, la voz, las trabas, los silencios y
+              los movimientos de la cara, con las mismas medidas para todos los de su ronda. No
+              entra en la valoración sobre 10 ni usa sus calificaciones.
+            </p>
+            <p className="m-0 max-w-[65ch] text-sm text-muted-foreground">
+              Las preguntas y las respuestas las clasifica una IA con un criterio escrito; la voz y
+              la cara las mide un programa, frase a frase y fotograma a fotograma. Cada informe dice
+              cómo se ha hecho y qué no puede decir.
+            </p>
+          </Cell>
+          <Cell span={5} label="La cara, solo como movimiento">
+            <p className="m-0">
+              Se mide con unidades de acción del sistema FACS, que nombran movimientos de músculos:
+              cejas, párpados, comisuras. Nunca con etiquetas de emoción, y cada persona se compara
+              con su propia cara.
+            </p>
             <p className="m-0 text-sm text-muted-foreground">
-              Nunca se describen expresiones, emociones ni aspecto físico: no se pueden medir igual
-              para todos.
+              Ni los gestos, ni la voz, ni las pausas sirven para saber si alguien dice la verdad.
             </p>
           </Cell>
         </Grid>

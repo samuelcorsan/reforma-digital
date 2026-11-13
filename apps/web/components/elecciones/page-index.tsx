@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 export function PageIndex({ items }: { items: [string | false, string][] }) {
   const shown = items.filter((item): item is [string, string] => !!item[0]);
   const [current, setCurrent] = useState<string | null>(null);
+  // Si el índice no cabe, por qué lado sigue: 1, por la izquierda; 2, por la derecha; 3, por los dos.
+  const [more, setMore] = useState(0);
   const nav = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -27,11 +29,32 @@ export function PageIndex({ items }: { items: [string | false, string][] }) {
       nav.current.scrollLeft = link.offsetLeft - (nav.current.clientWidth - link.clientWidth) / 2;
   }, [current]);
 
+  useEffect(() => {
+    const el = nav.current;
+    if (!el) return;
+    const update = () =>
+      setMore(
+        (el.scrollLeft > 4 ? 1 : 0) + (el.scrollLeft + el.clientWidth < el.scrollWidth - 4 ? 2 : 0),
+      );
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      el.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
+  // Por donde sigue, se funde: así se ve que hay más y no parece cortado.
+  const edge = (side: number) => (more & side ? 'transparent' : '#000');
+  const fade = `linear-gradient(to right, ${edge(1)}, #000 48px, #000 calc(100% - 48px), ${edge(2)})`;
+
   return (
     <nav
       ref={nav}
       aria-label="En esta página"
       className="sticky top-22 z-20 -mx-2 mb-4 overflow-x-auto px-2 py-1 [scrollbar-width:none]"
+      style={more ? { maskImage: fade, WebkitMaskImage: fade } : undefined}
     >
       <ul className="m-0 flex w-max list-none gap-1 rounded-full bg-background/80 p-1 ring-1 ring-foreground/10 backdrop-blur-md">
         {shown.map(([id, name]) => (

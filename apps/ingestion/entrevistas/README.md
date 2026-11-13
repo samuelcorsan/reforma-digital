@@ -186,6 +186,13 @@ Google que no llevan a una web real se descartan.
 - `analizar … --sin-comprobar`: sin verificación ni revisión, para ensayos rápidos.
 - `$PY -m entrevistas --help` y `$PY -m entrevistas analizar --help`: todas las opciones.
 
+## El análisis de comunicación
+
+`python -m entrevistas.comunicacion <carpeta de medidas>` convierte el análisis de comunicación de una ronda (preguntas
+y respuestas, voz, trabas, silencios y movimientos de la cara) en los JSON de
+[`apps/web/lib/elecciones/comunicacion`](../../web/lib/elecciones/comunicacion/README.md). No mide nada: las medidas
+se hacen fuera de este repositorio, y aquí solo se les da la forma que valida la web.
+
 ## Comprobación a mano, opcional
 
 Con Claude Code, `/segunda-revision 13n-pedro-sanchez` repasa las verificaciones publicadas: abre cada fuente,
