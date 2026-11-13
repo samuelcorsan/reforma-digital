@@ -563,13 +563,9 @@ def recalcular(a: Analisis) -> Analisis:
 
 def agrupar_comunes(cliente, entrevistas: dict[str, Analisis]) -> list[dict]:
     """Agrupa las preguntas comunes de varias entrevistas (la misma pregunta a distintos candidatos).
-    Solo se aceptan ids que existen y como mucho una pregunta por candidato en cada grupo."""
-    filas = [
-        f"{slug}:{p.id} | {slug} | {p.texto}"
-        for slug, a in entrevistas.items()
-        for p in a.preguntas
-        if p.comun
-    ]
+    Solo se aceptan ids que existen y como mucho una pregunta por candidato en cada grupo. Entran todas las
+    preguntas: la marca `comun` la pone el análisis de cada entrevista sin ver las demás, y se queda corta."""
+    filas = [f"{slug}:{p.id} | {slug} | {p.texto}" for slug, a in entrevistas.items() for p in a.preguntas]
     if not filas:
         return []
     existentes = {f"{slug}:{p.id}" for slug, a in entrevistas.items() for p in a.preguntas}

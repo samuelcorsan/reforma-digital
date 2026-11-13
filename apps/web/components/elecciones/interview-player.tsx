@@ -19,6 +19,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@reforma-digital/design/ui/collapsible';
+import { Input } from '@reforma-digital/design/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import { minute } from '../../lib/elecciones/format';
 import type { Interview, lanes as laneNames, Mark, Minute } from '../../lib/elecciones/interviews';
@@ -194,6 +195,37 @@ const tally: [Mark['kind'], string][] = [
   ['evasiva', 'Evasivas'],
   ['interrumpe', 'Interrumpe'],
 ];
+// Los avisos sobre el vídeo: verificaciones, propuestas y momentos clave, unos segundos cada uno.
+const alerts = new Set<Mark['kind']>([
+  'momento',
+  'completa',
+  'casi',
+  'incompleta',
+  'legal',
+  'amarilla',
+  'fuera',
+  'roja',
+  'sinfuente',
+]);
+const alertSeconds = 8;
+// Un «ding» corto para cada aviso, generado en el navegador: sin archivos de audio.
+let audio: AudioContext | undefined;
+function ding() {
+  audio ??= new AudioContext();
+  void audio.resume();
+  const now = audio.currentTime;
+  const tone = audio.createOscillator();
+  const volume = audio.createGain();
+  tone.frequency.value = 880;
+  volume.gain.setValueAtTime(0.12, now);
+  volume.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+  tone.connect(volume).connect(audio.destination);
+  tone.start(now);
+  tone.stop(now + 0.3);
+}
+// Para buscar sin tildes ni mayúsculas. Conserva la longitud del texto (que llega en NFC), así que
+// las posiciones sirven para resaltar en el original.
+const fold = (text: string) => text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
 const zooms = [
   [null, 'Entera'],
   [720, '12 min'],
@@ -317,6 +349,24 @@ export function InterviewPlayer({
     return () => observer.disconnect();
   }, []);
 
+  // El mini reproductor: si el hueco del vídeo sale de la pantalla, el vídeo flota en una esquina
+  // para verlo junto a la línea de tiempo. Solo cambia el CSS: el iframe es el mismo y no se recarga.
+  const slot = useRef<HTMLDivElement>(null);
+  const [slotInView, setSlotInView] = useState(true);
+  const [closed, setClosed] = useState(false);
+  useEffect(() => {
+    const element = slot.current;
+    if (!element) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setSlotInView(!!entry?.isIntersecting);
+      // Al volver a su sitio, la próxima vez vuelve a flotar.
+      if (entry?.isIntersecting) setClosed(false);
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [loaded, youtubeId]);
+  const docked = !!youtubeId && loaded && !slotInView && !closed;
+
   // El último tramo que ya ha empezado.
   const next = segments.findIndex((s) => s.inicio > time);
   const active = (next === -1 ? segments.length : next) - 1;
@@ -337,6 +387,28 @@ export function InterviewPlayer({
       }),
     [segments, marks],
   );
+
+  // Buscar en la transcripción: cada tramo donde se dice, con lo buscado resaltado.
+  const [query, setQuery] = useState('');
+  const needle = fold(query.trim());
+  const found = useMemo(
+    () => (needle.length < 2 ? null : segments.filter((s) => fold(s.texto).includes(needle))),
+    [segments, needle],
+  );
+  const marked = (text: string) => {
+    const at = fold(text).indexOf(needle);
+    return at < 0 ? (
+      text
+    ) : (
+      <>
+        {text.slice(0, at)}
+        <mark className="rounded-sm bg-foreground px-0.5 text-background">
+          {text.slice(at, at + needle.length)}
+        </mark>
+        {text.slice(at + needle.length)}
+      </>
+    );
+  };
 
   // La lista entera solo se vuelve a pintar cuando cambia el tramo que se está diciendo.
   const transcript = useMemo(
@@ -425,6 +497,59 @@ export function InterviewPlayer({
     setSelected(m);
     seek(m.second);
   };
+
+  // Los enlaces «▶ minuto» de las secciones del informe (`?t=` en esta misma página) ponen el
+  // vídeo en ese segundo sin mover la página: con el mini reproductor se ve desde donde estás.
+  useEffect(() => {
+    const onClick = (event: globalThis.MouseEvent) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
+      const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+      if (!(link instanceof HTMLAnchorElement)) return;
+      const url = new URL(link.href);
+      const t = url.searchParams.get('t');
+      const second = Number(t);
+      if (url.pathname !== window.location.pathname || t === null || !Number.isFinite(second))
+        return;
+      event.preventDefault();
+      setSelected(null);
+      seek(second);
+      play();
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, [seek, play]);
+  // Un enlace compartido con `?t=` abre el informe en ese minuto. El vídeo no se carga solo: hasta
+  // que la persona lo pide, el navegador no se conecta con Google.
+  useEffect(() => {
+    const second = Number(new URLSearchParams(window.location.search).get('t'));
+    if (!second) return;
+    seek(second);
+    root.current?.closest('section')?.scrollIntoView({ block: 'start' });
+  }, [seek]);
+  // Los dos últimos que han pasado hace menos de `alertSeconds`.
+  const [alertsOn, setAlertsOn] = useState(true);
+  const [sound, setSound] = useState(true);
+  const popups = alertsOn
+    ? marks
+        .filter((m) => alerts.has(m.kind) && m.second <= time && time - m.second < alertSeconds)
+        .slice(-2)
+    : [];
+  // Suena al pasar por un aviso mientras se reproduce, no al saltar a él.
+  const lastTime = useRef(time);
+  useEffect(() => {
+    const before = lastTime.current;
+    lastTime.current = time;
+    if (
+      alertsOn &&
+      sound &&
+      playing &&
+      time > before &&
+      time - before < 2 &&
+      marks.some((m) => alerts.has(m.kind) && m.second > before && m.second <= time)
+    )
+      ding();
+  }, [time, alertsOn, sound, playing, marks]);
   // Marcas del eje cada 30 s, 1, 2, 5, 10, 15, 20 o 30 minutos: las que quepan.
   const step =
     [30, 60, 120, 300, 600, 900, 1200, 1800].find(
@@ -464,16 +589,70 @@ export function InterviewPlayer({
     <div ref={root} className="grid grid-cols-12 gap-4">
       <div className="col-span-12 grid content-start gap-6 rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-7 lg:p-8 max-sm:p-5">
         {youtubeId && loaded ? (
-          <div
-            ref={box}
-            className="aspect-video overflow-hidden rounded-lg bg-muted [&_iframe]:size-full"
-          />
+          // El hueco guarda el sitio del vídeo mientras flota.
+          <div ref={slot} className="aspect-video">
+            <div
+              className={cn(
+                'relative',
+                docked &&
+                  'fixed right-4 bottom-24 z-30 w-[min(360px,calc(100%-32px))] overflow-hidden rounded-lg shadow-(--shadow-overlay) max-sm:w-56 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4',
+              )}
+            >
+              <div
+                ref={box}
+                className="aspect-video overflow-hidden rounded-lg bg-muted [&_iframe]:size-full"
+              />
+              {/* Sin aria-live: el panel bajo la línea de tiempo ya anuncia cada marca. */}
+              {!!popups.length && (
+                <ul className="pointer-events-none absolute top-3 left-3 m-0 grid max-w-[min(24rem,calc(100%-1.5rem))] list-none gap-2 p-0">
+                  {popups.map((m) => (
+                    <li key={m.id}>
+                      <button
+                        type="button"
+                        onClick={() => pick(m)}
+                        className="pointer-events-auto grid gap-1 rounded-lg bg-popover/95 p-3 text-left text-popover-foreground shadow-md ring-1 ring-foreground/10 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-2"
+                      >
+                        <span className="flex items-center gap-2 text-sm font-medium">
+                          <MarkIcon kind={m.kind} color={m.color} className="size-6" />
+                          {m.label}
+                          <span className="font-mono text-xs font-normal text-muted-foreground tabular-nums">
+                            {minute(m.second)}
+                          </span>
+                        </span>
+                        <span
+                          className={cn('text-sm leading-snug max-sm:hidden', docked && 'hidden')}
+                        >
+                          {m.text}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {docked && (
+                <Button
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label="Cerrar el mini reproductor"
+                  onClick={() => {
+                    setClosed(true);
+                    pause();
+                  }}
+                  className="absolute top-2 right-2 rounded-full"
+                >
+                  <Icon name="nunca" size={14} />
+                </Button>
+              )}
+            </div>
+          </div>
         ) : (
           <div className="grid aspect-video place-content-center justify-items-center gap-4 rounded-lg bg-muted p-6 text-center">
             {youtubeId ? (
               <>
                 <Button variant="sunset" size="xl" onClick={load}>
-                  Cargar el vídeo{time ? ` en el minuto ${minute(time)}` : ''}
+                  Cargar el vídeo{' '}
+                  {/* En el móvil no cabe: el minuto ya se ve en la barra de mandos. */}
+                  {time > 0 && <span className="max-sm:hidden">en el minuto {minute(time)}</span>}
                 </Button>
                 <p className="m-0 max-w-[44ch] text-sm text-muted-foreground">
                   Se carga desde YouTube: al pulsar, Google recibe tu visita.{' '}
@@ -588,9 +767,43 @@ export function InterviewPlayer({
           </TabsList>
           <span className="text-sm text-muted-foreground">Pulsa para ir a ese momento</span>
         </div>
-        <TabsContent value="transcripcion">
+        <TabsContent value="transcripcion" className="grid gap-3">
+          <Input
+            type="search"
+            aria-label="Buscar en la transcripción"
+            placeholder="Buscar en lo que se dice: vivienda, Puente…"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          {found && (
+            <p aria-live="polite" className="m-0 text-sm text-muted-foreground">
+              {found.length
+                ? `Se dice ${found.length === 1 ? 'una vez' : `${found.length} veces`}`
+                : 'No se dice en la entrevista'}
+            </p>
+          )}
           <ol className="relative m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
-            {transcript}
+            {found
+              ? found.map((s) => (
+                  <li key={s.inicio}>
+                    <button
+                      type="button"
+                      onClick={() => seek(s.inicio)}
+                      className="grid w-full gap-1.5 rounded-lg p-3 text-left transition-colors hover:bg-background/60 motion-reduce:transition-none"
+                    >
+                      <span className="flex items-center gap-2 text-sm">
+                        <span className={cn(s.hablante === 'candidato' && 'font-medium')}>
+                          {speakers[s.hablante]}
+                        </span>
+                        <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                          {minute(s.inicio)}
+                        </span>
+                      </span>
+                      <span className="leading-relaxed">{marked(s.texto)}</span>
+                    </button>
+                  </li>
+                ))
+              : transcript}
           </ol>
         </TabsContent>
         <TabsContent value="momentos">
@@ -915,7 +1128,7 @@ export function InterviewPlayer({
             </>
           ) : (
             <span className="self-center text-muted-foreground">
-              Pasa el ratón por un icono o dale al play: aquí aparece cada marca según ocurre.
+              Pasa el ratón por un icono o dale al play: aquí se explica cada marca cuando llega.
             </span>
           )}
         </div>
@@ -929,9 +1142,9 @@ export function InterviewPlayer({
           </CollapsibleTrigger>
           <CollapsibleContent className="grid gap-4 pt-2 text-sm">
             <p className="m-0 max-w-[70ch] text-muted-foreground">
-              Intensidad: ida y vuelta por minuto (cambios de turno, interrupciones y momentos de
-              tensión), con la misma escala para los cuatro; no mide emociones. Tiene la palabra:
-              arriba, el tiempo del candidato en cada minuto; abajo, el del entrevistador.
+              Intensidad: cuánto ida y vuelta hay en cada minuto (cambios de turno, interrupciones y
+              momentos de tensión), con la misma escala para todos. No mide emociones. Tiene la
+              palabra: arriba, cuánto habla el candidato en cada minuto; abajo, el entrevistador.
             </p>
             <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-x-4 gap-y-2 p-0">
               {legend.map(([kind, name]) => (
@@ -942,7 +1155,7 @@ export function InterviewPlayer({
               ))}
               <li className="flex items-center gap-2">
                 <MarkIcon kind="momento" className="opacity-50" />
-                Atenuado: sin la segunda revisión de IA todavía
+                Atenuado: aún sin la segunda revisión de IA
               </li>
             </ul>
           </CollapsibleContent>
@@ -952,55 +1165,117 @@ export function InterviewPlayer({
       {/* Mandos siempre a mano mientras el visor está en pantalla. */}
       <div
         className={cn(
-          'fixed bottom-4 left-1/2 z-30 flex w-[min(640px,calc(100%-32px))] -translate-x-1/2 items-center gap-2 rounded-full bg-background p-2 shadow-(--shadow-overlay) transition-opacity motion-reduce:transition-none',
+          'fixed bottom-4 left-1/2 z-30 w-[min(720px,calc(100%-32px))] -translate-x-1/2 overflow-hidden rounded-3xl bg-background shadow-(--shadow-overlay) transition-opacity motion-reduce:transition-none',
           inView ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
         aria-hidden={!inView}
       >
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => seek(time - 10)}
-          aria-label="10 segundos atrás"
-          tabIndex={inView ? 0 : -1}
-        >
-          −10 s
-        </Button>
-        <Button
-          variant="sunset"
-          size="icon-lg"
-          onClick={() => {
-            setSelected(null);
-            toggle();
-          }}
-          aria-label={playing ? 'Pausa' : 'Reproducir'}
-          tabIndex={inView ? 0 : -1}
-          className="rounded-full"
-        >
-          <Icon name={playing ? 'pausa' : 'reproducir'} size={16} />
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => seek(time + 10)}
-          aria-label="10 segundos adelante"
-          tabIndex={inView ? 0 : -1}
-        >
-          +10 s
-        </Button>
-        <span className="min-w-0 flex-1 truncate font-mono text-sm tabular-nums">
-          {minute(time)} <span className="text-muted-foreground">/ {minute(duration)}</span>
-          {topic && <span className="text-muted-foreground max-sm:hidden"> · {topic}</span>}
+        {/* Lo que va de entrevista. Decorativa: el tiempo de al lado da la cifra. */}
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-muted">
+          <i
+            className="block h-full bg-foreground"
+            style={{ width: `${duration ? Math.min(1, time / duration) * 100 : 0}%` }}
+          />
         </span>
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-full max-sm:hidden"
-          tabIndex={inView ? 0 : -1}
-          onClick={() => root.current?.scrollIntoView({ block: 'start' })}
-        >
-          Ver el vídeo <Icon name="arriba" size={14} />
-        </Button>
+        <div className="flex items-center gap-1 p-2 sm:gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => seek(time - 10)}
+            aria-label="10 segundos atrás"
+            tabIndex={inView ? 0 : -1}
+            className="max-sm:px-1.5"
+          >
+            −10 s
+          </Button>
+          <Button
+            variant="sunset"
+            size="icon-lg"
+            onClick={() => {
+              setSelected(null);
+              toggle();
+            }}
+            aria-label={playing ? 'Pausa' : 'Reproducir'}
+            tabIndex={inView ? 0 : -1}
+            className="shrink-0 rounded-full"
+          >
+            <Icon name={playing ? 'pausa' : 'reproducir'} size={16} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => seek(time + 10)}
+            aria-label="10 segundos adelante"
+            tabIndex={inView ? 0 : -1}
+            className="max-sm:px-1.5"
+          >
+            +10 s
+          </Button>
+          {/* El tema entero, debajo del tiempo: los capítulos de YouTube son largos. */}
+          <span className="grid min-w-0 flex-1 gap-0.5 px-1">
+            <span className="font-mono text-sm tabular-nums">
+              {minute(time)}{' '}
+              <span className="text-muted-foreground max-sm:hidden">/ {minute(duration)}</span>
+            </span>
+            {topic && (
+              <span className="text-sm leading-tight text-muted-foreground max-sm:hidden">
+                {topic}
+              </span>
+            )}
+          </span>
+          {youtubeId && (
+            <span className="flex shrink-0">
+              {(
+                [
+                  [
+                    'campana',
+                    'Avisos sobre el vídeo',
+                    alertsOn,
+                    false,
+                    () => setAlertsOn(!alertsOn),
+                  ],
+                  [
+                    'volumen',
+                    'Sonido de los avisos',
+                    alertsOn && sound,
+                    !alertsOn,
+                    () => setSound(!sound),
+                  ],
+                ] as const
+              ).map(([icon, name, on, off, flip]) => (
+                <Button
+                  key={icon}
+                  variant="ghost"
+                  size="icon"
+                  aria-label={name}
+                  aria-pressed={on}
+                  title={`${name}: ${on ? 'sí' : 'no'}`}
+                  disabled={off}
+                  tabIndex={inView ? 0 : -1}
+                  onClick={flip}
+                  className={cn(
+                    'relative rounded-full',
+                    // Apagado: el icono tachado.
+                    on
+                      ? 'bg-muted text-foreground'
+                      : "text-muted-foreground after:absolute after:h-0.5 after:w-5 after:rotate-45 after:rounded-full after:bg-current after:content-['']",
+                  )}
+                >
+                  <Icon name={icon} size={16} />
+                </Button>
+              ))}
+            </span>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0 rounded-full max-sm:hidden"
+            tabIndex={inView ? 0 : -1}
+            onClick={() => root.current?.scrollIntoView({ block: 'start' })}
+          >
+            Ver el vídeo <Icon name="arriba" size={14} />
+          </Button>
+        </div>
       </div>
     </div>
   );

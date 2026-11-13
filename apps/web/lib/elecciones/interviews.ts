@@ -52,12 +52,20 @@ export const visualIds = ['verificador', 'rotulo', 'documento', 'accion'] as con
 
 export const verdicts = {
   legal: { name: 'Cierto', text: 'Es verdad', color: '#2F7A4A' },
-  amarilla: { name: 'Con matices', text: 'Impreciso o incompleto', color: 'var(--brand-yellow)' },
-  fuera: { name: 'Engañoso', text: 'Fuera de contexto o engañoso', color: 'var(--brand-orange)' },
+  amarilla: {
+    name: 'Con matices',
+    text: 'Es verdad a medias: impreciso, exagerado o incompleto',
+    color: 'var(--brand-yellow)',
+  },
+  fuera: {
+    name: 'Engañoso',
+    text: 'Saca el dato de contexto o lleva a engaño',
+    color: 'var(--brand-orange)',
+  },
   roja: { name: 'Falso', text: 'Es falso', color: 'var(--brand)' },
   sinfuente: {
     name: 'Sin fuente',
-    text: 'No hay ninguna fuente que lo confirme o lo desmienta',
+    text: 'Ninguna fuente lo confirma ni lo desmiente',
     color: 'var(--muted-foreground)',
   },
 } as const satisfies Record<z.infer<typeof verdict>, object>;

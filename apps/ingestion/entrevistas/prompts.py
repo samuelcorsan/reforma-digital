@@ -139,11 +139,12 @@ Explica en tres o cuatro frases, en tono neutral, qué dicen los datos y si la a
 anécdota o no encuentras fuentes que permitan concluir, dilo claramente: no supongas."""
 
 AGRUPAR_COMUNES = """Estas son las preguntas que se hicieron a los candidatos en entrevistas distintas de la misma \
-ronda, marcadas como comunes. Formato: id | candidato | pregunta tal como la hizo.
+ronda. Formato: id | candidato | pregunta tal como la hizo.
 
 {lista}
 
-Agrupa las que preguntan lo mismo (aunque estén formuladas distinto). Para cada grupo: tema (una palabra o dos), \
+Agrupa las que preguntan lo mismo a más de un candidato (aunque estén formuladas distinto); las que solo se \
+hicieron a uno se quedan fuera. Para cada grupo: tema (una palabra o dos), \
 pregunta (redacción neutral y corta, máximo 15 palabras, que valga para todos) e ids (los ids del grupo, como \
 mucho uno por candidato). Devuelve solo grupos con al menos dos candidatos. No inventes ids."""
 

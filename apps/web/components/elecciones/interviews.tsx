@@ -4,6 +4,11 @@ import { cn } from '@reforma-digital/design/lib/utils';
 import { Badge } from '@reforma-digital/design/ui/badge';
 import { buttonVariants } from '@reforma-digital/design/ui/button';
 import { Card } from '@reforma-digital/design/ui/card';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@reforma-digital/design/ui/collapsible';
 import { decimal, formatDate, longDate, minute } from '../../lib/elecciones/format';
 import {
   allVerifications,
@@ -59,6 +64,7 @@ import {
 } from './compare-board';
 import { InterviewPlayer } from './interview-player';
 import { answerStyles, IconChip, MarkIcon, markIcons } from './mark-icon';
+import { PageIndex } from './page-index';
 import { PhotoCredits, Portrait } from './portrait';
 import { ScoreSimulator } from './score-simulator';
 import { ShareButton } from './share-button';
@@ -180,12 +186,12 @@ const steps: { title: string; text: string; ai?: boolean }[] = [
   },
   {
     title: 'Contraste con fuentes',
-    text: 'Cada dato, contra el INE, Eurostat, el BOE o el Banco de España.',
+    text: 'Cada dato se busca en el INE, Eurostat, el BOE o el Banco de España.',
     ai: true,
   },
   {
     title: 'Segunda revisión',
-    text: 'Otra IA abre cada fuente y confirma, corrige o descarta la calificación. Nadie la revisa a mano.',
+    text: 'Otra pasada de IA abre cada fuente y confirma, corrige o descarta la calificación. Ninguna persona la revisa.',
     ai: true,
   },
   { title: 'El informe', text: 'Cada calificación con su explicación y sus fuentes.' },
@@ -220,7 +226,7 @@ const features: { icon: IconName; color?: string; title: string; text: string }[
   {
     icon: markIcons.critica,
     title: 'Si critica o ataca',
-    text: 'Críticas a la política de otros frente a ataques personales e interrupciones.',
+    text: 'Si critica las políticas de otros o ataca a las personas, y cuántas veces interrumpe.',
   },
   {
     icon: 'documento',
@@ -256,8 +262,8 @@ export function InterviewsHome() {
               Qué dicen los candidatos y si es verdad
             </h1>
             <p className="m-0 max-w-[52ch] text-lg leading-relaxed text-muted-foreground">
-              Sus entrevistas largas, analizadas con IA. Cada dato que dan se contrasta con fuentes
-              oficiales y cada entrevista acaba con una nota sobre 10, con los pesos a la vista.
+              La IA analiza sus entrevistas largas: busca cada dato que dan en fuentes oficiales y
+              les pone una valoración sobre 10, con los criterios a la vista.
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-2">
@@ -350,7 +356,7 @@ export function InterviewsHome() {
         </Grid>
         <div className="mt-4">
           <PhotoCredits people={candidates}>
-            <p className="m-0">De menos a más escaños en las generales de 2023.</p>
+            <p className="m-0">Ordenados de menos a más escaños en las generales de 2023.</p>
           </PhotoCredits>
         </div>
       </ReportSection>
@@ -464,9 +470,7 @@ function VerificationCard({
     <Cell className="gap-4">
       <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
         <Verdict id={r.veredicto} />
-        <span className="font-mono text-sm text-muted-foreground tabular-nums">
-          minuto {minute(r.segundo)}
-        </span>
+        <Jump interview={a} second={r.segundo} />
         <Unreviewed estado={r.estado} />
       </p>
       {named && (
@@ -495,45 +499,202 @@ function VerificationCard({
   );
 }
 
+// Lo que no se sostiene, primero.
+const verdictOrder = ['roja', 'fuera', 'amarilla', 'sinfuente', 'legal'] as const;
+
+// «▶ 20:22»: el vídeo en ese minuto. En el informe, el reproductor intercepta el enlace y lo pone
+// sin mover la página; desde otra página, abre el informe en ese minuto.
+function Jump({ interview: a, second }: { interview: Interview; second: number }) {
+  return (
+    <a
+      href={`${interviewsHref(a.id)}?t=${Math.floor(second)}#minuto`}
+      aria-label={`Ver en el vídeo, minuto ${minute(second)}`}
+      className="inline-flex min-h-8 items-center gap-1.5 self-start justify-self-start rounded-full px-2.5 font-mono text-sm tabular-nums no-underline ring-1 ring-border transition-colors hover:bg-muted motion-reduce:transition-none"
+    >
+      <Icon name="reproducir" size={12} />
+      {minute(second)}
+    </a>
+  );
+}
+
+// Un bloque plegado: se ve el resumen y se despliega el resto.
+function Fold({ summary, children }: { summary: ReactNode; children: ReactNode }) {
+  return (
+    <Collapsible>
+      <CollapsibleTrigger className="group flex min-h-11 w-full items-center gap-3 text-left">
+        {summary}
+        <span
+          aria-hidden="true"
+          className="ml-auto flex shrink-0 group-data-open:rotate-180 motion-safe:transition-transform"
+        >
+          <Icon name="abajo" size={16} />
+        </span>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="grid gap-3 pt-2">{children}</CollapsibleContent>
+    </Collapsible>
+  );
+}
+
+// Cuántas hay de cada calificación, y un enlace a su grupo.
+function VerdictLinks({ interview: a }: { interview: Interview }) {
+  return (
+    <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
+      {verdictOrder.map((id) => {
+        const n = a.revisiones.filter((r) => r.veredicto === id).length;
+        return (
+          n > 0 && (
+            <li key={id}>
+              <a
+                href={`#v-${id}`}
+                className="inline-flex min-h-11 items-center gap-2 rounded-full py-1 pr-4 pl-1.5 no-underline ring-1 ring-border transition-colors hover:bg-muted motion-reduce:transition-none"
+              >
+                <MarkIcon kind={id} color={verdicts[id].color} className="size-8" />
+                {verdicts[id].name}
+                <span className="font-mono text-sm text-muted-foreground tabular-nums">{n}</span>
+              </a>
+            </li>
+          )
+        );
+      })}
+    </ul>
+  );
+}
+
+// Una verificación en una fila: la cita a la vista; el porqué y las fuentes, al desplegar.
+function VerificationItem({
+  interview: a,
+  verification: r,
+}: {
+  interview: Interview;
+  verification: Verification;
+}) {
+  return (
+    <li className="grid gap-2 border-b border-border py-4 last:border-0">
+      <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <Jump interview={a} second={r.segundo} />
+        <Unreviewed estado={r.estado} />
+      </p>
+      <blockquote className="m-0 font-heading text-lg leading-snug">«{r.cita}»</blockquote>
+      <Fold summary={<span className="text-sm font-medium">Por qué y fuentes</span>}>
+        <p className="m-0 text-muted-foreground">{r.explicacion}</p>
+        <Sources items={r.fuentes} />
+        <Link
+          href={interviewsHref(`${a.id}/${r.id}`)}
+          className="self-start text-sm underline underline-offset-4"
+        >
+          Enlace a esta verificación
+        </Link>
+      </Fold>
+    </li>
+  );
+}
+
+type Question = Interview['preguntas'][number];
+function QuestionItem({
+  interview: a,
+  question: q,
+  shared,
+}: {
+  interview: Interview;
+  question: Question;
+  // Si está en un grupo de preguntas comunes de su ronda.
+  shared: boolean;
+}) {
+  return (
+    <li className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-b border-border py-4 last:border-0">
+      <Jump interview={a} second={q.segundo} />
+      <span className="grid gap-2">
+        <span className="leading-snug">{q.texto}</span>
+        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <i
+              aria-hidden="true"
+              className={cn('block size-3 rounded-[3px]', answerStyles[q.respuesta])}
+            />
+            {answers[q.respuesta]}
+          </span>
+          {q.repregunta && (
+            <span className="inline-flex items-center gap-1.5">
+              <MarkIcon kind="repregunta" className="size-5" /> Repregunta
+            </span>
+          )}
+          {shared && <span>También se la hicieron a otros candidatos</span>}
+        </span>
+      </span>
+    </li>
+  );
+}
+
+// Las preguntas por tema, en el orden en que salen: el tema es el que suena en ese segundo.
+function questionsByTopic(a: Interview) {
+  const groups = new Map<string, Question[]>();
+  for (const q of [...a.preguntas].sort((x, y) => x.segundo - y.segundo)) {
+    const topic =
+      a.temas.find((t) => t.inicio <= q.segundo && q.segundo < t.fin)?.tema ?? 'Otros temas';
+    groups.set(topic, [...(groups.get(topic) ?? []), q]);
+  }
+  return [...groups];
+}
+
 export function ReportSections({ interview: a }: { interview: Interview }) {
   const proposals = [...a.propuestas].sort((x, y) => proposalScore(y) - proposalScore(x));
+  const shared = new Set(
+    (a.jornada ? commonQuestions(a.jornada) : []).flatMap((q) => q.respuestas[a.candidato] ?? []),
+  );
   return (
     <>
       {a.revisiones.length > 0 && (
-        <ReportSection title="Lo que afirma, verificado">
+        <ReportSection id="verificaciones" title="Lo que afirma, verificado">
           <AI label="Verificado y revisado con IA">
             <p>
-              Cada afirmación comprobable, contrastada con fuentes oficiales enlazadas y comprobada
-              por una segunda revisión de IA. Nadie la revisa a mano. Las que llevan «Sin revisar»
-              aún no han pasado esa segunda revisión.
+              La IA busca cada dato en fuentes oficiales y lo califica. Una segunda pasada de IA
+              abre esas fuentes y confirma o corrige la calificación; ninguna persona las revisa.
+              «Sin revisar» marca las que aún no han pasado esa segunda pasada.
             </p>
           </AI>
-          <ul className="m-0 mt-6 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
-            {a.revisiones.map((r) => (
-              <li key={r.id} className="grid">
-                <VerificationCard interview={a} verification={r} />
-              </li>
-            ))}
-          </ul>
+          <div className="mt-6 grid gap-4">
+            <VerdictLinks interview={a} />
+            {verdictOrder.map((id) => {
+              const list = a.revisiones.filter((r) => r.veredicto === id);
+              return (
+                list.length > 0 && (
+                  <div key={id} id={`v-${id}`} className="grid scroll-mt-40">
+                    <Cell className="gap-2">
+                      <h3 className="m-0 flex items-center gap-3 font-heading text-2xl leading-tight font-normal">
+                        <MarkIcon kind={id} color={verdicts[id].color} />
+                        {verdicts[id].name}
+                        <span className="text-muted-foreground tabular-nums">{list.length}</span>
+                      </h3>
+                      <p className="m-0 text-sm text-muted-foreground">{verdicts[id].text}</p>
+                      <ul className="m-0 grid list-none gap-x-10 p-0 md:grid-cols-2">
+                        {list.map((r) => (
+                          <VerificationItem key={r.id} interview={a} verification={r} />
+                        ))}
+                      </ul>
+                    </Cell>
+                  </div>
+                )
+              );
+            })}
+          </div>
         </ReportSection>
       )}
 
       {a.momentos.length > 0 && (
-        <ReportSection title="Momentos clave">
+        <ReportSection id="momentos" title="Momentos clave">
           <Grid>
             {a.momentos.map((m) => (
               <Cell
                 key={m.id}
                 span={4}
                 label={
-                  <MarkLabel kind="momento">
-                    {unreviewed(moments[m.tipo].name, m.estado)} · {minute(m.segundo)}
-                  </MarkLabel>
+                  <MarkLabel kind="momento">{unreviewed(moments[m.tipo].name, m.estado)}</MarkLabel>
                 }
               >
                 <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{m.titulo}</h3>
                 <p className="m-0">«{m.cita}»</p>
                 <p className="m-0 text-sm text-muted-foreground">{m.porQue}</p>
+                <Jump interview={a} second={m.segundo} />
               </Cell>
             ))}
           </Grid>
@@ -541,7 +702,7 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
       )}
 
       {proposals.length > 0 && (
-        <ReportSection title="Lo que propone">
+        <ReportSection id="propuestas" title="Lo que propone">
           <Grid>
             {proposals.map((p) => {
               const kind = proposalKind(p);
@@ -549,13 +710,10 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                 <Cell
                   key={p.id}
                   span={6}
-                  label={
-                    <MarkLabel kind={kind}>
-                      {proposalKinds[kind]} · {minute(p.segundo)}
-                    </MarkLabel>
-                  }
+                  label={<MarkLabel kind={kind}>{proposalKinds[kind]}</MarkLabel>}
                 >
                   <p className="m-0 text-lg leading-snug">{p.texto}</p>
+                  <Jump interview={a} second={p.segundo} />
                   {/* Lo que dice y lo que le falta: cuatro casillas iguales, con icono y texto. */}
                   <ul className="m-0 mt-auto grid list-none grid-cols-4 gap-1.5 p-0 text-sm max-sm:grid-cols-2">
                     {(
@@ -589,7 +747,7 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
       )}
 
       {a.ataques.length > 0 && (
-        <ReportSection title="Críticas a otros">
+        <ReportSection id="criticas" title="Críticas a otros">
           <Cell>
             <ul className="m-0 grid list-none gap-4 p-0">
               {a.ataques.map((x) => (
@@ -600,10 +758,11 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                   <Label>
                     <MarkLabel kind={x.tipo === 'personal' ? 'ataque' : 'critica'}>
                       {x.tipo === 'personal' ? 'Ataque personal' : 'Crítica política'} · a{' '}
-                      {x.objetivo} · {minute(x.segundo)}
+                      {x.objetivo}
                     </MarkLabel>
                   </Label>
                   <p className="m-0">«{x.texto}»</p>
+                  <Jump interview={a} second={x.segundo} />
                 </li>
               ))}
             </ul>
@@ -611,7 +770,7 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
         </ReportSection>
       )}
       {a.preguntas.length > 0 && (
-        <ReportSection title={`Las ${a.preguntas.length} preguntas`}>
+        <ReportSection id="preguntas" title={`Las ${a.preguntas.length} preguntas`}>
           <ul className="m-0 mb-4 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-sm text-muted-foreground">
             {answerIds.map((k) => (
               <li key={k} className="flex items-center gap-1.5">
@@ -623,45 +782,49 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
               </li>
             ))}
           </ul>
-          <Grid>
-            <Cell className="gap-0 py-2 lg:py-2">
-              <ol className="m-0 grid list-none gap-x-10 p-0 md:grid-cols-2">
-                {[...a.preguntas]
-                  .sort((x, y) => x.segundo - y.segundo)
-                  .map((q) => (
-                    <li
-                      key={q.id}
-                      className="grid grid-cols-[3rem_minmax(0,1fr)] gap-3 border-b border-border py-4"
-                    >
-                      <span className="pt-0.5 font-mono text-sm text-muted-foreground tabular-nums">
-                        {minute(q.segundo)}
-                      </span>
-                      <span className="grid gap-2">
-                        <span className="leading-snug">{q.texto}</span>
-                        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-                          <span className="inline-flex items-center gap-1.5">
+          <Cell className="gap-0 py-2 lg:py-2">
+            <ul className="m-0 grid list-none p-0">
+              {questionsByTopic(a).map(([topic, list]) => (
+                <li key={topic} className="border-b border-border py-2 last:border-0">
+                  <Fold
+                    summary={
+                      <span className="grid gap-1.5">
+                        <span className="font-medium">
+                          {topic}{' '}
+                          <span className="font-normal text-muted-foreground">
+                            · {list.length} {list.length === 1 ? 'pregunta' : 'preguntas'}
+                          </span>
+                        </span>
+                        {/* Cómo responde a cada una, en orden: el texto de dentro da el detalle. */}
+                        <span aria-hidden="true" className="flex flex-wrap gap-1">
+                          {list.map((q) => (
                             <i
-                              aria-hidden="true"
+                              key={q.id}
                               className={cn(
                                 'block size-3 rounded-[3px]',
                                 answerStyles[q.respuesta],
                               )}
                             />
-                            {answers[q.respuesta]}
-                          </span>
-                          {q.repregunta && (
-                            <span className="inline-flex items-center gap-1.5">
-                              <MarkIcon kind="repregunta" className="size-5" /> Repregunta
-                            </span>
-                          )}
-                          {q.comun && <span>Pregunta común a los cuatro</span>}
+                          ))}
                         </span>
                       </span>
-                    </li>
-                  ))}
-              </ol>
-            </Cell>
-          </Grid>
+                    }
+                  >
+                    <ol className="m-0 grid list-none gap-x-10 p-0 md:grid-cols-2">
+                      {list.map((q) => (
+                        <QuestionItem
+                          key={q.id}
+                          interview={a}
+                          question={q}
+                          shared={shared.has(q.id)}
+                        />
+                      ))}
+                    </ol>
+                  </Fold>
+                </li>
+              ))}
+            </ul>
+          </Cell>
         </ReportSection>
       )}
 
@@ -699,7 +862,7 @@ function Profile({ interview: a }: { interview: Interview }) {
     </dl>
   );
   return (
-    <ReportSection title="Su perfil">
+    <ReportSection id="perfil" title="Su perfil">
       <Grid>
         <Cell span={6} label="Cómo habla">
           {rows([
@@ -725,8 +888,8 @@ function Profile({ interview: a }: { interview: Interview }) {
             </p>
           )}
           <p className="m-0 text-sm text-muted-foreground">
-            Señales observables en la transcripción, no un diagnóstico: no dicen si alguien está
-            nervioso ni si es sincero.
+            Son recuentos sobre la transcripción. No dicen si alguien está nervioso ni si es
+            sincero.
           </p>
         </Cell>
         <Cell span={6} label={`Cómo le trató ${who}`}>
@@ -902,7 +1065,20 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
         </div>
       </Card>
 
-      <ReportSection title="Minuto a minuto">
+      <PageIndex
+        items={[
+          ['minuto', 'Minuto a minuto'],
+          ['cifras', 'Las cifras'],
+          [a.revisiones.length > 0 && 'verificaciones', 'Verificaciones'],
+          [a.momentos.length > 0 && 'momentos', 'Momentos clave'],
+          [a.propuestas.length > 0 && 'propuestas', 'Propuestas'],
+          [a.ataques.length > 0 && 'criticas', 'Críticas'],
+          [a.preguntas.length > 0 && 'preguntas', 'Preguntas'],
+          ['perfil', 'Perfil'],
+        ]}
+      />
+
+      <ReportSection id="minuto" title="Minuto a minuto">
         <InterviewPlayer
           youtubeId={a.youtubeId}
           source={a.youtubeId ? null : video}
@@ -923,7 +1099,7 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
         />
       </ReportSection>
 
-      <ReportSection title="Las cifras de la entrevista">
+      <ReportSection id="cifras" title="Las cifras de la entrevista">
         <Grid>
           <Cell span={6} label="La valoración, criterio a criterio">
             <Bars
@@ -961,8 +1137,8 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
               })}
             />
             <p className="m-0 text-sm text-muted-foreground">
-              {a.preguntas.filter((p) => p.repregunta).length} repreguntas: el entrevistador insiste
-              porque no le han contestado.
+              {a.preguntas.filter((p) => p.repregunta).length} repreguntas: las veces que el
+              entrevistador insiste porque no le han contestado.
             </p>
           </Cell>
           <Cell span={6} label="Las afirmaciones verificadas">
@@ -1106,7 +1282,14 @@ export function VerificationPage({
         </Cell>
       </Grid>
       <div className="mt-8">
-        <Explore links={[{ href: interviewsHref(a.id), text: 'El informe completo' }]} />
+        <Explore
+          links={[
+            {
+              href: `${interviewsHref(a.id)}?t=${Math.floor(r.segundo)}#minuto`,
+              text: 'El informe completo, en este minuto',
+            },
+          ]}
+        />
       </div>
     </>
   );
@@ -1168,9 +1351,9 @@ export function VerificationsIndex({
     <>
       <ReportIntro title="Todo lo verificado">
         <p>
-          Cada afirmación comprobable de las entrevistas, contrastada con fuentes oficiales y
-          comprobada por una segunda revisión de IA. Las que llevan «Sin revisar» aún no han pasado
-          por ella.
+          Los datos que dan los candidatos en sus entrevistas, buscados en fuentes oficiales y
+          calificados por la IA. Una segunda pasada de IA confirma o corrige cada calificación;
+          ninguna persona las revisa. Las que llevan «Sin revisar» aún no han pasado por ella.
         </p>
       </ReportIntro>
       {all.length === 0 ? (
@@ -1442,9 +1625,8 @@ export function InterviewsCompare({ roundId }: { roundId?: string }) {
     <>
       <ReportIntro title="Lado a lado">
         <p>
-          El perfil de cada candidato, las preguntas que se hicieron a varios y todas las cifras de
-          cada entrevista. Mismas reglas y misma escala para todos, sin ganador. Solo se comparan
-          entrevistas de la misma ronda.
+          Las entrevistas de una misma ronda, con las mismas reglas y la misma escala: cómo responde
+          cada candidato, qué preguntas se repitieron y todas las cifras. No hay ganador.
         </p>
       </ReportIntro>
 
@@ -1596,14 +1778,14 @@ const fairness = [
     'Cada criterio tiene ejemplos fijos de lo que es un 0, un 5 y un 10. Nadie suspende solo por quedar el último.',
   ],
   [
-    'Normalizado',
-    'Se cuenta por pregunta y por hora, nunca en totales: las entrevistas duran distinto.',
+    'Por hora, no en totales',
+    'Se cuenta por pregunta y por hora, porque las entrevistas no duran lo mismo.',
   ],
   [
     'Muestras pequeñas',
     'Con pocas afirmaciones comprobables, la valoración se acerca al centro en lugar de dispararse.',
   ],
-  ['Mismo análisis', 'Mismo modelo, misma versión y mismas instrucciones para los cuatro.'],
+  ['Mismo análisis', 'Mismo modelo, misma versión y mismas instrucciones para todos.'],
   ['Margen de error', 'Cada valoración lleva su margen. Si dos se solapan, es un empate.'],
   [
     'Solo lo comparable',
@@ -1616,9 +1798,10 @@ export function InterviewsMethod() {
     <>
       <ReportIntro title="Cómo se revisan las entrevistas">
         <p>
-          Se mide cómo responde cada candidato, no si tiene razón: rigor, claridad y sustancia, con
-          los mismos criterios para los cuatro. Todo lo hace la IA y lo comprueba una segunda
-          revisión de IA: nadie lo revisa a mano, por eso cada dato lleva su fuente enlazada.
+          La valoración no juzga las ideas de nadie. Mide cómo responde cada candidato: si sus datos
+          son ciertos, si va al grano y si concreta lo que propone, con los mismos criterios para
+          todos. Todo lo hace la IA y lo comprueba una segunda pasada de IA. Como ninguna persona lo
+          revisa a mano, cada dato lleva su fuente enlazada para que puedas comprobarlo.
         </p>
       </ReportIntro>
       <Grid>
@@ -1641,11 +1824,11 @@ export function InterviewsMethod() {
         <Cell span={5} label="Las calificaciones">
           <VerdictList />
           <p className="m-0 text-sm text-muted-foreground">
-            Cada afirmación se busca a fondo, con fuentes oficiales siempre que existan y, si no,
-            prensa de referencia, y se publica con sus enlaces. Si no aparece ninguna fuente que la
-            confirme o la desmienta, sale como «Sin fuente»: no se califica ni cuenta en la
-            valoración. Una segunda revisión de IA abre cada fuente y confirma o corrige la
-            calificación; lo que aún no ha pasado por ella va marcado como sin revisar.
+            Cada afirmación se busca primero en fuentes oficiales y, si no las hay, en prensa de
+            referencia, y se publica con los enlaces. Si ninguna fuente la confirma ni la desmiente,
+            sale como «Sin fuente»: no se califica ni cuenta en la valoración. Después, una segunda
+            pasada de IA abre cada fuente y confirma o corrige la calificación. Lo que aún no ha
+            pasado por ella lleva la marca «Sin revisar».
           </p>
           <ul className="m-0 flex list-none flex-wrap gap-2 p-0 text-sm">
             {officialSources.map((name) => (
@@ -1684,17 +1867,17 @@ export function InterviewsMethod() {
             ))}
           </dl>
           <p className="m-0 text-sm text-muted-foreground">
-            Los elige la IA con una cita literal, que se comprueba palabra por palabra en la
-            transcripción. Se eligen por su interés informativo, nunca por si favorecen o perjudican
-            a alguien.
+            Los elige la IA por su interés informativo, nunca por si favorecen o perjudican a
+            alguien. Cada uno lleva una cita literal, comprobada palabra por palabra en la
+            transcripción.
           </p>
         </Cell>
       </Grid>
 
       <ReportSection title="Pon tú los pesos">
         <p className="m-0 mb-6 max-w-[65ch] text-muted-foreground">
-          Dos candidatos ficticios con perfiles opuestos. Cambiar lo que más pesa puede cambiar
-          quién queda por delante: por eso los pesos son públicos.
+          Dos candidatos ficticios con perfiles opuestos. Mueve los pesos y verás que cambia quién
+          queda por delante: por eso son públicos.
         </p>
         <Grid>
           <Cell>
@@ -1713,13 +1896,14 @@ export function InterviewsMethod() {
         <Grid>
           <Cell span={6} label="Intensidad">
             <p className="m-0">
-              Por minuto: cambios de turno entre el entrevistador y el candidato (de al menos cuatro
-              palabras) + 3 × interrupciones + 2 × momentos de tensión (repreguntas, evasivas,
-              ataques personales, calificaciones que no son «Cierto» y choques).
+              Cada minuto suma los cambios de turno entre el entrevistador y el candidato (de cuatro
+              palabras o más), el triple por cada interrupción y el doble por cada momento de
+              tensión: repreguntas, evasivas, ataques personales, choques y datos que no salen
+              «Cierto».
             </p>
             <p className="m-0 text-sm text-muted-foreground">
-              Se dibuja con la misma escala para los cuatro: {intensityScale} puntos por minuto es
-              el máximo. Mide ida y vuelta, no emociones.
+              La escala es la misma para todos, con un máximo de {intensityScale} puntos por minuto.
+              Mide el ida y vuelta, no las emociones.
             </p>
           </Cell>
           <Cell span={6} label="Cómo habla">
@@ -1734,9 +1918,8 @@ export function InterviewsMethod() {
               ))}
             </dl>
             <p className="m-0 text-sm text-muted-foreground">
-              Se cuentan sobre la transcripción literal, con la misma lista para los cuatro. Son
-              señales observables, no un diagnóstico: no dicen si alguien está nervioso ni si es
-              sincero.
+              Se cuentan en la transcripción literal, con la misma lista para todos. No dicen si
+              alguien está nervioso ni si es sincero.
             </p>
           </Cell>
           <Cell label="Lo que solo se ve en el vídeo">
@@ -1753,7 +1936,7 @@ export function InterviewsMethod() {
             </dl>
             <p className="m-0 text-sm text-muted-foreground">
               Nunca se describen expresiones, emociones ni aspecto físico: no se pueden medir igual
-              para los cuatro.
+              para todos.
             </p>
           </Cell>
         </Grid>
@@ -1773,16 +1956,17 @@ export function InterviewsMethod() {
       <Grid>
         <Cell span={6} label="Qué entrevistas se revisan">
           <p className="m-0 max-w-[60ch]">
-            Por rondas: siempre los cuatro candidatos a la vez, nunca uno solo. Entrevistas
-            individuales y largas (30 minutos o más), en un medio de alcance nacional, publicadas
-            íntegras y en la misma semana. Si falta alguno de los cuatro, la ronda no se publica.
+            Por rondas: el mismo programa entrevista a los cuatro candidatos en la misma semana,
+            nunca a uno solo. Entrevistas individuales de 30 minutos o más, en un medio de alcance
+            nacional y publicadas íntegras. Si un candidato cancela, la ronda sale con los demás y
+            lo indica.
           </p>
         </Cell>
         <Cell span={6} label="Independencia y correcciones">
           <p className="m-0 max-w-[60ch]">
             Esta sección no tiene relación con los medios cuyas entrevistas analiza ni con ningún
-            partido, y los cuatro candidatos reciben el mismo tratamiento. Si hay un error, se
-            corrige a la vista, con la fecha y el motivo.
+            partido, y todos los candidatos reciben el mismo trato. Si hay un error, se corrige a la
+            vista, con la fecha y el motivo.
           </p>
         </Cell>
       </Grid>
