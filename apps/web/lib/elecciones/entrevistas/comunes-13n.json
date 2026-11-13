@@ -1,0 +1,93 @@
+[
+  {
+    "id": "c1",
+    "tema": "Abascal",
+    "pregunta": "¿Cómo definiría a Santiago Abascal?",
+    "respuestas": {
+      "ada-colau": "p132",
+      "alberto-nunez-feijoo": "p92",
+      "pedro-sanchez": "p92"
+    }
+  },
+  {
+    "id": "c2",
+    "tema": "Colau",
+    "pregunta": "¿Cómo definiría a Ada Colau?",
+    "respuestas": {
+      "alberto-nunez-feijoo": "p91",
+      "pedro-sanchez": "p90"
+    }
+  },
+  {
+    "id": "c3",
+    "tema": "Sánchez",
+    "pregunta": "¿Cómo definiría a Pedro Sánchez?",
+    "respuestas": {
+      "ada-colau": "p129",
+      "alberto-nunez-feijoo": "p93"
+    }
+  },
+  {
+    "id": "c4",
+    "tema": "Feijóo",
+    "pregunta": "¿Cómo definiría a Alberto Núñez Feijóo?",
+    "respuestas": {
+      "ada-colau": "p131",
+      "pedro-sanchez": "p91"
+    }
+  },
+  {
+    "id": "c5",
+    "tema": "Entrevista",
+    "pregunta": "¿Se arrepiente de haber venido a esta entrevista?",
+    "respuestas": {
+      "ada-colau": "p148",
+      "pedro-sanchez": "p98"
+    }
+  },
+  {
+    "id": "c6",
+    "tema": "Inmigración",
+    "pregunta": "¿Por qué cree que la inmigración preocupa tanto a la ciudadanía española?",
+    "respuestas": {
+      "ada-colau": "p69",
+      "pedro-sanchez": "p38"
+    }
+  },
+  {
+    "id": "c7",
+    "tema": "Ceuta",
+    "pregunta": "¿Quién es el responsable de la crisis migratoria de Ceuta?",
+    "respuestas": {
+      "ada-colau": "p49",
+      "alberto-nunez-feijoo": "p53"
+    }
+  },
+  {
+    "id": "c8",
+    "tema": "Ceuta",
+    "pregunta": "¿Qué habría hecho usted en la presidencia durante la crisis de Ceuta?",
+    "respuestas": {
+      "ada-colau": "p58",
+      "alberto-nunez-feijoo": "p51"
+    }
+  },
+  {
+    "id": "c9",
+    "tema": "Marruecos",
+    "pregunta": "¿Qué medidas diplomáticas adoptaría con Marruecos si se demuestra su responsabilidad?",
+    "respuestas": {
+      "ada-colau": "p59",
+      "alberto-nunez-feijoo": "p54"
+    }
+  },
+  {
+    "id": "c10",
+    "tema": "Palabra política",
+    "pregunta": "¿No cree que la palabra de un político debe mantenerse frente a contradicciones posteriores?",
+    "respuestas": {
+      "ada-colau": "p5",
+      "pedro-sanchez": "p82"
+    }
+  }
+]
