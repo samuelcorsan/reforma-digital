@@ -1,93 +1,176 @@
 [
   {
     "id": "c1",
-    "tema": "Abascal",
-    "pregunta": "¿Cómo definiría a Santiago Abascal?",
+    "tema": "Entrevista",
+    "pregunta": "¿Por qué aceptó venir a esta entrevista?",
     "respuestas": {
-      "ada-colau": "p132",
-      "alberto-nunez-feijoo": "p92",
-      "pedro-sanchez": "p92"
+      "ada-colau": "c1",
+      "alberto-nunez-feijoo": "c1"
     }
   },
   {
     "id": "c2",
-    "tema": "Colau",
-    "pregunta": "¿Cómo definiría a Ada Colau?",
+    "tema": "Polarización",
+    "pregunta": "¿No participan todos los partidos, también el suyo, de la crispación y el juego sucio?",
     "respuestas": {
-      "alberto-nunez-feijoo": "p91",
-      "pedro-sanchez": "p90"
+      "alberto-nunez-feijoo": "c7",
+      "pedro-sanchez": "c8"
     }
   },
   {
     "id": "c3",
-    "tema": "Sánchez",
-    "pregunta": "¿Cómo definiría a Pedro Sánchez?",
+    "tema": "Promesas",
+    "pregunta": "¿Qué garantiza que no cambiará de opinión sobre lo que promete hoy?",
     "respuestas": {
-      "ada-colau": "p129",
-      "alberto-nunez-feijoo": "p93"
+      "ada-colau": "c9",
+      "pedro-sanchez": "c142"
     }
   },
   {
     "id": "c4",
-    "tema": "Feijóo",
-    "pregunta": "¿Cómo definiría a Alberto Núñez Feijóo?",
+    "tema": "Trenes",
+    "pregunta": "¿Debería haber dimitido o haber sido cesado el ministro de Transportes tras el primer accidente ferroviario?",
     "respuestas": {
-      "ada-colau": "p131",
-      "pedro-sanchez": "p91"
+      "ada-colau": "c48",
+      "pedro-sanchez": "c14"
     }
   },
   {
     "id": "c5",
-    "tema": "Entrevista",
-    "pregunta": "¿Se arrepiente de haber venido a esta entrevista?",
+    "tema": "Zapatero",
+    "pregunta": "¿Cree que el caso de Zapatero es lawfare o pondría la mano en el fuego por él?",
     "respuestas": {
-      "ada-colau": "p148",
-      "pedro-sanchez": "p98"
+      "ada-colau": "c40",
+      "pedro-sanchez": "c110"
     }
   },
   {
     "id": "c6",
-    "tema": "Inmigración",
-    "pregunta": "¿Por qué cree que la inmigración preocupa tanto a la ciudadanía española?",
+    "tema": "CNI",
+    "pregunta": "¿Es creíble que el CNI y el Gobierno no supieran de antemano que miles de personas avanzaban hacia Ceuta?",
     "respuestas": {
-      "ada-colau": "p69",
-      "pedro-sanchez": "p38"
+      "ada-colau": "c67",
+      "pedro-sanchez": "c35"
     }
   },
   {
     "id": "c7",
     "tema": "Ceuta",
-    "pregunta": "¿Quién es el responsable de la crisis migratoria de Ceuta?",
+    "pregunta": "¿Quién es el responsable de la crisis de Ceuta? ¿Lo es Marruecos?",
     "respuestas": {
-      "ada-colau": "p49",
-      "alberto-nunez-feijoo": "p53"
+      "ada-colau": "c65",
+      "alberto-nunez-feijoo": "c58",
+      "pedro-sanchez": "c39"
     }
   },
   {
     "id": "c8",
     "tema": "Ceuta",
-    "pregunta": "¿Qué habría hecho usted en la presidencia durante la crisis de Ceuta?",
+    "pregunta": "¿Qué habría hecho usted como presidente durante la crisis de Ceuta?",
     "respuestas": {
-      "ada-colau": "p58",
-      "alberto-nunez-feijoo": "p51"
+      "ada-colau": "c74",
+      "alberto-nunez-feijoo": "c55"
     }
   },
   {
     "id": "c9",
     "tema": "Marruecos",
-    "pregunta": "¿Qué medidas diplomáticas adoptaría con Marruecos si se demuestra su responsabilidad?",
+    "pregunta": "¿Hay una especie de pleitesía del Gobierno español hacia Marruecos?",
     "respuestas": {
-      "ada-colau": "p59",
-      "alberto-nunez-feijoo": "p54"
+      "ada-colau": "c79",
+      "pedro-sanchez": "c47"
     }
   },
   {
     "id": "c10",
-    "tema": "Palabra política",
-    "pregunta": "¿No cree que la palabra de un político debe mantenerse frente a contradicciones posteriores?",
+    "tema": "Vacaciones",
+    "pregunta": "¿Cómo valora que el presidente del Gobierno se fuera de vacaciones durante la crisis de Ceuta?",
     "respuestas": {
-      "ada-colau": "p5",
-      "pedro-sanchez": "p82"
+      "ada-colau": "c69",
+      "pedro-sanchez": "c54"
+    }
+  },
+  {
+    "id": "c11",
+    "tema": "Marruecos",
+    "pregunta": "Si se demuestra que Marruecos participó en la crisis de Ceuta, ¿qué debe hacer el Gobierno de España con Marruecos?",
+    "respuestas": {
+      "ada-colau": "c76",
+      "alberto-nunez-feijoo": "c60"
+    }
+  },
+  {
+    "id": "c12",
+    "tema": "Inmigración",
+    "pregunta": "¿Por qué cree que la inmigración preocupa tanto en España?",
+    "respuestas": {
+      "ada-colau": "c86",
+      "pedro-sanchez": "c69"
+    }
+  },
+  {
+    "id": "c13",
+    "tema": "Demografía",
+    "pregunta": "¿Cómo valora la proyección del INE de que en 50 años alrededor del 40 % de los residentes en España haya nacido fuera?",
+    "respuestas": {
+      "ada-colau": "c100",
+      "alberto-nunez-feijoo": "c71",
+      "pedro-sanchez": "c79"
+    }
+  },
+  {
+    "id": "c14",
+    "tema": "Colau",
+    "pregunta": "¿Cómo definiría a Ada Colau?",
+    "respuestas": {
+      "alberto-nunez-feijoo": "c109",
+      "pedro-sanchez": "c145"
+    }
+  },
+  {
+    "id": "c15",
+    "tema": "Abascal",
+    "pregunta": "¿Cómo definiría a Santiago Abascal?",
+    "respuestas": {
+      "ada-colau": "c167",
+      "alberto-nunez-feijoo": "c110",
+      "pedro-sanchez": "c147"
+    }
+  },
+  {
+    "id": "c16",
+    "tema": "Sánchez",
+    "pregunta": "¿Cómo definiría a Pedro Sánchez?",
+    "respuestas": {
+      "ada-colau": "c164",
+      "alberto-nunez-feijoo": "c111"
+    }
+  },
+  {
+    "id": "c17",
+    "tema": "Feijóo",
+    "pregunta": "¿Cómo definiría a Alberto Núñez Feijóo?",
+    "respuestas": {
+      "ada-colau": "c166",
+      "pedro-sanchez": "c146"
+    }
+  },
+  {
+    "id": "c18",
+    "tema": "Entrevista",
+    "pregunta": "¿Se arrepiente de haber venido a esta entrevista?",
+    "respuestas": {
+      "ada-colau": "c186",
+      "pedro-sanchez": "c151"
+    }
+  },
+  {
+    "id": "c19",
+    "tema": "Alegato",
+    "pregunta": "Tiene la cámara para dirigirse libremente a los votantes: ¿qué les diría?",
+    "respuestas": {
+      "ada-colau": "c187",
+      "pedro-sanchez": "c152"
     }
   }
 ]

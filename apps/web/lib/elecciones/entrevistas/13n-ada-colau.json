@@ -14,24 +14,25 @@
   "duracion": 8052.0,
   "ficticio": false,
   "nota": {
-    "global": 6.3,
+    "global": 5.9,
     "margen": 0.2,
     "criterios": {
       "veracidad": 6.7,
-      "alGrano": 8.3,
-      "concrecion": 3.5,
-      "sustancia": 3.3,
+      "alGrano": 7.9,
+      "concrecion": 2.4,
+      "sustancia": 4.1,
       "juegoLimpio": 8.2,
-      "claridad": 10.0
+      "claridad": 10.0,
+      "propone": 3.9
     }
   },
   "stats": {
-    "alGrano": 70,
-    "remates": 1,
+    "alGrano": 66,
+    "remates": 8,
     "entradas": 31,
-    "balonesFuera": 14,
+    "balonesFuera": 28,
     "faltas": 14,
-    "cambios": 2
+    "cambios": 0
   },
   "segmentos": [
     {

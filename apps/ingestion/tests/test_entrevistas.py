@@ -6,7 +6,18 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from entrevistas import metricas, proceso
 from entrevistas.citas import localizar, normalizar
-from entrevistas.esquema import Analisis, Ataque, Extraccion, Pregunta, Propuesta, Revision, Segmento, Transcripcion
+from entrevistas.esquema import (
+    Analisis,
+    Ataque,
+    Compromiso,
+    Extraccion,
+    Pregunta,
+    PreguntaComunicacion,
+    Propuesta,
+    Revision,
+    Segmento,
+    Transcripcion,
+)
 from entrevistas.modelo import ClienteSimulado
 
 RAIZ = Path(__file__).resolve().parents[3]
@@ -38,7 +49,46 @@ def test_nota_entre_0_y_10_y_margen_positivo():
     n = metricas.nota(segmentos, preguntas, propuestas, ataques, revisiones, iteraciones=50)
     assert 0 <= n.global_ <= 10
     assert n.margen >= 0.2
-    assert set(n.criterios) == set(metricas.PESOS)
+    # «Propone» solo existe con análisis de comunicación
+    assert set(n.criterios) == set(metricas.PESOS) - {"propone"}
+
+
+def test_la_nota_usa_las_preguntas_y_compromisos_del_analisis_de_comunicacion(tmp_path, monkeypatch):
+    a = Analisis.model_validate(EJEMPLO).model_copy(update={"id": "13n-prueba"})
+    (tmp_path / "13n-prueba.json").write_text(
+        json.dumps(
+            {
+                "preguntas": [
+                    {"segundo": 10, "dureza": "neutra", "respuesta": "responde", "orientacion": "propone"},
+                    {"segundo": 20, "dureza": "incomoda", "respuesta": "otra_pregunta", "orientacion": "critica"},
+                    {"segundo": 30, "dureza": "neutra", "respuesta": "sin_respuesta", "orientacion": "ninguna"},
+                ],
+                "compromisos": [{"segundo": 10, "verificable": True}, {"segundo": 40, "verificable": False}],
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(proceso, "COMUNICACION", tmp_path)
+    r = proceso.recalcular(a)
+    # «No le dejan contestar» no cuenta: una de dos al grano, y un compromiso comprobable
+    assert (r.stats.alGrano, r.stats.balonesFuera, r.stats.remates) == (50, 1, 1)
+    # Con análisis de comunicación hay un criterio más: si propone o critica
+    assert "propone" in r.nota.criterios
+
+
+def test_al_grano_pesa_el_doble_ante_las_preguntas_duras():
+    def p(dureza, respuesta):
+        return PreguntaComunicacion(segundo=0, dureza=dureza, respuesta=respuesta, orientacion="ninguna")
+
+    esquiva_la_dura = [p("incomoda", "cambia_tema"), p("neutra", "responde")]
+    esquiva_la_facil = [p("incomoda", "responde"), p("neutra", "cambia_tema")]
+    assert metricas.criterios([], esquiva_la_dura, [], [], [])["alGrano"] < metricas.criterios([], esquiva_la_facil, [], [], [])["alGrano"]
+
+
+def test_un_compromiso_con_plazo_concreta_mas():
+    assert metricas.concrecion_de(Compromiso(segundo=0, verificable=True, plazo="el primer año")) == 1.0
+    assert metricas.concrecion_de(Compromiso(segundo=0, verificable=True)) == 0.75
+    assert metricas.concrecion_de(Compromiso(segundo=0, verificable=False, plazo="pronto")) == 0.0
 
 
 def test_solo_cuentan_las_revisiones_aprobadas():
@@ -294,6 +344,13 @@ def test_preguntas_comunes_se_agrupan_sin_inventar_ids_aunque_un_analisis_no_las
     grupos = proceso.agrupar_comunes(cliente, entrevistas)
     assert len(grupos) == len({p.texto.lower() for p in a.preguntas})  # cada pregunta, hecha a los dos
     assert all(set(g["respuestas"]) == {"pedro-sanchez", "alberto-nunez-feijoo"} for g in grupos)
+
+
+def test_con_analisis_de_comunicacion_se_agrupan_sus_preguntas(tmp_path, monkeypatch):
+    a = Analisis.model_validate(EJEMPLO).model_copy(update={"id": "13n-prueba"})
+    (tmp_path / "13n-prueba.json").write_text(json.dumps({"preguntas": [{"id": "c7", "texto": "¿Y la vivienda?"}]}), encoding="utf-8")
+    monkeypatch.setattr(proceso, "COMUNICACION", tmp_path)
+    assert proceso.preguntas_de(a) == [("c7", "¿Y la vivienda?")]
 
 
 def test_cortes_de_red_se_reintentan(monkeypatch):
