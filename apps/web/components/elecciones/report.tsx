@@ -317,16 +317,19 @@ export function ReportStats({ items }: { items: [number | string, string][] }) {
 }
 
 export function ReportSection({
+  id,
   title,
   action,
   children,
 }: {
+  // Para enlazarla desde un índice: el margen deja sitio a la cabecera y al índice fijos.
+  id?: string;
   title: string;
   action?: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <section className="my-16">
+    <section id={id} className="my-16 scroll-mt-40">
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4">
         <h2 className="m-0 font-heading text-[32px] leading-tight font-normal lg:text-[36px]">
           {title}

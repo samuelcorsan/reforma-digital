@@ -19,7 +19,7 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 from pathlib import Path
 
-from .esquema import Analisis, Extraccion, FichaEntrevista, SegundaRevision, Transcripcion
+from .esquema import Analisis, Extraccion, FichaEntrevista, SegundaRevision, TramoTema, Transcripcion
 from .modelo import ClienteGemini, ClienteSimulado
 from . import audio, proceso, sincronia
 
@@ -297,6 +297,25 @@ def cmd_nota(args):
     )
 
 
+def cmd_capitulos(args):
+    """Cambia los temas por los capítulos que el canal pone en la descripción del vídeo («Momentos
+    clave»): son los nombres que usa el propio medio. Lee los que yt-dlp guardó al descargar el audio.
+    `reanalizar` vuelve a poner los temas del modelo: después, hay que repetirlo."""
+    ruta = DATOS_WEB / f"{args.slug}.json"
+    info = BRUTOS / args.slug / "audio.info.json"
+    if not ruta.exists():
+        sys.exit(f"No existe {ruta.name}: usa el identificador de la entrevista (<jornada>-<candidato>).")
+    if not info.exists():
+        sys.exit(f"No está {info}: hace falta la descarga de `analizar` (sin --video).")
+    capitulos = json.loads(info.read_text(encoding="utf-8")).get("chapters") or []
+    if not capitulos:
+        sys.exit("El vídeo no tiene capítulos: se quedan los temas del análisis.")
+    a = Analisis.model_validate_json(ruta.read_text(encoding="utf-8"))
+    a.temas = [TramoTema(tema=c["title"], inicio=c["start_time"], fin=c["end_time"]) for c in capitulos]
+    ruta.write_text(a.a_json() + "\n", encoding="utf-8")
+    logging.info("%d capítulos de YouTube como temas → %s", len(a.temas), ruta)
+
+
 def cmd_anotar(args):
     """Nota de una comprobación a mano sobre una verificación (la usa la skill segunda-revision). No cambia el
     veredicto. El slug es una entrevista publicada (<ronda>-<candidato>) o la carpeta de un ensayo (ensayo-…)."""
@@ -523,6 +542,10 @@ def main():
     n = sub.add_parser("nota", help="Recalcula nota y estadísticas con las verificaciones aprobadas")
     n.add_argument("slug")
     n.set_defaults(f=cmd_nota)
+
+    cp = sub.add_parser("capitulos", help="Usa como temas los capítulos de la descripción de YouTube")
+    cp.add_argument("slug")
+    cp.set_defaults(f=cmd_capitulos)
 
     ra = sub.add_parser("reanalizar", help="Repite análisis, verificación y revisión sin volver a transcribir")
     ra.add_argument("slug", help="<ronda>-<candidato> o la carpeta de un ensayo (ensayo-…)")

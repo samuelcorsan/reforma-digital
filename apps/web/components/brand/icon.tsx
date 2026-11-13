@@ -2,6 +2,7 @@
 // aria-label del control que los contiene da el nombre.
 import type { ComponentType } from 'react';
 import {
+  IconBellOutline18,
   IconBoltOutline18,
   IconCalendarOutline18,
   IconCheckOutline18,
@@ -29,6 +30,7 @@ import {
   IconTargetOutline18,
   IconTriangleWarningOutline18,
   IconUserOutline18,
+  IconVolumeUpOutline18,
   IconXmarkOutline18,
 } from 'nucleo-ui-essential-outline-18';
 
@@ -64,6 +66,9 @@ const iconos = {
   pantalla: IconPresentationScreenOutline18,
   mano: IconHandOutline18,
   idea: IconLightbulb3Outline18,
+  // Los mandos del vídeo de las entrevistas.
+  campana: IconBellOutline18,
+  volumen: IconVolumeUpOutline18,
 } satisfies Record<string, Svg>;
 
 const pixelTurn = { derecha: 0, abajo: 90, izquierda: 180, arriba: 270 } as const;
