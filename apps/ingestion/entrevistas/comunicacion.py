@@ -345,6 +345,8 @@ def momentos_del_informe(bloques: list[dict]) -> list[dict]:
                     "segundo": _segundo(m.group(2)),
                     "quien": "jordi" if m.group(1) else "invitado",
                     "titulo": titulo[0].upper() + titulo[1:],
+                    # La primera cita del párrafo: lo que se oye en ese minuto, sin las medidas de voz y cara.
+                    "cita": cita.group(1) if (cita := re.search(r"«(.+?)»", b["texto"][m.end() :])) else None,
                 }
             )
     return momentos
@@ -450,11 +452,18 @@ def analisis(raiz: Path, slug: str) -> dict:
 
     preguntas = [
         {
+            # El número de la pregunta en la lectura: lo usan las preguntas comunes de la ronda
+            "id": f"c{p['n']}",
             "segundo": int(p["segundo"]),
             "tema": TEMAS[p["tema"]],
             "texto": p["pregunta"],
             "dureza": p["dureza"],
             "respuesta": p["respuesta"],
+            # Si la respuesta propone algo propio, critica a otros, las dos cosas o ninguna
+            "orientacion": p["orientacion"],
+            "aQuienCritica": p["a_quien_critica"],
+            # Quién cierra el intercambio: el invitado o el entrevistador, con un corte o un comentario suyo
+            "cierra": p["cierra"],
         }
         for p in _json(lectura / "preguntas.json")
     ]
@@ -485,6 +494,17 @@ def analisis(raiz: Path, slug: str) -> dict:
         "preguntas": preguntas,
         "temas": temas,
         "promesas": {"total": len(promesas), "verificables": sum(bool(x["verificable"]) for x in promesas)},
+        "compromisos": [
+            {
+                "segundo": int(x["segundo"]),
+                "cita": x["cita"],
+                "compromiso": x["compromiso"],
+                "verificable": bool(x["verificable"]),
+                "plazo": x["plazo"],
+                "condicion": x["condicion"],
+            }
+            for x in promesas
+        ],
         "sintonia": sintonia,
         "trabas": trabas,
         "pausas": pausas,

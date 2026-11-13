@@ -665,1068 +665,1679 @@
   },
   "preguntas": [
     {
+      "id": "c1",
       "segundo": 117,
       "tema": "Formato y presentación",
       "texto": "me parece tan surrealista que estés sentado en la misma silla que Joseba Salauténtico",
       "dureza": "comoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c2",
       "segundo": 158,
       "tema": "Formato y presentación",
       "texto": "mi misión hoy es ponerte en un aprieto, igual que a todos",
       "dureza": "comoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c3",
       "segundo": 232,
       "tema": "Asuntos personales",
       "texto": "¿por qué no decides dar un paso al lado, quizás vivir más tranquilo, quizás vivir más feliz y de alguna forma ceder el testigo",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c4",
       "segundo": 351,
       "tema": "Asuntos personales",
       "texto": "¿Por qué no decir, mira, ya he cumplido, yo he dado lo que he podido y ahora tranquilidad",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c5",
       "segundo": 363,
       "tema": "Asuntos personales",
       "texto": "Sí, pero no se puede comparar la responsabilidad de un presidente con un tío como yo",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c6",
       "segundo": 485,
       "tema": "Asuntos personales",
       "texto": "y sabes cómo van los memes. ¿Tú qué sientes, sinceramente?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Javier Milei", "responsables políticos que lo corean"],
+      "cierra": "invitado"
     },
     {
+      "id": "c7",
       "segundo": 561,
       "tema": "Rivales",
       "texto": "que también es difícil encontrar a un responsable político que directamente te llame hijo de puta a la cara",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Santiago Abascal"],
+      "cierra": "invitado"
     },
     {
+      "id": "c8",
       "segundo": 578,
       "tema": "Rivales",
       "texto": "Sí, pero el juego sucio es bidireccional. Yo he escuchado cosas vuestras también. A ti te he escuchado la fachosfera, máquina de fango",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c9",
       "segundo": 631,
       "tema": "Rivales",
       "texto": "Quiero decir que al final todos tenéis parte de culpa en esto.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Santiago Abascal", "Alberto Núñez Feijóo", "oposición"],
+      "cierra": "invitado"
     },
     {
+      "id": "c10",
       "segundo": 726,
       "tema": "Rivales",
       "texto": "En campaña han tenido problemas incluso de intentos de asalto durante sus meetings y sus reuniones",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["autores de agresiones a sedes y militantes del PSOE"],
+      "cierra": "invitado"
     },
     {
+      "id": "c11",
       "segundo": 756,
       "tema": "Rivales",
       "texto": "yo escucho a veces un discurso demasiado victimista cuando yo creo que el fango lo estáis repartiendo todos",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c12",
       "segundo": 796,
       "tema": "Rivales",
       "texto": "Pero los dos la habéis cruzado Yo he visto peleas entre comillas en el Congreso que han sido muy verbalmente violentas",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c13",
       "segundo": 835,
       "tema": "Rivales",
       "texto": "yo a veces las comparaciones son odiosas porque yo prefiero sentarnos en nosotros que no comparar con lo que pasa con los demás",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c14",
       "segundo": 882,
       "tema": "Infraestructuras y transporte",
       "texto": "¿Por qué no hay ya una dimisión o un cese? Cuando hay un accidente mortal y unos avisos de los sindicatos ferroviarios",
       "dureza": "incomoda",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ambas",
+      "aQuienCritica": ["gobierno de Mariano Rajoy"],
+      "cierra": "invitado"
     },
     {
+      "id": "c15",
       "segundo": 989,
       "tema": "Infraestructuras y transporte",
       "texto": "las averías son algo habitual, los retrasos son algo habitual y esto no es serio",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c16",
       "segundo": 1069,
       "tema": "Infraestructuras y transporte",
       "texto": "O sea, que se repitan dos accidentes en menos de un año es algo",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c17",
       "segundo": 1134,
       "tema": "Infraestructuras y transporte",
       "texto": "Pero el ser humano vigilado por un sistema mecánico, porque los humanos ya sabes cómo somos, imperfectos.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c18",
       "segundo": 1163,
       "tema": "Infraestructuras y transporte",
       "texto": "Cuando pasa el primer accidente, ¿por qué no hay claramente un responsable?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c19",
       "segundo": 1173,
       "tema": "Infraestructuras y transporte",
       "texto": "¿Cómo es posible que te apete tanto en determinar qué pasó?",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c20",
       "segundo": 1217,
       "tema": "Infraestructuras y transporte",
       "texto": "¿crees que tendría que haber habido más responsabilidad en el primer accidente?",
       "dureza": "insistencia",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Óscar Puente"],
+      "cierra": "invitado"
     },
     {
+      "id": "c21",
       "segundo": 1241,
       "tema": "Infraestructuras y transporte",
       "texto": "Claro, ahora con un segundo accidente, pero ya en el primero mucha gente pidió su cabeza.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c22",
       "segundo": 1269,
       "tema": "Infraestructuras y transporte",
       "texto": "en agosto de 2025 el sindicato de maquinistas pidió por escrito bajar la velocidad en cuatro líneas. Había avisos técnicos.",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Isabel Díaz Ayuso", "Carlos Mazón"],
+      "cierra": "invitado"
     },
     {
+      "id": "c23",
       "segundo": 1335,
       "tema": "Infraestructuras y transporte",
       "texto": "O sea, ¿tú crees que no hicisteis nada mal para evitar este segundo accidente?",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c24",
       "segundo": 1381,
       "tema": "Infraestructuras y transporte",
       "texto": "Creo que la gestión es mala porque si no no pasaría lo que ha pasado.",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Carlos Mazón"],
+      "cierra": "invitado"
     },
     {
+      "id": "c25",
       "segundo": 1466,
       "tema": "Infraestructuras y transporte",
       "texto": "y he escuchado muy poca autocrítica, casi se ha culpado más a los pobres que estaban ahí que al final",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c26",
       "segundo": 1492,
       "tema": "Infraestructuras y transporte",
       "texto": "Y esto hoy un poco habéis propuesto, ¿verdad?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c27",
       "segundo": 1503,
       "tema": "Infraestructuras y transporte",
       "texto": "Claro, hemos empezado flojos, ¿eh? Pero hemos empezado cañeros, ¿eh?",
       "dureza": "comoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c28",
       "segundo": 1525,
       "tema": "Infraestructuras y transporte",
       "texto": "¿No tendrías que haber dicho, no es que me sorprenda, es que era algo esperable?",
       "dureza": "incomoda",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Óscar Puente"],
+      "cierra": "invitado"
     },
     {
+      "id": "c29",
       "segundo": 1553,
       "tema": "Infraestructuras y transporte",
       "texto": "Solo faltaría que el ministro de un accidente no salga tres o cuatro o veinte horas a dar la cara.",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Alberto Núñez Feijóo", "PP"],
+      "cierra": "invitado"
     },
     {
+      "id": "c30",
       "segundo": 1597,
       "tema": "Infraestructuras y transporte",
       "texto": "Pero es que esto lo usa todo el mundo.",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ambas",
+      "aQuienCritica": ["PP"],
+      "cierra": "invitado"
     },
     {
+      "id": "c31",
       "segundo": 1634,
       "tema": "Infraestructuras y transporte",
       "texto": "Si no hubiera dimitido, ¿lo hubieras cesado?",
       "dureza": "incomoda",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c32",
       "segundo": 1644,
       "tema": "Infraestructuras y transporte",
       "texto": "es también entender cómo funciona el que quiere ser el siguiente o próximo presidente de España",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c33",
       "segundo": 1667,
       "tema": "Infraestructuras y transporte",
       "texto": "pero eso no es lo que te he preguntado si tú",
       "dureza": "insistencia",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c34",
       "segundo": 1739,
       "tema": "Medios y redes",
       "texto": "hay un momento en el que estamos tan saturados de noticias que había Ceuta, me parece, que fuera hace 14 años",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c35",
       "segundo": 1841,
       "tema": "Fronteras y Marruecos",
       "texto": "cosas diferentes, CNI sí, CNI no. ¿Qué sabíais exactamente antes de que sucediera?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c36",
       "segundo": 1881,
       "tema": "Fronteras y Marruecos",
       "texto": "no haya una forma de ver que una masa gigante de gente se está desplazando de un punto a otro?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Marruecos", "quien difundió el bulo"],
+      "cierra": "jordi"
     },
     {
+      "id": "c37",
       "segundo": 2057,
       "tema": "Fronteras y Marruecos",
       "texto": "Si el CNI no pudo prever esto, ¿por qué no ha habido consecuencias en el CNI? ¿Por qué no ha habido responsables?",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["servicios de inteligencia"],
+      "cierra": "invitado"
     },
     {
+      "id": "c38",
       "segundo": 2076,
       "tema": "Fronteras y Marruecos",
       "texto": "y también de que había unos bulos en redes sociales que estaban haciendo una concentración",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c39",
       "segundo": 2158,
       "tema": "Fronteras y Marruecos",
       "texto": "Y yo quiero ahora saber si tú, a día de hoy, consideras a Marruecos responsable de esto o no.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Marruecos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c40",
       "segundo": 2176,
       "tema": "Fronteras y Marruecos",
       "texto": "Pero una cosa, simplemente para acabar eso, en esa misma frase culpaste a Rusia y a Israel.",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["Marruecos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c41",
       "segundo": 2235,
       "tema": "Fronteras y Marruecos",
       "texto": "quiere frenar eso, no podría haberlo frenado?",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["Marruecos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c42",
       "segundo": 2268,
       "tema": "Fronteras y Marruecos",
       "texto": "fue de tener a una ciudad española en una situación pésima durante semanas",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c43",
       "segundo": 2292,
       "tema": "Fronteras y Marruecos",
       "texto": "Este dato, ¿cómo lo sabéis? Porque yo el baile de cifras ha sido terrible.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c44",
       "segundo": 2311,
       "tema": "Fronteras y Marruecos",
       "texto": "Pero a dedo es poco fiable una información que se cuenta a dedo.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c45",
       "segundo": 2410,
       "tema": "Fronteras y Marruecos",
       "texto": "si los han cometido no lo van a decir, y muchos iban indocumentados",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c46",
       "segundo": 2429,
       "tema": "Fronteras y Marruecos",
       "texto": "entonces tú a día de hoy aún no puedes decir que Marruecos estuvo involucrada",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c47",
       "segundo": 2471,
       "tema": "Fronteras y Marruecos",
       "texto": "a veces hay una especie de pleitesía del gobierno español hacia el gobierno marroquí",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c48",
       "segundo": 2552,
       "tema": "Fronteras y Marruecos",
       "texto": "y lo compran todos los países es un sistema que se ha puesto a la venta",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["Santiago Abascal"],
+      "cierra": "invitado"
     },
     {
+      "id": "c49",
       "segundo": 2572,
       "tema": "Fronteras y Marruecos",
       "texto": "Yo no te digo por el tema del hackeo, yo no te lo he mencionado.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c50",
       "segundo": 2585,
       "tema": "Fronteras y Marruecos",
       "texto": "¿Tú crees que los ceutis están contentos contigo?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c51",
       "segundo": 2600,
       "tema": "Fronteras y Marruecos",
       "texto": "Entonces, ¿por qué están enfadados contigo?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c52",
       "segundo": 2603,
       "tema": "Fronteras y Marruecos",
       "texto": "Entonces no se gestionó bien.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c53",
       "segundo": 2658,
       "tema": "Fronteras y Marruecos",
       "texto": "Bueno, claro, de momento no has dicho si el responsable es Marruecos o no.",
       "dureza": "insistencia",
-      "respuesta": "sin_respuesta"
+      "respuesta": "sin_respuesta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c54",
       "segundo": 2708,
       "tema": "Fronteras y Marruecos",
       "texto": "Pero en ese momento, ¿cómo se debe sentir el Zotí cuando su presidente está",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c55",
       "segundo": 2738,
       "tema": "Fronteras y Marruecos",
       "texto": "incluso para que la gente de Ceuta esté más tranquila o que tenga la sensación de que su presidente está más involucrado",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c56",
       "segundo": 2749,
       "tema": "Fronteras y Marruecos",
       "texto": "Te hablo de la gestión, ¿eh? En esos días.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c57",
       "segundo": 2808,
       "tema": "Fronteras y Marruecos",
       "texto": "Pero y el tema de imagen, a veces sabes que la percepción es muy importante",
       "dureza": "insistencia",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c58",
       "segundo": 2834,
       "tema": "Fronteras y Marruecos",
       "texto": "Claro, faltaría. Bueno, sí, es España.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["gobiernos anteriores"],
+      "cierra": "invitado"
     },
     {
+      "id": "c59",
       "segundo": 2872,
       "tema": "Fronteras y Marruecos",
       "texto": "Sí, que ha habido un esfuerzo para mejorarla, digamos.",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c60",
       "segundo": 2894,
       "tema": "Fronteras y Marruecos",
       "texto": "Tardaste 25 días aproximadamente en convocar el Consejo de Seguridad Nacional. En cambio, en el apagón lo convocaste inmediatamente.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c61",
       "segundo": 2922,
       "tema": "Fronteras y Marruecos",
       "texto": "¿Porque no era suficientemente grave?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c62",
       "segundo": 2947,
       "tema": "Fronteras y Marruecos",
       "texto": "Pero aún así durante días estaba colapsada de una forma bestial.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c63",
       "segundo": 2965,
       "tema": "Fronteras y Marruecos",
       "texto": "¿Cuánto tardasteis en crearlo?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c64",
       "segundo": 2969,
       "tema": "Fronteras y Marruecos",
       "texto": "¿Y no habría sido para crearlo al momento, al día siguiente?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c65",
       "segundo": 2980,
       "tema": "Fronteras y Marruecos",
       "texto": "Eras tú que habías dicho que, bueno, habías anunciado que estabas de vacaciones",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c66",
       "segundo": 3000,
       "tema": "Fronteras y Marruecos",
       "texto": "a veces no tan solo es el hecho de la percepción y eso es muy interesante",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c67",
       "segundo": 3031,
       "tema": "Fronteras y Marruecos",
       "texto": "la duración en la que Ceuta estuvo en un estado lamentable es bastante inaceptable",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c68",
       "segundo": 3080,
       "tema": "Fronteras y Marruecos",
       "texto": "También había mucho hombre joven también había, es decir",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c69",
       "segundo": 3133,
       "tema": "Inmigración",
       "texto": "¿Por qué crees que a la gente le preocupa tanto la inmigración?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["la izquierda"],
+      "cierra": "invitado"
     },
     {
+      "id": "c70",
       "segundo": 3351,
       "tema": "Inmigración",
       "texto": "Mucha gente no reconoce es su barrio. Y eso es un problema, porque eso crea desconfianza.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c71",
       "segundo": 3403,
       "tema": "Inmigración",
       "texto": "Cuando hay un crecimiento de población muy elevado en poco tiempo, evidentemente las cosas se saturan.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c72",
       "segundo": 3474,
       "tema": "Inmigración",
       "texto": "Esto es algo que tenéis que ir más a raíz, porque si no, lo que pasará es que la gente seguirá enfadada.",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c73",
       "segundo": 3492,
       "tema": "Inmigración",
       "texto": "Esa es la segunda causa de problema en España.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c74",
       "segundo": 3502,
       "tema": "Inmigración",
       "texto": "En los últimos años no ha bajado.",
       "dureza": "repregunta",
-      "respuesta": "sin_respuesta"
+      "respuesta": "sin_respuesta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c75",
       "segundo": 3519,
       "tema": "Inmigración",
       "texto": "Ah, pero Marruecos no lo habías dicho, ¿sí?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c76",
       "segundo": 3537,
       "tema": "Inmigración",
       "texto": "O sea, a veces yo escucho cosas que digo, es que no es lo que hay en la calle.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c77",
       "segundo": 3545,
       "tema": "Inmigración",
       "texto": "Sí, pero es que aquí tenemos que el marroquí, por ejemplo, es un porcentaje elevadísimo",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c78",
       "segundo": 3601,
       "tema": "Inmigración",
       "texto": "pero ahora algo no está funcionando",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c79",
       "segundo": 3663,
       "tema": "Inmigración",
       "texto": "¿Crees que es algo normal o crees que tenemos que empezar a frenarlo ya?",
       "dureza": "neutra",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c80",
       "segundo": 3732,
       "tema": "Inmigración",
       "texto": "No, yo creo que tenemos que tocar más el dinero.",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c81",
       "segundo": 3834,
       "tema": "Inmigración",
       "texto": "Creo que tenemos que enfrentar este debate, porque yo he visto desde la izquierda que ha dado mucho miedo este debate",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ambas",
+      "aQuienCritica": ["gobierno de Mariano Rajoy", "un delegado del Gobierno en Madrid"],
+      "cierra": "invitado"
     },
     {
+      "id": "c82",
       "segundo": 3896,
       "tema": "Inmigración",
       "texto": "Por eso han cambiado la fórmula que tienen con la inmigración porque no tenían esto antes",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ambas",
+      "aQuienCritica": ["ultraderecha"],
+      "cierra": "invitado"
     },
     {
+      "id": "c83",
       "segundo": 3999,
       "tema": "Inmigración",
       "texto": "aquí estamos viendo a veces un choque en el que no está funcionando",
       "dureza": "insistencia",
-      "respuesta": "sin_respuesta"
+      "respuesta": "sin_respuesta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c84",
       "segundo": 4004,
       "tema": "Formato y presentación",
       "texto": "vamos a pasar a más cositas, entonces ¿tengo más tiempo?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c85",
       "segundo": 4065,
       "tema": "Corrupción",
       "texto": "No estamos hablando tan solo de un ministro que se desvió. Se habla de una organización criminal que operó desde el",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Ábalos", "Koldo García", "Víctor de Aldama"],
+      "cierra": "invitado"
     },
     {
+      "id": "c86",
       "segundo": 4105,
       "tema": "Corrupción",
       "texto": "Son dos personas que han sido muy cercanas.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Ábalos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c87",
       "segundo": 4138,
       "tema": "Corrupción",
       "texto": "hay ciertas cosas que a mí me sorprende que no al menos preveyeras",
       "dureza": "repregunta",
-      "respuesta": "sin_respuesta"
+      "respuesta": "sin_respuesta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c88",
       "segundo": 4151,
       "tema": "Partido interno",
       "texto": "¿Y el viaje en que lo hicisteis? ¿En el Peugeot o en el Mercedes?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c89",
       "segundo": 4256,
       "tema": "Corrupción",
       "texto": "de verdad que me cuesta no pensar que ellos hicieron ese tipo de comentarios",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["Koldo García"],
+      "cierra": "invitado"
     },
     {
+      "id": "c90",
       "segundo": 4276,
       "tema": "Corrupción",
       "texto": "Pero Ábalos estaba ahí, hemos escuchado los audios de Ábalos.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Ábalos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c91",
       "segundo": 4285,
       "tema": "Corrupción",
       "texto": "Ni un comentario, ni una broma.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c92",
       "segundo": 4291,
       "tema": "Corrupción",
       "texto": "O sea, ni te lo imaginabas.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c93",
       "segundo": 4305,
       "tema": "Corrupción",
       "texto": "porque hablamos de organización criminal, o mirabas a otro lado. O sea, las dos son horribles.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Ábalos"],
+      "cierra": "jordi"
     },
     {
+      "id": "c94",
       "segundo": 4328,
       "tema": "Corrupción",
       "texto": "¿Tú qué sabías en ese momento, en 2021?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["José Luis Ábalos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c95",
       "segundo": 4358,
       "tema": "Corrupción",
       "texto": "lo sacas del PSOE, del partido también, lo sacas completamente y eso no tiene demasiado sentido",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["José Luis Ábalos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c96",
       "segundo": 4365,
       "tema": "Corrupción",
       "texto": "No le expulses, pero lo sacas del poder del partido.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c97",
       "segundo": 4377,
       "tema": "Corrupción",
       "texto": "No te imaginabas nada.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Ábalos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c98",
       "segundo": 4459,
       "tema": "Corrupción",
       "texto": "tú decías que casi no tenías trato. Y aquí yo veo un compañerismo y hasta admiración.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Mariano Rajoy", "dirección del PSOE de 2016", "Koldo García"],
+      "cierra": "invitado"
     },
     {
+      "id": "c99",
       "segundo": 4557,
       "tema": "Corrupción",
       "texto": "indica que hay un cierto cariño, que Coldo no era Era un desconocido para ti. Le dedicas un post en tu propio Instagram.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Koldo García"],
+      "cierra": "invitado"
     },
     {
+      "id": "c100",
       "segundo": 4583,
       "tema": "Corrupción",
       "texto": "O sea, aquí yo veo que sientes admiración por él.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Koldo García"],
+      "cierra": "invitado"
     },
     {
+      "id": "c101",
       "segundo": 4610,
       "tema": "Corrupción",
       "texto": "Pero no era un desconocido, era alguien con, seguro, hombre, ese no es muy raro",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Koldo García", "José Luis Ábalos", "Santos Cerdán"],
+      "cierra": "invitado"
     },
     {
+      "id": "c102",
       "segundo": 4652,
       "tema": "Corrupción",
       "texto": "¿Cuál de los dos te sorprendió más cuando te dan la noticia?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Ábalos", "Santos Cerdán"],
+      "cierra": "invitado"
     },
     {
+      "id": "c103",
       "segundo": 4679,
       "tema": "Corrupción",
       "texto": "elegidos por ti, tengan este problema, ¿qué dice de",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["José Luis Ábalos", "Santos Cerdán"],
+      "cierra": "invitado"
     },
     {
+      "id": "c104",
       "segundo": 4759,
       "tema": "Corrupción",
       "texto": "te daban vergüenza, bueno, no me acuerdo. ¿Lo llamaste?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Ábalos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c105",
       "segundo": 4799,
       "tema": "Corrupción",
       "texto": "La UCO atribuye al partido 43 .225 euros que le llegaron a través de intermediarios. ¿Tú sabes algo de esto?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Leire Díez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c106",
       "segundo": 4830,
       "tema": "Corrupción",
       "texto": "Bueno, es buscar trapos sucios, ¿no? ¿no?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c107",
       "segundo": 4838,
       "tema": "Corrupción",
       "texto": "¿Este caso te tiene tranquilo o te da miedo? Sabes que la UCO interpreta que a Leire Díaz se refería a ti como The One.",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["Leire Díez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c108",
       "segundo": 4869,
       "tema": "Corrupción",
       "texto": "¿Te has pensado incluso en querellarte contra ella?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c109",
       "segundo": 4884,
       "tema": "Corrupción",
       "texto": "¿A título personal o a título del partido?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c110",
       "segundo": 4906,
       "tema": "Corrupción",
       "texto": "estamos hablando de un expresidente. ¿Tú pondrías la mano en el fuego por él?",
       "dureza": "incomoda",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c111",
       "segundo": 4965,
       "tema": "Corrupción",
       "texto": "la pregunta era muy simple si tú personalmente a",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Rodríguez Zapatero"],
+      "cierra": "invitado"
     },
     {
+      "id": "c112",
       "segundo": 5032,
       "tema": "Corrupción",
       "texto": "No has hablado con él de este tema.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Rodríguez Zapatero"],
+      "cierra": "invitado"
     },
     {
+      "id": "c113",
       "segundo": 5043,
       "tema": "Corrupción",
       "texto": "Hombre, claro, si te pillan con algo que no está bien, pues como no te quieres quitar el marrón",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Rodríguez Zapatero"],
+      "cierra": "invitado"
     },
     {
+      "id": "c114",
       "segundo": 5049,
       "tema": "Corrupción",
       "texto": "Yo quiero saber tu opinión, pero te lo pido ya como persona.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Rodríguez Zapatero"],
+      "cierra": "invitado"
     },
     {
+      "id": "c115",
       "segundo": 5054,
       "tema": "Corrupción",
       "texto": "Tú pones en la mano que es inocente en ambos casos.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Rodríguez Zapatero"],
+      "cierra": "invitado"
     },
     {
+      "id": "c116",
       "segundo": 5066,
       "tema": "Corrupción",
       "texto": "te sorprendería mucho si esto va a mal y acaba siendo condenado",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["José Luis Rodríguez Zapatero"],
+      "cierra": "invitado"
     },
     {
+      "id": "c117",
       "segundo": 5097,
       "tema": "Vivienda",
       "texto": "ha dicho que vosotros habéis hecho cero en ocho años, que no habéis mejorado en nada la situación de la vivienda en España",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c118",
       "segundo": 5113,
       "tema": "Vivienda",
       "texto": "Son ocho años en que habéis mejorado la vivienda en España.",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c119",
       "segundo": 5226,
       "tema": "Vivienda",
       "texto": "¿creéis que habéis hecho suficiente como para que la situación de la vivienda en",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c120",
       "segundo": 5238,
       "tema": "Vivienda",
       "texto": "Pero la gente no quiere bases, quiere realidades, porque hoy en día se está volviendo cada vez más imposible el independizarte.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c121",
       "segundo": 5247,
       "tema": "Vivienda",
       "texto": "tenéis una responsabilidad que son ocho años de gobierno, que se pueden hacer cosas",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["comunidades autónomas y ayuntamientos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c122",
       "segundo": 5325,
       "tema": "Vivienda",
       "texto": "La realidad del país es que habéis tenido dos legislaturas y la situación de la vivienda es dramática.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": [
+        "políticas de vivienda de los últimos 40 años",
+        "la izquierda a su izquierda"
+      ],
+      "cierra": "invitado"
     },
     {
+      "id": "c123",
       "segundo": 5372,
       "tema": "Vivienda",
       "texto": "Tiene que haber más construcción privada también.",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c124",
       "segundo": 5417,
       "tema": "Vivienda",
       "texto": "A día de hoy, ¿cuántas están entregadas y con gente viviendo en ellas?",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c125",
       "segundo": 5447,
       "tema": "Vivienda",
       "texto": "pero en proceso no es lo mismo que la gente que ya está viviendo",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c126",
       "segundo": 5488,
       "tema": "Vivienda",
       "texto": "Pero no me has dado el dato más o menos exacto de cuánta gente está viviendo ahí",
       "dureza": "insistencia",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c127",
       "segundo": 5506,
       "tema": "Vivienda",
       "texto": "Claro, habilitar para mí es ya vivir.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c128",
       "segundo": 5514,
       "tema": "Vivienda",
       "texto": "Y al final, que una cosa llegue años más tarde es un problema.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["partido de Ada Colau", "Podemos", "la derecha y la ultraderecha"],
+      "cierra": "invitado"
     },
     {
+      "id": "c129",
       "segundo": 5562,
       "tema": "Vivienda",
       "texto": "Se está conteniendo a un nivel que es casi inasumible, claro.",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c130",
       "segundo": 5648,
       "tema": "Vivienda",
       "texto": "¿Por qué no empezarlo esto hace años y hoy ya poder estar hablando?",
       "dureza": "repregunta",
-      "respuesta": "sin_respuesta"
+      "respuesta": "sin_respuesta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c131",
       "segundo": 5671,
       "tema": "Vivienda",
       "texto": "Hay mucha gente que está enfadada porque realmente está muy decepcionada contigo y con",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c132",
       "segundo": 5735,
       "tema": "Trayectoria y gestión pasada",
       "texto": "La famosa hemeroteca de Pedro Sánchez. Ya sabes, esos cambios de opinión radicales en ciertos temas importantes.",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ambas",
+      "aQuienCritica": ["líderes independentistas"],
+      "cierra": "invitado"
     },
     {
+      "id": "c133",
       "segundo": 5895,
       "tema": "Cataluña y modelo territorial",
       "texto": "Pero yo creo que aunque no hubiera habido indultos o amnistías, tampoco lo sería ya",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c134",
       "segundo": 5929,
       "tema": "Fronteras y Marruecos",
       "texto": "libre y decir lo contrario, tú lo has hecho.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c135",
       "segundo": 5986,
       "tema": "Pactos y gobernabilidad",
       "texto": "pactasteis con Bildu una moción que hizo alcalde de Pamplona",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c136",
       "segundo": 6025,
       "tema": "Pactos y gobernabilidad",
       "texto": "no se dan las condiciones para que el señor Iglesias sea miembro de ese gobierno, esto no es un bulo",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["PP"],
+      "cierra": "invitado"
     },
     {
+      "id": "c137",
       "segundo": 6090,
       "tema": "Trayectoria y gestión pasada",
       "texto": "cuando dices literalmente, la vamos a derogar, estás haciendo una promesa",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c138",
       "segundo": 6133,
       "tema": "Trayectoria y gestión pasada",
       "texto": "me duele mucho cómo cambiáis vuestra palabra a veces tan fácilmente",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c139",
       "segundo": 6228,
       "tema": "Cataluña y modelo territorial",
       "texto": "mucha gente contigo, y eso es una realidad",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Mariano Rajoy", "PP", "Vox"],
+      "cierra": "invitado"
     },
     {
+      "id": "c140",
       "segundo": 6316,
       "tema": "Pactos y gobernabilidad",
       "texto": "dijiste literalmente que Pablo Iglesias es el principal escollo, no puede estar en el gobierno",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c141",
       "segundo": 6326,
       "tema": "Cataluña y modelo territorial",
       "texto": "Y tú apoyaste la aplicación del 155",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["PP", "Alberto Núñez Feijóo", "Vox"],
+      "cierra": "invitado"
     },
     {
+      "id": "c142",
       "segundo": 6435,
       "tema": "Trayectoria y gestión pasada",
       "texto": "piensa que lo que estás prometiendo hoy en dos años puede cambiar radicalmente, ¿qué le dirías?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c143",
       "segundo": 6461,
       "tema": "Trayectoria y gestión pasada",
       "texto": "O sea, hay un poco de todo, ¿no?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c144",
       "segundo": 6481,
       "tema": "Trayectoria y gestión pasada",
       "texto": "tendrían que ser personas intachables, al menos a nivel público, y que su palabra para mí tendría que ser sagrada",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c145",
       "segundo": 6546,
       "tema": "Rivales",
       "texto": "Te voy a pedir que me definas a tus rivales en estas elecciones.",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Ada Colau"],
+      "cierra": "invitado"
     },
     {
+      "id": "c146",
       "segundo": 6555,
       "tema": "Rivales",
       "texto": "Feijó.",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Alberto Núñez Feijóo"],
+      "cierra": "invitado"
     },
     {
+      "id": "c147",
       "segundo": 6562,
       "tema": "Rivales",
       "texto": "Abascal.",
       "dureza": "neutra",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Santiago Abascal"],
+      "cierra": "invitado"
     },
     {
+      "id": "c148",
       "segundo": 6579,
       "tema": "Rivales",
       "texto": "Si lo tuvieras que definir.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Santiago Abascal"],
+      "cierra": "invitado"
     },
     {
+      "id": "c149",
       "segundo": 6634,
       "tema": "Otros",
       "texto": "Lo del hombre blandén, ¿qué opinas?",
       "dureza": "comoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c150",
       "segundo": 6642,
       "tema": "Otros",
       "texto": "O sea, hombre, no eras muy fan de las declaraciones del Fari",
       "dureza": "comoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c151",
       "segundo": 6674,
       "tema": "Cierre y alegato",
       "texto": "¿Te arrepientes de haber venido?",
       "dureza": "comoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c152",
       "segundo": 6684,
       "tema": "Cierre y alegato",
       "texto": "si hay un ser humano que es capaz, tú, pues mira, tienes aquí la cámara para intentarlo",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Donald Trump", "Jair Bolsonaro", "Javier Milei"],
+      "cierra": "invitado"
     }
   ],
   "temas": [
@@ -2023,6 +2634,160 @@
     "total": 19,
     "verificables": 7
   },
+  "compromisos": [
+    {
+      "segundo": 1093,
+      "cita": "una auditoría extraordinaria de seguridad de la línea Madrid -Sevilla",
+      "compromiso": "Auditoría extraordinaria de seguridad de la línea Madrid-Sevilla (la presenta como en marcha, junto a la negociación con maquinistas y controladores).",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1104,
+      "cita": "vamos a invertir 19 .000 millones de euros en el mantenimiento",
+      "compromiso": "Invertir 19.000 millones en mantenimiento de las vías ferroviarias.",
+      "verificable": true,
+      "plazo": "2026-2030",
+      "condicion": null
+    },
+    {
+      "segundo": 1116,
+      "cita": "tenemos que incorporar elementos de seguridad de otros sistemas que han sido positivos, por ejemplo, transporte aéreo",
+      "compromiso": "Incorporar al ferrocarril elementos de seguridad del transporte aéreo.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1152,
+      "cita": "Bueno, pues, hagámoslo también en el transporte ferroviario.",
+      "compromiso": "Implantar la doble firma en el transporte ferroviario.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1484,
+      "cita": "lo que tenemos que hacer es mejorar la capacidad que tienen los controladores",
+      "compromiso": "Mejorar la capacidad de los controladores para reducir errores humanos (formación continua, simulacros, descansos).",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 2590,
+      "cita": "Bueno, por supuesto que tengo que hacer las cosas mejor",
+      "compromiso": "Hacer las cosas mejor con Ceuta.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 3593,
+      "cita": "lo que tenemos que hacer es abrir cauces para una migración regular, ordenada",
+      "compromiso": "Abrir cauces de migración regular y ordenada.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 3795,
+      "cita": "lo que tenemos que hacer es una política equilibrada y ordenada de la migración",
+      "compromiso": "Mantener una política migratoria \"equilibrada y ordenada\" que aumente la fuerza de trabajo.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 4880,
+      "cita": "actividad ilícita, nosotros no descartamos ninguna acción judicial",
+      "compromiso": "No descartar acciones judiciales del PSOE contra Leire Díez.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": "si se prueba que el partido ha sido afectado por alguna actividad ilícita"
+    },
+    {
+      "segundo": 5201,
+      "cita": "Tenemos que construir más vivienda protegida.",
+      "compromiso": "Construir más vivienda protegida.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 5208,
+      "cita": "Pues regular, por ejemplo, el alquiler de habitaciones, los alojamientos temporales",
+      "compromiso": "Regular el alquiler de habitaciones y de temporada, incentivar fiscalmente a pequeños propietarios y dar estabilidad a los contratos.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 5358,
+      "cita": "lo que tenemos que hacer es seguir el camino que hemos iniciado",
+      "compromiso": "Seguir la política de vivienda iniciada (construcción, sobre todo protegida, y regulación del alquiler).",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 5368,
+      "cita": "por ejemplo, necesitamos modificar la ley",
+      "compromiso": "Modificar la ley del suelo para construir a mayor ritmo.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 5498,
+      "cita": "nosotros en lo que es la entrega y la construcción vamos a cumplir con ese compromiso",
+      "compromiso": "Cumplir el compromiso de las 184.000 viviendas públicas y de alquiler asequible.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 5538,
+      "cita": "Pues tenemos que agilizar los trámites.",
+      "compromiso": "Agilizar los trámites urbanísticos (ley del suelo).",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 6064,
+      "cita": "se ha acabado la legislatura y volverá en la próxima legislatura",
+      "compromiso": "Volver a llevar al Congreso la derogación de la ley mordaza.",
+      "verificable": true,
+      "plazo": "próxima legislatura",
+      "condicion": "depende de los grupos parlamentarios"
+    },
+    {
+      "segundo": 6115,
+      "cita": "pues podré hacer muchas más cosas",
+      "compromiso": "Hacer \"muchas más cosas\".",
+      "verificable": false,
+      "plazo": null,
+      "condicion": "si obtiene más escaños que los 121 actuales, más cerca de 176"
+    },
+    {
+      "segundo": 6420,
+      "cita": "pero lo que no voy a hacer es una tercera repetición electoral",
+      "compromiso": "No ir a otra repetición electoral (lo dice en presente, explicando el pacto con Podemos).",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 6719,
+      "cita": "con una mayoría progresista en el Parlamento que nos permita, por ejemplo, resolver cuestiones tan importantes como",
+      "compromiso": "Resolver la vivienda en cuatro años más de gobierno.",
+      "verificable": false,
+      "plazo": "cuatro años",
+      "condicion": "con una mayoría progresista en el Parlamento"
+    }
+  ],
   "sintonia": [
     {
       "tipo": "halago",
@@ -3219,32 +3984,38 @@
     {
       "segundo": 1639,
       "quien": "invitado",
-      "titulo": "El cese de Puente"
+      "titulo": "El cese de Puente",
+      "cita": "Yo creo que ese debate hoy está superado."
     },
     {
       "segundo": 2718,
       "quien": "invitado",
-      "titulo": "Las vacaciones"
+      "titulo": "Las vacaciones",
+      "cita": "No, no, perdona, yo no me fui de vacaciones"
     },
     {
       "segundo": 3140,
       "quien": "invitado",
-      "titulo": "Por qué preocupa la inmigración"
+      "titulo": "Por qué preocupa la inmigración",
+      "cita": "Yo creo que sobre todo es el desafío de la integración."
     },
     {
       "segundo": 6438,
       "quien": "invitado",
-      "titulo": "La hemeroteca"
+      "titulo": "La hemeroteca",
+      "cita": "dije que iba a subir el salario mínimo interprofesional y lo he subido"
     },
     {
       "segundo": 874,
       "quien": "jordi",
-      "titulo": "Los accidentes"
+      "titulo": "Los accidentes",
+      "cita": "Vamos primero a Damuz [Adamuz], cuando sucede, en ese momento,"
     },
     {
       "segundo": 4681,
       "quien": "jordi",
-      "titulo": "Dos secretarios de organización"
+      "titulo": "Dos secretarios de organización",
+      "cita": "elegidos por ti, tengan este problema, ¿qué dice de"
     }
   ],
   "publico": {

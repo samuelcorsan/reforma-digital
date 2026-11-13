@@ -95,8 +95,8 @@ def test_no_se_publican_imagenes_y_las_remisiones_enlazan_a_su_seccion():
 def test_los_momentos_clave_salen_de_las_entradas_del_informe():
     momentos = momentos_del_informe(leer_informe(INFORME)["secciones"]["momentos"])
     assert momentos == [
-        {"segundo": 65, "quien": "invitado", "titulo": "La cifra"},
-        {"segundo": 130, "quien": "jordi", "titulo": "La repregunta"},
+        {"segundo": 65, "quien": "invitado", "titulo": "La cifra", "cita": "son 22"},
+        {"segundo": 130, "quien": "jordi", "titulo": "La repregunta", "cita": "¿sí o no?"},
     ]
 
 

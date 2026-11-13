@@ -831,781 +831,1236 @@
   },
   "preguntas": [
     {
+      "id": "c1",
       "segundo": 122,
       "tema": "Formato y presentación",
       "texto": "o el último que me diría que sí al borde del final. Y fuiste el primero. ¿Cómo es eso?",
       "dureza": "comoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c2",
       "segundo": 290,
       "tema": "Rivales",
       "texto": "¿Qué te parece que no hayan venido al final?",
       "dureza": "neutra",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c3",
       "segundo": 345,
       "tema": "Rivales",
       "texto": "¿Por qué debería la gente que quizás tiende más a la derecha votarte a ti y no a Abascal?",
       "dureza": "neutra",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez", "Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c4",
       "segundo": 389,
       "tema": "Rivales",
       "texto": "Bueno, pero un bando no es descalificar, es evidente que hay una tendencia ideológica más parecida.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c5",
       "segundo": 418,
       "tema": "Rivales",
       "texto": "¿No te sientes afín a Vox?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c6",
       "segundo": 430,
       "tema": "Rivales",
       "texto": "¿Cuál sería la más grande que tengas?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Vox", "Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c7",
       "segundo": 465,
       "tema": "Rivales",
       "texto": "creo que todos participáis de esa polarización y de este enfrentamiento brusco a veces",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c8",
       "segundo": 505,
       "tema": "Rivales",
       "texto": "Pero no creo que lo haya inoculado el PSOE, precisamente.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Podemos", "Pedro Sánchez", "PSOE"],
+      "cierra": "invitado"
     },
     {
+      "id": "c9",
       "segundo": 540,
       "tema": "Rivales",
       "texto": "Pero él podría decir lo mismo de vosotros.",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez", "PSOE"],
+      "cierra": "invitado"
     },
     {
+      "id": "c10",
       "segundo": 591,
       "tema": "Rivales",
       "texto": "¿A la inversa no habríais hecho vosotros lo mismo?",
       "dureza": "insistencia",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "jordi"
     },
     {
+      "id": "c11",
       "segundo": 636,
       "tema": "Rivales",
       "texto": "Para muchos ahora González está más cerca de vosotros que del PSOE de Sainz",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c12",
       "segundo": 657,
       "tema": "Rivales",
       "texto": "Eso no siempre tiene que ser malo. No digo el caso de Sánchez, pero a veces hay partidos que están podridos",
       "dureza": "incomoda",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "jordi"
     },
     {
+      "id": "c13",
       "segundo": 694,
       "tema": "Pactos y gobernabilidad",
       "texto": "si tuvieras que pactar, ¿tú tienes ministerios intocables para vosotros?",
       "dureza": "neutra",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c14",
       "segundo": 762,
       "tema": "Pactos y gobernabilidad",
       "texto": "¿Hay ministerios que tú tengas claros que no van…?",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c15",
       "segundo": 771,
       "tema": "Pactos y gobernabilidad",
       "texto": "¿Hay algún, por ejemplo, interior y exterior serán vuestros sí o sí?",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c16",
       "segundo": 815,
       "tema": "Pactos y gobernabilidad",
       "texto": "Y supongo que tendrás alguno que dirás, es que este es innegociable.",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c17",
       "segundo": 826,
       "tema": "Pactos y gobernabilidad",
       "texto": "¿Y por qué no? ¿Para no quitarte fuerte a la negociadora?",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["PSOE", "Bildu"],
+      "cierra": "invitado"
     },
     {
+      "id": "c18",
       "segundo": 884,
       "tema": "Pactos y gobernabilidad",
       "texto": "que digas esto es una línea roja que por aquí no pasaremos y prefieres no ser presidente a tener que ceder en eso?",
       "dureza": "neutra",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c19",
       "segundo": 939,
       "tema": "Pactos y gobernabilidad",
       "texto": "Es un tema que hay mucha gente que le preocupa. ¿Lo entiendes, la preocupación?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Vox", "Gobierno"],
+      "cierra": "jordi"
     },
     {
+      "id": "c20",
       "segundo": 1018,
       "tema": "Feminismo e igualdad",
       "texto": "¿Ministerio de Igualdad lo quitas si tú eres presidente?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c21",
       "segundo": 1047,
       "tema": "Feminismo e igualdad",
       "texto": "Sí, pero el ministerio no estará. No habrá un ministerio de igualdad como tal.",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c22",
       "segundo": 1111,
       "tema": "Feminismo e igualdad",
       "texto": "el ministerio no va a existir como tal, sino que va a estar en otros lados, ¿no?",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c23",
       "segundo": 1162,
       "tema": "Pensiones",
       "texto": "Yo te pregunto directamente, ¿va a petar el sistema de pensiones? ¿Esto es asumible a largo plazo?",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c24",
       "segundo": 1256,
       "tema": "Pensiones",
       "texto": "Pero esto no explica las pensiones.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c25",
       "segundo": 1278,
       "tema": "Pensiones",
       "texto": "Entiendo que recaudar impuestos no, porque tú has dicho que los vas a bajar, ¿no?",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c26",
       "segundo": 1320,
       "tema": "Impuestos y autónomos",
       "texto": "¿Tenéis o los vais? ¿Qué es diferente?",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c27",
       "segundo": 1331,
       "tema": "Deuda y gasto",
       "texto": "No lo sabes a día de hoy.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c28",
       "segundo": 1339,
       "tema": "Deuda y gasto",
       "texto": "O sea, ¿crees que hay una falsificación de datos públicos?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c29",
       "segundo": 1372,
       "tema": "Pensiones",
       "texto": "Entonces, ¿para ti cuál es la solución?",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c30",
       "segundo": 1407,
       "tema": "Pensiones",
       "texto": "¿Y cómo lo pensáis hacer cuando hay un agujero?",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c31",
       "segundo": 1446,
       "tema": "Pensiones",
       "texto": "opcionalmente o sea, tú no quieres retrasar la edad de jubilación",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c32",
       "segundo": 1460,
       "tema": "Pensiones",
       "texto": "quiere saber lo que vais a hacer",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c33",
       "segundo": 1490,
       "tema": "Pensiones",
       "texto": "no, no, no no tener previsto no asegurarlo a ver,",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c34",
       "segundo": 1576,
       "tema": "Economía y empleo",
       "texto": "¿Y eso no crees que puede ser también debido a la crisis de salud mental que está sufriendo la sociedad moderna?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c35",
       "segundo": 1606,
       "tema": "Economía y empleo",
       "texto": "Sí, pero tampoco un autónomo muchas veces trabaja enfermo.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c36",
       "segundo": 1682,
       "tema": "Economía y empleo",
       "texto": "Porque claro, hay un tema mental que es muy complicado de demostrar.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c37",
       "segundo": 1713,
       "tema": "Economía y empleo",
       "texto": "la incidencia de bajas médicas entre los trabajadores autónomos está en torno al 1%, aproximadamente",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c38",
       "segundo": 1733,
       "tema": "Impuestos y autónomos",
       "texto": "Pero ¿y los que llevan 12 años y facturan 1 .400 euros?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c39",
       "segundo": 1787,
       "tema": "Impuestos y autónomos",
       "texto": "O sea, literalmente aquí afirmas que no pagarán IVA.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c40",
       "segundo": 1865,
       "tema": "Impuestos y autónomos",
       "texto": "¿incluso algún día hacer las cuotas opcionales para que la gente que es autónomo y no le va muy bien",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c41",
       "segundo": 1979,
       "tema": "Economía y empleo",
       "texto": "hay mucha gente que te justificará que no ha podido ir a trabajar porque está con ansiedad o está con depresión",
       "dureza": "repregunta",
-      "respuesta": "sin_respuesta"
+      "respuesta": "sin_respuesta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c42",
       "segundo": 1997,
       "tema": "Deuda y gasto",
       "texto": "que en tu caso personal cuando fuiste el gestor máximo de una comunidad pasó eso y ahora criticas al gestor actual?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c43",
       "segundo": 2059,
       "tema": "Deuda y gasto",
       "texto": "Pero aún así hubo un incremento generalizado en todo el país.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c44",
       "segundo": 2080,
       "tema": "Deuda y gasto",
       "texto": "Es verdad que tres de todas es una buena cifra, pero igualmente no podías…",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c45",
       "segundo": 2115,
       "tema": "Deuda y gasto",
       "texto": "es un mal menor, sigue estando mal porque evidentemente la deuda pública crece por todos lados",
       "dureza": "repregunta",
-      "respuesta": "sin_respuesta"
+      "respuesta": "sin_respuesta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c46",
       "segundo": 2128,
       "tema": "Defensa y seguridad",
       "texto": "Cuando tú seas presidente o si tú eres presidente, tú vas a, cuando puedas ya subir el 3 ,5%, lo vas a acabar haciendo.",
       "dureza": "incomoda",
-      "respuesta": "cambia_tema"
+      "respuesta": "cambia_tema",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez", "Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c47",
       "segundo": 2197,
       "tema": "Deuda y gasto",
       "texto": "hay economistas que dicen que el momento de la deuda es una bolsa tan grande que al final no se va a poder pagar",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["gobiernos de izquierda"],
+      "cierra": "invitado"
     },
     {
+      "id": "c48",
       "segundo": 2225,
       "tema": "Deuda y gasto",
       "texto": "no está llegando a unos extremos que empieza a ser inasumible en la economía global?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c49",
       "segundo": 2247,
       "tema": "Deuda y gasto",
       "texto": "¿Tú crees que en España puedes conseguir un superávit?",
       "dureza": "neutra",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c50",
       "segundo": 2254,
       "tema": "Deuda y gasto",
       "texto": "O sea, si hubierais sido vosotros, podrías haber conseguido un superávit.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c51",
       "segundo": 2300,
       "tema": "Defensa y seguridad",
       "texto": "Pero el 3 ,5 % es un incremento brutal",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c52",
       "segundo": 2335,
       "tema": "Defensa y seguridad",
       "texto": "¿Qué hubieras hecho tú entonces en el mismo caso?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c53",
       "segundo": 2361,
       "tema": "Defensa y seguridad",
       "texto": "¿Lo pedirás? Si eres presidente, ¿esto va a volver a pasar?",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c54",
       "segundo": 2427,
       "tema": "Defensa y seguridad",
       "texto": "O sea, tú prometes mucha más transparencia.",
       "dureza": "comoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c55",
       "segundo": 2459,
       "tema": "Fronteras y Marruecos",
       "texto": "Si tú hubieras sido presidente del país, cuando sucede la crisis de Ceuta, la última que hemos tenido hace nada, ¿exactamente qué hubieras hecho?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Marruecos", "Gobierno"],
+      "cierra": "jordi"
     },
     {
+      "id": "c56",
       "segundo": 2610,
       "tema": "Fronteras y Marruecos",
       "texto": "¿Das orden de si hace falta disparar?",
       "dureza": "incomoda",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": [
+        "Pedro Sánchez",
+        "ministro del Interior",
+        "ministra de Defensa",
+        "Marruecos"
+      ],
+      "cierra": "invitado"
     },
     {
+      "id": "c57",
       "segundo": 2629,
       "tema": "Fronteras y Marruecos",
       "texto": "o como cada uno le llama diferente, supongo que tú le llamas una invasión, ¿no?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c58",
       "segundo": 2742,
       "tema": "Fronteras y Marruecos",
       "texto": "Para ti, ¿quién es el responsable de esta crisis?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Marruecos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c59",
       "segundo": 2747,
       "tema": "Fronteras y Marruecos",
       "texto": "desde el gobierno dicen que esperemos, esperemos a la investigación",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez", "Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c60",
       "segundo": 2838,
       "tema": "Fronteras y Marruecos",
       "texto": "¿Qué es lo que tiene que hacer el gobierno español si se demuestra que Marruecos participó por omisión o activamente en esto?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Marruecos", "Gobierno"],
+      "cierra": "invitado"
     },
     {
+      "id": "c61",
       "segundo": 2956,
       "tema": "Inmigración",
       "texto": "¿Un español que nunca ha cotizado o un extranjero que lleva 20 años haciéndolo?",
       "dureza": "incomoda",
-      "respuesta": "cambia_tema"
+      "respuesta": "cambia_tema",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "jordi"
     },
     {
+      "id": "c62",
       "segundo": 2986,
       "tema": "Inmigración",
       "texto": "Bueno, pero llevado a la inmigración",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c63",
       "segundo": 3069,
       "tema": "Inmigración",
       "texto": "¿Pero qué pesa más, la nacionalidad o la cotización?",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c64",
       "segundo": 3146,
       "tema": "Inmigración",
       "texto": "O sea, les vas a quitar el ingreso mínimo vital.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c65",
       "segundo": 3173,
       "tema": "Inmigración",
       "texto": "¿Tenéis ya un país en el que habéis hablado con él? ¿Esto es una idea teórica?",
       "dureza": "neutra",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c66",
       "segundo": 3208,
       "tema": "Inmigración",
       "texto": "El Reino Unido con Ruanda no salió bien porque era muy caro y al final no funcionó.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c67",
       "segundo": 3241,
       "tema": "Inmigración",
       "texto": "¿Y qué gente mandarías a un tercer país? ¿Qué tipo de inmigrante?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c68",
       "segundo": 3265,
       "tema": "Inmigración",
       "texto": "Pero si está trabajando y está trabajando en negro.",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c69",
       "segundo": 3276,
       "tema": "Inmigración",
       "texto": "No lo tiene, pero sigue trabajando.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c70",
       "segundo": 3296,
       "tema": "Inmigración",
       "texto": "¿Y en este caso sería justo que el inmigrante pague por el maltrato que le está dando su empleador?",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c71",
       "segundo": 3407,
       "tema": "Inmigración",
       "texto": "Y la proyección es que en 50 años sea un 40 % y no un 20%",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c72",
       "segundo": 3425,
       "tema": "Asuntos personales",
       "texto": "Cuéntame la historia de esta foto y cuéntame la relación que tenías y qué sabías de él.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c73",
       "segundo": 3537,
       "tema": "Asuntos personales",
       "texto": "No sabías nada, no habías escuchado nada",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c74",
       "segundo": 3562,
       "tema": "Asuntos personales",
       "texto": "¿Erais amigos?",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["otros partidos políticos"],
+      "cierra": "invitado"
     },
     {
+      "id": "c75",
       "segundo": 3595,
       "tema": "Asuntos personales",
       "texto": "Pero un meeting es una cosa y una foto en yate o barco es otra.",
       "dureza": "insistencia",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c76",
       "segundo": 3621,
       "tema": "Asuntos personales",
       "texto": "una cosa puntual que evidentemente una relación cercana en este momento,",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c77",
       "segundo": 3682,
       "tema": "Rivales",
       "texto": "La misma foto, y él explica lo mismo.",
       "dureza": "incomoda",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c78",
       "segundo": 3749,
       "tema": "Rivales",
       "texto": "A mí no me lo tienes que preguntar, ni a la gente tampoco.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c79",
       "segundo": 3763,
       "tema": "Rivales",
       "texto": "A ver, aquí habéis jugado sucio todos.",
       "dureza": "incomoda",
-      "respuesta": "ataca_pregunta"
+      "respuesta": "ataca_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "jordi"
     },
     {
+      "id": "c80",
       "segundo": 3780,
       "tema": "Rivales",
       "texto": "yo no soy responsable de lo que haga el padre de mi pareja",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c81",
       "segundo": 3788,
       "tema": "Rivales",
       "texto": "pero esto está certificado, o sea, tú aseguras aquí 100 %",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c82",
       "segundo": 3811,
       "tema": "Rivales",
       "texto": "¿Pero eso es una pregunta o es una afirmación?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c83",
       "segundo": 3835,
       "tema": "Corrupción",
       "texto": "¿Tú ahí también habrías pedido la dimisión?",
       "dureza": "incomoda",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c84",
       "segundo": 3892,
       "tema": "Corrupción",
       "texto": "hay un tema de confianza y de ética y de moral en la política",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ambas",
+      "aQuienCritica": [
+        "PSOE",
+        "Pedro Sánchez",
+        "José Luis Ábalos",
+        "Santos Cerdán",
+        "tesorero del PP"
+      ],
+      "cierra": "invitado"
     },
     {
+      "id": "c85",
       "segundo": 4044,
       "tema": "Corrupción",
       "texto": "A veces es una respuesta no saberlo también.",
       "dureza": "insistencia",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "critica",
+      "aQuienCritica": ["PSOE", "Pedro Sánchez"],
+      "cierra": "jordi"
     },
     {
+      "id": "c86",
       "segundo": 4124,
       "tema": "Corrupción",
       "texto": "Entonces, ¿qué sabes de esto? Esto es una orden de alguien que tú puedas saber. ¿Qué ha pasado con esto?",
       "dureza": "incomoda",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c87",
       "segundo": 4191,
       "tema": "Corrupción",
       "texto": "¿Y por qué el de Coldo?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c88",
       "segundo": 4202,
       "tema": "Corrupción",
       "texto": "Pero no es un tema que tú, como el jefe, tendrías que",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c89",
       "segundo": 4232,
       "tema": "Corrupción",
       "texto": "¿Y por qué no está ya con vosotros este abogado?",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Koldo García", "Pedro Sánchez", "PSOE", "un periodista y una televisión"],
+      "cierra": "invitado"
     },
     {
+      "id": "c90",
       "segundo": 4358,
       "tema": "Partido interno",
       "texto": "cuéntame qué opinas de Ayuso, como activo político y como persona, tú que la conoces.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "jordi"
     },
     {
+      "id": "c91",
       "segundo": 4391,
       "tema": "Partido interno",
       "texto": "Sí, pero como Ayuso no hay otra persona que fíjate en tanto.",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c92",
       "segundo": 4407,
       "tema": "Partido interno",
       "texto": "Bueno, Casadón sí que fue uno de los que cayó.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c93",
       "segundo": 4424,
       "tema": "Partido interno",
       "texto": "Es un aviso incluso para ti.",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c94",
       "segundo": 4449,
       "tema": "Partido interno",
       "texto": "Un poco lo que se dice de Ayuso, que es un verso suelto un poquito, ¿no?",
       "dureza": "repregunta",
-      "respuesta": "en_parte"
+      "respuesta": "en_parte",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c95",
       "segundo": 4464,
       "tema": "Partido interno",
       "texto": "¿Te cae bien?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ambas",
+      "aQuienCritica": ["Pedro Sánchez"],
+      "cierra": "invitado"
     },
     {
+      "id": "c96",
       "segundo": 4507,
       "tema": "Partido interno",
       "texto": "que no puede ser oficinas, que es un poco un pifostio, ¿qué es lo que piensas?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c97",
       "segundo": 4540,
       "tema": "Partido interno",
       "texto": "¿El precio te parece normal?",
       "dureza": "repregunta",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c98",
       "segundo": 4555,
       "tema": "Partido interno",
       "texto": "¿Y en el momento que te dicen casi 7 kilos?",
       "dureza": "insistencia",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c99",
       "segundo": 4574,
       "tema": "Partido interno",
       "texto": "¿Te parece que 7 millones de euros para unas oficinas es algo asumible?",
       "dureza": "insistencia",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "critica",
+      "aQuienCritica": ["Generalitat de Cataluña"],
+      "cierra": "invitado"
     },
     {
+      "id": "c100",
       "segundo": 4590,
       "tema": "Partido interno",
       "texto": "Yo te pregunto por el tema del piso de ayuso.",
       "dureza": "insistencia",
-      "respuesta": "otra_pregunta"
+      "respuesta": "otra_pregunta",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c101",
       "segundo": 4608,
       "tema": "Partido interno",
       "texto": "Hombre, es que es caro casi 7 kilos.",
       "dureza": "insistencia",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c102",
       "segundo": 4631,
       "tema": "Partido interno",
       "texto": "sobre todo en un momento que económicamente estamos mal",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c103",
       "segundo": 4638,
       "tema": "Partido interno",
       "texto": "si estamos hablando de casi 7 kilos, a mí me parece muy caro cuando España está como está",
       "dureza": "insistencia",
-      "respuesta": "cambia_tema"
+      "respuesta": "cambia_tema",
+      "orientacion": "critica",
+      "aQuienCritica": ["Gobierno"],
+      "cierra": "jordi"
     },
     {
+      "id": "c104",
       "segundo": 4692,
       "tema": "Asuntos personales",
       "texto": "A ver. ¿Qué tal llevas el inglés?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c105",
       "segundo": 4704,
       "tema": "Asuntos personales",
       "texto": "2026, ¿tú crees que el presidente de un país de Europa tiene que saber inglés?",
       "dureza": "incomoda",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c106",
       "segundo": 4751,
       "tema": "Asuntos personales",
       "texto": "No, pero de mayor, digo, ya...",
       "dureza": "repregunta",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "ninguna",
+      "aQuienCritica": [],
+      "cierra": "jordi"
     },
     {
+      "id": "c107",
       "segundo": 4784,
       "tema": "Defensa y seguridad",
       "texto": "¿Vas a promover esta idea? ¿O de momento se queda como está todo?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "propone",
+      "aQuienCritica": [],
+      "cierra": "invitado"
     },
     {
+      "id": "c108",
       "segundo": 4882,
       "tema": "Política internacional",
       "texto": "Y ahora que hablabas de la OTAN, Donald Trump, ¿cómo lo definirías?",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Donald Trump", "políticos que critican a Trump (sin nombrar)"],
+      "cierra": "invitado"
     },
     {
+      "id": "c109",
       "segundo": 4939,
       "tema": "Rivales",
       "texto": "Defineme a tus rivales en estas elecciones. Venga, empecemos por Colau.",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Ada Colau"],
+      "cierra": "invitado"
     },
     {
+      "id": "c110",
       "segundo": 4969,
       "tema": "Rivales",
       "texto": "Vale, Abascal.",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Santiago Abascal", "Vox"],
+      "cierra": "invitado"
     },
     {
+      "id": "c111",
       "segundo": 5042,
       "tema": "Rivales",
       "texto": "Ya es la última cosa que te pido. Defíneme a Pedro Sánchez.",
       "dureza": "neutra",
-      "respuesta": "responde"
+      "respuesta": "responde",
+      "orientacion": "critica",
+      "aQuienCritica": ["Pedro Sánchez", "ministros del Gobierno"],
+      "cierra": "jordi"
     }
   ],
   "temas": [
@@ -1836,6 +2291,328 @@
     "total": 40,
     "verificables": 20
   },
+  "compromisos": [
+    {
+      "segundo": 851,
+      "cita": "pues yo reuniré con Vox y le diré lo que creo",
+      "compromiso": "Reunirse con Vox y exponerle su posición.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": "si gana con margen suficiente para que el PSOE no pueda gobernar"
+    },
+    {
+      "segundo": 1031,
+      "cita": "Mi estructura ministerial estará entre 14 y 15 ministerios.",
+      "compromiso": "Un gobierno de 14 o 15 ministerios (frente a los 22 actuales).",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1039,
+      "cita": "El Ministerio de Igualdad se agrupará con otros",
+      "compromiso": "Agrupar Igualdad con otros ministerios.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1045,
+      "cita": "Las políticas de igualdad van a seguir.",
+      "compromiso": "Mantener las políticas de igualdad.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1078,
+      "cita": "este gobierno se va a basar en la austeridad de altos cargos",
+      "compromiso": "Reducir altos cargos.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1119,
+      "cita": "No va a haber un Ministerio de Igualdad, tampoco va a haber un Ministerio de Vivienda",
+      "compromiso": "No habrá Ministerio de Igualdad ni Ministerio de Vivienda como tales.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1323,
+      "cita": "Mi planteamiento es clarísimo, bajar los impuestos.",
+      "compromiso": "Bajar los impuestos.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": "dice que antes necesita conocer y explicar el estado de las cuentas"
+    },
+    {
+      "segundo": 1390,
+      "cita": "Yo me comprometo a la actualización de las pensiones, de acuerdo con el índice de precios al consumo.",
+      "compromiso": "Revalorizar las pensiones con el IPC.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1399,
+      "cita": "el objetivo es buscar la viabilidad del sistema público de pensiones para las gentes que todavía no las cobran",
+      "compromiso": "Buscar la viabilidad del sistema público de pensiones.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1436,
+      "cita": "que yo le voy a facilitar el cobro parcial de su pensión y que será compatible con el sueldo",
+      "compromiso": "Permitir cobrar parte de la pensión y un sueldo a quien quiera seguir trabajando tras los 67.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": "voluntario para el trabajador"
+    },
+    {
+      "segundo": 1484,
+      "cita": "no tenemos previsto te contesto, no tenemos previsto ampliar",
+      "compromiso": "No prevé ampliar obligatoriamente la edad de jubilación más allá de los 67.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": "\"con los datos que tenemos\""
+    },
+    {
+      "segundo": 1513,
+      "cita": "Jordi, no vamos a ampliar la edad de jubilación.",
+      "compromiso": "No ampliar la edad de jubilación: \"hasta los 67 años y punto\".",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1536,
+      "cita": "Si hacemos un millón de viviendas, crearemos 500 .000 puestos de trabajo.",
+      "compromiso": "Construir un millón de viviendas, con 500.000 empleos.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": "formulado en condicional (\"si hacemos\")"
+    },
+    {
+      "segundo": 1777,
+      "cita": "Los que llevan 12 años y facturan menos de 85 .000 euros no pagarán IVA.",
+      "compromiso": "Exención de IVA para autónomos que facturen menos de 85.000 euros, también los que ya ejercen.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1805,
+      "cita": "Un autónomo que contrate a otro el primer año de ese autónomo contratado no pagará la cuota.",
+      "compromiso": "Sin cuota el primer año del primer trabajador contratado por un autónomo.",
+      "verificable": true,
+      "plazo": "primer año",
+      "condicion": null
+    },
+    {
+      "segundo": 1819,
+      "cita": "ese segundo trabajador no pagará el 50 % de la cuota",
+      "compromiso": "50 % de cuota por el segundo trabajador contratado.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": "en función de la facturación"
+    },
+    {
+      "segundo": 1826,
+      "cita": "si las hace trimestrales o puede hacerlas dos veces al año o una vez al año",
+      "compromiso": "El autónomo podrá elegir declarar trimestral, semestral o anualmente.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1831,
+      "cita": "una mujer autónoma que tiene derecho a un permiso de maternidad y no tendrá que pagar la cuota",
+      "compromiso": "Sin cuota durante el permiso de maternidad de las autónomas.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1840,
+      "cita": "Y buscaremos todas las similitudes en el ámbito de la conciliación",
+      "compromiso": "Equiparar a los autónomos en conciliación y enfermedad.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1881,
+      "cita": "No, vamos a hacer un estatuto al autónomo.",
+      "compromiso": "Aprobar un estatuto del autónomo.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 1955,
+      "cita": "mi objetivo es que en esas patologías absolutamente invalidantes, patologías que ponen en riesgo la vida",
+      "compromiso": "Que las bajas por enfermedades graves (cáncer) se paguen al 100 %.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": "lo formula como \"objetivo\""
+    },
+    {
+      "segundo": 1964,
+      "cita": "Eso sí, tengo que luchar contra el fraude.",
+      "compromiso": "Luchar contra el fraude laboral (absentismo).",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 2380,
+      "cita": "Llegaré, haré la auditoría de gasto, explicaré cuál es el gasto en mi país",
+      "compromiso": "Hacer una auditoría del gasto y comunicar a los aliados a qué gasto en defensa puede llegar España.",
+      "verificable": true,
+      "plazo": "al llegar al gobierno",
+      "condicion": null
+    },
+    {
+      "segundo": 2387,
+      "cita": "No me voy a enfrentar con los aliados.",
+      "compromiso": "No enfrentarse con los aliados de la OTAN.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 2391,
+      "cita": "Y si no puedo llegar al 2 .4, pues me quedaré en el 2 .3.",
+      "compromiso": "Decir a los aliados el gasto en defensa que realmente pueda asumir.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": "según resulte de la auditoría"
+    },
+    {
+      "segundo": 2429,
+      "cita": "Por supuesto. Desde el primer momento.",
+      "compromiso": "Más transparencia (en el gasto de defensa) desde el primer momento.",
+      "verificable": false,
+      "plazo": "desde el primer momento",
+      "condicion": null
+    },
+    {
+      "segundo": 2431,
+      "cita": "La primera transparencia de un presidente es someter a votación los presupuestos",
+      "compromiso": "Someter los presupuestos a votación en las Cortes.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 2868,
+      "cita": "Y si tengo la responsabilidad de ser presidente de gobierno, lo leeré, evidentemente, y me informaré.",
+      "compromiso": "Leer los informes de inteligencia sobre Ceuta.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": "si es presidente"
+    },
+    {
+      "segundo": 2876,
+      "cita": "Toda aquella información que se le ha ocultado a los españoles no se la voy a ocultar.",
+      "compromiso": "Hacer pública la información sobre la crisis de Ceuta.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 2880,
+      "cita": "Por supuesto decirle a Marruecos que no puede volver a ocurrir en ningún caso",
+      "compromiso": "Advertir a Marruecos de que no puede repetirse.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 2942,
+      "cita": "evidentemente esto conllevará una crisis sin precedentes con el reino de Marrocos",
+      "compromiso": "Abrir una crisis diplomática con Marruecos, con la UE, si se repite una entrada facilitada.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": "si vuelve a ocurrir"
+    },
+    {
+      "segundo": 3018,
+      "cita": "Yo voy a pedir a la gente su arraigo en la sociedad española.",
+      "compromiso": "Exigir arraigo, aportación, idioma y respeto a las leyes a quien venga a España.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 3106,
+      "cita": "es un requisito que se puntuará de acuerdo con la antigüedad que acordemos",
+      "compromiso": "Puntuar la antigüedad de empadronamiento para vivienda protegida y ayudas sociales.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 3151,
+      "cita": "Le voy a establecer un camino hacia el empleo y van a tener la obligación de asumir un empleo",
+      "compromiso": "Itinerario de empleo obligatorio para perceptores del IMV, con reducción de la ayuda hasta cero si lo rechazan.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": "la reducción, si rechazan empleo de forma reiterada"
+    },
+    {
+      "segundo": 3201,
+      "cita": "estoy a favor que en determinados supuestos busquemos acuerdos con determinados países que estén",
+      "compromiso": "Buscar acuerdos con terceros países para retornos.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": "en determinados supuestos"
+    },
+    {
+      "segundo": 3232,
+      "cita": "Yo voy a cambiar la política migratoria",
+      "compromiso": "Cambiar la política migratoria.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 3261,
+      "cita": "No, le vamos a dar otros plazos para que usted vuelva a encontrar otro trabajo.",
+      "compromiso": "Dar plazo para encontrar otro trabajo a quien termine su contrato, sin expulsarlo.",
+      "verificable": true,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 3267,
+      "cita": "Ahora bien, si usted entra de forma irregular, usted se tiene que ir.",
+      "compromiso": "Quien entre de forma irregular tendrá que irse.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 3304,
+      "cita": "Yo soy partido de legalizar a un señor que tiene un contrato",
+      "compromiso": "Regularizar a quien trabaja en negro y sancionar al empleador.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    },
+    {
+      "segundo": 5270,
+      "cita": "Y no voy a servir a nadie más que a los ciudadanos de mi país.",
+      "compromiso": "Servir solo a los ciudadanos.",
+      "verificable": false,
+      "plazo": null,
+      "condicion": null
+    }
+  ],
   "sintonia": [
     {
       "tipo": "halago",
@@ -2943,32 +3720,38 @@
     {
       "segundo": 826,
       "quien": "invitado",
-      "titulo": "Los ministerios"
+      "titulo": "Los ministerios",
+      "cita": "No, porque creo que no es el momento."
     },
     {
       "segundo": 2931,
       "quien": "invitado",
-      "titulo": "Marruecos"
+      "titulo": "Marruecos",
+      "cita": "Que quede claro, no lo voy a consentir."
     },
     {
       "segundo": 3769,
       "quien": "invitado",
-      "titulo": "La sauna"
+      "titulo": "La sauna",
+      "cita": "¿Pero cómo que si la sauna?"
     },
     {
       "segundo": 4699,
       "quien": "invitado",
-      "titulo": "El inglés"
+      "titulo": "El inglés",
+      "cita": "Pues mira, yo no sé inglés, pero sé gobernar"
     },
     {
       "segundo": 3853,
       "quien": "invitado",
-      "titulo": "Gürtel"
+      "titulo": "Gürtel",
+      "cita": "Yo te pregunto lo mismo cuando pasó el caso Gürtel y Rajoy, un caso también gravísimo de tu partido,"
     },
     {
       "segundo": 5251,
       "quien": "invitado",
-      "titulo": "El alegato a cámara"
+      "titulo": "El alegato a cámara",
+      "cita": "soy un político que ha gestionado durante los últimos 30 años de su vida"
     }
   ],
   "publico": {
