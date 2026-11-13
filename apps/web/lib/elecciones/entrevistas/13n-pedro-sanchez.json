@@ -17,7 +17,7 @@
     "global": 6.7,
     "margen": 0.2,
     "criterios": {
-      "veracidad": 7.5,
+      "veracidad": 7.3,
       "alGrano": 7.9,
       "concrecion": 4.5,
       "sustancia": 4.7,
@@ -11608,23 +11608,23 @@
       "segundo": 3024,
       "cita": "cada día hubo un ministro o ministra que estuvo en Ceuta.",
       "veredicto": "roja",
-      "explicacion": "Es falso que hubiera presencia continuada de miembros del Ejecutivo: según los registros oficiales de La Moncloa y el seguimiento de Público, entre el 2 y el 5 de agosto de 2026 ningún ministro estuvo en Ceuta. Las visitas oficiales durante la crisis fueron puntuales en días alternos y no diarias.",
+      "explicacion": "Según la cronología de Público (14-8-2026), Marlaska estuvo en Ceuta el 31 de julio y el 1 de agosto y entre el 3 y el 5 de agosto ningún miembro del Gobierno visitó la ciudad, hasta la llegada de Sira Rego el día 6. Las notas oficiales fechan visitas posteriores y separadas: Rego el 8 de agosto, Albares el 11 y Robles el 12.",
       "fuentes": [
         {
-          "titulo": "exteriores.gob.es",
-          "url": "https://www.exteriores.gob.es/eu/Comunicacion/NotasPrensa/Paginas/2026_NOTAS_P/Albares-visita-Ceuta-y-traslada-su-compromiso-total-y-permanente-con-la-Ciudad-Autonoma.aspx"
+          "titulo": "Público: La semana en la que el Gobierno desembarcó en Ceuta",
+          "url": "https://www.publico.es/politica/gobierno/semana-gobierno-desembarco-ceuta-pp-puso-ocho-dias-ausencia.html"
         },
         {
-          "titulo": "exteriores.gob.es",
+          "titulo": "La Moncloa: Rego se reúne con el presidente de Ceuta (8-8-2026)",
+          "url": "https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/juventud-e-infancia/Paginas/2026/080824-reunion-rego-vivas.aspx"
+        },
+        {
+          "titulo": "Exteriores: Albares visita Ceuta (11-8-2026)",
           "url": "https://www.exteriores.gob.es/es/Comunicacion/NotasPrensa/Paginas/2026_NOTAS_P/Albares-visita-Ceuta-y-traslada-su-compromiso-total-y-permanente-con-la-Ciudad-Autonoma.aspx"
         },
         {
-          "titulo": "articulo14.es",
-          "url": "https://www.articulo14.es/politica/sanchez-sobre-la-crisis-en-ceuta-lo-que-sabemos-de-los-dias-anteriores-es-que-hubo-un-bulo-la-seguridad-marroqui-estaba-mas-volcada-en-la-proteccion-de-sus-autoridades-20261113.html"
-        },
-        {
-          "titulo": "antena3.com",
-          "url": "https://www.antena3.com/noticias/espana/pedro-sanchez-asume-que-cualquier-inversion-fue-insuficiente-sistema-ferroviario-evidente-que-tenemos-que-hacer-mas_202611136af6fe8fea8d8979978448c7.html"
+          "titulo": "La Moncloa: la ministra de Defensa visita las unidades en Ceuta (12-8-2026)",
+          "url": "https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/defensa/paginas/2026/120826-robles-visita-ceuta.aspx"
         }
       ],
       "pilladoEnDirecto": false,
@@ -11632,7 +11632,7 @@
       "segundaRevision": {
         "sugerencia": null,
         "fuentesOk": true,
-        "nota": "Se comprobó en los registros oficiales y en prensa que la presencia ministerial en Ceuta no fue diaria, registrándose varios días consecutivos sin visitas del gabinete."
+        "nota": "Revisión a mano (13-11-2026), al contrastar con el análisis de comunicación: las fuentes anteriores no recogían el hueco; lo documenta la cronología de Público y las notas oficiales confirman las fechas de Rego, Albares y Robles."
       },
       "estado": "aprobada"
     },
@@ -12407,6 +12407,32 @@
         "sugerencia": null,
         "fuentesOk": true,
         "nota": "Se ha verificado en el BOE y fuentes sectoriales que el traspaso a Casa 47 se limita a un lote específico y no a la totalidad histórica de los activos de Sareb."
+      },
+      "estado": "aprobada"
+    },
+    {
+      "id": "r51",
+      "candidato": "Pedro Sánchez",
+      "segundo": 6005,
+      "cita": "yo nunca dije nunca dije que eh no quería que Pablo Iglesias estuviera en el Gobierno, no.",
+      "veredicto": "roja",
+      "explicacion": "Según la transcripción de La Moncloa de su entrevista en Al Rojo Vivo (laSexta) del 18 de julio de 2019, Sánchez dijo que «no se dan las condiciones para que el señor Iglesias sea miembro de ese Gobierno» y que su participación era «el principal escollo» para un acuerdo. La frase sobre no dormir con ministros de Podemos es de otra entrevista, del 19 de septiembre de 2019.",
+      "fuentes": [
+        {
+          "titulo": "La Moncloa: entrevista en Al Rojo Vivo (18-7-2019)",
+          "url": "https://www.lamoncloa.gob.es/presidente/intervenciones/Documents/2019/20190718%20PG%20Entrevista%20Al%20rojo%20vivo%20La%20sexta%20ferreras.pdf"
+        },
+        {
+          "titulo": "La Moncloa: entrevista en Al Rojo Vivo (19-9-2019)",
+          "url": "https://www.lamoncloa.gob.es/presidente/intervenciones/Paginas/2019/prsp190919.aspx"
+        }
+      ],
+      "pilladoEnDirecto": true,
+      "enVideo": true,
+      "segundaRevision": {
+        "sugerencia": null,
+        "fuentesOk": true,
+        "nota": "Revisión a mano (13-11-2026), al contrastar con el análisis de comunicación: se comprobaron las frases literales en las transcripciones oficiales; en la entrevista, Jordi le lee la cita y responde «Bueno, claro, eso no»."
       },
       "estado": "aprobada"
     },

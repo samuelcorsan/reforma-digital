@@ -17,7 +17,7 @@
     "global": 7.0,
     "margen": 0.2,
     "criterios": {
-      "veracidad": 6.9,
+      "veracidad": 7.0,
       "alGrano": 7.8,
       "concrecion": 5.4,
       "sustancia": 6.8,
@@ -9183,6 +9183,40 @@
       "estado": "aprobada"
     },
     {
+      "id": "r63",
+      "candidato": "Alberto Núñez Feijóo",
+      "segundo": 2685,
+      "cita": "¿Y la ministra de Defensa no deja comparecer a la directora del CNI en la comisión de secretos oficiales?",
+      "veredicto": "roja",
+      "explicacion": "La directora del CNI no llegó a comparecer, pero Margarita Robles pidió el 23 de septiembre de 2026 a la presidenta del Congreso que se autorizara su comparecencia, según EFE y Demócrata. Armengol citó solo a la ministra para el 6 de octubre y la sesión se desconvocó el 5 de octubre por la convocatoria de elecciones, según The Objective.",
+      "fuentes": [
+        {
+          "titulo": "Demócrata: Robles reclama a Armengol que permita la comparecencia de la jefa del CNI",
+          "url": "https://www.democrata.es/politica/ampliacion-robles-reclama-a-armengol-que-permita-la-comparecencia-de-la-jefa-del-cni-en-la-comision-de-secretos/amp/"
+        },
+        {
+          "titulo": "Demócrata: Armengol cita a Robles ante la Comisión de Secretos y deja fuera a la directora del CNI",
+          "url": "https://www.democrata.es/politica/congreso-y-senado/armengol-cita-a-robles-ante-la-comision-de-secretos-el-dia-6-y-deja-fuera-a-la-directora-del-cni/"
+        },
+        {
+          "titulo": "Infobae (EFE): Robles estará en la comisión de secretos, pero no la directora del CNI",
+          "url": "https://www.infobae.com/espana/agencias/2026/09/22/robles-estara-en-la-comision-de-secretos-del-congreso-pero-no-la-directora-del-cni/"
+        },
+        {
+          "titulo": "The Objective: desconvocatoria de la comisión de secretos",
+          "url": "https://theobjective.com/espana/politica/2026-10-05/sanchez-robles-avisos-cni-ceuta-secretos/"
+        }
+      ],
+      "pilladoEnDirecto": false,
+      "enVideo": true,
+      "segundaRevision": {
+        "sugerencia": null,
+        "fuentesOk": true,
+        "nota": "Revisión a mano (13-11-2026), al contrastar con el análisis de comunicación: ninguna fuente atribuye el bloqueo a la ministra, que pidió la comparecencia; todo sale de prensa porque no se localizó el Diario de Sesiones."
+      },
+      "estado": "aprobada"
+    },
+    {
       "id": "r36",
       "candidato": "Alberto Núñez Feijóo",
       "segundo": 2808,
@@ -9357,32 +9391,32 @@
       "candidato": "Alberto Núñez Feijóo",
       "segundo": 3231,
       "cita": "España es el país donde hay más inmigración irregular desde hace algunos años de toda Europa.",
-      "veredicto": "roja",
-      "explicacion": "España no es el país de la Unión Europea con mayor nivel de inmigración irregular ni en detecciones en frontera ni en permanencia irregular. Según Eurostat y Frontex, en 2023 Italia registró 157.651 llegadas marítimas frente a las 56.852 entradas totales en España, mientras que Alemania lideró las detecciones en estancia irregular con más de 260.000 casos.",
+      "veredicto": "amarilla",
+      "explicacion": "Según los balances de Interior y del Viminale, Italia recibió más llegadas irregulares que España en 2024 (66.617 frente a 64.019) y en 2025 (66.296 frente a 36.775). En 2026 España sí supera a Italia: Frontex contabiliza de enero a octubre unas 32.000 entradas por las rutas occidentales frente a 26.600 por el Mediterráneo central.",
       "fuentes": [
         {
-          "titulo": "europa.eu",
-          "url": "https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Enforcement_of_immigration_legislation_statistics_introduced"
+          "titulo": "Frontex: Irregular border crossings into the EU down 29% in the first ten months of 2026",
+          "url": "https://www.frontex.europa.eu/media-centre/news/news-release/frontex-irregular-border-crossings-into-the-eu-down-29-in-the-first-ten-months-of-2026-Yj3qp4"
         },
         {
-          "titulo": "europa.eu",
-          "url": "https://www.frontex.europa.eu/media-centre/news/news-release/irregular-border-crossings-into-eu-drop-sharply-in-2024-oqpweX"
-        },
-        {
-          "titulo": "europa.eu",
-          "url": "https://www.frontex.europa.eu/what-we-do/monitoring-and-risk-analysis/migratory-routes/migratory-routes/"
-        },
-        {
-          "titulo": "europa.eu",
+          "titulo": "Eurostat: Enforcement of immigration legislation statistics",
           "url": "https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Enforcement_of_immigration_legislation_statistics"
+        },
+        {
+          "titulo": "Escudo Digital: balance de Interior de 2025",
+          "url": "https://www.escudodigital.com/interior/llegada-migrantes-irregulares-espana-cayo-mas-40-2025.html"
+        },
+        {
+          "titulo": "L'Adige: Viminale, gli sbarchi nel 2025",
+          "url": "https://www.ladige.it/attualita/viminale-gli-sbarchi-nel-2025-sono-calati-dello-0-48-ke64q4q1"
         }
       ],
       "pilladoEnDirecto": false,
       "enVideo": null,
       "segundaRevision": {
-        "sugerencia": null,
+        "sugerencia": "roja",
         "fuentesOk": true,
-        "nota": "Se han contrastado las estadísticas oficiales de Eurostat sobre estancia irregular y los balances migratorios de Frontex y de los Ministerios del Interior de España e Italia."
+        "nota": "Revisión a mano (13-11-2026), al contrastar con el análisis de comunicación: Italia estuvo por delante en 2023, 2024 y 2025 («desde hace algunos años» no se sostiene), pero en 2026 España la supera; las páginas de Interior no cargan y sus cifras se toman de prensa que cita los balances."
       },
       "estado": "aprobada"
     },

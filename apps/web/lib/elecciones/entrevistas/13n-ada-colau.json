@@ -14,13 +14,13 @@
   "duracion": 8052.0,
   "ficticio": false,
   "nota": {
-    "global": 6.2,
+    "global": 6.3,
     "margen": 0.2,
     "criterios": {
-      "veracidad": 6.5,
+      "veracidad": 6.7,
       "alGrano": 8.3,
       "concrecion": 3.5,
-      "sustancia": 3.2,
+      "sustancia": 3.3,
       "juegoLimpio": 8.2,
       "claridad": 10.0
     }
@@ -12030,32 +12030,28 @@
       "candidato": "Ada Colau",
       "segundo": 1222,
       "cita": "quince formaciones políticas, o sea, quince formaciones políticas finalmente van en el frente amplio",
-      "veredicto": "roja",
-      "explicacion": "La coalición Frente Amplio está integrada formalmente por 11 formaciones políticas según el registro oficial de la Junta Electoral Central publicado en el BOE, no por 15. La cifra de quince partidos correspondió a la coalición Sumar en las elecciones generales de julio de 2023.",
+      "veredicto": "amarilla",
+      "explicacion": "Según el comunicado del propio Frente Amplio, recogido por ACN el 17 de octubre de 2026, la coalición agrupa a 15 organizaciones; según el recuento de EFE, el pacto inscrito ante la Junta Electoral Central lo forman 11.",
       "fuentes": [
         {
-          "titulo": "boe.es",
-          "url": "https://www.boe.es/boe/dias/2026/11/03/pdfs/BOE-A-2026-23103.pdf"
+          "titulo": "Diari de Tarragona (ACN): Frente Amplio y Podemos concurrirán por separado",
+          "url": "https://www.diaridetarragona.com/espana/273314/frente-amplio-concurriran-separado-catalunya-madrid.html"
         },
         {
-          "titulo": "boe.es",
-          "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-23103"
-        },
-        {
-          "titulo": "articulo14.es",
-          "url": "https://www.articulo14.es/politica/que-partidos-se-presentan-a-las-elecciones-del-29-n-candidaturas-y-coaliciones-20261108.html"
-        },
-        {
-          "titulo": "articulo14.es",
+          "titulo": "Artículo14 (EFE): Qué partidos forman Frente Amplio",
           "url": "https://www.articulo14.es/politica/que-partidos-forman-frente-amplio-integrantes-acuerdos-y-diferencias-con-sumar-20261107.html"
+        },
+        {
+          "titulo": "Junta Electoral Central: coaliciones de las Generales del 29-N-2026",
+          "url": "https://www.juntaelectoralcentral.es/cs/jec/elecciones/coalicionesJECGenerales"
         }
       ],
       "pilladoEnDirecto": false,
       "enVideo": true,
       "segundaRevision": {
-        "sugerencia": null,
+        "sugerencia": "roja",
         "fuentesOk": true,
-        "nota": "Se ha comprobado en el BOE y en los registros de la Junta Electoral Central que la coalición está formada por 11 organizaciones políticas y no por 15."
+        "nota": "Revisión a mano (13-11-2026), al contrastar con el análisis de comunicación: el comunicado de la coalición dice «Somos 15 organizaciones» y EFE cuenta 11 inscritas; la fuente anterior (BOE de candidaturas) no da la composición."
       },
       "estado": "aprobada"
     },
@@ -12302,32 +12298,36 @@
       "candidato": "Ada Colau",
       "segundo": 2493,
       "cita": "donde se separó Renfe de Adif, entonces tienes como varios operadores que a lo mejor tienen protocolos diferentes y es más difícil que haya una buena supervisión, en lugar de tener un único operador público como tienen en Francia o tienen en Alemania.",
-      "veredicto": "roja",
-      "explicacion": "Es falso que en Francia o Alemania exista un único operador ferroviario público, ya que la Directiva 2012/34/UE exige la separación de infraestructuras y la apertura a la competencia. En Alemania operan más de 350 empresas ferroviarias activas según la Bundesnetzagentur, y en Francia compiten múltiples operadores privados y públicos supervisados por la ART.",
+      "veredicto": "amarilla",
+      "explicacion": "Según la Ordonnance 2019-552 y el Gobierno federal alemán, la red y el operador principal siguen en un mismo grupo público (SNCF, Deutsche Bahn), mientras que la Ley 39/2003 separó Adif de Renfe. No hay un único operador: según la Bundesnetzagentur, otras empresas hicieron en 2025 el 37 % del tráfico regional de viajeros en Alemania, y según la ART, Renfe y Trenitalia compiten con SNCF Voyageurs en Francia.",
       "fuentes": [
         {
-          "titulo": "boe.es",
-          "url": "https://www.boe.es/buscar/doc.php?id=BOE-A-2004-21913"
+          "titulo": "BOE: Ley 39/2003, del Sector Ferroviario",
+          "url": "https://www.boe.es/buscar/doc.php?id=BOE-A-2003-20978"
         },
         {
-          "titulo": "europa.eu",
-          "url": "https://eur-lex.europa.eu/ES/legal-content/summary/a-single-railway-network-for-europe.html"
+          "titulo": "Ordonnance n° 2019-552 relative au groupe SNCF",
+          "url": "https://www.securite-ferroviaire.fr/sites/default/files/reglementations/pdf/2023-04/ordonnance-2019-552-du-3-juin-2019-dispositions-relatives-au-groupe-sncf.pdf"
         },
         {
-          "titulo": "europa.eu",
-          "url": "https://eur-lex.europa.eu/FR/legal-content/summary/a-single-railway-network-for-europe.html"
+          "titulo": "Bundesregierung: FAQ zur DB InfraGO AG",
+          "url": "https://www.bundesregierung.de/breg-de/service/archiv-bundesregierung/db-infrago-ag-2251022"
         },
         {
-          "titulo": "boe.es",
-          "url": "https://www.boe.es/doue/2012/343/L00032-00077.pdf"
+          "titulo": "Bundesnetzagentur: Marktuntersuchung Eisenbahnen, Sommer 2026",
+          "url": "https://data.bundesnetzagentur.de/Bundesnetzagentur/SharedDocs/Mediathek/Berichte/2026/MUEisenbahnenSonderausgabeSommer2026.pdf"
+        },
+        {
+          "titulo": "ART: Bilan ferroviaire France, premiers chiffres 2025",
+          "url": "https://www.autorite-transports.fr/wp-content/uploads/2026/06/art-bilan-ferroviaire-france-premiers-chiffres-2025.pdf"
         }
       ],
       "pilladoEnDirecto": false,
       "enVideo": true,
       "segundaRevision": {
-        "sugerencia": null,
+        "sugerencia": "roja",
         "fuentesOk": true,
-        "nota": "Se ha verificado que la normativa comunitaria impone la liberalización ferroviaria y que los informes de la Bundesnetzagentur y la ART constatan múltiples operadores en ambos países."
+        "nota": "Revisión a mano (13-11-2026), al contrastar con el análisis de comunicación: la integración de red y operador en SNCF y DB es cierta y el «único operador» no; la cifra anterior de «más de 350 empresas» no aparece en la Bundesnetzagentur."
       },
       "estado": "aprobada"
     },
@@ -12396,6 +12396,32 @@
         "sugerencia": null,
         "fuentesOk": true,
         "nota": "Se ha verificado que la oferta y el empleo crecieron al ritmo citado, pero el presupuesto de mantenimiento sí aumentó en términos nominales."
+      },
+      "estado": "aprobada"
+    },
+    {
+      "id": "r44",
+      "candidato": "Ada Colau",
+      "segundo": 2735,
+      "cita": "la derecha, que ha estado gritando que dimita Pedro Sánchez, no no han dimitido nunca cuando les han pasado cosas incluso más graves como lo de la DANA",
+      "veredicto": "roja",
+      "explicacion": "Según el Real Decreto 1025/2025, publicado en el BOE el 7 de noviembre de 2025, Carlos Mazón (PP) cesó como president de la Generalitat Valenciana «a petición propia». Había anunciado su dimisión el 3 de noviembre de 2025, un año después de la DANA, reconociendo errores en su gestión.",
+      "fuentes": [
+        {
+          "titulo": "BOE: Real Decreto 1025/2025, cese de Carlos Mazón Guixot",
+          "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-22530"
+        },
+        {
+          "titulo": "El Salto: Mazón abandona el cargo de president de la Generalitat",
+          "url": "https://www.elsaltodiario.com/pais-valenciano/mazon-comparecencia-palau-generalitat-lunes-3-noviembre"
+        }
+      ],
+      "pilladoEnDirecto": false,
+      "enVideo": true,
+      "segundaRevision": {
+        "sugerencia": null,
+        "fuentesOk": true,
+        "nota": "Revisión a mano (13-11-2026), al contrastar con el análisis de comunicación: el BOE recoge el cese «a petición propia» y la prensa fecha el anuncio y su relación con la DANA."
       },
       "estado": "aprobada"
     },
