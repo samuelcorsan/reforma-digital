@@ -284,14 +284,15 @@ def test_contraste_con_la_transcripcion_del_video():
     assert not en_contraste("hemos creado más empleo que nunca en la historia", 98, video)
 
 
-def test_preguntas_comunes_se_agrupan_sin_inventar_ids():
+def test_preguntas_comunes_se_agrupan_sin_inventar_ids_aunque_un_analisis_no_las_marque():
     a = Analisis.model_validate(EJEMPLO)
     b = a.model_copy(deep=True)
+    for p in b.preguntas:
+        p.comun = False  # cada análisis marca «común» sin ver las demás entrevistas
     entrevistas = {"pedro-sanchez": a, "alberto-nunez-feijoo": b}
     cliente = ClienteSimulado(Transcripcion(segmentos=[]), Extraccion(temas=[], preguntas=[], propuestas=[], ataques=[], afirmaciones=[]))
     grupos = proceso.agrupar_comunes(cliente, entrevistas)
-    comunes = [p for p in a.preguntas if p.comun]
-    assert len(grupos) == len(comunes)  # cada pregunta común, hecha a los dos
+    assert len(grupos) == len({p.texto.lower() for p in a.preguntas})  # cada pregunta, hecha a los dos
     assert all(set(g["respuestas"]) == {"pedro-sanchez", "alberto-nunez-feijoo"} for g in grupos)
 
 
@@ -544,3 +545,27 @@ def test_analizar_y_reanalizar_presentan_igual_al_entrevistador():
     assert cli.presentador(wild, ensayo=True) == "Jordi Wild"
     assert cli.presentador(ser, ensayo=False) == "Aimar Bretos"
     assert cli.presentador(None, ensayo=True) == ""
+
+
+def test_capitulos_de_youtube_sustituyen_a_los_temas(tmp_path, monkeypatch):
+    from argparse import Namespace
+
+    from entrevistas import __main__ as cli
+
+    (tmp_path / "web").mkdir()
+    (tmp_path / "web" / "13n-x.json").write_text(json.dumps(EJEMPLO), encoding="utf-8")
+    (tmp_path / "brutos" / "13n-x").mkdir(parents=True)
+    capitulos = [
+        {"start_time": 0, "end_time": 300, "title": "Vivienda y alquileres"},
+        {"start_time": 300, "end_time": 900, "title": "Ceuta y Marruecos"},
+    ]
+    (tmp_path / "brutos" / "13n-x" / "audio.info.json").write_text(json.dumps({"chapters": capitulos}))
+    monkeypatch.setattr(cli, "DATOS_WEB", tmp_path / "web")
+    monkeypatch.setattr(cli, "BRUTOS", tmp_path / "brutos")
+    cli.cmd_capitulos(Namespace(slug="13n-x"))
+    guardado = json.loads((tmp_path / "web" / "13n-x.json").read_text(encoding="utf-8"))
+    assert guardado["temas"] == [
+        {"tema": "Vivienda y alquileres", "inicio": 0, "fin": 300},
+        {"tema": "Ceuta y Marruecos", "inicio": 300, "fin": 900},
+    ]
+    assert guardado["preguntas"] == EJEMPLO["preguntas"]  # lo demás no cambia

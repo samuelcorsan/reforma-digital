@@ -163,8 +163,8 @@ export function CompareBoard({
 
       <section className="grid grid-cols-[minmax(0,1fr)] gap-8">
         <Heading label="La huella" title="Formas de hacer una entrevista">
-          Cada eje va de cero al mismo tope para todos. Más grande no es mejor ni peor: es más de
-          esa cosa.
+          Cada eje va de cero al mismo tope para todos. Llegar más lejos no es mejor ni peor: solo
+          indica más de lo que mide ese eje.
         </Heading>
         <Grid>
           <Cell span={6} className="items-center">
@@ -372,8 +372,8 @@ export function CompareBoard({
       <section className="grid grid-cols-[minmax(0,1fr)] gap-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <Heading label="En cifras" title="Mismas reglas, misma escala">
-            Cada barra tiene un tope fijo, el mismo para todos. No hay ganador: cada cifra se lee
-            por separado.
+            Cada barra tiene un tope fijo, el mismo para todos. No hay ganador: lee cada cifra por
+            separado.
           </Heading>
           <Tabs
             value={mode}

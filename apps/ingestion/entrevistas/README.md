@@ -116,6 +116,12 @@ $PY -m pip install -U "yt-dlp[default,curl-cffi]"
    - Con 55 minutos de vídeo tardó 11 minutos y costó 3 USD: una entrevista de 100 minutos, unos 5 USD. Puedes lanzar las tres a la vez, en
      terminales distintas.
    - Al acabar escribe `apps/web/lib/elecciones/entrevistas/13n-pedro-sanchez.json` y actualiza `index.ts`.
+   - Si el vídeo trae capítulos en la descripción («Momentos clave»), úsalos como temas: son los nombres que
+     pone el propio medio y agrupan las preguntas en la web.
+
+     ```sh
+     $PY -m entrevistas capitulos 13n-pedro-sanchez
+     ```
 
 2. **Lee el final del log.** Debe decir cuántas afirmaciones se verificaron, cuántas aprobó la segunda revisión y
    la comprobación de tiempos. Si sale **⚠ LOS TIEMPOS NO CUADRAN CON EL VÍDEO**, no lo publiques: repite con
@@ -172,6 +178,8 @@ Google que no llevan a una web real se descartan.
 
 ## Otros comandos
 
+- `capitulos <id>`: cambia los temas por los capítulos de la descripción de YouTube. `reanalizar` vuelve a
+  poner los del modelo: después, repítelo.
 - `nota <id>`: recalcula la valoración, por ejemplo tras cambiar los pesos en `metricas.py`.
 - `ensayo-general URL1 URL2 … --hasta 90`: varios ensayos a la vez, como el día de una ronda, con el tiempo y el
   coste totales.
