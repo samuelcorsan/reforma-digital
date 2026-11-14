@@ -44,6 +44,7 @@ import {
   outlet,
   pendingRound,
   publishedDay,
+  publishedOn,
   perMinute,
   roundInterviews,
   roundOf,
@@ -1325,29 +1326,29 @@ export function availableViews(a: Interview): ReportView[] {
 const viewName = (a: Interview, view: ReportView) =>
   view === 'compromisos' && !getCommunication(a.id) ? 'Propuestas' : reportViews[view];
 
-// Las subpáginas de la entrevista, para la barra lateral, y el análisis de comunicación.
-// `analysis`: las partes del análisis de comunicación, que cuelgan de él en la barra lateral.
-export function reportNav(a: Interview, analysis: NavItem['children'] = []): LocalNav {
+// La barra lateral de una entrevista: de quién es, dónde y cuándo, sus subpáginas y el análisis de
+// comunicación, con sus partes (`analysis`) colgando de él. `here`: la subpágina que toca marcar
+// cuando la ruta no es una de ellas (una verificación concreta, en «Verificaciones»).
+export function reportNav(a: Interview, analysis: NavItem[] = [], here?: ReportView): LocalNav {
   return {
     title: interviewName(a),
-    sections: [
-      {
-        items: [
-          ...availableViews(a).map((view) => ({
-            href: reportHref(a.id, view),
-            label: viewName(a, view),
-          })),
-          ...(getCommunication(a.id)
-            ? [
-                {
-                  href: interviewsHref(`${a.id}/${communicationPath}`),
-                  label: 'Análisis de comunicación',
-                  children: analysis,
-                },
-              ]
-            : []),
-        ],
-      },
+    subtitle: [outlet(a), publishedOn(a)].filter(Boolean).join(' · ') || undefined,
+    back: { href: interviewsHref(), label: 'Todas las entrevistas' },
+    current: here && reportHref(a.id, here),
+    items: [
+      ...availableViews(a).map((view) => ({
+        href: reportHref(a.id, view),
+        label: viewName(a, view),
+      })),
+      ...(getCommunication(a.id)
+        ? [
+            {
+              href: interviewsHref(`${a.id}/${communicationPath}`),
+              label: 'Análisis de comunicación',
+              children: analysis,
+            },
+          ]
+        : []),
     ],
   };
 }

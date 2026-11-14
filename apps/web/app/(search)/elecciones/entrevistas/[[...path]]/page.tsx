@@ -203,7 +203,9 @@ export default async function Page({ params, searchParams }: Props) {
             ? reportNav(match.interview, commNav(match.interview))
             : match.kind === 'communication'
               ? reportNav(match.interview, commNavItems(match.interview, match.analysis))
-              : undefined
+              : match.kind === 'verification'
+                ? reportNav(match.interview, commNav(match.interview), 'verificaciones')
+                : undefined
         }
       >
         {match.kind === 'home' && <InterviewsHome />}
