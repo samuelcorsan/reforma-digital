@@ -33,11 +33,11 @@ type Mode = 'first' | 'vote' | 'seats' | 'turnout' | 'price' | 'margin';
 
 const modes: [Mode, string][] = [
   ['first', 'Primera fuerza'],
-  ['vote', 'Voto a…'],
+  ['vote', 'Voto por candidatura'],
   ['seats', 'Escaños'],
   ['turnout', 'Participación'],
   ['price', 'Votos por escaño'],
-  ['margin', 'Último escaño'],
+  ['margin', 'Margen del último escaño'],
 ];
 const isMode = (v: unknown): v is Mode => modes.some(([m]) => m === v);
 const mix = (color: string, amount: number) =>
@@ -198,7 +198,9 @@ export function ProvinceMap({
         {previous && (
           <div className="grid gap-1.5">
             <Label>
-              {turned.length ? `Cambian de manos: ${turned.length}` : 'Ninguna cambia de manos'}
+              {turned.length
+                ? `Cambio de fuerza más votada: ${turned.length}`
+                : 'Sin cambios de fuerza más votada'}
             </Label>
             <ul className="m-0 grid max-h-80 list-none gap-0.5 overflow-y-auto p-0">
               {turned.map((p) => (
@@ -232,27 +234,27 @@ export function ProvinceMap({
     legend = (
       <>
         <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
-          Victoria ajustada
+          Margen estrecho
           <span
             className="block h-2.5 w-28 rounded-full"
             style={{ background: 'linear-gradient(90deg, var(--muted), var(--foreground))' }}
           />
-          holgada
+          amplio
         </p>
         {previous && (
           <p className="m-0 text-sm text-muted-foreground">
-            Con borde, las que cambian de manos respecto a {previous}.
+            Con borde, provincias con cambio de fuerza más votada respecto a {previous}.
           </p>
         )}
       </>
     );
   } else {
     const titles: Record<Exclude<Mode, 'first'>, [string, string]> = {
-      vote: ['Donde más votos tuvo', 'Donde menos'],
+      vote: ['Mayor porcentaje de voto', 'Menor porcentaje de voto'],
       seats: ['Más escaños', 'Menos escaños'],
-      turnout: ['Más participación', 'Menos participación'],
-      price: ['Escaño más caro', 'Escaño más barato'],
-      margin: ['Último escaño más holgado', 'Último escaño más ajustado'],
+      turnout: ['Mayor participación', 'Menor participación'],
+      price: ['Más votos por escaño', 'Menos votos por escaño'],
+      margin: ['Mayor margen en el último escaño', 'Menor margen en el último escaño'],
     };
     const [hi, lo] = titles[mode];
     const top = ranked.slice(0, 5);
@@ -282,7 +284,7 @@ export function ProvinceMap({
           {format[mode](high)}
         </p>
         {mode === 'vote' && values.length < provinces.length && (
-          <p className="m-0 text-sm text-muted-foreground">En gris, donde no se presentó.</p>
+          <p className="m-0 text-sm text-muted-foreground">En gris, provincias sin candidatura.</p>
         )}
       </>
     );
@@ -419,14 +421,14 @@ export function ProvinceMap({
               {chosen.last && (
                 <>
                   {' '}
-                  Último escaño para <b>{chosen.last.from}</b>; a {chosen.last.to} le faltaron{' '}
+                  Último escaño asignado a <b>{chosen.last.from}</b>; a {chosen.last.to} le faltaron{' '}
                   {thousands(chosen.last.missing)} votos.
                 </>
               )}
             </p>
             <div className="grid gap-2">
               <Label>
-                Quién ganó, de {years[0]} a {years.at(-1)}
+                Fuerza más votada, de {years[0]} a {years.at(-1)}
               </Label>
               <ol className="m-0 grid list-none grid-cols-[repeat(16,minmax(0,1fr))] gap-0.5 p-0">
                 {chosen.history.map((b, j) => (
@@ -449,7 +451,7 @@ export function ProvinceMap({
                 'justify-self-start',
               )}
             >
-              La ficha de {chosen.name} <Icon name="derecha" size={16} />
+              Ficha de {chosen.name} <Icon name="derecha" size={16} />
             </Link>
           </div>
         ) : (

@@ -44,45 +44,34 @@ const decimal = (value: number) => value.toLocaleString('es-ES', { maximumFracti
 
 type Milestone = { fecha: string; hasta?: string; hito: string; detalle?: string };
 
-// La cabecera cambia según la fase de la elección (textos de Escaño Abierto).
+// El titular cambia según la fase de la elección; debajo, lo que reúne la página, en el orden de la
+// barra lateral.
 const phases = {
   precampana: {
-    label: 'Precampaña',
-    title: 'Antes de votar, mira lo que votaron',
-    text: 'La XV legislatura se cierra con la disolución de las Cortes. Lo que dejó hecho y sin hacer, cómo se reparten los 350 escaños y cuarenta y nueve años de elecciones, con datos oficiales.',
-    cta: ['caducan', '350'],
+    title: 'Elecciones generales del 29 de noviembre',
+    text: 'Disolución de las Cortes y fin de la XV legislatura.',
   },
   listas: {
-    label: 'Ya hay listas',
-    title: 'Ya hay listas: mira quién repite',
-    text: 'Las candidaturas ya están en el BOE: quién de los 350 vuelve a presentarse, en qué puesto y por qué provincia.',
-    cta: ['repite', 'caducan'],
+    title: 'Candidaturas publicadas en el BOE',
+    text: 'Candidaturas proclamadas y publicadas en el Boletín Oficial del Estado.',
   },
   campana: {
-    label: 'Campaña electoral',
-    title: 'Quince días de campaña. Antes, mira lo que votaron',
-    text: 'Los partidos piden el voto. Aquí, lo que hicieron en la legislatura que acaba y cuánto vale un voto en cada provincia.',
-    cta: ['repite', 'legislatura'],
+    title: 'Campaña electoral del 13 al 27 de noviembre',
+    text: 'Periodo en el que las candidaturas pueden pedir el voto.',
   },
   reflexion: {
-    label: 'Jornada de reflexión',
-    title: 'Mañana se vota',
-    text: 'Hoy no hay campaña ni propaganda. Mira cuántos diputados elige tu provincia.',
-    cta: ['350', 'historico'],
+    title: 'Jornada de reflexión',
+    text: 'No se permite hacer campaña ni propaganda electoral.',
   },
   votacion: {
-    label: 'Hoy se vota',
-    title: 'Hoy se vota, de 9.00 a 20.00',
-    text: 'A las ocho de la tarde cierran los colegios y empieza el escrutinio.',
-    cta: ['350', 'escano'],
+    title: 'Jornada electoral: votación de 9.00 a 20.00',
+    text: 'Los colegios electorales cierran a las 20.00 y comienza el escrutinio.',
   },
   despues: {
-    label: 'Después del 29N',
-    title: 'Ya se ha votado',
-    text: 'Mientras se publican los resultados oficiales, mira cómo se reparten los 350 y cuarenta y nueve años de elecciones.',
-    cta: ['350', 'historico'],
+    title: 'Escrutinio de las elecciones generales',
+    text: 'Resultados oficiales pendientes de publicación.',
   },
-} satisfies Record<string, { label: string; title: string; text: string; cta: ElectionPage[] }>;
+} satisfies Record<string, { title: string; text: string }>;
 
 function phase(today: string, vote: string, calendar: Milestone[]): keyof typeof phases {
   const find = (start: string) => calendar.find((m) => m.hito.startsWith(start));
@@ -97,28 +86,13 @@ function phase(today: string, vote: string, calendar: Milestone[]): keyof typeof
 }
 
 const chapters = [
-  {
-    id: 'legislatura',
-    name: 'La legislatura',
-    title: 'La legislatura que se acaba',
-    color: '#7152A8',
-  },
-  { id: 'escanos', name: 'Los escaños', title: 'Cómo se reparten los 350', color: 'var(--brand)' },
-  { id: 'tu-provincia', name: 'Tu provincia', title: 'Tu provincia', color: 'var(--brand-orange)' },
-  {
-    id: 'historia',
-    name: 'La historia',
-    title: 'Cuarenta y nueve años de elecciones',
-    color: '#2A7DB5',
-  },
-  { id: 'mapa', name: 'El mapa', title: 'El mapa del voto', color: 'var(--brand-yellow)' },
-  { id: 'encuestas', name: 'Las encuestas', title: 'Lo que dicen las encuestas', color: '#2F7A4A' },
-  {
-    id: 'entrevistas',
-    name: 'Las entrevistas',
-    title: 'Los candidatos, entrevista a entrevista',
-    color: 'var(--foreground)',
-  },
+  { id: 'legislatura', title: 'Legislatura' },
+  { id: 'escanos', title: 'Reparto de escaños' },
+  { id: 'tu-provincia', title: 'Datos por provincia' },
+  { id: 'historia', title: 'Historial electoral' },
+  { id: 'mapa', title: 'Resultados territoriales' },
+  { id: 'encuestas', title: 'Encuestas' },
+  { id: 'entrevistas', title: 'Entrevistas a los candidatos' },
 ];
 
 const card = (id: ElectionPage, span: 4 | 6 | 12, children?: ReactNode) => (
@@ -134,11 +108,12 @@ const card = (id: ElectionPage, span: 4 | 6 | 12, children?: ReactNode) => (
   </PageCard>
 );
 
-// Los plazos en vertical: cada hito en una línea, con la fecha a la derecha.
+// Los plazos en horizontal: cada hito con su punto en la línea, la fecha y el nombre debajo. La línea
+// va en tinta hasta hoy. Caben todos desde 1024 px; por debajo, se desplaza de lado.
 function Calendar({ calendar, today }: { calendar: Milestone[]; today: string }) {
   const next = calendar.findIndex((m) => m.fecha > today);
   return (
-    <ol className="m-0 grid list-none p-0">
+    <ol className="m-0 grid list-none auto-cols-[minmax(8.5rem,1fr)] grid-flow-col overflow-x-auto p-0 pb-2 lg:auto-cols-[minmax(0,1fr)]">
       {calendar.map((m, k) => {
         const now = (m.hasta && m.fecha <= today && today <= m.hasta) || m.fecha === today;
         const past = !now && m.fecha < today;
@@ -148,37 +123,37 @@ function Calendar({ calendar, today }: { calendar: Milestone[]; today: string })
             key={`${m.fecha}-${m.hito}`}
             title={m.detalle}
             className={cn(
-              'relative grid grid-cols-[12px_minmax(0,1fr)_auto] items-start gap-x-3 py-1.5',
-              'before:absolute before:top-0 before:bottom-0 before:left-[5px] before:w-0.5 first:before:top-[17px] last:before:bottom-auto last:before:h-[17px]',
+              'relative grid content-start gap-1.5 pr-4',
+              'before:absolute before:top-[5px] before:right-0 before:left-3 before:h-0.5 last:before:hidden',
               past || now ? 'before:bg-foreground' : 'before:bg-border',
             )}
           >
             <i
               className={cn(
-                'relative mt-[5px] block size-3 rounded-full border-2 border-border bg-background',
+                'relative mb-2 block size-3 rounded-full border-2 border-border bg-background',
                 past && 'border-foreground bg-foreground',
                 now && 'border-foreground bg-foreground ring-4 ring-foreground/15',
                 k === next && 'border-foreground',
               )}
             />
+            <span className="font-mono text-sm whitespace-nowrap text-muted-foreground tabular-nums">
+              {m.hasta
+                ? `${m.fecha.slice(5, 7) === m.hasta.slice(5, 7) ? Number(m.fecha.slice(8)) : shortDate(m.fecha)} – ${shortDate(m.hasta)}`
+                : shortDate(m.fecha)}
+            </span>
             <span
               className={cn(
-                'text-base leading-snug',
+                'text-sm leading-snug',
                 past && 'text-muted-foreground',
                 (now || k === next) && 'font-medium',
               )}
             >
               {m.hito}
               {days !== null && (
-                <span className="block text-sm font-normal text-muted-foreground">
-                  {days === 1 ? 'Mañana' : `En ${days} días`}
+                <span className="block font-normal text-muted-foreground">
+                  {days === 1 ? 'Mañana' : `Dentro de ${days} días`}
                 </span>
               )}
-            </span>
-            <span className="pt-0.5 font-mono text-sm whitespace-nowrap text-muted-foreground tabular-nums">
-              {m.hasta
-                ? `${m.fecha.slice(5, 7) === m.hasta.slice(5, 7) ? Number(m.fecha.slice(8)) : shortDate(m.fecha)} – ${shortDate(m.hasta)}`
-                : shortDate(m.fecha)}
             </span>
           </li>
         );
@@ -334,22 +309,22 @@ export async function ElectionsHome() {
           name: p.corto,
           seats,
           note: change
-            ? `${Math.abs(change) === 1 ? 'Uno' : Math.abs(change)} ${change > 0 ? 'más' : 'menos'} que en ${year}, por su población (${election.decreto.rd}).`
-            : `Los mismos que en ${year}.`,
+            ? `${Math.abs(change) === 1 ? 'Un escaño' : `${Math.abs(change)} escaños`} ${change > 0 ? 'más' : 'menos'} que en ${year}, por población (${election.decreto.rd}).`
+            : `Mismo número de escaños que en ${year}.`,
           stats: [
             {
               value: thousands(total.validos / total.e),
-              caption: `votos costó cada escaño en ${year} (España: ${thousands(last.validos / 350)})`,
+              caption: `votos por escaño en ${year} (conjunto de España: ${thousands(last.validos / 350)})`,
             },
             {
               value: percent(total.votantes / total.censo),
-              caption: `de participación en ${year} (España: ${percent(last.votantes / last.censo)})`,
+              caption: `de participación en ${year} (conjunto de España: ${percent(last.votantes / last.censo)})`,
             },
             ...(detail.ultimo
               ? [
                   {
                     value: thousands(detail.ultimo.faltan),
-                    caption: `votos le faltaron a ${detail.ultimo.segundo} para quitarle el último escaño a ${detail.ultimo.gana}`,
+                    caption: `votos faltaron a ${detail.ultimo.segundo} para obtener el último escaño, asignado a ${detail.ultimo.gana}`,
                   },
                 ]
               : []),
@@ -492,94 +467,45 @@ export async function ElectionsHome() {
   );
 
   const chapter = (id: string) => {
-    const i = chapters.findIndex((c) => c.id === id);
-    const c = chapters[i];
+    const c = chapters.find((c) => c.id === id);
     if (!c) throw new Error(`Capítulo desconocido: ${id}`);
-    return { ...c, n: i + 1 };
+    return c;
   };
 
   return (
     <>
-      <Grid>
-        <Cell span={7} className="gap-10">
-          <Label>
-            Elecciones generales · {formatDate(election.votacion, { weekday: 'long' })}{' '}
-            {longDate(election.votacion)} de {election.votacion.slice(0, 4)}
-          </Label>
-          <div className="grid gap-8">
-            <div className="grid justify-items-start gap-4">
-              <Badge className="font-mono uppercase">{current.label}</Badge>
-              <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
-                {current.title}
-              </h1>
-              <p className="m-0 max-w-[58ch] text-lg leading-relaxed text-muted-foreground">
-                {current.text}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {current.cta.map((id, i) => (
-                <Link
-                  key={id}
-                  href={electionsHref(id)}
-                  data-slot="button"
-                  data-variant={i ? 'outline' : 'sunset'}
-                  className={cn(buttonVariants({ variant: i ? 'outline' : 'sunset', size: 'xl' }))}
-                >
-                  {electionPages[id].title} <Icon name="derecha" size={16} />
-                </Link>
-              ))}
-              <a
-                href="#tu-provincia"
-                data-slot="button"
-                data-variant="outline"
-                className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}
-              >
-                Tu provincia <Icon name="abajo" size={16} />
-              </a>
-            </div>
-          </div>
-          <nav aria-label="Capítulos" className="mt-auto grid gap-3 border-t border-border pt-6">
-            <Label>En esta página</Label>
-            <ol className="m-0 grid list-none gap-x-6 p-0 sm:grid-cols-2">
-              {chapters.map((c, i) => (
-                <li key={c.id}>
-                  <a
-                    href={`#${c.id}`}
-                    className="flex min-h-11 items-center gap-3 text-base leading-snug no-underline hover:text-muted-foreground"
-                  >
-                    <i
-                      aria-hidden="true"
-                      className="block size-2.5 shrink-0 rounded-full"
-                      style={{ background: c.color }}
-                    />
-                    <span className="font-mono text-sm text-muted-foreground">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    {c.title}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </nav>
-        </Cell>
-        <Cell span={5} label="Calendario electoral">
-          <Stat
-            value={daysLeft > 0 ? daysLeft : daysLeft === 0 ? 'Hoy' : '29N'}
-            caption={
-              daysLeft > 1
-                ? 'días para votar'
-                : daysLeft === 1
-                  ? 'día: mañana se vota'
-                  : daysLeft === 0
-                    ? 'se vota de 9.00 a 20.00'
-                    : 'elecciones generales'
-            }
-          />
-          <Calendar calendar={calendar} today={today} />
-          <p className="m-0 text-sm text-muted-foreground">
-            Plazos de la Ley Orgánica del Régimen Electoral General, contados desde el{' '}
-            {election.decreto.rd}.
+      <div className="flex flex-col items-center gap-8 pt-4 pb-12 text-center lg:pt-8 lg:pb-16">
+        <div className="grid justify-items-center gap-4">
+          <h1 className="m-0 max-w-[20ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
+            {current.title}
+          </h1>
+          <p className="m-0 max-w-[58ch] text-lg leading-relaxed text-muted-foreground">
+            {current.text} Datos oficiales de la legislatura, el reparto de escaños, los resultados
+            desde 1977, las encuestas y las entrevistas a los candidatos.
           </p>
+        </div>
+      </div>
+      <Grid>
+        <Cell>
+          <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-2">
+            <Stat
+              value={daysLeft > 0 ? daysLeft : daysLeft === 0 ? 'Hoy' : '29N'}
+              caption={
+                daysLeft > 1
+                  ? 'días para la votación'
+                  : daysLeft === 1
+                    ? 'día para la votación'
+                    : daysLeft === 0
+                      ? 'votación de 9.00 a 20.00'
+                      : 'elecciones generales'
+              }
+            />
+            <p className="m-0 max-w-[48ch] text-sm text-muted-foreground">
+              Plazos de la Ley Orgánica del Régimen Electoral General, contados desde el{' '}
+              {election.decreto.rd}.
+            </p>
+          </div>
+          <Calendar calendar={calendar} today={today} />
         </Cell>
       </Grid>
 
@@ -587,8 +513,8 @@ export async function ElectionsHome() {
         {...chapter('legislatura')}
         insight={
           <>
-            La disolución deja <b>{thousands(caducan.total)} leyes</b> a medio camino. La mayoría
-            las habían presentado los grupos parlamentarios.
+            Con la disolución caducan <b>{thousands(caducan.total)} iniciativas legislativas</b> en
+            tramitación. La mayoría son proposiciones de ley de los grupos parlamentarios.
           </>
         }
       >
@@ -596,7 +522,10 @@ export async function ElectionsHome() {
           'caducan',
           4,
           <>
-            <Stat value={thousands(caducan.total)} caption="leyes caducan sin terminar" />
+            <Stat
+              value={thousands(caducan.total)}
+              caption="iniciativas legislativas caducan sin completar su tramitación"
+            />
             <MonthBars from={firstMonth} columns={lawColumns} />
             <Legend items={origins.map(([, label, color]) => ({ label, color }))} small />
           </>,
@@ -609,8 +538,8 @@ export async function ElectionsHome() {
               value={thousands(b.votaciones)}
               caption={
                 b.mas_ajustada
-                  ? `votaciones; la más ajustada, ${b.mas_ajustada.si} a ${b.mas_ajustada.no}`
-                  : `votaciones en ${b.plenos} plenos`
+                  ? `votaciones; la más ajustada, ${b.mas_ajustada.si} votos a favor y ${b.mas_ajustada.no} en contra`
+                  : `votaciones en ${b.plenos} sesiones plenarias`
               }
             />
             <MonthBars from={firstMonth} columns={voteColumns} />
@@ -623,9 +552,7 @@ export async function ElectionsHome() {
             {lists && (
               <Stat
                 value={shortDate(lists.fecha)}
-                caption={
-                  today < lists.fecha ? 'el BOE publica las listas' : 'el BOE publicó las listas'
-                }
+                caption={'publicación de las candidaturas en el BOE'}
               />
             )}
             <svg viewBox={seatsBox} aria-hidden="true" className="mx-auto block h-26 w-auto">
@@ -641,7 +568,8 @@ export async function ElectionsHome() {
         {...chapter('escanos')}
         insight={
           <>
-            Cada provincia elige sus diputados por separado. En {dearest.name} un escaño costó{' '}
+            Cada provincia es una circunscripción y elige a sus propios diputados. En {year}, un
+            escaño en {dearest.name} requirió{' '}
             <b>{decimal(dearest.price / cheapest.price)} veces más votos</b> que en {cheapest.name}.
           </>
         }
@@ -680,7 +608,6 @@ export async function ElectionsHome() {
                   max={dearest.price}
                   narrow
                 />
-                <Label>Votos por escaño en {year}</Label>
               </div>
               {changes.length > 0 && (
                 <p className="m-0 border-t border-border pt-4 text-muted-foreground">
@@ -694,7 +621,7 @@ export async function ElectionsHome() {
 
       <Chapter
         {...chapter('tu-provincia')}
-        insight="Cuántos diputados elige, cómo se repartieron la última vez y quiénes la representan hoy."
+        insight="Diputados que elige cada provincia, reparto en las últimas elecciones y diputados actuales."
       >
         <Cell>
           <ProvincePicker provinces={provinces} />
@@ -705,12 +632,12 @@ export async function ElectionsHome() {
         {...chapter('historia')}
         insight={
           <>
-            <b>{history.elecciones.length} elecciones generales</b> desde {firstYear}, y así se
-            repartieron los 350 escaños en cada una.
+            Reparto de los 350 escaños en las{' '}
+            <b>{history.elecciones.length} elecciones generales</b> celebradas desde {firstYear}.
           </>
         }
       >
-        <Cell label="Escaños por familia política">
+        <Cell>
           <Tips className="grid auto-cols-fr grid-flow-col gap-0.5 sm:gap-1">
             {history.elecciones.map((e, i) => {
               const ranked = history.familias
@@ -762,10 +689,10 @@ export async function ElectionsHome() {
           </Tips>
           <Legend items={presentFamilies.map((f) => ({ label: f.nombre, color: f.color }))} />
         </Cell>
-        <Cell span={6} label="Fragmentación">
+        <Cell span={6}>
           <Stat
             value={decimal(last.metricas.nep_votos)}
-            caption={`partidos efectivos en ${year}, frente a ${decimal(first.metricas.nep_votos)} en ${firstYear}`}
+            caption={`número efectivo de partidos en ${year} (${decimal(first.metricas.nep_votos)} en ${firstYear})`}
           />
           <Spark
             values={history.elecciones.map((e) => e.metricas.nep_votos)}
@@ -774,10 +701,10 @@ export async function ElectionsHome() {
             to={year}
           />
         </Cell>
-        <Cell span={6} label="Participación">
+        <Cell span={6}>
           <Stat
             value={percent(last.votantes / last.censo)}
-            caption={`votó en ${year}, frente al ${percent(first.votantes / first.censo)} en ${firstYear}`}
+            caption={`de participación en ${year} (${percent(first.votantes / first.censo)} en ${firstYear})`}
           />
           <Spark
             values={history.elecciones.map((e) => e.votantes / e.censo)}
@@ -795,12 +722,12 @@ export async function ElectionsHome() {
           {...chapter('mapa')}
           insight={
             <>
-              En {year}, <b>{topFamily.label}</b> fue lo más votado en {topFamily.n} de las{' '}
+              En {year}, <b>{topFamily.label}</b> fue la fuerza más votada en {topFamily.n} de las{' '}
               {winners.length} provincias.
             </>
           }
         >
-          <Cell span={7} label={`Lo más votado en cada provincia · ${year}`}>
+          <Cell span={7}>
             {/* Las provincias no entran en el orden de tabulación: el buscador de «Tu provincia» lleva a cada ficha. */}
             <Tips>
               <svg
@@ -817,7 +744,9 @@ export async function ElectionsHome() {
                       href={href(`geografia/${id}`)}
                       tabIndex={-1}
                       data-tip={p.circ}
-                      data-tip-text={w ? `Lo más votado en ${year}: ${w.party}` : undefined}
+                      data-tip-text={
+                        w ? `Candidatura más votada en ${year}: ${w.party}` : undefined
+                      }
                       data-tip-color={w?.family.color}
                       className="[&:hover>path]:opacity-75"
                     >
@@ -849,18 +778,18 @@ export async function ElectionsHome() {
         insight={
           projection && leader ? (
             <>
-              En la media de las encuestas, {party[leader[0]]?.nombre ?? leader[0]} va primero con{' '}
-              <b>{decimal(leader[1])} %</b>. La ley prohíbe publicarlas desde el{' '}
+              {party[leader[0]]?.nombre ?? leader[0]} encabeza la media de encuestas con{' '}
+              <b>{decimal(leader[1])} %</b>. La LOREG prohíbe su publicación desde el{' '}
               {longDate(polls.veda[0])}.
             </>
           ) : (
-            'Durante los días previos a la votación, la ley prohíbe publicar encuestas.'
+            'La LOREG prohíbe publicar encuestas durante los días previos a la votación.'
           )
         }
       >
         {projection ? (
           <>
-            <Cell span={6} label={`Intención de voto · ${longDate(projection.fecha)}`}>
+            <Cell span={6} label={`Estimación de voto · ${longDate(projection.fecha)}`}>
               <Bars
                 rows={average.map(([id, value]) => ({
                   label: party[id]?.nombre ?? id,
@@ -870,7 +799,7 @@ export async function ElectionsHome() {
                 }))}
               />
             </Cell>
-            <Cell span={6} label="Escaños de la media">
+            <Cell span={6} label="Escaños según la media de encuestas">
               <div
                 className="relative h-8"
                 role="img"
@@ -895,7 +824,7 @@ export async function ElectionsHome() {
                 />
               </div>
               <p className="m-0 -mt-3 text-sm text-muted-foreground">
-                La línea vertical marca la mayoría absoluta: {majority} escaños.
+                Línea vertical: mayoría absoluta ({majority} escaños).
               </p>
               <Legend
                 items={projected.slice(0, 6).map(([id, n]) => ({
@@ -904,7 +833,7 @@ export async function ElectionsHome() {
                 }))}
               />
               <div className="grid gap-3 border-t border-border pt-5">
-                <Label>Bloques, frente a la mayoría de {majority}</Label>
+                <Label>Escaños por bloque y mayoría absoluta ({majority})</Label>
                 <Bars rows={blocks} max={350} mark={majority} />
               </div>
             </Cell>
@@ -916,7 +845,7 @@ export async function ElectionsHome() {
               market && favourite && (
                 <Stat
                   value={`${Math.round(favourite.p * 100)} %`}
-                  caption={`${favourite.nombre}, en «${market.pregunta}», según Polymarket`}
+                  caption={`probabilidad de «${favourite.nombre}» en «${market.pregunta}», según Polymarket`}
                 />
               ),
             )}
@@ -924,9 +853,9 @@ export async function ElectionsHome() {
           </>
         ) : (
           <>
-            <Cell span={6} label="Veda electoral">
+            <Cell span={6}>
               <p className="m-0 text-base text-muted-foreground">
-                Las encuestas volverán a mostrarse cuando acabe el periodo de restricción.
+                Las encuestas se mostrarán de nuevo al terminar el periodo de prohibición.
               </p>
             </Cell>
             {accuracyCard}
@@ -938,8 +867,8 @@ export async function ElectionsHome() {
         {...chapter('entrevistas')}
         insight={
           <>
-            Cuatro candidatos y las mismas reglas: cada afirmación comprobable se contrasta con{' '}
-            <b>fuentes oficiales</b> y una segunda revisión de IA comprueba cada una.
+            Entrevistas a los cuatro candidatos con el mismo método: cada afirmación comprobable se
+            contrasta con <b>fuentes oficiales</b> y pasa una segunda revisión con IA.
           </>
         }
       >

@@ -295,7 +295,7 @@ export function MunicipalMap({
           disabled={!comparable}
           onClick={() => setChange(!change)}
         >
-          Cambio desde 2019
+          Variación desde 2019
         </Button>
       </div>
       {summary && (
@@ -342,7 +342,7 @@ export function MunicipalMap({
                 ref={svg}
                 viewBox={box ?? `0 0 ${data.geo.ancho} ${data.geo.alto}`}
                 role="img"
-                aria-label={`Mapa de los municipios de ${provinceName ?? 'España'}: ${modes.find((m) => m.value === mode)?.label}${showChange ? ', cambio desde 2019' : ''}`}
+                aria-label={`Mapa de los municipios de ${provinceName ?? 'España'}: ${modes.find((m) => m.value === mode)?.label}${showChange ? ', variación desde 2019' : ''}`}
                 className="block h-auto w-full"
                 onPointerOver={describe}
                 onClick={choose}
@@ -395,8 +395,7 @@ export function MunicipalMap({
               />
             ) : (
               <p className="m-0 text-(--text-secondary)">
-                Pulsa un municipio del mapa para ver su ficha: cómo votó en 2023, cuánto cambió
-                desde 2019 y cuánta gente fue a votar.
+                Pulsa un municipio del mapa para ver su ficha.
               </p>
             )}
           </aside>
@@ -502,7 +501,7 @@ function Profile({
             ))}
           </ul>
           <p className="m-0 text-sm text-(--text-secondary)">
-            Voto del 23J sobre los votos a candidaturas; la raya negra marca el de 2019.
+            Porcentaje sobre los votos a candidaturas el 23J; la línea negra indica el de 2019.
           </p>
         </>
       )}

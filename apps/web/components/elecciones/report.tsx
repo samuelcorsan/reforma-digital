@@ -18,13 +18,9 @@ const spans = {
   12: 'md:col-span-12',
 };
 
-// Etiqueta corta en mayúsculas: el único texto que puede medir 12 px.
+// El título corto de una tarjeta o de un bloque, en minúsculas como el resto del texto.
 export function Label({ children }: { children: ReactNode }) {
-  return (
-    <p className="m-0 font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
-      {children}
-    </p>
-  );
+  return <p className="m-0 text-sm font-medium">{children}</p>;
 }
 
 export function Grid({ className, children }: { className?: string; children: ReactNode }) {
@@ -217,17 +213,26 @@ export function CardCta({ children }: { children: ReactNode }) {
 export function Heading({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="grid gap-2">
-      <h2 className="m-0 font-heading text-[28px] leading-tight font-normal">{title}</h2>
+      <h2
+        data-section-title
+        className="m-0 scroll-mt-40 font-heading text-[28px] leading-tight font-normal"
+      >
+        {title}
+      </h2>
       {children && <p className="m-0 max-w-[65ch] text-muted-foreground">{children}</p>}
     </div>
   );
 }
 
 // Título de una sección de la página (fuera de las tarjetas): de 32 a 36 px, como pide DESIGN.md.
+// `data-section-title` lo lleva a la barra lateral como una sección de la página.
 export function SectionHeading({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="grid gap-2">
-      <h2 className="m-0 font-heading text-[32px] leading-tight font-normal lg:text-[36px]">
+      <h2
+        data-section-title
+        className="m-0 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]"
+      >
         {title}
       </h2>
       {children && <p className="m-0 max-w-[65ch] text-muted-foreground">{children}</p>}
@@ -237,17 +242,11 @@ export function SectionHeading({ title, children }: { title: string; children?: 
 
 export function Chapter({
   id,
-  n,
-  name,
-  color,
   title,
   insight,
   children,
 }: {
   id: string;
-  n: number;
-  name: string;
-  color: string;
   title: string;
   insight: ReactNode;
   children: ReactNode;
@@ -255,22 +254,13 @@ export function Chapter({
   return (
     <section id={id} aria-labelledby={`${id}-titulo`} className="mt-24 scroll-mt-24 max-sm:mt-16">
       <header className="mb-8 grid items-end gap-x-12 gap-y-4 md:grid-cols-2">
-        <div>
-          <p className="m-0 mb-4 flex items-center gap-2 font-mono text-xs font-medium tracking-[0.08em] uppercase">
-            <i
-              aria-hidden="true"
-              className="block size-2.5 rounded-full"
-              style={{ background: color }}
-            />
-            {String(n).padStart(2, '0')} · {name}
-          </p>
-          <h2
-            id={`${id}-titulo`}
-            className="m-0 font-heading text-[32px] leading-[1.1] font-normal lg:text-[44px]"
-          >
-            {title}
-          </h2>
-        </div>
+        <h2
+          id={`${id}-titulo`}
+          data-section-title
+          className="m-0 scroll-mt-40 font-heading text-[32px] leading-[1.1] font-normal lg:text-[44px]"
+        >
+          {title}
+        </h2>
         <p className="m-0 max-w-[52ch] text-lg leading-relaxed text-muted-foreground [&_b]:font-medium [&_b]:text-foreground">
           {insight}
         </p>
@@ -320,18 +310,27 @@ export function ReportSection({
   id,
   title,
   action,
+  quiet,
   children,
 }: {
   // Para enlazarla desde un índice: el margen deja sitio a la cabecera y al índice fijos.
   id?: string;
   title: string;
   action?: ReactNode;
+  // Cuando el título de la página ya dice lo mismo: el título queda para los lectores de pantalla.
+  quiet?: boolean;
   children: ReactNode;
 }) {
   return (
-    <section id={id} className="my-16 scroll-mt-40">
-      <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4">
-        <h2 className="m-0 font-heading text-[32px] leading-tight font-normal lg:text-[36px]">
+    <section id={id} className={cn('scroll-mt-40', quiet ? 'mt-6 mb-16' : 'my-16')}>
+      <div className={cn('flex flex-wrap items-baseline justify-between gap-4', !quiet && 'mb-6')}>
+        <h2
+          data-section-title
+          className={cn(
+            'm-0 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]',
+            quiet && 'sr-only',
+          )}
+        >
           {title}
         </h2>
         {action}

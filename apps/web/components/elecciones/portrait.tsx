@@ -1,23 +1,27 @@
 import Image, { type StaticImageData } from 'next/image';
-import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@reforma-digital/design/ui/collapsible';
 import type { Candidate } from '../../lib/elecciones/candidates';
-import { Icon } from '../brand/icon';
 import abascal from './candidatos/abascal.png';
 import colau from './candidatos/colau.png';
 import feijoo from './candidatos/feijoo.png';
 import sanchez from './candidatos/sanchez.png';
+import abascalColor from './candidatos/abascal-color.png';
+import colauColor from './candidatos/colau-color.png';
+import feijooColor from './candidatos/feijoo-color.png';
+import sanchezColor from './candidatos/sanchez-color.png';
 
 const photos: Record<Candidate['slug'], StaticImageData> = {
   'ada-colau': colau,
   'santiago-abascal': abascal,
   'pedro-sanchez': sanchez,
   'alberto-nunez-feijoo': feijoo,
+};
+// La misma foto a color, con el mismo encuadre y el mismo recorte, para pasar el ratón.
+const colorPhotos: Record<Candidate['slug'], StaticImageData> = {
+  'ada-colau': colauColor,
+  'santiago-abascal': abascalColor,
+  'pedro-sanchez': sanchezColor,
+  'alberto-nunez-feijoo': feijooColor,
 };
 
 // Retrato: la cara ocupa el 38 % del alto y empieza al 20 %. Avatar: cuadrado y con la cara más grande.
@@ -49,17 +53,27 @@ export function Portrait({
   candidate,
   kind = 'portrait',
   sizes,
+  hoverColor,
   className,
 }: {
   candidate: Candidate;
   kind?: keyof typeof frames;
   sizes: string;
+  // En blanco y negro; a color al pasar el ratón por la foto o por la tarjeta (`group/candidato`).
+  hoverColor?: boolean;
   className?: string;
 }) {
   const photo = photos[candidate.slug];
   const frame = frames[kind];
   return (
-    <div className={cn('relative overflow-hidden bg-muted', frame.box, className)}>
+    <div
+      className={cn(
+        'relative overflow-hidden bg-muted',
+        hoverColor && 'group/candidato',
+        frame.box,
+        className,
+      )}
+    >
       <div
         className="absolute inset-0"
         style={kind === 'portrait' ? { maskImage: fade, WebkitMaskImage: fade } : undefined}
@@ -72,54 +86,42 @@ export function Portrait({
           className="pointer-events-none absolute h-auto max-w-none select-none"
           style={place(candidate, photo, frame)}
         />
+        {hoverColor && (
+          <Image
+            src={colorPhotos[candidate.slug]}
+            alt=""
+            sizes={sizes}
+            draggable={false}
+            className="pointer-events-none absolute h-auto max-w-none opacity-0 transition-opacity duration-500 ease-(--ease-brand) select-none group-hover/candidato:opacity-100 motion-reduce:transition-none"
+            style={place(candidate, photo, frame)}
+          />
+        )}
       </div>
     </div>
   );
 }
 
 // Los créditos, enlazados a su original: CC BY-SA pide autor, licencia y que se diga que se ha
-// cambiado. Con una foto, una línea; con varias, una lista desplegable junto a `children`.
-export function PhotoCredits({
-  people,
-  children,
-}: {
-  people: readonly Candidate[];
-  children?: ReactNode;
-}) {
-  const [first] = people;
-  if (people.length === 1 && first) {
-    return (
-      <p className="m-0 text-sm text-muted-foreground">
-        Foto: <Original candidate={first} />, recortada y en blanco y negro.
-      </p>
-    );
-  }
+// cambiado. Van todos juntos en la metodología.
+export function PhotoCredits({ people }: { people: readonly Candidate[] }) {
   return (
-    <Collapsible className="grid gap-3 text-sm text-muted-foreground">
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
-        {children}
-        <CollapsibleTrigger className="group flex min-h-11 items-center gap-2 font-medium text-foreground">
-          Créditos de las fotos
-          <span aria-hidden="true" className="flex group-data-open:rotate-180">
-            <Icon name="abajo" size={16} />
-          </span>
-        </CollapsibleTrigger>
-      </div>
-      <CollapsibleContent>
-        <ul className="m-0 grid list-none gap-2 border-t border-border p-0 pt-3">
-          {people.map((c) => (
-            <li
-              key={c.slug}
-              className="grid grid-cols-[minmax(0,12rem)_minmax(0,1fr)] gap-x-4 max-sm:grid-cols-1"
-            >
-              <span className="text-foreground">{c.name}</span>
-              <Original candidate={c} />
-            </li>
-          ))}
-        </ul>
-        <p className="m-0 mt-3">Recortadas y en blanco y negro. Originales en Wikimedia Commons.</p>
-      </CollapsibleContent>
-    </Collapsible>
+    <div className="grid gap-3 text-sm text-muted-foreground">
+      <ul className="m-0 grid list-none gap-2 p-0">
+        {people.map((c) => (
+          <li
+            key={c.slug}
+            className="grid grid-cols-[minmax(0,12rem)_minmax(0,1fr)] gap-x-4 max-sm:grid-cols-1"
+          >
+            <span className="text-foreground">{c.name}</span>
+            <Original candidate={c} />
+          </li>
+        ))}
+      </ul>
+      <p className="m-0">
+        Recortadas; se muestran en blanco y negro y, al pasar el ratón, en color. Originales en
+        Wikimedia Commons.
+      </p>
+    </div>
   );
 }
 

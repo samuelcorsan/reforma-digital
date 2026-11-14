@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import {
+  availableViews,
   InterviewReport,
+  playerHref,
+  reportNav,
+  reportViews,
   InterviewsCompare,
   InterviewsHome,
   InterviewsMethod,
@@ -10,16 +14,23 @@ import {
   VerificationPage,
   VerificationsIndex,
 } from '../../../../../components/elecciones/interviews';
-import { CandidateProfile } from '../../../../../components/elecciones/candidate';
-import { CommunicationReport } from '../../../../../components/elecciones/communication';
+import {
+  commAvailable,
+  CommunicationReport,
+  commNavItems,
+  commViews,
+} from '../../../../../components/elecciones/communication';
+import { VideoDock } from '../../../../../components/elecciones/video-dock';
 import { ElectionsFrame } from '../../../../../components/elecciones/nav';
 import {
   getCandidate,
   getInterview,
   interviewName,
+  interviewsOf,
   rounds,
   verdictIds,
   verdicts,
+  type Interview,
 } from '../../../../../lib/elecciones/interviews';
 import { communicationPath, getCommunication } from '../../../../../lib/elecciones/communication';
 import { electionPages } from '../../../../../lib/elecciones/pages';
@@ -39,10 +50,11 @@ type Props = {
 };
 
 // /entrevistas, /entrevistas/metodologia, /entrevistas/verificaciones, /entrevistas/comparar(/<ronda>), /entrevistas/<candidato>, /entrevistas/<entrevista>,
-// /entrevistas/<entrevista>/comunicacion y /entrevistas/<entrevista>/<verificación>.
+// /entrevistas/<entrevista>/<subpágina> (verificaciones, compromisos…), /entrevistas/<entrevista>/comunicacion
+// y /entrevistas/<entrevista>/<verificación>.
 function route(path: string[] = []) {
-  const [id, detail, ...rest] = path;
-  if (rest.length) return null;
+  const [id, detail, sub, ...rest] = path;
+  if (rest.length || (sub && detail !== communicationPath)) return null;
   if (!id) return detail ? null : { kind: 'home' as const };
   if (id === 'metodologia') return detail ? null : { kind: 'method' as const };
   if (id === 'verificaciones') return detail ? null : { kind: 'verifications' as const };
@@ -54,10 +66,16 @@ function route(path: string[] = []) {
   if (candidate) return detail ? null : { kind: 'candidate' as const, candidate };
   const interview = getInterview(id);
   if (!interview) return null;
-  if (!detail) return { kind: 'interview' as const, interview };
+  if (!detail) return { kind: 'interview' as const, interview, view: 'resumen' as const };
+  const view = availableViews(interview).find((v) => v === detail && v !== 'resumen');
+  if (view) return { kind: 'interview' as const, interview, view };
   if (detail === communicationPath) {
     const analysis = getCommunication(interview.id);
-    return analysis ? { kind: 'communication' as const, interview, analysis } : null;
+    if (!analysis) return null;
+    const view = commAvailable(analysis).find((v) =>
+      sub ? v === sub && v !== 'resumen' : v === 'resumen',
+    );
+    return view ? { kind: 'communication' as const, interview, analysis, view } : null;
   }
   const verification = interview.revisiones.find((r) => r.id === detail);
   return verification ? { kind: 'verification' as const, interview, verification } : null;
@@ -86,18 +104,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       });
     }
     case 'candidate':
-      return pageMetadata({
-        ...base,
-        og: ogOf(match.candidate.slug),
-        title: `${match.candidate.name} · Las entrevistas · Reforma Digital`,
-        description: `La entrevista a ${match.candidate.name} (${match.candidate.party}), revisada: qué afirma y si es cierto, qué propone y si responde a lo que se le pregunta.`,
-      });
+      return redirect(candidateTarget(match.candidate.slug));
     case 'interview': {
       const name = interviewName(match.interview);
       return pageMetadata({
         ...base,
         og: ogOf(match.interview.candidato),
-        title: `${name} · Las entrevistas · Reforma Digital`,
+        title:
+          match.view === 'resumen'
+            ? `${name} · Las entrevistas · Reforma Digital`
+            : `${reportViews[match.view]} · ${name} · Las entrevistas · Reforma Digital`,
         description: `El informe de la entrevista a ${name}: valoración, afirmaciones verificadas con sus fuentes, propuestas y cómo responde.`,
         index: !match.interview.ficticio,
       });
@@ -106,7 +122,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       return pageMetadata({
         ...base,
         og: ogOf(match.interview.candidato),
-        title: `${interviewName(match.interview)}: análisis de comunicación · Las entrevistas · Reforma Digital`,
+        title:
+          match.view === 'resumen'
+            ? `${interviewName(match.interview)}: análisis de comunicación · Las entrevistas · Reforma Digital`
+            : `${commViews[match.view]} · ${interviewName(match.interview)}: análisis de comunicación · Reforma Digital`,
         description: match.analysis.titular,
       });
     case 'verification': {
@@ -122,6 +141,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 }
+
+// La sección trata de entrevistas, no de personas: /entrevistas/<candidato> lleva al informe de su
+// entrevista más reciente o, si no tiene ninguna, a la portada de las entrevistas.
+const candidateTarget = (slug: string) => {
+  const latest = interviewsOf(slug)[0];
+  return interviewsHref(latest ? latest.id : '');
+};
+
+// Las partes del análisis de comunicación de una entrevista, si lo tiene.
+const commNav = (interview: Interview) => {
+  const analysis = getCommunication(interview.id);
+  return analysis ? commNavItems(interview, analysis) : [];
+};
 
 // Los filtros de /entrevistas/verificaciones: una calificación que no existe se ignora; un candidato o
 // un tema que no existen dejan la lista vacía.
@@ -139,8 +171,13 @@ async function filters(searchParams: Props['searchParams']) {
 export default async function Page({ params, searchParams }: Props) {
   const match = route((await params).path);
   if (!match) notFound();
+  if (match.kind === 'candidate') redirect(candidateTarget(match.candidate.slug));
+  // Antes el reproductor estaba en el informe: un enlace con minuto (`?t=`) lleva ahora al suyo.
+  const { t } = await searchParams;
+  if (match.kind === 'interview' && match.view === 'resumen' && typeof t === 'string')
+    redirect(playerHref(match.interview.id, Number.parseInt(t, 10) || 0));
   const crumb =
-    match.kind === 'verification' || match.kind === 'communication' ? (
+    match.kind === 'verification' ? (
       <Link
         href={interviewsHref(match.interview.id)}
         className="-my-3.5 py-3.5 text-muted-foreground"
@@ -152,7 +189,7 @@ export default async function Page({ params, searchParams }: Props) {
     <main
       id="main"
       tabIndex={-1}
-      className="mx-auto max-w-(--container-content) px-(--page-gutter) pt-8 pb-20"
+      className="mx-auto max-w-(--container-content) px-(--page-gutter) pt-8 pb-20 min-[1100px]:max-w-(--elecciones-ancho)"
     >
       <ElectionsFrame
         current={
@@ -161,20 +198,33 @@ export default async function Page({ params, searchParams }: Props) {
             : 'entrevistas'
         }
         crumb={crumb}
+        local={
+          match.kind === 'interview'
+            ? reportNav(match.interview, commNav(match.interview))
+            : match.kind === 'communication'
+              ? reportNav(match.interview, commNavItems(match.interview, match.analysis))
+              : undefined
+        }
       >
         {match.kind === 'home' && <InterviewsHome />}
         {match.kind === 'method' && <InterviewsMethod />}
         {match.kind === 'verifications' && <VerificationsIndex {...await filters(searchParams)} />}
         {match.kind === 'compare' && <InterviewsCompare roundId={match.round} />}
-        {match.kind === 'candidate' && <CandidateProfile candidate={match.candidate} />}
-        {match.kind === 'interview' && <InterviewReport interview={match.interview} />}
+        {match.kind === 'interview' && (
+          <InterviewReport interview={match.interview} view={match.view} />
+        )}
         {match.kind === 'communication' && (
-          <CommunicationReport interview={match.interview} analysis={match.analysis} />
+          <CommunicationReport
+            interview={match.interview}
+            analysis={match.analysis}
+            view={match.view}
+          />
         )}
         {match.kind === 'verification' && (
           <VerificationPage interview={match.interview} verification={match.verification} />
         )}
       </ElectionsFrame>
+      <VideoDock />
     </main>
   );
 }

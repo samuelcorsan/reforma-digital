@@ -23,9 +23,9 @@ export function SeatSum({
   return (
     <Cell>
       <div className="grid gap-1">
-        <h3 className="m-0 text-base font-medium">Prueba una suma de escaños</h3>
+        <h3 className="m-0 text-base font-medium">Suma de escaños</h3>
         <p className="m-0 text-sm text-muted-foreground">
-          Elige partidos. Que los números sumen no quiere decir que haya un acuerdo.
+          Una suma de escaños no implica un acuerdo.
         </p>
       </div>
       <div className="flex flex-wrap gap-1.5" role="group" aria-label="Partidos">
@@ -351,7 +351,7 @@ export function ProjectionMap({
           <div className="grid gap-4" aria-live="polite">
             <div className="flex items-start justify-between gap-3">
               <div className="grid gap-1">
-                <Label>{chosen.seats.reduce((t, [, n]) => t + n, 0)} escaños · proyección</Label>
+                <Label>{chosen.seats.reduce((t, [, n]) => t + n, 0)} escaños</Label>
                 <h3 className="m-0 font-heading text-[28px] leading-tight font-normal">
                   {chosen.name}
                 </h3>
@@ -359,7 +359,7 @@ export function ProjectionMap({
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label="Volver a los escaños en el aire"
+                aria-label="Volver a los escaños en disputa"
                 onClick={() => setSelected(null)}
               >
                 <span className="rotate-45">
@@ -401,8 +401,8 @@ export function ProjectionMap({
             </ul>
             {chosen.last && (
               <p className="m-0 text-sm text-muted-foreground [&_b]:font-medium [&_b]:text-foreground">
-                El último escaño sería para <b>{name(chosen.last.gana)}</b>; a{' '}
-                {name(chosen.last.segundo)} le faltarían {decimal(chosen.last.falta)} puntos.
+                Último escaño: <b>{name(chosen.last.gana)}</b>. Siguiente candidatura:{' '}
+                {name(chosen.last.segundo)}, a {decimal(chosen.last.falta)} puntos.
               </p>
             )}
             <Link
@@ -412,15 +412,14 @@ export function ProjectionMap({
                 'justify-self-start',
               )}
             >
-              Su historia <Icon name="derecha" size={16} />
+              Historial electoral <Icon name="derecha" size={16} />
             </Link>
           </div>
         ) : (
           <div className="grid gap-2">
-            <Label>Escaños en el aire</Label>
+            <Label>Escaños en disputa</Label>
             <p className="m-0 text-sm text-muted-foreground">
-              Donde al segundo le falta menos de medio punto para quitarle el último escaño al
-              primero.
+              Circunscripciones en las que el último escaño se decide por menos de medio punto.
             </p>
             <ul className="m-0 grid list-none gap-0.5 p-0">
               {close.map((p) => (

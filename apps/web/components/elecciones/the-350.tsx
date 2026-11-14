@@ -6,6 +6,7 @@ import { Apportionment } from './apportionment';
 import { Reparto, type RepartoElection } from './reparto';
 import { Cell, Grid, Legend, ReportIntro, SectionHeading } from './report';
 import { SeatsCard } from './seats-card';
+import { electionPages } from '../../lib/elecciones/pages';
 
 // «Los 350»: del mapa al hemiciclo, la regla que reparte los escaños y cómo ha cambiado el reparto
 // desde 1977. Estructura de Escaño Abierto.
@@ -52,11 +53,8 @@ export async function The350() {
 
   return (
     <>
-      <ReportIntro title="Los 350">
-        <p>
-          Cada escaño sale de una provincia. Del mapa al hemiciclo, y cómo ha cambiado el reparto
-          desde {history.elecciones[0]?.fecha.slice(0, 4)}.
-        </p>
+      <ReportIntro title={electionPages['350'].title}>
+        <p>Cada escaño corresponde a una circunscripción.</p>
       </ReportIntro>
       <Grid>
         <SeatsCard
@@ -66,10 +64,9 @@ export async function The350() {
         />
       </Grid>
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="La regla: por qué Soria elige 2 y Madrid 38">
-          Los diputados de cada provincia no dependen solo de cuánta gente vive en ella. La ley
-          electoral (art. 162 de la LOREG) los reparte en dos pasos, con el padrón de{' '}
-          {source.padron.anio}, y de ahí sale el reparto del decreto del 29N.
+        <SectionHeading title="Asignación de escaños por circunscripción">
+          El artículo 162 de la LOREG asigna los diputados de cada provincia en dos fases, con el
+          padrón de {source.padron.anio}. El decreto de convocatoria del 29N aplica ese reparto.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -83,10 +80,9 @@ export async function The350() {
         </Grid>
       </section>
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Cómo ha cambiado el reparto">
-          Cada provincia tiene al menos dos diputados (Ceuta y Melilla, uno) y el resto se reparte
-          según su población antes de cada elección. Cada punto es un escaño, del color de la
-          familia que lo ganó. Pulsa uno para ir a su provincia.
+        <SectionHeading title="Evolución del reparto">
+          Mínimo de dos diputados por provincia (uno en Ceuta y en Melilla); el resto se asigna
+          según la población antes de cada elección.
         </SectionHeading>
         <Grid>
           <Cell>
