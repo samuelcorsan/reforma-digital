@@ -17,7 +17,7 @@ import { Icon } from '../brand/icon';
 import { href } from '../congreso/common';
 import { electionData } from './election-data';
 import { Hemicycle, ProvinceSection } from './province-section';
-import { Cell, Grid, Heading, Label, Legend, ReportIntro, SectionHeading, Stat } from './report';
+import { Cell, Grid, Heading, Legend, ReportIntro, SectionHeading, Stat } from './report';
 import { Tips } from './tips';
 
 const millions = (n: number) => `${decimal(n / 1e6, 2)} M`;
@@ -105,16 +105,13 @@ export async function Election({ id }: { id: string }) {
           {next ? label(next) : '29N'} <Icon name="derecha" size={16} />
         </Link>
       </nav>
-      <div className="mb-3">
-        <Label>Elecciones generales · {legislature}</Label>
-      </div>
       <ReportIntro title={formatDate(e.fecha, { day: 'numeric', month: 'long', year: 'numeric' })}>
         <p>
           {largest &&
             (majority
-              ? `${shortParty(largest[0])} logró la mayoría absoluta con ${largest[4]} escaños.`
-              : `Sin mayoría absoluta: ${shortParty(largest[0])} fue la primera fuerza con ${largest[4]} escaños, a ${176 - largest[4]} de los 176.`)}{' '}
-          Votó el {percent(turnout)} del censo
+              ? `${shortParty(largest[0])} obtuvo mayoría absoluta con ${largest[4]} escaños.`
+              : `Sin mayoría absoluta: ${shortParty(largest[0])}, primera fuerza con ${largest[4]} escaños, a ${176 - largest[4]} de los 176.`)}{' '}
+          Participación: {percent(turnout)} del censo
           {turnoutBefore !== null && previous
             ? ` (${(turnout - turnoutBefore) * 100 >= 0 ? '+' : '−'}${decimal(Math.abs(turnout - turnoutBefore) * 100)} puntos respecto a ${label(previous)})`
             : ''}
@@ -127,8 +124,8 @@ export async function Election({ id }: { id: string }) {
           [percent(turnout), 'participación'],
           [millions(e.votantes), 'votantes'],
           [String(withSeats.length), 'candidaturas con escaño'],
-          [decimal(e.metricas.nep_votos), 'partidos efectivos, por votos'],
-          [decimal(e.metricas.gallagher), 'desproporcionalidad (Gallagher)'],
+          [decimal(e.metricas.nep_votos), 'número efectivo de partidos (votos)'],
+          [decimal(e.metricas.gallagher), 'desproporcionalidad (índice de Gallagher)'],
           [millions(e.metricas.sin_escano), 'votos sin escaño'],
         ].map(([value, caption]) => (
           <Cell key={caption} span={4}>
@@ -136,13 +133,11 @@ export async function Election({ id }: { id: string }) {
           </Cell>
         ))}
         <Cell span={7}>
-          <Heading title="El hemiciclo">
-            Un punto por escaño, de izquierda a derecha según la familia de cada candidatura.
-          </Heading>
+          <Heading title="Composición del Congreso" />
           <Hemicycle data={data} limit={10} small />
         </Cell>
         <Cell span={5} className="content-start">
-          <Heading title="La legislatura" />
+          <Heading title="Legislatura" />
           <dl className="m-0 grid gap-4">
             {[
               ['Legislatura', legislature],
@@ -166,10 +161,10 @@ export async function Election({ id }: { id: string }) {
                 href={electionsHref('legislatura')}
                 className={buttonVariants({ variant: 'outline' })}
               >
-                La XV legislatura en cifras <Icon name="derecha" size={16} />
+                Balance de la XV legislatura <Icon name="derecha" size={16} />
               </Link>
               <Link href={href('')} className={buttonVariants({ variant: 'outline' })}>
-                Toda su actividad en el Congreso <Icon name="derecha" size={16} />
+                Actividad parlamentaria <Icon name="derecha" size={16} />
               </Link>
             </div>
           )}
@@ -192,7 +187,7 @@ export async function Election({ id }: { id: string }) {
                 <TableHead className="w-1/5" />
                 <TableHead className="text-right">Escaños</TableHead>
                 {previous && (
-                  <TableHead className="text-right">Frente a {label(previous)}</TableHead>
+                  <TableHead className="text-right">Respecto a {label(previous)}</TableHead>
                 )}
               </TableRow>
             </TableHeader>
@@ -236,7 +231,7 @@ export async function Election({ id }: { id: string }) {
                         title={
                           then
                             ? undefined
-                            : `No se presentó con estas siglas en ${label(previous)}: el cambio por familias está más abajo.`
+                            : `Sin candidatura con estas siglas en ${label(previous)}. La variación por familias figura más abajo.`
                         }
                       >
                         {then ? (
@@ -257,7 +252,7 @@ export async function Election({ id }: { id: string }) {
       <Grid className="mt-6">
         {previous && (
           <Cell span={6} className="content-start">
-            <Heading title={`Cambio de escaños desde ${label(previous)}`}>
+            <Heading title={`Variación de escaños respecto a ${label(previous)}`}>
               Por familia de partidos.
             </Heading>
             <Tips>
@@ -304,8 +299,7 @@ export async function Election({ id }: { id: string }) {
         )}
         <Cell span={previous ? 6 : 12} className="content-start">
           <Heading title="Votos y escaños">
-            Parte de los votos (anillo) y de los escaños (punto) de cada candidatura con escaño. Si
-            el punto queda a la derecha, sacó más escaños que votos.
+            Porcentaje de votos (anillo) y de escaños (punto) de cada candidatura con escaño.
           </Heading>
           <Tips>
             <ul className="m-0 grid list-none gap-1 p-0 text-sm">
@@ -366,21 +360,20 @@ export async function Election({ id }: { id: string }) {
         </Cell>
       </Grid>
 
-      <ProvinceSection data={data} title="Por provincia">
-        Las {data.codes.length} circunscripciones en {label(e)}. Pulsa una provincia para ver su
-        resultado.
+      <ProvinceSection data={data} title="Resultados por circunscripción">
+        Las {data.codes.length} circunscripciones en {label(e)}.
       </ProvinceSection>
 
       {closest.length > 0 && (
         <section className="mt-16 grid gap-6">
-          <SectionHeading title="Los últimos escaños más ajustados">
-            El último diputado que repartió la ley D&apos;Hondt en cada provincia y los votos que le
+          <SectionHeading title="Últimos escaños con menor diferencia">
+            Último diputado asignado por el sistema D&apos;Hondt en cada provincia y votos que
             faltaron a la siguiente candidatura.{' '}
             <Link
               href={`${electionsHref('escano')}?eleccion=${e.id}`}
               className="underline underline-offset-4"
             >
-              Más en «El precio de un escaño»
+              Más en «Votos por escaño»
             </Link>
             .
           </SectionHeading>
@@ -399,7 +392,7 @@ export async function Election({ id }: { id: string }) {
                       {name(c.code)}
                     </Link>
                     <span className="text-muted-foreground [&_b]:font-medium [&_b]:text-foreground">
-                      Lo ganó <b>{shortParty(c.gana)}</b>; a <b>{shortParty(c.segundo)}</b> le
+                      Asignado a <b>{shortParty(c.gana)}</b>; a <b>{shortParty(c.segundo)}</b> le
                       faltaron
                     </span>
                     <b className="font-mono font-medium tabular-nums">

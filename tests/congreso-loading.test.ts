@@ -65,7 +65,7 @@ describe('carga del Congreso', () => {
       searchParams: Promise.resolve({}),
     });
     const html = await new Response(await renderToReadableStream(page)).text();
-    expect(html).toContain('Cómo se reparte un escaño');
+    expect(html).toContain('Asignación de escaños por el sistema');
     expect(html).not.toContain('Cargando datos');
     expect(data.getIndex).not.toHaveBeenCalled();
   });

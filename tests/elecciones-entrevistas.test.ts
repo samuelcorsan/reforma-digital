@@ -115,9 +115,13 @@ describe('las entrevistas', () => {
     expect(paths).toContain('/elecciones/entrevistas/verificaciones');
   });
 
-  it('comparte cada candidato con su imagen, generada con pnpm landing:og', async () => {
+  it('lleva cada candidato al informe de su entrevista, compartido con su imagen', async () => {
     for (const c of candidates) {
-      const { openGraph } = await generateMetadata(params([c.slug]));
+      // No hay ficha de la persona: su ruta redirige a la entrevista (o a la portada si no tiene).
+      await expect(generateMetadata(params([c.slug]))).rejects.toThrow('NEXT_REDIRECT');
+      const latest = interviewsOf(c.slug)[0];
+      if (!latest) continue;
+      const { openGraph } = await generateMetadata(params([latest.id]));
       const image = `/og/entrevistas-${c.slug}.jpg`;
       expect(JSON.stringify(openGraph?.images)).toContain(image);
       expect(existsSync(new URL(`../apps/web/public${image}`, import.meta.url))).toBe(true);

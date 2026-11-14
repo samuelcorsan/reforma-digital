@@ -11,7 +11,7 @@ import { municipalityVotes } from '../../lib/congreso/queries';
 import { mapSchema } from '../../lib/congreso/schema';
 import { percent } from '../../lib/elecciones/format';
 import { turnout, voteShare } from '../../lib/elecciones/geography';
-import { electionsHref } from '../../lib/elecciones/pages';
+import { electionsHref, electionPages } from '../../lib/elecciones/pages';
 import { Filters, Pagination } from '../congreso/common';
 import { MunicipalMap, type MapGroup } from './municipal-map';
 import { Cell, Grid, ReportIntro, SectionHeading } from './report';
@@ -54,8 +54,8 @@ export async function Municipalities({ query, page }: { query: string; page: num
 
   return (
     <>
-      <ReportIntro title="Municipio a municipio">
-        <p>El voto de 2019 y 2023 en los 8.131 municipios y cuánto cambió entre las dos.</p>
+      <ReportIntro title={electionPages.mapa.title}>
+        <p>Resultados de 2019 y 2023 en los 8.131 municipios y variación entre ambas elecciones.</p>
       </ReportIntro>
       <Grid>
         <Cell>
@@ -63,8 +63,8 @@ export async function Municipalities({ query, page }: { query: string; page: num
         </Cell>
       </Grid>
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Busca tu municipio">
-          El voto del 23 de julio de 2023 en cada municipio, por grupos de partidos.
+        <SectionHeading title="Buscador de municipios">
+          Resultados del 23 de julio de 2023 por municipio y grupo de partidos.
         </SectionHeading>
         <Filters action={electionsHref('mapa')} query={query} />
         <div className="overflow-x-auto rounded-2xl ring-1 ring-border">
@@ -100,7 +100,7 @@ export async function Municipalities({ query, page }: { query: string; page: num
               {!votes.rows.length && (
                 <TableRow>
                   <TableCell colSpan={shown.length + 2} className="text-muted-foreground">
-                    Ningún municipio con ese nombre.
+                    Ningún municipio coincide con la búsqueda.
                   </TableCell>
                 </TableRow>
               )}

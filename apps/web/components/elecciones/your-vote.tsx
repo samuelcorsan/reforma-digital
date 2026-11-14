@@ -56,14 +56,16 @@ export function YourVote({
   const sentence =
     current.code === dearest.code ? (
       <>
-        Es la provincia donde un escaño costó más votos. Un voto aquí pesa{' '}
-        <b>{decimal(price(dearest) / price(cheapest))} veces menos</b> que uno de {cheapest.name}.
+        Provincia con más votos por escaño. Un voto tiene{' '}
+        <b>{decimal(price(dearest) / price(cheapest))} veces menos</b> peso que uno de{' '}
+        {cheapest.name}.
       </>
     ) : (
       <>
-        {mine < average ? 'Menos' : 'Más'} que la media de España ({thousands(average)}). Un voto de{' '}
-        {current.name} pesa <b>{decimal(price(dearest) / mine)} veces</b> uno de {dearest.name}
-        {current.code === cheapest.code ? ', la que más' : ''}.
+        {mine < average ? 'Por debajo' : 'Por encima'} de la media nacional ({thousands(average)}).
+        Un voto de {current.name} equivale a <b>{decimal(price(dearest) / mine)} veces</b> uno de{' '}
+        {dearest.name}
+        {current.code === cheapest.code ? ', el valor máximo' : ''}.
       </>
     );
   const choose = (next: string | null | undefined) => next && byCode.has(next) && setCode(next);
@@ -73,13 +75,13 @@ export function YourVote({
     <>
       <Cell className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-center lg:gap-10">
         <div className="grid content-start gap-4">
-          <Label>¿Cuánto vale tu voto?</Label>
+          <Label>Votos por escaño en tu provincia</Label>
           <ProvinceSelect provinces={provinces} value={current.code} onChange={choose} />
           <p className="m-0 grid gap-1" aria-live="polite">
             <b className="font-heading text-6xl leading-none font-normal tabular-nums lg:text-7xl">
               {thousands(mine)}
             </b>
-            <span className="text-muted-foreground">votos costó cada escaño en {year}</span>
+            <span className="text-muted-foreground">votos por escaño en {year}</span>
           </p>
           <p className="m-0 max-w-[48ch] text-sm leading-relaxed text-muted-foreground [&_b]:font-medium [&_b]:text-foreground">
             {sentence}
@@ -90,11 +92,13 @@ export function YourVote({
       {kpis}
       <Cell span={6}>
         <Heading
-          title={mode === 'price' ? 'Votos por escaño en cada provincia' : 'Votos que no sirvieron'}
+          title={
+            mode === 'price' ? 'Votos por escaño en cada provincia' : 'Votos sin representación'
+          }
         >
           {mode === 'price'
-            ? 'Votos válidos entre escaños: cuanto más intenso, más caro. Pulsa una provincia para hacerla tuya.'
-            : 'Parte de los votos de cada provincia que fue a candidaturas sin escaño allí. Con pocos escaños en juego se pierden muchos más.'}
+            ? 'Votos válidos divididos entre escaños.'
+            : 'Porcentaje de votos de cada provincia a candidaturas sin escaño en ella. Es mayor en las circunscripciones con pocos escaños.'}
         </Heading>
         <Tabs value={mode} onValueChange={(value) => setMode(value === 'lost' ? 'lost' : 'price')}>
           <TabsList aria-label="Qué se pinta">
@@ -102,7 +106,7 @@ export function YourVote({
               Votos por escaño
             </TabsTrigger>
             <TabsTrigger value="lost" className="px-3">
-              Votos que no sirvieron
+              Votos sin representación
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -195,16 +199,16 @@ function Balance({
   );
   return (
     <div className="grid gap-2">
-      <p className="m-0 flex justify-between font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
-        <span>Más barato</span>
-        <span>Más caro</span>
+      <p className="m-0 flex justify-between text-xs font-medium text-muted-foreground">
+        <span>Menos votos por escaño</span>
+        <span>Más votos por escaño</span>
       </p>
       <Tips>
         <div ref={chart}>
           <svg
             viewBox={`0 0 ${W} ${H}`}
             role="img"
-            aria-label="Votos por escaño en cada provincia, de la más barata a la más cara"
+            aria-label="Votos por escaño en cada provincia, de menos a más"
             className="block h-auto w-full overflow-visible"
           >
             <line x1={m} x2={W - m} y1={H / 2} y2={H / 2} className="stroke-border" />
@@ -244,7 +248,7 @@ function Balance({
         </div>
       </Tips>
       <p className="m-0 text-sm text-muted-foreground">
-        Cada bola es una provincia, del tamaño de sus escaños. Pulsa una para hacerla tuya.
+        Cada círculo es una provincia; el tamaño indica sus escaños.
       </p>
     </div>
   );

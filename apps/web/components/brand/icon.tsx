@@ -2,15 +2,20 @@
 // aria-label del control que los contiene da el nombre.
 import type { ComponentType } from 'react';
 import {
+  IconArrowDottedRotateAnticlockwiseOutline18,
   IconBellOutline18,
   IconBoltOutline18,
+  IconBookOpenOutline18,
   IconCalendarOutline18,
+  IconChair4Outline18,
+  IconChartBarTrendUpOutline18,
   IconCheckOutline18,
   IconCircleHalfDottedCheckOutline18,
   IconCircleInfoOutline18,
   IconClipboardOutline18,
   IconCreditCardOutline18,
   IconHandOutline18,
+  IconHouse2Outline18,
   IconLightbulb3Outline18,
   IconEyeClosedOutline18,
   IconFileContentOutline18,
@@ -19,6 +24,8 @@ import {
   IconLocation2Outline18,
   IconLockOutline18,
   IconMagnifierOutline18,
+  IconMapOutline18,
+  IconMicrophoneOutline18,
   IconMicrophoneSlashOutline18,
   IconMsgsOutline18,
   IconPhoneOutline18,
@@ -69,6 +76,14 @@ const iconos = {
   // Los mandos del vídeo de las entrevistas.
   campana: IconBellOutline18,
   volumen: IconVolumeUpOutline18,
+  // Los grupos de la barra lateral de Elecciones.
+  casa: IconHouse2Outline18,
+  libro: IconBookOpenOutline18,
+  escano: IconChair4Outline18,
+  historia: IconArrowDottedRotateAnticlockwiseOutline18,
+  mapa: IconMapOutline18,
+  grafica: IconChartBarTrendUpOutline18,
+  microfono: IconMicrophoneOutline18,
 } satisfies Record<string, Svg>;
 
 const pixelTurn = { derecha: 0, abajo: 90, izquierda: 180, arriba: 270 } as const;

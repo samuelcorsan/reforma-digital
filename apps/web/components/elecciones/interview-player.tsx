@@ -193,7 +193,7 @@ const communicationLegend: [Mark['kind'], string][] = [
   ['dura', 'Pregunta dura sin respuesta clara'],
   ['pausa', 'Pausa larga'],
   ['traba', 'Traba'],
-  ['comentado', 'Minuto que cita el público'],
+  ['comentado', 'Minuto citado por el público'],
 ];
 // El recuento bajo el vídeo: lo que ha pasado hasta el segundo que suena.
 const tally: [Mark['kind'], string][] = [
@@ -521,8 +521,8 @@ export function InterviewPlayer({
     seek(m.second);
   };
 
-  // Los enlaces «▶ minuto» de las secciones del informe (`?t=` en esta misma página) ponen el
-  // vídeo en ese segundo sin mover la página: con el mini reproductor se ve desde donde estás.
+  // Los enlaces «▶ minuto» de la página ponen el vídeo en ese segundo sin mover la página: con el
+  // mini reproductor se ve desde donde estás.
   useEffect(() => {
     const onClick = (event: globalThis.MouseEvent) => {
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
@@ -530,18 +530,21 @@ export function InterviewPlayer({
       const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
       if (!(link instanceof HTMLAnchorElement)) return;
       const url = new URL(link.href);
+      // Un enlace a este mismo vídeo en YouTube (`watch?v=…&t=…s`) o a esta página con `?t=`.
+      const own = url.hostname === 'www.youtube.com' && url.searchParams.get('v') === youtubeId;
       const t = url.searchParams.get('t');
-      const second = Number(t);
-      if (url.pathname !== window.location.pathname || t === null || !Number.isFinite(second))
-        return;
+      const second = Number.parseInt(t ?? '', 10);
+      if (!(own || url.pathname === window.location.pathname) || !Number.isFinite(second)) return;
       event.preventDefault();
+      // Antes que el reproductor flotante: este ya está en la página.
+      event.stopPropagation();
       setSelected(null);
       seek(second);
       play();
     };
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
-  }, [seek, play]);
+    document.addEventListener('click', onClick, true);
+    return () => document.removeEventListener('click', onClick, true);
+  }, [seek, play, youtubeId]);
   // Un enlace compartido con `?t=` abre el informe en ese minuto. El vídeo no se carga solo: hasta
   // que la persona lo pide, el navegador no se conecta con Google.
   useEffect(() => {
@@ -687,7 +690,7 @@ export function InterviewPlayer({
                   {time > 0 && <span className="max-sm:hidden">en el minuto {minute(time)}</span>}
                 </Button>
                 <p className="m-0 max-w-[44ch] text-sm text-muted-foreground">
-                  Se carga desde YouTube: al pulsar, Google recibe tu visita.{' '}
+                  El vídeo se carga desde YouTube: al pulsar, Google registra la visita.{' '}
                   <Link href="/privacy" className="underline underline-offset-4">
                     Privacidad
                   </Link>
@@ -697,22 +700,23 @@ export function InterviewPlayer({
               <p className="m-0 max-w-[44ch] text-muted-foreground">
                 {source ? (
                   <>
-                    El vídeo está en la web de {outlet || 'su medio'}:{' '}
+                    El vídeo está disponible en la web de {outlet || 'su medio'}:{' '}
                     <a
                       href={source}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-foreground underline underline-offset-4"
                     >
-                      verlo allí<span aria-hidden="true"> ↗</span>
+                      abrir el vídeo<span aria-hidden="true"> ↗</span>
                       <span className="sr-only"> (se abre en una pestaña nueva)</span>
                     </a>
                     .{' '}
                   </>
                 ) : (
-                  'Esta entrevista no tiene vídeo. '
+                  'Entrevista sin vídeo disponible. '
                 )}
-                Dale al play para recorrerla con la transcripción y la línea de tiempo.
+                El botón de reproducción recorre la entrevista en la transcripción y en la línea de
+                tiempo.
               </p>
             )}
           </div>
@@ -758,7 +762,7 @@ export function InterviewPlayer({
               <span className="grid gap-0.5">
                 <b className="font-medium">Ver el resumen</b>
                 <span className="text-sm text-muted-foreground">
-                  Los {clips.length} momentos clave seguidos · unos{' '}
+                  {clips.length} momentos clave consecutivos · unos{' '}
                   {Math.max(1, Math.round(clips.reduce((t, c) => t + c.to - c.from, 0) / 60))} min
                 </span>
               </span>
@@ -769,7 +773,7 @@ export function InterviewPlayer({
           ))}
 
         <div className="grid gap-3">
-          <Label>Recuento hasta el {minute(time)}</Label>
+          <Label>Recuento hasta el minuto {minute(time)}</Label>
           <dl className="m-0 grid grid-cols-4 gap-x-3 gap-y-4 max-sm:grid-cols-2">
             {(hasCommunication ? communicationTally : tally).map(([kind, name]) => (
               <div key={kind} className="grid content-start justify-items-start gap-1">
@@ -788,30 +792,27 @@ export function InterviewPlayer({
         defaultValue="transcripcion"
         className="col-span-12 gap-4 rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-5 lg:p-8 max-sm:p-5"
       >
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <TabsList aria-label="Qué ver">
-            <TabsTrigger value="transcripcion" className="px-3">
-              Transcripción
-            </TabsTrigger>
-            <TabsTrigger value="momentos" className="px-3">
-              Momentos ({marks.length})
-            </TabsTrigger>
-          </TabsList>
-          <span className="text-sm text-muted-foreground">Pulsa para ir a ese momento</span>
-        </div>
+        <TabsList aria-label="Qué ver">
+          <TabsTrigger value="transcripcion" className="px-3">
+            Transcripción
+          </TabsTrigger>
+          <TabsTrigger value="momentos" className="px-3">
+            Momentos ({marks.length})
+          </TabsTrigger>
+        </TabsList>
         <TabsContent value="transcripcion" className="grid gap-3">
           <Input
             type="search"
             aria-label="Buscar en la transcripción"
-            placeholder="Buscar en lo que se dice: vivienda, Puente…"
+            placeholder="Buscar en la transcripción: vivienda, Puente…"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
           {found && (
             <p aria-live="polite" className="m-0 text-sm text-muted-foreground">
               {found.length
-                ? `Se dice ${found.length === 1 ? 'una vez' : `${found.length} veces`}`
-                : 'No se dice en la entrevista'}
+                ? `${found.length} ${found.length === 1 ? 'resultado' : 'resultados'}`
+                : 'Sin resultados en la transcripción'}
             </p>
           )}
           <ol className="relative m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
@@ -893,7 +894,7 @@ export function InterviewPlayer({
             <div
               role="slider"
               tabIndex={0}
-              aria-label="Parte de la entrevista que se ve"
+              aria-label="Intervalo visible de la entrevista"
               aria-valuemin={0}
               aria-valuemax={Math.round(Math.max(0, duration - span))}
               aria-valuenow={Math.round(from)}
@@ -1129,7 +1130,7 @@ export function InterviewPlayer({
                   </div>
                 ) : (
                   <span className="py-2 text-sm leading-tight text-muted-foreground">
-                    Ninguna en esta entrevista
+                    Sin marcas en esta entrevista
                   </span>
                 )}
               </div>
@@ -1206,20 +1207,19 @@ export function InterviewPlayer({
 
         <Collapsible>
           <CollapsibleTrigger className="group flex min-h-11 items-center gap-2 text-sm font-medium">
-            Cómo se lee
+            Leyenda
             <span aria-hidden="true" className="flex group-data-open:rotate-180">
               <Icon name="abajo" size={16} />
             </span>
           </CollapsibleTrigger>
           <CollapsibleContent className="grid gap-4 pt-2 text-sm">
             <p className="m-0 max-w-[70ch] text-muted-foreground">
-              Pasa el ratón por un icono, o tócalo, para ver qué es; al pulsarlo, el vídeo salta a
-              ese segundo. Intensidad: cuánto ida y vuelta hay en cada minuto (cambios de turno,
-              interrupciones y momentos de tensión), con la misma escala para todos. No mide
-              emociones. Tiene la palabra: arriba, cuánto habla el candidato en cada minuto; abajo,
-              el entrevistador.
+              Intensidad: grado de intercambio en cada minuto (cambios de turno, interrupciones y
+              momentos de tensión), con la misma escala para todas las entrevistas. No mide
+              emociones. Tiene la palabra: arriba, tiempo de palabra del candidato en cada minuto;
+              abajo, el del entrevistador.
               {voiceLine &&
-                ' Voz: la intensidad de su voz en cada minuto, por encima o por debajo de su propia media (la raya). Como las pausas y las trabas, no sirve para saber si alguien dice la verdad.'}
+                ' Voz: intensidad vocal en cada minuto respecto a la media de la propia persona (línea discontinua). Como las pausas y las trabas, no permite determinar si alguien dice la verdad.'}
             </p>
             <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-x-4 gap-y-2 p-0">
               {[
@@ -1233,7 +1233,7 @@ export function InterviewPlayer({
               ))}
               <li className="flex items-center gap-2">
                 <MarkIcon kind="momento" className="opacity-50" />
-                Atenuado: aún sin la segunda revisión de IA
+                Atenuado: pendiente de la segunda revisión de IA
               </li>
             </ul>
           </CollapsibleContent>
@@ -1327,7 +1327,7 @@ export function InterviewPlayer({
                   size="icon"
                   aria-label={name}
                   aria-pressed={on}
-                  title={`${name}: ${on ? 'sí' : 'no'}`}
+                  title={`${name}: ${on ? 'activado' : 'desactivado'}`}
                   disabled={off}
                   tabIndex={inView ? 0 : -1}
                   onClick={flip}

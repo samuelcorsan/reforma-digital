@@ -1,155 +1,127 @@
+import type { IconName } from '../../components/brand/icon';
+
 export const electionsBase = '/elecciones';
 export const electionsHref = (path = '') => `${electionsBase}${path ? `/${path}` : ''}`;
 
-// Apartados de la sección, con el texto de Escaño Abierto. `short` es el nombre en la navegación y
-// `cta`, la frase junto a la flecha de su tarjeta en la portada.
+// Apartados de la sección, con un vocabulario institucional y descriptivo. `short` es el nombre en la
+// barra lateral y `cta`, el enlace de su tarjeta en la portada.
 export const electionPages = {
   '350': {
-    short: 'Los 350',
-    title: 'Los 350',
-    text: 'Cada escaño sale de una provincia. Del mapa al hemiciclo, y cómo ha cambiado el reparto desde 1977.',
-    cta: 'Cómo ha cambiado desde 1977',
+    short: 'Reparto de escaños',
+    title: 'Reparto de los 350 escaños',
+    text: 'Escaños que elige cada provincia, composición del Congreso y evolución del reparto desde 1977.',
+    cta: 'Consultar el reparto',
   },
   caducan: {
-    short: 'Lo que caduca',
-    title: 'Lo que caduca',
-    text: 'Las leyes que la disolución deja a medio camino y los decretos-leyes que heredará la Diputación Permanente.',
-    cta: 'Ver todas las leyes',
+    short: 'Iniciativas que caducan',
+    title: 'Iniciativas que caducan con la disolución',
+    text: 'Proyectos y proposiciones de ley que quedan sin tramitar y decretos-leyes pendientes ante la Diputación Permanente.',
+    cta: 'Consultar las iniciativas',
   },
   legislatura: {
-    short: 'En cifras',
-    title: 'La legislatura en cifras',
-    text: 'La XV legislatura, de la sesión constitutiva a la disolución: votaciones, leyes, decretos y preguntas.',
-    cta: 'Ver las cifras',
+    short: 'Balance de la legislatura',
+    title: 'Balance de la XV legislatura',
+    text: 'Actividad de la XV legislatura desde la sesión constitutiva hasta la disolución: votaciones, leyes, decretos-leyes y preguntas.',
+    cta: 'Consultar el balance',
   },
   repite: {
-    short: '¿Repite?',
-    title: '¿Repite?',
-    text: 'Quién de los 350 vuelve a ir en las listas, en qué puesto y por qué provincia.',
-    cta: 'Ver quién repite',
+    short: 'Diputados candidatos',
+    title: 'Diputados que se presentan de nuevo',
+    text: 'Diputados de la XV legislatura incluidos en las candidaturas, con su puesto y su circunscripción.',
+    cta: 'Consultar las candidaturas',
   },
   escano: {
-    short: 'Precio del escaño',
-    title: 'El precio de un escaño',
-    text: "Cuántos votos cuesta un diputado en cada provincia, el último escaño de cada una y un simulador D'Hondt.",
-    cta: "Probar el simulador D'Hondt",
+    short: 'Votos por escaño',
+    title: 'Votos por escaño y simulador',
+    text: "Votos necesarios para obtener un diputado en cada provincia, último escaño asignado y simulador del sistema D'Hondt.",
+    cta: 'Abrir el simulador',
   },
   historico: {
-    short: 'Desde 1977',
-    title: 'Elecciones desde 1977',
-    text: 'Las dieciséis generales y sus 52 provincias: el hemiciclo de cada una, quién ganó dónde y cómo ha cambiado cada circunscripción.',
-    cta: 'Ver las 16 elecciones',
+    short: 'Resultados desde 1977',
+    title: 'Resultados de las elecciones generales desde 1977',
+    text: 'Resultados de las dieciséis elecciones generales en las 52 circunscripciones: composición del Congreso, fuerza más votada y evolución por provincia.',
+    cta: 'Consultar los resultados',
   },
   metricas: {
-    short: 'Métricas',
-    title: 'Métricas',
-    text: 'Participación, fragmentación, desproporcionalidad, volatilidad y bipartidismo, elección a elección.',
-    cta: 'Ver las métricas',
+    short: 'Indicadores',
+    title: 'Indicadores del sistema electoral',
+    text: 'Participación, fragmentación, desproporcionalidad, volatilidad y bipartidismo en cada elección general.',
+    cta: 'Consultar los indicadores',
   },
   mapa: {
-    short: 'Por municipios',
-    title: 'Municipio a municipio',
-    text: 'El voto de 2019 y 2023 en los 8.131 municipios y cuánto cambió entre las dos.',
-    cta: 'Ver los municipios',
+    short: 'Resultados por municipio',
+    title: 'Resultados por municipio',
+    text: 'Resultados de 2019 y 2023 en los 8.131 municipios y variación entre ambas elecciones.',
+    cta: 'Consultar los municipios',
   },
   voto: {
-    short: 'Geografía del voto',
-    title: 'La geografía del voto',
-    text: 'Ciudad y campo, la España vacía, la edad, el dinero, las Españas, el giro y el peso del voto: cómo vota cada España, municipio a municipio.',
-    cta: 'Ver los siete ejes',
+    short: 'Voto por territorio',
+    title: 'Voto según el territorio',
+    text: 'Comportamiento electoral por municipio según siete variables: tamaño, despoblación, edad, renta, territorio, cambio entre elecciones y peso del voto.',
+    cta: 'Consultar el análisis',
   },
   encuestas: {
     short: 'Encuestas',
-    title: 'Las encuestas',
-    text: 'Todas las encuestas desde 2023 y su media día a día: cómo ha cambiado la intención de voto camino del 29N.',
-    cta: 'Ver todas las encuestas',
+    title: 'Encuestas electorales',
+    text: 'Encuestas publicadas desde 2023 y media diaria de estimación de voto.',
+    cta: 'Consultar las encuestas',
   },
   proyeccion: {
-    short: 'Proyección',
-    title: 'La proyección',
-    text: 'Los escaños que salen de la media de las encuestas, provincia a provincia, y lo probable que es cada mayoría.',
-    cta: 'Ver la proyección',
+    short: 'Proyección de escaños',
+    title: 'Proyección de escaños',
+    text: 'Escaños estimados a partir de la media de encuestas, por provincia, y probabilidad de cada mayoría.',
+    cta: 'Consultar la proyección',
   },
   mercados: {
-    short: 'Mercados',
-    title: 'Los mercados',
-    text: 'Lo que apuestan en Polymarket: quién gana, quién preside y cuándo se va Sánchez, día a día.',
-    cta: 'Ver las apuestas',
+    short: 'Mercados de predicción',
+    title: 'Mercados de predicción',
+    text: 'Probabilidades de Polymarket sobre el ganador, la Presidencia del Gobierno y la fecha de salida de Pedro Sánchez, actualizadas a diario.',
+    cta: 'Consultar los mercados',
   },
   acierto: {
-    short: '¿Aciertan?',
-    title: 'Cuánto acertaron',
-    text: 'Las encuestas de las cinco últimas generales frente al resultado: quién falló, cuánto y hacia dónde.',
-    cta: 'Ver el ranking',
+    short: 'Precisión de las encuestas',
+    title: 'Precisión de las encuestas',
+    text: 'Error de las encuestas frente al resultado en las cinco últimas elecciones generales, por encuestadora, magnitud y sentido.',
+    cta: 'Consultar la clasificación',
   },
   // Viven en su propia ruta (/elecciones/entrevistas/...), con candidatos y entrevistas debajo.
   entrevistas: {
     short: 'Entrevistas',
-    title: 'Las entrevistas',
-    text: 'Las entrevistas a los cuatro candidatos, revisadas una a una: qué afirman y si es cierto, qué proponen y si responden a lo que se les pregunta.',
-    cta: 'Ver las entrevistas',
+    title: 'Entrevistas a los candidatos',
+    text: 'Análisis de las entrevistas a los cuatro candidatos: verificación de sus afirmaciones, propuestas y grado de respuesta a las preguntas.',
+    cta: 'Consultar las entrevistas',
   },
   'entrevistas/comparar': {
-    short: 'Comparar',
-    title: 'Lado a lado',
-    text: 'Las cifras de las entrevistas de una ronda con la misma escala y en el mismo orden: valoración, respuestas, propuestas, verificaciones y tono.',
+    short: 'Comparativa',
+    title: 'Comparativa de entrevistas',
+    text: 'Indicadores de las entrevistas de una misma ronda con la misma escala: valoración, respuestas, propuestas, verificaciones y tono.',
     cta: 'Comparar las entrevistas',
   },
   'entrevistas/verificaciones': {
     short: 'Verificaciones',
-    title: 'Todo lo verificado',
-    text: 'Cada afirmación comprobable de las entrevistas, con su calificación y sus fuentes oficiales. Filtra por calificación y por candidato.',
-    cta: 'Ver las verificaciones',
+    title: 'Verificaciones',
+    text: 'Afirmaciones comprobables de las entrevistas con su calificación y sus fuentes oficiales, filtrables por calificación y por candidato.',
+    cta: 'Consultar las verificaciones',
   },
   'entrevistas/metodologia': {
     short: 'Metodología',
-    title: 'Cómo se revisan las entrevistas',
-    text: 'La valoración sobre 10, sus seis criterios y sus pesos, las calificaciones de una afirmación y cómo se verifica y se revisa con IA.',
-    cta: 'Ver la metodología',
+    title: 'Metodología',
+    text: 'Valoración sobre 10, criterios y ponderación, calificaciones y proceso de verificación y revisión con IA.',
+    cta: 'Consultar la metodología',
   },
 } as const;
 export type ElectionPage = keyof typeof electionPages;
 
-export const electionGroups: {
-  name: string;
-  title: string;
-  text: string;
-  pages: ElectionPage[];
-}[] = [
+// Los grupos de la barra lateral.
+export const electionGroups: { name: string; icon: IconName; pages: ElectionPage[] }[] = [
+  { name: 'Legislatura', icon: 'libro', pages: ['caducan', 'legislatura', 'repite'] },
+  { name: 'Escaños', icon: 'escano', pages: ['350', 'escano'] },
+  { name: 'Historial electoral', icon: 'historia', pages: ['historico', 'metricas'] },
+  { name: 'Resultados territoriales', icon: 'mapa', pages: ['mapa', 'voto'] },
+  { name: 'Encuestas', icon: 'grafica', pages: ['encuestas', 'proyeccion', 'mercados', 'acierto'] },
   {
-    name: 'La legislatura',
-    title: 'La legislatura que se acaba',
-    text: 'Lo que deja hecho y sin hacer la XV legislatura, y quién vuelve a presentarse.',
-    pages: ['caducan', 'legislatura', 'repite'],
-  },
-  {
-    name: 'Los escaños',
-    title: 'Cómo se reparten los 350',
-    text: "Cada provincia elige sus diputados por separado, con la ley D'Hondt: por eso unos votos pesan más que otros.",
-    pages: ['350', 'escano'],
-  },
-  {
-    name: 'La historia',
-    title: 'Cuarenta y nueve años de elecciones',
-    text: 'Las dieciséis generales desde 1977, una a una, provincia a provincia y en cifras.',
-    pages: ['historico', 'metricas'],
-  },
-  {
-    name: 'El mapa',
-    title: 'El mapa del voto',
-    text: 'Quién gana dónde, municipio a municipio, y cómo vota cada España.',
-    pages: ['mapa', 'voto'],
-  },
-  {
-    name: 'Las encuestas',
-    title: 'Lo que dicen las encuestas',
-    text: 'Las encuestas y su media hasta el 23 de noviembre: desde el 24, la ley prohíbe publicarlas.',
-    pages: ['encuestas', 'proyeccion', 'mercados', 'acierto'],
-  },
-  {
-    name: 'Las entrevistas',
-    title: 'Los candidatos, entrevista a entrevista',
-    text: 'Cuatro candidatos y las mismas reglas: cada afirmación comprobable se contrasta con fuentes oficiales y una segunda revisión de IA comprueba cada una.',
+    name: 'Entrevistas',
+    icon: 'microfono',
     pages: [
       'entrevistas',
       'entrevistas/verificaciones',

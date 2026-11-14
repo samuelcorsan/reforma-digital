@@ -179,56 +179,54 @@ export function Simulator({
   const narration = finished ? (
     last ? (
       <>
-        El último escaño fue para <b>{last.party}</b>, con {thousands(last.value)} (÷
+        Último escaño: <b>{last.party}</b>, con {thousands(last.value)} (÷
         {last.divisor}).
         {out && (
           <>
             {' '}
-            La barra más larga que se queda sin escaño es la de <b>{out.party}</b>:{' '}
-            {thousands(out.value)}.
+            Primer cociente sin escaño: <b>{out.party}</b>, {thousands(out.value)}.
           </>
         )}
       </>
     ) : (
-      'Ninguna candidatura pasa la barrera.'
+      'Ninguna candidatura alcanza el 3 %.'
     )
   ) : toca ? (
     <>
-      <span className="mr-2 font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
+      <span className="mr-2 text-xs font-medium text-muted-foreground">
         Escaño {n + 1} de {province.seats}
       </span>
-      La barra más larga es la de <b style={{ color: color[toca.party] }}>{toca.party}</b>:{' '}
+      Cociente más alto: <b style={{ color: color[toca.party] }}>{toca.party}</b>,{' '}
       {thousands(toca.value)}.
     </>
   ) : latest ? (
     <>
-      <span className="mr-2 font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
+      <span className="mr-2 text-xs font-medium text-muted-foreground">
         Escaño {n} de {province.seats}
       </span>
-      Para <b style={{ color: color[latest.party] }}>{latest.party}</b>. Su barra pasa a ÷
-      {(now[latest.party] ?? 0) + 1}:{' '}
+      Asignado a <b style={{ color: color[latest.party] }}>{latest.party}</b>. Siguiente cociente (÷
+      {(now[latest.party] ?? 0) + 1}):{' '}
       {thousands((votes[latest.party] ?? 0) / ((now[latest.party] ?? 0) + 1))}.
     </>
   ) : (
-    'Al empezar, cada barra es el total de votos (÷1). Las que no llegan al 3 % no juegan.'
+    'En la primera ronda, cada cociente es el total de votos (÷1). Las candidaturas por debajo del 3 % quedan excluidas.'
   );
 
   return (
     <Cell>
       <div className="flex items-start justify-between gap-6">
         <div className="grid gap-2">
-          <Label>Juega con los votos</Label>
           <h2
             id="simulador"
             className="m-0 flex scroll-mt-28 flex-wrap items-center gap-x-3 gap-y-2 font-heading text-[28px] leading-tight font-normal"
           >
-            ¿Cuántos votos cambian un escaño en
-            <ProvinceSelect provinces={provinces} value={province.code} onChange={onProvince} />?
+            Reparto D&apos;Hondt en{' '}
+            <ProvinceSelect provinces={provinces} value={province.code} onChange={onProvince} />
           </h2>
           <p className="m-0 max-w-[75ch] text-muted-foreground">
             {province.seats === 1
-              ? 'Aquí se reparte un solo escaño: se lo lleva quien más votos tiene.'
-              : `Los ${province.seats} escaños se reparten por rondas. En cada una, el escaño es para la barra más larga; y esa barra se divide entre uno más (÷2, ÷3…) para la ronda siguiente.`}
+              ? 'Circunscripción de un solo escaño: lo obtiene la candidatura más votada.'
+              : `Los ${province.seats} escaños se asignan por rondas. En cada ronda, el escaño corresponde al cociente más alto, y los votos de esa candidatura se dividen entre el siguiente divisor (÷2, ÷3…).`}
           </p>
         </div>
         <figure className="m-0 hidden w-28 shrink-0 text-center sm:block" aria-hidden="true">
@@ -257,7 +255,13 @@ export function Simulator({
               size="sm"
               onClick={() => (playing ? setPlaying(false) : step ? setPlaying(true) : play())}
             >
-              {playing ? 'Pausa' : step ? 'Seguir' : done ? 'Repetir el reparto' : 'Ver el reparto'}
+              {playing
+                ? 'Pausa'
+                : step
+                  ? 'Continuar'
+                  : done
+                    ? 'Repetir el reparto'
+                    : 'Ver el reparto'}
             </Button>
             <Button
               size="sm"
@@ -276,7 +280,7 @@ export function Simulator({
               Siguiente escaño <Icon name="derecha" size={14} />
             </Button>
             <Button size="sm" variant="outline" onClick={() => edit(real)}>
-              Resultado real
+              Resultado oficial
             </Button>
           </div>
           <div ref={bars} className="grid gap-1.5">
@@ -292,9 +296,7 @@ export function Simulator({
                   </span>
                 )}
               </span>
-              <span className="w-20 text-right text-xs font-medium tracking-[0.08em] uppercase">
-                Escaños
-              </span>
+              <span className="w-20 text-right text-xs font-medium">Escaños</span>
             </p>
             {province.parties.map(([name]) => {
               const v = votes[name] ?? 0;
@@ -336,7 +338,7 @@ export function Simulator({
                           <b className="font-medium text-foreground">{thousands(v / d)}</b>
                         </>
                       ) : (
-                        'no llega al 3 %'
+                        'por debajo del 3 %'
                       )}
                     </small>
                   </span>
@@ -387,7 +389,7 @@ export function Simulator({
                     data-tip-text={
                       q
                         ? `${q.party}: ${thousands(q.votes)} ÷ ${q.divisor} = ${thousands(q.value)}`
-                        : 'Aún sin repartir'
+                        : 'Sin asignar'
                     }
                     data-tip-color={c}
                     className={cn(
@@ -422,10 +424,10 @@ export function Simulator({
 
       <div className="grid gap-3 border-t border-border pt-6">
         <p className="m-0 flex flex-wrap items-baseline gap-x-3 text-sm">
-          <b className="font-medium">Los votos</b>
+          <b className="font-medium">Votos por candidatura</b>
           <span className="text-muted-foreground">
-            Arrástralos, o pide <b className="font-medium text-foreground">+1 escaño</b> y la web
-            calcula cuántos faltan.
+            <b className="font-medium text-foreground">+1 escaño</b> calcula los votos que faltan
+            para obtener otro escaño.
           </span>
         </p>
         <ul className="m-0 grid list-none gap-2 p-0">
@@ -476,18 +478,17 @@ export function Simulator({
           })}
         </ul>
         <p className="m-0 text-sm text-muted-foreground [&_b]:font-medium [&_b]:text-foreground">
-          Para entrar en el reparto hace falta el 3 % de los votos válidos:{' '}
-          <b>{thousands(r.barrier)}</b>.{below.length > 0 && ` No llegan: ${below.join(', ')}.`}
+          Barrera legal: 3 % de los votos válidos (<b>{thousands(r.barrier)}</b>).
+          {below.length > 0 && ` Por debajo: ${below.join(', ')}.`}
         </p>
       </div>
 
       {rows.length > 0 && (
         <div className="grid gap-2 border-t border-border pt-6">
-          <h3 className="m-0 text-base font-medium">La tabla de cocientes</h3>
+          <h3 className="m-0 text-base font-medium">Tabla de cocientes</h3>
           <p className="m-0 text-sm text-muted-foreground">
-            Las mismas rondas, en números: los votos de cada candidatura entre 1, 2, 3… Los{' '}
-            {province.seats} cocientes más altos se llevan los escaños (en color); el recuadro marca
-            el último y el discontinuo, el primero que se queda fuera.
+            Los {province.seats} cocientes más altos se llevan los escaños (en color); el recuadro
+            marca el último y el discontinuo, el primero que se queda fuera.
           </p>
           <div className="overflow-x-auto">
             <table className="w-full border-separate border-spacing-0.5 font-mono text-sm tabular-nums">

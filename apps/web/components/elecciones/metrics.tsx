@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { getHistory } from '../../lib/congreso/data';
 import { electionLabel, longDate, time } from '../../lib/elecciones/format';
-import { electionsHref } from '../../lib/elecciones/pages';
+import { electionsHref, electionPages } from '../../lib/elecciones/pages';
 import { Cell, Grid, Heading, ReportIntro } from './report';
 import { Trend, type TrendPoint } from './trend';
 
@@ -46,11 +46,10 @@ export async function Metrics() {
 
   return (
     <>
-      <ReportIntro title="Métricas">
+      <ReportIntro title={electionPages.metricas.title}>
         <p>
           Participación, fragmentación, desproporcionalidad, volatilidad y bipartidismo, elección a
-          elección. Pasa por encima de cualquier gráfico para ver el valor de cada elección y pulsa
-          para abrir su ficha.
+          elección.
         </p>
       </ReportIntro>
       <Grid>
@@ -67,10 +66,10 @@ export async function Metrics() {
             />
           }
         >
-          Votantes sobre el censo, con el voto desde el extranjero.
+          Votantes sobre el censo, incluido el voto desde el extranjero.
         </Card>
         <Card
-          title="Primera fuerza y mayoría absoluta"
+          title="Escaños de la fuerza más votada"
           chart={
             <Trend
               points={points}
@@ -88,7 +87,7 @@ export async function Metrics() {
             />
           }
         >
-          Escaños de la candidatura más votada. La línea marca los 176 de la mayoría absoluta.
+          Escaños de la candidatura más votada.
         </Card>
         <Card
           title="Número efectivo de partidos"
@@ -104,11 +103,11 @@ export async function Metrics() {
             />
           }
         >
-          Cuántos partidos «cuentan» de verdad (índice de Laakso y Taagepera): 2 es un bipartidismo
-          puro; cuanto más alto, más fragmentado. Por votos y por escaños.
+          Índice de Laakso y Taagepera. Un valor de 2 corresponde a un bipartidismo puro; los
+          valores más altos indican más fragmentación.
         </Card>
         <Card
-          title="PSOE y PP juntos"
+          title="Voto conjunto a PSOE y PP"
           chart={
             <Trend
               points={points}
@@ -121,7 +120,7 @@ export async function Metrics() {
             />
           }
         >
-          Su parte de los votos válidos y de los escaños.
+          Porcentaje conjunto de votos válidos y de escaños.
         </Card>
         <Card
           title="Desproporcionalidad"
@@ -135,7 +134,7 @@ export async function Metrics() {
           }
         >
           Índice de Gallagher: cuánto se separa el reparto de escaños del de votos, en puntos. 0
-          sería un reparto exactamente proporcional.
+          corresponde a un reparto exactamente proporcional.
         </Card>
         <Card
           title="Volatilidad"

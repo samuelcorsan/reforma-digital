@@ -201,7 +201,7 @@ function Calendar({
     [now[1], 'leyes publicadas'],
     [now[2], 'reales decretos-leyes'],
     [now[3], 'preguntas registradas'],
-    [plenaries, 'días de Pleno con votaciones'],
+    [plenaries, 'días de sesión plenaria con votaciones'],
     [unanswered, 'preguntas sin respuesta', true],
   ];
   const height = years.length * blockH;
@@ -227,11 +227,15 @@ function Calendar({
       </dl>
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="sunset" onClick={play}>
-          {playing ? 'Pausa' : cursor >= list.length - 1 ? 'Reproducir la legislatura' : 'Seguir'}
+          {playing
+            ? 'Pausar'
+            : cursor >= list.length - 1
+              ? 'Reproducir la legislatura'
+              : 'Continuar'}
         </Button>
         <div className="max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <Tabs value={mode} onValueChange={(value) => isMode(value) && setMode(value)}>
-            <TabsList aria-label="Qué se pinta">
+            <TabsList aria-label="Dato representado">
               <TabsTrigger value="votes" className="px-3">
                 Votaciones
               </TabsTrigger>
@@ -254,7 +258,7 @@ function Calendar({
             <svg
               viewBox={`0 0 ${W} ${height}`}
               role="img"
-              aria-label="Cada día de la legislatura, pintado según lo que se ha elegido"
+              aria-label="Días de la legislatura según el dato seleccionado"
               className="block h-auto w-full"
             >
               {years.map((year, i) => (
@@ -320,11 +324,11 @@ function Calendar({
           <>
             <span className="inline-flex items-center gap-1.5">
               <i className="block size-2.5 rounded-xs" style={{ background: colors.law }} />
-              Se publica una ley
+              Publicación de una ley
             </span>
             <span className="inline-flex items-center gap-1.5">
               <i className="block size-2.5 rounded-xs" style={{ background: colors.decree }} />
-              Se publica un decreto-ley
+              Publicación de un decreto-ley
             </span>
           </>
         ) : (
@@ -337,8 +341,8 @@ function Calendar({
               }}
             />
             {mode === 'votes'
-              ? `Más votaciones (hasta ${maxVotes} en un día)`
-              : `Más preguntas (hasta ${thousands(maxQuestions)} en un día)`}
+              ? `Más votaciones (máximo: ${maxVotes} en un día)`
+              : `Más preguntas (máximo: ${thousands(maxQuestions)} en un día)`}
           </>
         )}
       </p>
@@ -423,9 +427,8 @@ function Margins({ votes, voteHref }: { votes: Vote[]; voteHref: string }) {
     <div className="grid gap-4">
       <p className="m-0 max-w-[75ch] text-muted-foreground [&_b]:font-medium [&_b]:text-foreground">
         De {thousands(votes.length)} votaciones con voto nominal, <b>{thousands(close)}</b> se
-        decidieron por 10 votos o menos y <b>{ties}</b> acabaron en empate (en el Congreso, un
-        empate repetido tres veces tumba la propuesta). Arrastra la raya hacia un lado para ver las
-        que se decidieron por esa diferencia o menos.
+        resolvieron por una diferencia de 10 votos o menos y <b>{ties}</b> terminaron en empate. En
+        el Congreso, si el empate se repite en tres votaciones, la propuesta se entiende rechazada.
       </p>
       <div className="overflow-x-auto">
         <Tips className="min-w-[640px]">
@@ -554,7 +557,7 @@ function Margins({ votes, voteHref }: { votes: Vote[]; voteHref: string }) {
           </h3>
           {edge !== 0 && (
             <Button variant="ghost" size="sm" onClick={() => setEdge(0)}>
-              Volver a los empates
+              Mostrar solo empates
             </Button>
           )}
         </div>

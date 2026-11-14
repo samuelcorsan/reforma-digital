@@ -9,7 +9,7 @@ import { Button } from '@reforma-digital/design/ui/button';
 const fictitious = [
   {
     name: 'Candidato A',
-    profile: 'Riguroso con los datos, pero esquiva preguntas',
+    profile: 'Precisión alta en los datos; respuestas evasivas',
     scores: {
       veracidad: 8.6,
       alGrano: 4.9,
@@ -22,7 +22,7 @@ const fictitious = [
   },
   {
     name: 'Candidato B',
-    profile: 'Directo y claro, pero menos preciso con las cifras',
+    profile: 'Respuestas directas y claras; menor precisión en las cifras',
     scores: {
       veracidad: 5.9,
       alGrano: 8.1,
@@ -83,7 +83,7 @@ export function ScoreSimulator({ criteria }: { criteria: Criterion[] }) {
           disabled={!changed}
           onClick={() => setWeights(initial)}
         >
-          Volver a los pesos de la metodología
+          Restablecer los pesos de la metodología
         </Button>
       </div>
       <div className="grid content-start gap-3">
@@ -107,7 +107,7 @@ export function ScoreSimulator({ criteria }: { criteria: Criterion[] }) {
         <p aria-live="polite" className="m-0 text-muted-foreground">
           {ahead == null
             ? 'Empate: la diferencia es menor que el margen.'
-            : `Con estos pesos, por delante: ${fictitious[ahead]?.name}.`}
+            : `Con estos pesos, valoración más alta: ${fictitious[ahead]?.name}.`}
         </p>
       </div>
     </div>

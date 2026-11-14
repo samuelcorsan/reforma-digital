@@ -227,7 +227,7 @@ function Path({
   }, 0.55);
 
   const fell = t >= tEnd;
-  const label = playing ? 'Pausa' : fell ? 'Reproducir la legislatura' : 'Seguir';
+  const label = playing ? 'Pausar' : fell ? 'Reproducir la legislatura' : 'Continuar';
   return (
     <div ref={box} className="grid gap-4">
       <div className="flex flex-wrap items-center gap-4">
@@ -258,7 +258,7 @@ function Path({
           <svg
             viewBox={`0 0 ${W} ${height}`}
             role="img"
-            aria-label="Cada ley de la legislatura, según la etapa a la que había llegado en la fecha elegida"
+            aria-label="Iniciativas de la legislatura según la fase alcanzada en la fecha seleccionada"
             className="block h-auto w-full"
             onMouseLeave={() => setCard(null)}
           >
@@ -281,7 +281,7 @@ function Path({
                 className="fill-brand font-mono font-medium tracking-[0.06em]"
                 style={{ fontSize: 12 * k }}
               >
-                CADUCAN CON LA DISOLUCIÓN
+                Caducan con la disolución
               </text>
             </g>
             {pathColumns.map((name, c) => (
@@ -335,7 +335,7 @@ function Path({
         >
           <b className="block text-lg font-medium">{shortDate(dissolution)}</b>
           <small className="text-sm text-muted-foreground">
-            Se disuelven las Cortes: caduca todo lo que no había terminado
+            Disolución de las Cortes: caducan las iniciativas en tramitación
           </small>
         </div>
       </div>
@@ -356,7 +356,7 @@ const stepNames = [
   'Admitida a debate',
   'Informe de la comisión',
   'Aprobada en el Congreso',
-  'Pasó por el Senado',
+  'Tramitada en el Senado',
   'Ley',
 ];
 
@@ -563,7 +563,7 @@ function Flows({
   }, []);
   const tip = (title: string, n: number, extra = '') => ({
     'data-tip': title,
-    'data-tip-text': `${thousands(n)} ${n === 1 ? 'ley' : 'leyes'} · ${pct(n)} de las presentadas${extra}`,
+    'data-tip-text': `${thousands(n)} ${n === 1 ? 'iniciativa' : 'iniciativas'} · ${pct(n)} de las presentadas${extra}`,
   });
 
   return (
@@ -574,7 +574,7 @@ function Flows({
             <svg
               viewBox={`0 0 ${SW} ${SH}`}
               role="img"
-              aria-label={`De las ${total} leyes presentadas en la legislatura, ${nodes.find((n) => n.id === 'e5')?.n ?? 0} acabaron en ley`}
+              aria-label={`De las ${total} iniciativas presentadas en la legislatura, ${nodes.find((n) => n.id === 'e5')?.n ?? 0} se aprobaron como ley`}
               className="block h-auto w-full"
             >
               <defs>
@@ -628,7 +628,7 @@ function Flows({
                         className="cursor-pointer"
                         onClick={() => pick(picked)}
                         data-tip={`${link.a.name} → ${link.b.name}`}
-                        data-tip-text={`${thousands(m)} de las ${thousands(link.n)} leyes de este tramo`}
+                        data-tip-text={`${thousands(m)} de las ${thousands(link.n)} iniciativas de este tramo`}
                         data-tip-color={picked.color}
                       />
                     ) : null;
@@ -711,14 +711,14 @@ function Flows({
         </Tips>
       </div>
       <p className="m-0 text-sm text-muted-foreground">
-        Pulsa un nodo o un flujo para seguir esas leyes aquí y en «El camino de cada ley»; pulsa
-        otra vez para quitarlo.
+        Pulsa un nodo o un flujo para seguir esas iniciativas aquí y en «Tramitación de cada
+        iniciativa».
       </p>
       {selected && picked && (
         <div className="grid gap-2 border-t border-border pt-4" aria-live="polite">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="m-0 text-base font-medium">
-              {thousands(selected.length)} {selected.length === 1 ? 'ley' : 'leyes'} ·{' '}
+              {thousands(selected.length)} {selected.length === 1 ? 'iniciativa' : 'iniciativas'} ·{' '}
               {picked.label}
             </h3>
             <Button variant="ghost" size="sm" onClick={() => pick(picked)}>

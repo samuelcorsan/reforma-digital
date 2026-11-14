@@ -34,7 +34,7 @@ const columns: [Column, string][] = [
   ['turnout', 'Participación'],
   ['price', 'Votos por escaño'],
   ['winner', 'Primera fuerza'],
-  ['margin', 'Último escaño'],
+  ['margin', 'Margen del último escaño'],
 ];
 const plain = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
@@ -110,7 +110,7 @@ export function ProvinceTable({
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Busca una provincia"
+          placeholder="Buscar provincia"
           aria-label="Buscar provincia"
           className="max-w-xs"
         />
@@ -192,7 +192,7 @@ export function ProvinceTable({
             {!shown.length && (
               <TableRow>
                 <TableCell colSpan={6} className="text-muted-foreground">
-                  Ninguna provincia con ese nombre.
+                  Ninguna provincia coincide con la búsqueda.
                 </TableCell>
               </TableRow>
             )}

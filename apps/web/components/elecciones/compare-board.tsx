@@ -41,18 +41,9 @@ export type Common = {
 };
 const surname = (c: Candidate) => c.name.split(' ').at(-1) ?? c.name;
 
-function Heading({
-  label,
-  title,
-  children,
-}: {
-  label: string;
-  title: string;
-  children?: ReactNode;
-}) {
+function Heading({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="grid gap-2">
-      <Label>{label}</Label>
       <h2 className="m-0 font-heading text-[32px] leading-tight font-normal lg:text-[40px]">
         {title}
       </h2>
@@ -109,7 +100,7 @@ export function CompareBoard({
         setPair(side === 0 ? [String(value), pair[1]] : [pair[0], String(value)])
       }
     >
-      <TabsList aria-label={side === 0 ? 'Primero' : 'Segundo'}>
+      <TabsList aria-label={side === 0 ? 'Primer candidato' : 'Segundo candidato'}>
         {present.map(({ candidate: c }) => (
           <TabsTrigger
             key={c.slug}
@@ -160,16 +151,16 @@ export function CompareBoard({
       </div>
 
       <section className="grid grid-cols-[minmax(0,1fr)] gap-8">
-        <Heading label="La huella" title="Formas de hacer una entrevista">
-          Cada eje va de cero al mismo tope para todos. Llegar más lejos no es mejor ni peor: solo
-          indica más de lo que mide ese eje.
+        <Heading title="Perfil de cada entrevista">
+          Cada eje va de cero a un tope común para todos los candidatos. Un valor más alto no es
+          mejor ni peor: indica más presencia de lo que mide el eje.
         </Heading>
         <Grid>
           <Cell span={6} className="items-center">
             <svg
               viewBox={`0 0 ${size} ${size}`}
               role="img"
-              aria-label="La huella de cada candidato sobre los mismos ejes"
+              aria-label="Perfil de cada candidato sobre los mismos ejes"
               className="mx-auto w-full max-w-[420px] overflow-visible"
             >
               {[0.25, 0.5, 0.75, 1].map((r) => (
@@ -221,7 +212,7 @@ export function CompareBoard({
                 })}
             </svg>
           </Cell>
-          <Cell span={6} label="Cómo se lee">
+          <Cell span={6}>
             <dl className="m-0 grid gap-x-6 gap-y-3 sm:grid-cols-2">
               {footprint.axes.map((axis) => (
                 <div key={axis.name}>
@@ -248,8 +239,8 @@ export function CompareBoard({
 
       {commons.length > 0 && (
         <section className="grid grid-cols-[minmax(0,1fr)] gap-8">
-          <Heading label="Preguntas comunes" title="La misma pregunta: quién respondió a qué">
-            Pulsa en una pregunta para ver cómo se formuló y lo que respondió cada uno.
+          <Heading title="Preguntas comunes a varias entrevistas">
+            Pulsa una pregunta para ver su formulación y la respuesta de cada candidato.
           </Heading>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -369,9 +360,9 @@ export function CompareBoard({
 
       <section className="grid grid-cols-[minmax(0,1fr)] gap-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <Heading label="En cifras" title="Mismas reglas, misma escala">
-            Cada barra tiene un tope fijo, el mismo para todos. No hay ganador: lee cada cifra por
-            separado.
+          <Heading title="Indicadores">
+            Cada barra tiene un tope fijo, común a todos los candidatos. Los indicadores no
+            establecen un ganador y se leen por separado.
           </Heading>
           <Tabs
             value={mode}
@@ -382,7 +373,7 @@ export function CompareBoard({
                 Todos
               </TabsTrigger>
               <TabsTrigger value="duelo" className="px-3" disabled={present.length < 2}>
-                1 contra 1
+                Dos candidatos
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -390,13 +381,13 @@ export function CompareBoard({
         {mode === 'duelo' && (
           <div className="flex flex-wrap items-center gap-3">
             {picker(0)}
-            <span className="text-sm text-muted-foreground">contra</span>
+            <span className="text-sm text-muted-foreground">frente a</span>
             {picker(1)}
           </div>
         )}
         <div className="max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <Tabs value={group} onValueChange={(value) => setGroup(String(value))}>
-            <TabsList aria-label="Qué cifras">
+            <TabsList aria-label="Grupo de indicadores">
               {['Todo', ...groups].map((g) => (
                 <TabsTrigger key={g} value={g} className="px-3">
                   {g}

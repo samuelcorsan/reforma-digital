@@ -4,6 +4,7 @@ import { shortDate, thousands, toDay } from '../../lib/elecciones/format';
 import { Empty, href } from '../congreso/common';
 import { Relevos, type Departure, type RelevoSeat } from './relevos';
 import { Cell, Grid, ReportIntro, SectionHeading } from './report';
+import { electionPages } from '../../lib/elecciones/pages';
 
 const longDate = new Intl.DateTimeFormat('es-ES', {
   day: 'numeric',
@@ -105,14 +106,18 @@ export async function Repeat() {
 
   return (
     <>
-      <ReportIntro title="¿Repite?">
-        <p>Quién de los 350 vuelve a ir en las listas, en qué puesto y por qué provincia.</p>
+      <ReportIntro title={electionPages.repite.title}>
+        <p>
+          Diputados de la XV legislatura incluidos en las candidaturas, con su puesto y su
+          circunscripción.
+        </p>
       </ReportIntro>
       <Grid>
         {source.hay.candidaturas ? (
           <Cell>
             <Empty>
-              Las listas están disponibles en los conjuntos públicos de la convocatoria.
+              Las candidaturas están disponibles en los conjuntos de datos públicos de la
+              convocatoria.
             </Empty>
           </Cell>
         ) : (
@@ -123,34 +128,32 @@ export async function Repeat() {
               </b>
               <span className="text-sm text-muted-foreground">
                 {left > 1
-                  ? 'días para las listas'
+                  ? 'días para la publicación de las candidaturas'
                   : left === 1
-                    ? 'día para las listas'
-                    : 'las listas, en el BOE'}
+                    ? 'día para la publicación de las candidaturas'
+                    : 'publicación de las candidaturas en el BOE'}
               </span>
             </p>
             <div className="grid gap-2">
               <h2 className="m-0 font-heading text-2xl leading-tight font-normal">
-                Las listas aún no se conocen
+                Candidaturas pendientes de publicación
               </h2>
               <p className="m-0 max-w-[75ch] text-muted-foreground [&_b]:font-medium [&_b]:text-foreground">
                 Las candidaturas presentadas se publican en el BOE el{' '}
                 <b>{lists ? longDate.format(dateOf(lists.fecha)) : '—'}</b>; las Juntas Electorales
                 las proclaman el{' '}
                 <b>{proclaimed ? longDate.format(dateOf(proclaimed.fecha)) : '—'}</b> y el BOE las
-                publica al día siguiente. Ese día, aquí: quién de los 350 vuelve a ir en una lista,
-                en qué puesto y si es de salida, quién cambia de provincia o de siglas y quién no se
-                presenta.
+                publica al día siguiente.
               </p>
             </div>
           </Cell>
         )}
       </Grid>
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Antes de las listas: los relevos">
-          En los 350 escaños de la XV legislatura se han sentado{' '}
-          {thousands(source.relevos.personas)} personas: {source.relevos.salidas.length} diputados
-          dejaron el escaño y entró el siguiente de su lista.
+        <SectionHeading title="Relevos durante la legislatura">
+          {thousands(source.relevos.personas)} personas han ocupado los 350 escaños de la XV
+          legislatura. {source.relevos.salidas.length} diputados causaron baja y les sustituyó el
+          siguiente candidato de su lista.
         </SectionHeading>
         <Grid>
           <Relevos seats={seats} box={box} departures={departures} span={span} />
