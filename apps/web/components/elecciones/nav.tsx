@@ -16,6 +16,8 @@ import {
 } from '../../lib/elecciones/pages';
 import { SectionNav, type LocalNav } from './section-nav';
 
+const authors = ['disamdev', 'jgarcelan', 'RogerKernel', 'ErikaCelestica'];
+
 // Desde 1100 px, los apartados en una columna fija a la izquierda; por debajo, en un desplegable.
 // Al final, el anterior y el siguiente. Sin `current`, es la portada; con `local`, la barra muestra
 // las secciones de la página (un informe largo).
@@ -116,6 +118,24 @@ export function ElectionsFrame({
             )}
           </nav>
         )}
+        <p className="mt-16 mb-0 text-sm text-muted-foreground">
+          Hecho por{' '}
+          {authors.map((name, i) => (
+            <span key={name}>
+              {i > 0 && (i === authors.length - 1 ? ' y ' : ', ')}
+              <a
+                href={`https://x.com/${name}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-foreground"
+              >
+                @{name}
+                <span className="sr-only"> en X (se abre en una pestaña nueva)</span>
+              </a>
+            </span>
+          ))}
+          .
+        </p>
       </div>
     </SidebarProvider>
   );
