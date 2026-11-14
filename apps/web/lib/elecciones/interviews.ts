@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { longDate } from './format';
 import { candidates, type Candidate } from './candidates';
+import { getCommunication, isHard } from './communication';
 import { commonFiles, files } from './entrevistas';
 
 // Las entrevistas a los candidatos del 29N, analizadas y revisadas con IA. Las publica el pipeline de
@@ -38,6 +39,7 @@ const criterion = z.enum([
   'veracidad',
   'alGrano',
   'concrecion',
+  'propone',
   'sustancia',
   'juegoLimpio',
   'claridad',
@@ -76,11 +78,20 @@ export const criteria = {
     weight: 25,
     text: 'Si lo que afirma es cierto, según fuentes oficiales',
   },
-  alGrano: { name: 'Al grano', weight: 25, text: 'Si responde a lo que se le pregunta' },
+  alGrano: {
+    name: 'Al grano',
+    weight: 20,
+    text: 'Si responde a lo que se le pregunta; contestar a una pregunta dura cuenta el doble',
+  },
   concrecion: {
     name: 'Concreción',
-    weight: 20,
-    text: 'Si sus propuestas dicen qué, cuánto, cuándo y cómo',
+    weight: 15,
+    text: 'Si sus compromisos se podrán comprobar (una cifra, una ley o un sí o un no) y si dicen cuándo',
+  },
+  propone: {
+    name: 'Propone',
+    weight: 10,
+    text: 'Respuestas que proponen algo propio frente a las que solo critican a otros',
   },
   sustancia: {
     name: 'Sustancia',
@@ -160,7 +171,8 @@ const interviewSchema = z.object({
   nota: z.object({
     global: z.number(),
     margen: z.number(),
-    criterios: z.record(criterion, z.number()),
+    // «Propone» solo existe si la entrevista tiene análisis de comunicación.
+    criterios: z.partialRecord(criterion, z.number()),
   }),
   stats: z.object({ alGrano: z.number() }),
   // La transcripción: quién habla y de qué segundo a qué segundo.
@@ -213,6 +225,12 @@ const interviewSchema = z.object({
       explicacion: z.string(),
       fuentes: z.array(source),
       pilladoEnDirecto: z.boolean().optional(),
+      // La segunda revisión: la de IA o, si su nota empieza por «Revisión a mano», la de una persona.
+      // `sugerencia`: la calificación que tenía antes, si se corrigió.
+      segundaRevision: z
+        .object({ sugerencia: verdict.nullable(), fuentesOk: z.boolean(), nota: z.string() })
+        .nullable()
+        .optional(),
       estado: state,
     }),
   ),
@@ -292,6 +310,12 @@ export const allVerifications = () =>
     .flatMap((interview) =>
       interview.revisiones.map((verification) => ({ interview, verification })),
     );
+// Si una persona la revisó a mano después de la IA.
+export const handReviewed = (r: Interview['revisiones'][number]) =>
+  !!r.segundaRevision?.nota.startsWith('Revisión a mano');
+// El tema que suena en el segundo de una verificación.
+export const topicAt = (a: Interview, second: number) =>
+  topicsOf(a).find((t) => t.inicio <= second && second < t.fin)?.tema;
 export const getCandidate = (slug: string) => candidates.find((c) => c.slug === slug);
 // El nombre del candidato, o el título de la entrevista de ejemplo.
 export const interviewName = (a: Interview) => getCandidate(a.candidato)?.name ?? a.titulo;
@@ -311,10 +335,19 @@ export const lanes = {
   criticas: 'Críticas e interrupciones',
   plato: 'En plató',
 } as const;
+// Los carriles que salen del análisis de comunicación, si la entrevista lo tiene. Sus momentos, sus
+// compromisos y sus preguntas sustituyen a los del análisis.
+export const communicationLanes = {
+  propuestas: 'Compromisos',
+  preguntas: 'Preguntas duras sin respuesta clara',
+  pausas: 'Pausas de un segundo o más',
+  trabas: 'Trabas',
+  comentados: 'Lo más comentado',
+} as const;
 export type Mark = {
   id: string;
   second: number;
-  lane: keyof typeof lanes;
+  lane: keyof typeof lanes | keyof typeof communicationLanes;
   kind:
     | 'momento'
     | 'completa'
@@ -327,7 +360,13 @@ export type Mark = {
     | 'ataque'
     | 'interrumpe'
     | 'interrumpido'
-    | keyof typeof visuals;
+    | keyof typeof visuals
+    | 'comprobable'
+    | 'compromiso'
+    | 'dura'
+    | 'pausa'
+    | 'traba'
+    | 'comentado';
   label: string;
   text: string;
   detail?: string;
@@ -521,7 +560,13 @@ export const roundInterviews = (round: string) =>
   }));
 
 // Qué parte del tiempo hablado es de quien se pida, en %.
+// Con análisis de comunicación, la parte de las palabras de cada uno; sin él, la del tiempo.
 export function speakingShare(a: Interview, who: Interview['segmentos'][number]['hablante']) {
+  const c = getCommunication(a.id);
+  if (c) {
+    if (who === 'candidato') return Math.round(c.habla.invitado.parte);
+    return who === 'jordi' ? Math.round(c.habla.jordi.parte) : 0;
+  }
   const time = (list: Interview['segmentos']) => list.reduce((t, s) => t + s.fin - s.inicio, 0);
   const total = time(a.segmentos);
   return total
@@ -569,7 +614,7 @@ export function speech(a: Interview) {
     return near ? Math.min(near[1] - near[0], 10) : 0;
   });
   return {
-    pace: words.length / minutes,
+    pace: getCommunication(a.id)?.habla.invitado.palabrasPorMinuto ?? words.length / minutes,
     fillers: fillers / minutes,
     stutters: stutters / minutes,
     pause: pauses.length ? pauses.reduce((t, p) => t + p, 0) / pauses.length : null,
@@ -584,7 +629,8 @@ export function speech(a: Interview) {
 // Minuto a minuto: quién tiene la palabra (segundos del candidato y del entrevistador) y la
 // intensidad, con la fórmula de El VAR Electoral y la misma escala para los cuatro: cambios de turno
 // entre los dos (de al menos cuatro palabras) + 3 × interrupciones + 2 × momentos de tensión
-// (repreguntas, evasivas, ataques personales, calificaciones que no son «Cierto» y choques), sobre
+// (con análisis de comunicación, preguntas duras sin respuesta clara; sin él, repreguntas, evasivas y
+// choques; y en los dos, ataques personales y calificaciones que no son «Cierto»), sobre
 // 25 puntos por minuto. Mide ida y vuelta, no emociones.
 export const intensityScale = 25;
 export function perMinute(a: Interview) {
@@ -612,13 +658,17 @@ export function perMinute(a: Interview) {
       if (s.texto.split(/\s+/).length >= 4) bump(s.inicio, 1);
   });
   for (const x of a.interrupciones) bump(x.segundo, 3);
+  // Con análisis de comunicación, la tensión de las preguntas son las duras sin respuesta clara.
+  const c = getCommunication(a.id);
   const tension = [
-    ...a.preguntas.filter(
-      (p) => p.repregunta || p.respuesta === 'evasiva' || p.respuesta === 'cambio',
-    ),
+    ...(c
+      ? c.preguntas.filter((q) => isHard(q) && q.respuesta !== 'responde')
+      : a.preguntas.filter(
+          (p) => p.repregunta || p.respuesta === 'evasiva' || p.respuesta === 'cambio',
+        )),
     ...a.ataques.filter((x) => x.tipo === 'personal'),
     ...a.revisiones.filter((r) => r.veredicto !== 'legal' && r.veredicto !== 'sinfuente'),
-    ...a.momentos.filter((m) => m.tipo === 'choque'),
+    ...(c ? [] : a.momentos.filter((m) => m.tipo === 'choque')),
   ];
   for (const t of tension) bump(t.segundo, 2);
   return rows.map(({ points, ...row }) => ({
@@ -635,18 +685,81 @@ export function interviewer(a: Interview) {
     share: speakingShare(a, 'jordi'),
     questionsPerMinute: a.preguntas.length / (a.duracion / 60 || 1),
     followUps: a.preguntas.filter((p) => p.repregunta).length,
-    cuts: a.interrupciones.filter((x) => x.quien === 'jordi').length,
+    cuts: interruptions(a).interviewer,
     wordsPerQuestion: a.preguntas.length ? words / a.preguntas.length : 0,
   };
+}
+
+// Lo que el análisis de comunicación mide mejor, si la entrevista lo tiene; si no, lo del análisis.
+// Repreguntas: con comunicación, también las insistencias (tercera vez o más).
+export function followUps(a: Interview) {
+  const c = getCommunication(a.id);
+  return c
+    ? c.preguntas.filter((q) => q.dureza === 'repregunta' || q.dureza === 'insistencia').length
+    : a.preguntas.filter((p) => p.repregunta).length;
+}
+// Las respuestas que no contestan a lo preguntado.
+export function dodges(a: Interview) {
+  const c = getCommunication(a.id);
+  return c
+    ? c.preguntas.filter((q) =>
+        ['otra_pregunta', 'ataca_pregunta', 'cambia_tema'].includes(q.respuesta),
+      ).length
+    : a.preguntas.filter((p) => p.respuesta === 'evasiva' || p.respuesta === 'cambio').length;
+}
+// La parte de las respuestas que contestan a lo preguntado (sin las que no le dejan contestar).
+export function directShare(a: Interview) {
+  const c = getCommunication(a.id);
+  const list = c
+    ? c.preguntas
+        .filter((q) => q.respuesta !== 'sin_respuesta')
+        .map((q) => q.respuesta === 'responde')
+    : a.preguntas.map((p) => p.respuesta === 'directa');
+  return list.filter(Boolean).length / (list.length || 1);
+}
+// A quién critica y cuántas veces: con comunicación, las respuestas que critican a cada uno; sin
+// ella, las críticas y ataques del análisis.
+export function criticTargets(a: Interview) {
+  const c = getCommunication(a.id);
+  const names = c ? c.preguntas.flatMap((q) => q.aQuienCritica) : a.ataques.map((x) => x.objetivo);
+  const count = new Map<string, number>();
+  for (const name of names) count.set(name, (count.get(name) ?? 0) + 1);
+  return [...count].sort((x, y) => y[1] - x[1]);
+}
+// Los cortes: con comunicación, sus interrupciones notables y los intercambios que cierra el
+// entrevistador con un corte o un comentario suyo; sin ella, las interrupciones del análisis.
+export function interruptions(a: Interview) {
+  const c = getCommunication(a.id);
+  return c
+    ? {
+        candidate: c.sintonia.filter(
+          (x) => x.tipo === 'interrupcion_notable' && x.quien === 'invitado',
+        ).length,
+        interviewer: c.preguntas.filter((q) => q.cierra === 'jordi').length,
+      }
+    : {
+        candidate: a.interrupciones.filter((x) => x.quien === 'candidato').length,
+        interviewer: a.interrupciones.filter((x) => x.quien === 'jordi').length,
+      };
+}
+// Los compromisos que se podrán comprobar; sin comunicación, las propuestas completas.
+export function checkable(a: Interview) {
+  const c = getCommunication(a.id);
+  return c
+    ? c.compromisos.filter((x) => x.verificable).length
+    : a.propuestas.filter((p) => proposalScore(p) === 4).length;
 }
 
 export const proposalScore = (p: Interview['propuestas'][number]) =>
   +p.que + +p.cuanto + +p.cuando + +p.como;
 
 // Porcentaje del tiempo de la entrevista por tema, de mayor a menor.
+// Los temas: con análisis de comunicación, los suyos, iguales para toda la ronda y con quién saca
+// cada uno; sin él, los capítulos del vídeo.
+export const topicsOf = (a: Interview) => getCommunication(a.id)?.temas ?? a.temas;
 export function topicShare(a: Interview) {
   const total = new Map<string, number>();
-  for (const t of a.temas) total.set(t.tema, (total.get(t.tema) ?? 0) + t.fin - t.inicio);
+  for (const t of topicsOf(a)) total.set(t.tema, (total.get(t.tema) ?? 0) + t.fin - t.inicio);
   return [...total]
     .map(([topic, seconds]) => ({ topic, share: Math.round((seconds / a.duracion) * 100) }))
     .sort((x, y) => y.share - x.share);

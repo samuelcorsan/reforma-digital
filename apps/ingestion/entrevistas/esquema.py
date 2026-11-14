@@ -38,6 +38,23 @@ class Pregunta(BaseModel):
     repregunta: bool = False
 
 
+class PreguntaComunicacion(BaseModel):
+    """Una pregunta del análisis de comunicación (apps/web/lib/elecciones/comunicacion), con su clase de respuesta."""
+
+    segundo: int
+    dureza: Literal["insistencia", "repregunta", "incomoda", "neutra", "comoda"]
+    respuesta: Literal["responde", "en_parte", "otra_pregunta", "ataca_pregunta", "cambia_tema"]
+    orientacion: Literal["propone", "critica", "ambas", "ninguna"]
+
+
+class Compromiso(BaseModel):
+    """Un compromiso del análisis de comunicación: verificable si tiene un objeto que se podrá comprobar."""
+
+    segundo: int
+    verificable: bool
+    plazo: str | None = None
+
+
 class Propuesta(BaseModel):
     id: str = ""
     segundo: int

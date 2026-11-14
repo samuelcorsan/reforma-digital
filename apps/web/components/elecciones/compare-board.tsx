@@ -6,7 +6,7 @@ import { cn } from '@reforma-digital/design/lib/utils';
 import { Tabs, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import type { Candidate } from '../../lib/elecciones/candidates';
 import type { Mark } from '../../lib/elecciones/interviews';
-import { answerStyles, MarkIcon } from './mark-icon';
+import { IconChip, MarkIcon, type AnswerMark } from './mark-icon';
 import { Portrait } from './portrait';
 import { Cell, Grid, Label } from './report';
 
@@ -31,20 +31,13 @@ export type Footprint = {
   axes: { name: string; text: string }[];
   values: Partial<Record<string, number[]>>;
 };
-type Answer = 'directa' | 'parcial' | 'evasiva' | 'cambio';
+// Cómo respondió: su nombre, su icono y su color.
+type Answer = AnswerMark & { name: string };
 export type Common = {
   id: string;
   topic: string;
   question: string;
-  answers: Partial<Record<string, { text: string; answer: Answer; href: string }>>;
-};
-
-const answerKinds: Answer[] = ['directa', 'parcial', 'evasiva', 'cambio'];
-const answerNames: Record<Answer, string> = {
-  directa: 'Directa',
-  parcial: 'Parcial',
-  evasiva: 'Evasiva',
-  cambio: 'Cambio de tema',
+  answers: Partial<Record<string, Answer & { text: string; href: string }>>;
 };
 const surname = (c: Candidate) => c.name.split(' ').at(-1) ?? c.name;
 
@@ -73,11 +66,14 @@ export function CompareBoard({
   figures,
   footprint,
   commons,
+  answers,
 }: {
   people: Person[];
   figures: Figure[];
   footprint: Footprint;
   commons: Common[];
+  // La leyenda de las respuestas.
+  answers: Answer[];
 }) {
   const present = people.filter((p) => p.interviewId);
   const [focus, setFocus] = useState<string | null>(null);
@@ -130,12 +126,14 @@ export function CompareBoard({
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-20">
-      {/* Todos, siempre a mano: pulsar en uno lo destaca en todos los gráficos. */}
-      <div className="sticky top-22 z-20 grid grid-cols-[minmax(0,1fr)] gap-2">
-        <p className="m-0 text-sm text-muted-foreground">
-          Pulsa en uno para destacarlo en todos los gráficos.
-        </p>
-        <div className="grid grid-cols-2 gap-1 rounded-xl bg-background/90 p-1.5 ring-1 ring-foreground/10 backdrop-blur sm:grid-cols-4">
+      {/* Todos, siempre a mano: pulsar en uno lo destaca en todos los gráficos. Solo se queda pegada
+          la barra, que es opaca: un texto suelto encima se montaría sobre los títulos al bajar. */}
+      <div className="sticky top-22 z-20">
+        <div
+          role="group"
+          aria-label="Destacar un candidato en todos los gráficos"
+          className="grid grid-cols-2 gap-1 rounded-xl bg-background/90 p-1.5 ring-1 ring-foreground/10 backdrop-blur sm:grid-cols-4"
+        >
           {people.map(({ candidate: c, score, provisional, interviewId, cancelled }) => (
             <button
               key={c.slug}
@@ -266,13 +264,10 @@ export function CompareBoard({
               </Tabs>
             </div>
             <ul className="m-0 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-sm text-muted-foreground">
-              {answerKinds.map((a) => (
-                <li key={a} className="flex items-center gap-1.5">
-                  <i
-                    aria-hidden="true"
-                    className={cn('block size-3 rounded-[3px]', answerStyles[a])}
-                  />
-                  {answerNames[a]}
+              {answers.map((a) => (
+                <li key={a.name} className="flex items-center gap-1.5">
+                  <IconChip name={a.icon} color={a.color} className="size-6" />
+                  {a.name}
                 </li>
               ))}
             </ul>
@@ -310,18 +305,21 @@ export function CompareBoard({
                           const a = q.answers[c.slug];
                           return (
                             <span key={c.slug} className="grid justify-items-center">
-                              <i
-                                title={a ? answerNames[a.answer] : 'No se le preguntó'}
-                                className={cn(
-                                  'block size-7 rounded-md',
-                                  a
-                                    ? answerStyles[a.answer]
-                                    : 'border border-dashed border-muted-foreground/40',
-                                  dim(c.slug) && 'opacity-30',
-                                )}
-                              />
+                              {a ? (
+                                <span title={a.name} className={cn(dim(c.slug) && 'opacity-30')}>
+                                  <IconChip name={a.icon} color={a.color} className="size-8" />
+                                </span>
+                              ) : (
+                                <i
+                                  title="No se le preguntó"
+                                  className={cn(
+                                    'block size-8 rounded-full border border-dashed border-muted-foreground/40',
+                                    dim(c.slug) && 'opacity-30',
+                                  )}
+                                />
+                              )}
                               <span className="sr-only">
-                                {c.name}: {a ? answerNames[a.answer] : 'no se le preguntó'}
+                                {c.name}: {a ? a.name : 'no se le preguntó'}
                               </span>
                             </span>
                           );
@@ -342,7 +340,7 @@ export function CompareBoard({
                                   />
                                   {c.name}
                                   <span className="font-normal text-muted-foreground">
-                                    · {a ? answerNames[a.answer] : 'No se le preguntó'}
+                                    · {a ? a.name : 'No se le preguntó'}
                                   </span>
                                 </span>
                                 {a && (

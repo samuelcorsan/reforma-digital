@@ -11,6 +11,7 @@ import {
   VerificationsIndex,
 } from '../../../../../components/elecciones/interviews';
 import { CandidateProfile } from '../../../../../components/elecciones/candidate';
+import { CommunicationReport } from '../../../../../components/elecciones/communication';
 import { ElectionsFrame } from '../../../../../components/elecciones/nav';
 import {
   getCandidate,
@@ -20,6 +21,7 @@ import {
   verdictIds,
   verdicts,
 } from '../../../../../lib/elecciones/interviews';
+import { communicationPath, getCommunication } from '../../../../../lib/elecciones/communication';
 import { electionPages } from '../../../../../lib/elecciones/pages';
 import { pageMetadata } from '../../../../../lib/seo';
 
@@ -36,8 +38,8 @@ type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-// /entrevistas, /entrevistas/metodologia, /entrevistas/verificaciones, /entrevistas/comparar(/<ronda>), /entrevistas/<candidato>, /entrevistas/<entrevista> y
-// /entrevistas/<entrevista>/<verificación>.
+// /entrevistas, /entrevistas/metodologia, /entrevistas/verificaciones, /entrevistas/comparar(/<ronda>), /entrevistas/<candidato>, /entrevistas/<entrevista>,
+// /entrevistas/<entrevista>/comunicacion y /entrevistas/<entrevista>/<verificación>.
 function route(path: string[] = []) {
   const [id, detail, ...rest] = path;
   if (rest.length) return null;
@@ -53,6 +55,10 @@ function route(path: string[] = []) {
   const interview = getInterview(id);
   if (!interview) return null;
   if (!detail) return { kind: 'interview' as const, interview };
+  if (detail === communicationPath) {
+    const analysis = getCommunication(interview.id);
+    return analysis ? { kind: 'communication' as const, interview, analysis } : null;
+  }
   const verification = interview.revisiones.find((r) => r.id === detail);
   return verification ? { kind: 'verification' as const, interview, verification } : null;
 }
@@ -96,6 +102,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         index: !match.interview.ficticio,
       });
     }
+    case 'communication':
+      return pageMetadata({
+        ...base,
+        og: ogOf(match.interview.candidato),
+        title: `${interviewName(match.interview)}: análisis de comunicación · Las entrevistas · Reforma Digital`,
+        description: match.analysis.titular,
+      });
     case 'verification': {
       const { interview, verification } = match;
       return pageMetadata({
@@ -110,12 +123,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-// Los filtros de /entrevistas/verificaciones: lo que no es una calificación o un candidato se ignora.
+// Los filtros de /entrevistas/verificaciones: una calificación que no existe se ignora; un candidato o
+// un tema que no existen dejan la lista vacía.
 async function filters(searchParams: Props['searchParams']) {
-  const { calificacion, candidato } = await searchParams;
+  const { calificacion, candidato, tema, pagina } = await searchParams;
   return {
     verdict: verdictIds.find((id) => id === calificacion),
     candidate: typeof candidato === 'string' ? candidato : undefined,
+    topic: typeof tema === 'string' ? tema : undefined,
+    // Una página que no es un número va a la primera; una que se pasa, a la última.
+    page: Number(pagina) || 1,
   };
 }
 
@@ -123,7 +140,7 @@ export default async function Page({ params, searchParams }: Props) {
   const match = route((await params).path);
   if (!match) notFound();
   const crumb =
-    match.kind === 'verification' ? (
+    match.kind === 'verification' || match.kind === 'communication' ? (
       <Link
         href={interviewsHref(match.interview.id)}
         className="-my-3.5 py-3.5 text-muted-foreground"
@@ -151,6 +168,9 @@ export default async function Page({ params, searchParams }: Props) {
         {match.kind === 'compare' && <InterviewsCompare roundId={match.round} />}
         {match.kind === 'candidate' && <CandidateProfile candidate={match.candidate} />}
         {match.kind === 'interview' && <InterviewReport interview={match.interview} />}
+        {match.kind === 'communication' && (
+          <CommunicationReport interview={match.interview} analysis={match.analysis} />
+        )}
         {match.kind === 'verification' && (
           <VerificationPage interview={match.interview} verification={match.verification} />
         )}

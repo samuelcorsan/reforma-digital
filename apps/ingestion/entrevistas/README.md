@@ -180,11 +180,20 @@ Google que no llevan a una web real se descartan.
 
 - `capitulos <id>`: cambia los temas por los capítulos de la descripción de YouTube. `reanalizar` vuelve a
   poner los del modelo: después, repítelo.
-- `nota <id>`: recalcula la valoración, por ejemplo tras cambiar los pesos en `metricas.py`.
+- `nota <id>`: recalcula la valoración, por ejemplo tras cambiar los pesos en `metricas.py`. Si la entrevista tiene análisis
+  de comunicación, «Al grano» y «Concreción» salen de sus preguntas y sus compromisos: hay que repetirla después de
+  convertirlo.
 - `ensayo-general URL1 URL2 … --hasta 90`: varios ensayos a la vez, como el día de una ronda, con el tiempo y el
   coste totales.
 - `analizar … --sin-comprobar`: sin verificación ni revisión, para ensayos rápidos.
 - `$PY -m entrevistas --help` y `$PY -m entrevistas analizar --help`: todas las opciones.
+
+## El análisis de comunicación
+
+`python -m entrevistas.comunicacion <carpeta de medidas>` convierte el análisis de comunicación de una ronda (preguntas
+y respuestas, voz, trabas, silencios y movimientos de la cara) en los JSON de
+[`apps/web/lib/elecciones/comunicacion`](../../web/lib/elecciones/comunicacion/README.md). No mide nada: las medidas
+se hacen fuera de este repositorio, y aquí solo se les da la forma que valida la web.
 
 ## Comprobación a mano, opcional
 

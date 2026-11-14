@@ -17,6 +17,7 @@ import {
 import { generateMetadata } from '../apps/web/app/(search)/elecciones/entrevistas/[[...path]]/page';
 import sitemap from '../apps/web/app/sitemap';
 import { candidates } from '../apps/web/lib/elecciones/candidates';
+import { allCommunication, pressure } from '../apps/web/lib/elecciones/communication';
 
 const params = (path: string[]) => ({ params: Promise.resolve({ path }) });
 
@@ -121,6 +122,20 @@ describe('las entrevistas', () => {
       expect(JSON.stringify(openGraph?.images)).toContain(image);
       expect(existsSync(new URL(`../apps/web/public${image}`, import.meta.url))).toBe(true);
     }
+  });
+
+  it('publica el análisis de comunicación solo de entrevistas que existen, con sus cifras', async () => {
+    for (const c of allCommunication()) {
+      const { title } = await generateMetadata(params([c.id, 'comunicacion']));
+      expect(String(title)).toContain('análisis de comunicación');
+      // Las cifras del titular salen de las preguntas: no pueden pasar de las que hay.
+      const { questions, hard, answered } = pressure(c);
+      expect(answered).toBeLessThanOrEqual(hard);
+      expect(hard).toBeLessThanOrEqual(questions);
+      expect(c.temas.every((t) => c.inicio <= t.inicio && t.fin <= c.fin)).toBe(true);
+    }
+    await expect(generateMetadata(params(['ejemplo', 'comunicacion']))).rejects.toThrow();
+    await expect(generateMetadata(params(['ada-colau', 'comunicacion']))).rejects.toThrow();
   });
 
   it('no espera la entrevista cancelada de Abascal en el 13N', () => {

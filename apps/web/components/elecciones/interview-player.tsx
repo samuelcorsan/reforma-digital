@@ -22,7 +22,7 @@ import {
 import { Input } from '@reforma-digital/design/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import { minute } from '../../lib/elecciones/format';
-import type { Interview, lanes as laneNames, Mark, Minute } from '../../lib/elecciones/interviews';
+import type { Interview, Mark, Minute } from '../../lib/elecciones/interviews';
 import { Icon } from '../brand/icon';
 import { MarkIcon } from './mark-icon';
 import { Label } from './report';
@@ -184,6 +184,17 @@ const legend: [Mark['kind'], string][] = [
   ['documento', 'Lo enseña'],
   ['accion', 'Acción'],
 ];
+// Las del análisis de comunicación, solo si la entrevista lo tiene. Sus preguntas duras sustituyen
+// a las repreguntas y evasivas.
+const replaced = new Set<Mark['kind']>(['completa', 'casi', 'incompleta', 'repregunta', 'evasiva']);
+const communicationLegend: [Mark['kind'], string][] = [
+  ['comprobable', 'Compromiso comprobable'],
+  ['compromiso', 'Compromiso sin objeto comprobable'],
+  ['dura', 'Pregunta dura sin respuesta clara'],
+  ['pausa', 'Pausa larga'],
+  ['traba', 'Traba'],
+  ['comentado', 'Minuto que cita el público'],
+];
 // El recuento bajo el vídeo: lo que ha pasado hasta el segundo que suena.
 const tally: [Mark['kind'], string][] = [
   ['completa', 'Propuestas completas'],
@@ -194,6 +205,14 @@ const tally: [Mark['kind'], string][] = [
   ['roja', 'Falso'],
   ['evasiva', 'Evasivas'],
   ['interrumpe', 'Interrumpe'],
+];
+const communicationTally: [Mark['kind'], string][] = [
+  ['comprobable', 'Compromisos comprobables'],
+  ...tally.flatMap(([kind, name]): [Mark['kind'], string][] =>
+    kind === 'completa' || kind === 'casi'
+      ? []
+      : [[kind === 'evasiva' ? 'dura' : kind, kind === 'evasiva' ? 'Sin respuesta clara' : name]],
+  ),
 ];
 // Los avisos sobre el vídeo: verificaciones, propuestas y momentos clave, unos segundos cada uno.
 const alertLanes = new Set<Mark['lane']>(['momentos', 'propuestas', 'verificaciones']);
@@ -261,6 +280,7 @@ export function InterviewPlayer({
   minutes,
   topics,
   color,
+  voice,
 }: {
   youtubeId: string | null;
   // El vídeo en la web del medio, si no está en YouTube.
@@ -270,11 +290,13 @@ export function InterviewPlayer({
   segments: Interview['segmentos'];
   speakers: Record<Interview['segmentos'][number]['hablante'], string>;
   marks: Mark[];
-  lanes: typeof laneNames;
+  lanes: Partial<Record<Mark['lane'], string>>;
   minutes: Minute[];
   topics: Interview['temas'];
   // El color de su partido, para su tiempo de palabra.
   color: string;
+  // La intensidad de su voz minuto a minuto, respecto a su propia media (análisis de comunicación).
+  voice?: (number | null)[];
 }) {
   const { time, playing, loaded, load, box, seek, toggle, play, pause } = useClock(
     youtubeId,
@@ -317,7 +339,11 @@ export function InterviewPlayer({
     }
   }, [time, summary, clip, clips.length, goToClip, pause]);
   const [selected, setSelected] = useState<Mark | null>(null);
-  const [hovered, setHovered] = useState<Mark | null>(null);
+  // La ficha de la marca que señalas (ratón) o que tiene el foco (teclado o un toque), junto a ella.
+  const [tip, setTip] = useState<{ mark: Mark; x: number; top: number; bottom: number } | null>(
+    null,
+  );
+  const board = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState<number | null>(null);
   // Con zoom, dónde empieza la ventana si la has movido tú; sin valor, sigue a lo que suena.
   const [pan, setPan] = useState<number | null>(null);
@@ -479,10 +505,17 @@ export function InterviewPlayer({
 
   const topicNames = [...new Set(topics.map((t) => t.tema))];
   const topic = topics.find((t) => t.inicio <= time && time < t.fin)?.tema;
-  // Lo que se explica debajo: lo que señalas, lo que has elegido o, sonando, lo último que pasó.
-  const passed = marks.filter((m) => m.second <= time).at(-1);
-  const shown =
-    hovered ?? selected ?? (playing && passed && time - passed.second < 25 ? passed : null);
+  const point = (mark: Mark, element: HTMLElement) => {
+    const b = board.current?.getBoundingClientRect();
+    const r = element.getBoundingClientRect();
+    if (b)
+      setTip({
+        mark,
+        x: r.left + r.width / 2 - b.left,
+        top: r.top - b.top,
+        bottom: r.bottom - b.top,
+      });
+  };
   const pick = (m: Mark) => {
     setSelected(m);
     seek(m.second);
@@ -558,6 +591,15 @@ export function InterviewPlayer({
         ? `${d} Q${prev[0]},${prev[1]} ${(prev[0] + x) / 2},${(prev[1] + y) / 2}`
         : `M${x},${y}`;
     }, '') + (points.length ? ` L${points.at(-1)?.join(',')}` : '');
+  // La voz: una línea por los minutos con frases suyas, sobre su propia media (la raya del centro).
+  const hasCommunication = marks.some((m) => m.kind === 'dura');
+  const voiceLine = voice?.reduce(
+    (d, z, i) =>
+      z === null
+        ? d
+        : `${d}${voice[i - 1] == null ? ' M' : ' L'}${share(i * 60 + 30) * 1000},${20 - Math.max(-2, Math.min(2, z)) * 9}`,
+    '',
+  );
   // El segundo bajo el ratón, o nada si está fuera de las pistas.
   const timeAt = (event: MouseEvent<HTMLElement>) => {
     const r = track.current?.getBoundingClientRect();
@@ -729,7 +771,7 @@ export function InterviewPlayer({
         <div className="grid gap-3">
           <Label>Recuento hasta el {minute(time)}</Label>
           <dl className="m-0 grid grid-cols-4 gap-x-3 gap-y-4 max-sm:grid-cols-2">
-            {tally.map(([kind, name]) => (
+            {(hasCommunication ? communicationTally : tally).map(([kind, name]) => (
               <div key={kind} className="grid content-start justify-items-start gap-1">
                 <dt className="order-last text-sm leading-tight text-muted-foreground">{name}</dt>
                 <dd className="m-0 flex items-center gap-2 font-heading text-2xl tabular-nums">
@@ -914,6 +956,7 @@ export function InterviewPlayer({
 
         {/* Las filas comparten la columna de la izquierda, así las líneas del tiempo las cruzan todas. */}
         <div
+          ref={board}
           className="relative grid pt-7 [--label:6rem] sm:[--label:10rem]"
           onMouseMove={(event) => setHover(timeAt(event))}
           onMouseLeave={() => setHover(null)}
@@ -950,6 +993,34 @@ export function InterviewPlayer({
               />
             </svg>,
           )}
+          {voiceLine &&
+            row(
+              'Voz',
+              40,
+              <svg
+                viewBox="0 0 1000 40"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                className="absolute inset-0 size-full"
+              >
+                <line
+                  x1="0"
+                  x2="1000"
+                  y1="20"
+                  y2="20"
+                  stroke="var(--border)"
+                  strokeDasharray="4 4"
+                  vectorEffect="non-scaling-stroke"
+                />
+                <path
+                  d={voiceLine}
+                  fill="none"
+                  stroke="var(--foreground)"
+                  strokeWidth="1.5"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>,
+            )}
           {row(
             // Los nombres, más pequeños que la etiqueta de la fila (12 px; lo pidió la persona que
             // lo diseña, aunque Sol reserva ese tamaño para las etiquetas en mayúsculas).
@@ -1028,12 +1099,18 @@ export function InterviewPlayer({
                         type="button"
                         aria-label={`${minute(m.second)} · ${m.label}: ${m.text}`}
                         aria-pressed={selected?.id === m.id}
+                        aria-describedby={tip?.mark.id === m.id ? `${gradient}-ficha` : undefined}
                         onClick={(event) => {
                           event.stopPropagation();
                           pick(m);
                         }}
-                        onMouseEnter={() => setHovered(m)}
-                        onMouseLeave={() => setHovered(null)}
+                        onMouseEnter={(event) => point(m, event.currentTarget)}
+                        onFocus={(event) => point(m, event.currentTarget)}
+                        // Con el foco (tras pulsarla o tocarla), la ficha se queda hasta salir de ella.
+                        onMouseLeave={(event) => {
+                          if (event.currentTarget !== document.activeElement) setTip(null);
+                        }}
+                        onBlur={() => setTip(null)}
                         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-transform hover:z-10 hover:scale-125 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground aria-pressed:ring-offset-2 aria-pressed:ring-offset-background motion-reduce:transition-none"
                         style={{ left: at(share(m.second)), top: half + level * gap }}
                       >
@@ -1058,6 +1135,29 @@ export function InterviewPlayer({
               </div>
             );
           })}
+
+          {/* La ficha de la marca, encima de ella (o debajo, si no cabe), sin tener que bajar. */}
+          {tip && (
+            <div
+              id={`${gradient}-ficha`}
+              role="tooltip"
+              className="pointer-events-none absolute z-30 grid w-80 max-w-[calc(100%-1rem)] gap-1 rounded-xl bg-background p-3 text-sm shadow-(--shadow-overlay) ring-1 ring-foreground/10"
+              style={{
+                left: `clamp(10.5rem, ${tip.x}px, calc(100% - 10.5rem))`,
+                top: tip.top > 200 ? tip.top - 8 : tip.bottom + 8,
+                transform: `translate(-50%, ${tip.top > 200 ? '-100%' : '0'})`,
+              }}
+            >
+              <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                <MarkIcon kind={tip.mark.kind} color={tip.mark.color} className="size-6" />
+                {minute(tip.mark.second)} · {tip.mark.label}
+              </span>
+              <span className="line-clamp-4 text-base leading-snug">{tip.mark.text}</span>
+              {tip.mark.detail && (
+                <span className="line-clamp-3 text-muted-foreground">{tip.mark.detail}</span>
+              )}
+            </div>
+          )}
 
           {/* La columna de las pistas: la línea de lo que suena (continua) y la del ratón (discontinua). */}
           <div
@@ -1104,25 +1204,6 @@ export function InterviewPlayer({
           </div>
         </div>
 
-        <div aria-live="polite" className="grid min-h-24 gap-1 rounded-lg bg-muted p-4">
-          {shown ? (
-            <>
-              <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-                <MarkIcon kind={shown.kind} color={shown.color} className="size-6" />
-                {minute(shown.second)} · {shown.label}
-              </span>
-              <span>{shown.text}</span>
-              {shown.detail && (
-                <span className="text-sm text-muted-foreground">{shown.detail}</span>
-              )}
-            </>
-          ) : (
-            <span className="self-center text-muted-foreground">
-              Pasa el ratón por un icono o dale al play: aquí se explica cada marca cuando llega.
-            </span>
-          )}
-        </div>
-
         <Collapsible>
           <CollapsibleTrigger className="group flex min-h-11 items-center gap-2 text-sm font-medium">
             Cómo se lee
@@ -1132,12 +1213,19 @@ export function InterviewPlayer({
           </CollapsibleTrigger>
           <CollapsibleContent className="grid gap-4 pt-2 text-sm">
             <p className="m-0 max-w-[70ch] text-muted-foreground">
-              Intensidad: cuánto ida y vuelta hay en cada minuto (cambios de turno, interrupciones y
-              momentos de tensión), con la misma escala para todos. No mide emociones. Tiene la
-              palabra: arriba, cuánto habla el candidato en cada minuto; abajo, el entrevistador.
+              Pasa el ratón por un icono, o tócalo, para ver qué es; al pulsarlo, el vídeo salta a
+              ese segundo. Intensidad: cuánto ida y vuelta hay en cada minuto (cambios de turno,
+              interrupciones y momentos de tensión), con la misma escala para todos. No mide
+              emociones. Tiene la palabra: arriba, cuánto habla el candidato en cada minuto; abajo,
+              el entrevistador.
+              {voiceLine &&
+                ' Voz: la intensidad de su voz en cada minuto, por encima o por debajo de su propia media (la raya). Como las pausas y las trabas, no sirve para saber si alguien dice la verdad.'}
             </p>
             <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-x-4 gap-y-2 p-0">
-              {legend.map(([kind, name]) => (
+              {[
+                ...legend.filter(([kind]) => !(hasCommunication && replaced.has(kind))),
+                ...communicationLegend.filter(([kind]) => marks.some((m) => m.kind === kind)),
+              ].map(([kind, name]) => (
                 <li key={kind} className="flex items-center gap-2">
                   <MarkIcon kind={kind} color={marks.find((m) => m.kind === kind)?.color} />
                   {name}

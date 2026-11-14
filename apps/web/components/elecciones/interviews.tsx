@@ -13,6 +13,12 @@ import { decimal, formatDate, longDate, minute } from '../../lib/elecciones/form
 import {
   allVerifications,
   answerIds,
+  checkable,
+  handReviewed,
+  topicAt,
+  directShare,
+  dodges,
+  followUps,
   answers,
   criteria,
   criterionIds,
@@ -21,6 +27,7 @@ import {
   intensityScale,
   interviewer,
   interviewsOf,
+  communicationLanes,
   lanes,
   marks,
   moments,
@@ -43,6 +50,9 @@ import {
   speech,
   rounds,
   topicShare,
+  topicsOf,
+  criticTargets,
+  interruptions,
   verdictIds,
   visualIds,
   visuals,
@@ -52,6 +62,17 @@ import {
   type Mark,
 } from '../../lib/elecciones/interviews';
 import { candidates, type Candidate } from '../../lib/elecciones/candidates';
+import {
+  commitmentDetail,
+  communicationMarks,
+  communicationPath,
+  getCommunication,
+  hardnessNames,
+  pressure,
+  replyIds,
+  replyNames,
+  type Communication,
+} from '../../lib/elecciones/communication';
 import { electionsHref } from '../../lib/elecciones/pages';
 import { Icon, type IconName } from '../brand/icon';
 import { AI, Source } from '../congreso/common';
@@ -63,7 +84,14 @@ import {
   type Person,
 } from './compare-board';
 import { InterviewPlayer } from './interview-player';
-import { answerStyles, IconChip, MarkIcon, markIcons } from './mark-icon';
+import {
+  answerMarks,
+  IconChip,
+  MarkIcon,
+  markIcons,
+  replyMarks,
+  type AnswerMark,
+} from './mark-icon';
 import { PageIndex } from './page-index';
 import { PhotoCredits, Portrait } from './portrait';
 import { ScoreSimulator } from './score-simulator';
@@ -152,7 +180,7 @@ function MarkLabel({
   );
 }
 
-function Notice({ children }: { children: ReactNode }) {
+export function Notice({ children }: { children: ReactNode }) {
   return (
     <Card className="mb-8 bg-muted p-5 text-base ring-0" role="note">
       <p className="m-0">{children}</p>
@@ -174,14 +202,17 @@ function Sources({ items }: { items: { titulo: string; url: string }[] }) {
   );
 }
 
-// El proceso, con lo que hace la IA en cada paso. Nadie lo revisa a mano: lo comprueba una segunda
-// pasada de IA, y la web lo dice así.
+// El proceso, con lo que hace la IA en cada paso. Lo comprueba una segunda pasada de IA y, si algo no
+// cuadra al contrastarlo con el análisis de comunicación, una persona; la web lo dice así.
 const steps: { title: string; text: string; ai?: boolean }[] = [
-  { title: 'La entrevista entera', text: 'El vídeo completo, sin cortes.' },
-  { title: 'Transcripción', text: 'Quién habla y en qué segundo.', ai: true },
+  {
+    title: 'Transcripción',
+    text: 'La entrevista entera, sin cortes: quién habla y en qué segundo, comprobado con los subtítulos de YouTube.',
+    ai: true,
+  },
   {
     title: 'Análisis',
-    text: 'Temas, cifras, propuestas, críticas, interrupciones y preguntas sin responder.',
+    text: 'Temas, cifras, críticas a otros e interrupciones.',
     ai: true,
   },
   {
@@ -191,10 +222,18 @@ const steps: { title: string; text: string; ai?: boolean }[] = [
   },
   {
     title: 'Segunda revisión',
-    text: 'Otra pasada de IA abre cada fuente y confirma, corrige o descarta la calificación. Ninguna persona la revisa.',
+    text: 'Otra pasada de IA abre cada fuente y confirma, corrige o descarta la calificación. Las que no cuadran con el análisis de comunicación se revisan a mano.',
     ai: true,
   },
-  { title: 'El informe', text: 'Cada calificación con su explicación y sus fuentes.' },
+  {
+    title: 'Análisis de comunicación',
+    text: 'Cada pregunta, por lo dura que es y por cómo se responde; cada compromiso, por si se podrá comprobar; y la voz, las pausas y las trabas, con las mismas medidas para todos.',
+    ai: true,
+  },
+  {
+    title: 'El informe',
+    text: 'Cada calificación con su explicación y sus fuentes, y una valoración sobre 10 con los criterios a la vista.',
+  },
 ];
 
 // «13 nov»: el día y el mes de una fecha ISO.
@@ -209,29 +248,29 @@ const features: { icon: IconName; color?: string; title: string; text: string }[
     text: 'Cada dato que se puede comprobar, calificado y con la fuente oficial enlazada.',
   },
   {
-    icon: markIcons.completa,
-    title: 'Si concreta lo que propone',
-    text: 'Si cada propuesta dice qué, cuánto, cuándo y cómo.',
-  },
-  {
-    icon: markIcons.repregunta,
+    icon: markIcons.dura,
     title: 'Si contesta a lo que le preguntan',
-    text: 'Respuestas directas, evasivas, cambios de tema y repreguntas.',
+    text: 'Cada pregunta, por lo dura que es y por cómo responde: a lo preguntado, en parte, con otra pregunta o cambiando de tema.',
   },
   {
-    icon: markIcons.momento,
-    title: 'Momentos clave',
-    text: 'Lo que anuncia, los choques y las rectificaciones, con la cita exacta.',
+    icon: markIcons.comprobable,
+    title: 'A qué se compromete',
+    text: 'Cada compromiso con su cita: si se podrá comprobar, y si dice cuándo y con qué condición.',
   },
   {
     icon: markIcons.critica,
-    title: 'Si critica o ataca',
-    text: 'Si critica las políticas de otros o ataca a las personas, y cuántas veces interrumpe.',
+    title: 'Si propone o critica',
+    text: 'Qué respuestas proponen algo propio y cuáles critican a otros, y si critica políticas o ataca a personas.',
+  },
+  {
+    icon: 'volumen',
+    title: 'Cómo lo dice',
+    text: 'El reparto de la palabra, la voz, las pausas y las trabas, en un análisis de comunicación aparte. Nada de esto sirve para saber si alguien miente.',
   },
   {
     icon: 'documento',
     title: 'Minuto a minuto',
-    text: 'La transcripción completa y una línea de tiempo junto al vídeo.',
+    text: 'El vídeo con su línea de tiempo (momentos clave, verificaciones, compromisos y preguntas sin respuesta clara) y la transcripción completa.',
   },
 ];
 
@@ -466,35 +505,69 @@ function VerificationCard({
   named?: boolean;
 }) {
   const day = publishedDay(a);
+  const candidate = getCandidate(a.candidato);
+  const color = verdicts[r.veredicto].color;
   return (
-    <Cell className="gap-4">
-      <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-1">
-        <Verdict id={r.veredicto} />
-        <Jump interview={a} second={r.segundo} />
-        <Unreviewed estado={r.estado} />
-      </p>
-      {named && (
-        <p className="m-0 -mb-2 grid">
-          <Link
-            href={interviewsHref(a.id)}
-            className="font-medium underline-offset-4 hover:underline"
-          >
-            {interviewName(a)}
-          </Link>
-          <span className="text-sm text-muted-foreground">
-            {[outlet(a) || a.titulo, day && shortDay(day)].filter(Boolean).join(' · ')}
-          </span>
-        </p>
-      )}
-      <blockquote className="m-0 font-heading text-xl leading-snug">«{r.cita}»</blockquote>
-      <p className="m-0 text-muted-foreground">{r.explicacion}</p>
-      <Sources items={r.fuentes} />
-      <Link
-        href={interviewsHref(`${a.id}/${r.id}`)}
-        className="mt-auto self-start text-sm underline underline-offset-4"
+    <Cell className="gap-0 overflow-hidden p-0 lg:p-0 max-sm:p-0">
+      {/* La calificación, en una franja con su color: se distingue de un vistazo en la lista. */}
+      <p
+        className="m-0 flex flex-wrap items-center gap-x-3 gap-y-2 px-6 py-3.5 max-sm:px-5"
+        style={{ background: `color-mix(in oklab, ${color} 12%, var(--background))` }}
       >
-        Enlace a esta verificación
-      </Link>
+        <Verdict id={r.veredicto} />
+        <Unreviewed estado={r.estado} />
+        <span className="ml-auto">
+          <Jump interview={a} second={r.segundo} />
+        </span>
+      </p>
+      <div className="grid flex-1 content-start gap-4 p-6 max-sm:p-5">
+        {named && (
+          <div className="flex items-center gap-3">
+            {candidate && (
+              <Portrait candidate={candidate} kind="avatar" sizes="72px" className="size-9" />
+            )}
+            <span className="grid leading-tight">
+              <Link
+                href={interviewsHref(a.id)}
+                className="font-medium underline-offset-4 hover:underline"
+              >
+                {interviewName(a)}
+              </Link>
+              <span className="text-sm text-muted-foreground">
+                {[outlet(a) || a.titulo, day && shortDay(day)].filter(Boolean).join(' · ')}
+              </span>
+            </span>
+          </div>
+        )}
+        <blockquote
+          className="m-0 border-l-2 pl-4 font-heading text-xl leading-snug"
+          style={{ borderColor: color }}
+        >
+          «{r.cita}»
+        </blockquote>
+        <p className="m-0 text-muted-foreground">{r.explicacion}</p>
+        {(handReviewed(r) || r.pilladoEnDirecto) && (
+          <p className="m-0 flex flex-wrap gap-2">
+            {handReviewed(r) && (
+              <Badge variant="outline" title={r.segundaRevision?.nota}>
+                Revisada a mano
+                {r.segundaRevision?.sugerencia &&
+                  ` · antes, ${verdicts[r.segundaRevision.sugerencia].name}`}
+              </Badge>
+            )}
+            {r.pilladoEnDirecto && <Badge variant="outline">Se lo señalaron en directo</Badge>}
+          </p>
+        )}
+      </div>
+      <div className="grid gap-3 border-t border-border px-6 py-4 max-sm:px-5">
+        <Sources items={r.fuentes} />
+        <Link
+          href={interviewsHref(`${a.id}/${r.id}`)}
+          className="inline-flex items-center gap-1.5 self-start text-sm underline underline-offset-4"
+        >
+          <Icon name="copiar" size={14} /> Enlace a esta verificación
+        </Link>
+      </div>
     </Cell>
   );
 }
@@ -504,7 +577,7 @@ const verdictOrder = ['roja', 'fuera', 'amarilla', 'sinfuente', 'legal'] as cons
 
 // «▶ 20:22»: el vídeo en ese minuto. En el informe, el reproductor intercepta el enlace y lo pone
 // sin mover la página; desde otra página, abre el informe en ese minuto.
-function Jump({ interview: a, second }: { interview: Interview; second: number }) {
+export function Jump({ interview: a, second }: { interview: Interview; second: number }) {
   return (
     <a
       href={`${interviewsHref(a.id)}?t=${Math.floor(second)}#minuto`}
@@ -518,10 +591,10 @@ function Jump({ interview: a, second }: { interview: Interview; second: number }
 }
 
 // Un bloque plegado: se ve el resumen y se despliega el resto.
-function Fold({ summary, children }: { summary: ReactNode; children: ReactNode }) {
+export function Fold({ summary, children }: { summary: ReactNode; children: ReactNode }) {
   return (
     <Collapsible>
-      <CollapsibleTrigger className="group flex min-h-11 w-full items-center gap-3 text-left">
+      <CollapsibleTrigger className="group flex min-h-11 w-full cursor-pointer items-center gap-3 text-left">
         {summary}
         <span
           aria-hidden="true"
@@ -535,15 +608,69 @@ function Fold({ summary, children }: { summary: ReactNode; children: ReactNode }
   );
 }
 
-// Las preguntas por tema, en el orden en que salen: el tema es el que suena en ese segundo.
-function questionsByTopic(a: Interview) {
-  const groups = new Map<string, Interview['preguntas']>();
-  for (const q of [...a.preguntas].sort((x, y) => x.segundo - y.segundo)) {
-    const topic =
-      a.temas.find((t) => t.inicio <= q.segundo && q.segundo < t.fin)?.tema ?? 'Otros temas';
-    groups.set(topic, [...(groups.get(topic) ?? []), q]);
+// Las preguntas por tema, en el orden en que salen, con cómo responde a cada una y la leyenda de esas
+// respuestas. Con análisis de comunicación, las suyas: su tema, su dureza y su clase de respuesta.
+type QuestionItem = { key: string; second: number; text: string; mark: AnswerMark; answer: string };
+function questionGroups(a: Interview) {
+  const c = getCommunication(a.id);
+  const shared = new Set(
+    (a.jornada ? commonQuestions(a.jornada) : []).flatMap((q) => q.respuestas[a.candidato] ?? []),
+  );
+  const groups = new Map<string, (QuestionItem & { notes: ReactNode[] })[]>();
+  const add = (topic: string, item: QuestionItem & { notes: ReactNode[] }) =>
+    groups.set(topic, [...(groups.get(topic) ?? []), item]);
+  if (c) {
+    const list = [...c.preguntas].sort((x, y) => x.segundo - y.segundo);
+    list.forEach((q) =>
+      add(q.tema, {
+        key: q.id,
+        second: q.segundo,
+        text: q.texto,
+        mark: replyMarks[q.respuesta],
+        answer: replyNames[q.respuesta],
+        notes: [
+          `Pregunta ${hardnessNames[q.dureza].toLowerCase()}`,
+          shared.has(q.id) && 'También se la hicieron a otros candidatos',
+        ],
+      }),
+    );
+    return {
+      total: list.length,
+      legend: replyIds.map((id) => ({
+        mark: replyMarks[id],
+        name: replyNames[id],
+        count: list.filter((q) => q.respuesta === id).length,
+      })),
+      groups: [...groups],
+    };
   }
-  return [...groups];
+  // Sin comunicación, el tema es el que suena en ese segundo.
+  for (const q of [...a.preguntas].sort((x, y) => x.segundo - y.segundo)) {
+    add(a.temas.find((t) => t.inicio <= q.segundo && q.segundo < t.fin)?.tema ?? 'Otros temas', {
+      key: q.id,
+      second: q.segundo,
+      text: q.texto,
+      mark: answerMarks[q.respuesta],
+      answer: answers[q.respuesta],
+      notes: [
+        q.repregunta && (
+          <span className="inline-flex items-center gap-1.5">
+            <MarkIcon kind="repregunta" className="size-5" /> Repregunta
+          </span>
+        ),
+        shared.has(q.id) && 'También se la hicieron a otros candidatos',
+      ],
+    });
+  }
+  return {
+    total: a.preguntas.length,
+    legend: answerIds.map((id) => ({
+      mark: answerMarks[id],
+      name: answers[id],
+      count: a.preguntas.filter((p) => p.respuesta === id).length,
+    })),
+    groups: [...groups],
+  };
 }
 
 export function ReportSections({ interview: a }: { interview: Interview }) {
@@ -551,9 +678,8 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
   const byVerdict = verdictOrder
     .map((id) => [id, a.revisiones.filter((r) => r.veredicto === id)] as const)
     .filter(([, list]) => list.length > 0);
-  const shared = new Set(
-    (a.jornada ? commonQuestions(a.jornada) : []).flatMap((q) => q.respuestas[a.candidato] ?? []),
-  );
+  const c = getCommunication(a.id);
+  const questions = questionGroups(a);
   return (
     <>
       {a.revisiones.length > 0 && (
@@ -628,7 +754,58 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
         </ReportSection>
       )}
 
-      {a.momentos.length > 0 && (
+      {c && c.momentos.length > 0 && (
+        <ReportSection id="momentos" title="Momentos clave">
+          <Grid>
+            {[...c.momentos]
+              .sort((x, y) => x.segundo - y.segundo)
+              .map((m) => (
+                <Cell
+                  key={m.segundo}
+                  span={4}
+                  label={
+                    <MarkLabel kind="momento">
+                      {m.quien === 'jordi' ? 'Del entrevistador' : 'Momento clave'}
+                    </MarkLabel>
+                  }
+                >
+                  <h3 className="m-0 font-heading text-2xl leading-tight font-normal">
+                    {m.titulo}
+                  </h3>
+                  {m.cita && <p className="m-0">«{m.cita}»</p>}
+                  <Jump interview={a} second={m.segundo} />
+                </Cell>
+              ))}
+          </Grid>
+        </ReportSection>
+      )}
+
+      {c && c.compromisos.length > 0 && (
+        <ReportSection id="propuestas" title="Sus compromisos">
+          <Grid>
+            {[...c.compromisos]
+              .sort((x, y) => +y.verificable - +x.verificable || x.segundo - y.segundo)
+              .map((x) => (
+                <Cell
+                  key={`${x.segundo}-${x.compromiso}`}
+                  span={6}
+                  label={
+                    <MarkLabel kind={x.verificable ? 'comprobable' : 'compromiso'}>
+                      {x.verificable ? 'Comprobable' : 'Sin objeto comprobable'}
+                    </MarkLabel>
+                  }
+                >
+                  <p className="m-0 text-lg leading-snug">{x.compromiso}</p>
+                  <p className="m-0 text-muted-foreground">«{x.cita}»</p>
+                  <Jump interview={a} second={x.segundo} />
+                  <p className="m-0 mt-auto text-sm text-muted-foreground">{commitmentDetail(x)}</p>
+                </Cell>
+              ))}
+          </Grid>
+        </ReportSection>
+      )}
+
+      {!c && a.momentos.length > 0 && (
         <ReportSection id="momentos" title="Momentos clave">
           <Grid>
             {a.momentos.map((m) => (
@@ -649,7 +826,7 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
         </ReportSection>
       )}
 
-      {proposals.length > 0 && (
+      {!c && proposals.length > 0 && (
         <ReportSection id="propuestas" title="Lo que propone">
           <Grid>
             {proposals.map((p) => {
@@ -717,22 +894,19 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
           </Cell>
         </ReportSection>
       )}
-      {a.preguntas.length > 0 && (
-        <ReportSection id="preguntas" title={`Las ${a.preguntas.length} preguntas`}>
+      {questions.total > 0 && (
+        <ReportSection id="preguntas" title={`Las ${questions.total} preguntas`}>
           <ul className="m-0 mb-4 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-sm text-muted-foreground">
-            {answerIds.map((k) => (
-              <li key={k} className="flex items-center gap-1.5">
-                <i
-                  aria-hidden="true"
-                  className={cn('block size-3 rounded-[3px]', answerStyles[k])}
-                />
-                {answers[k]} ({a.preguntas.filter((p) => p.respuesta === k).length})
+            {questions.legend.map((l) => (
+              <li key={l.name} className="flex items-center gap-1.5">
+                <IconChip name={l.mark.icon} color={l.mark.color} className="size-6" />
+                {l.name} ({l.count})
               </li>
             ))}
           </ul>
           <Cell className="gap-0 py-2 lg:py-2">
             <ul className="m-0 grid list-none p-0">
-              {questionsByTopic(a).map(([topic, list]) => (
+              {questions.groups.map(([topic, list]) => (
                 <li key={topic} className="border-b border-border py-2 last:border-0">
                   <Fold
                     summary={
@@ -747,11 +921,9 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                         <span aria-hidden="true" className="flex flex-wrap gap-1">
                           {list.map((q) => (
                             <i
-                              key={q.id}
-                              className={cn(
-                                'block size-3 rounded-[3px]',
-                                answerStyles[q.respuesta],
-                              )}
+                              key={q.key}
+                              className="block size-3 rounded-[3px]"
+                              style={{ background: q.mark.color }}
                             />
                           ))}
                         </span>
@@ -761,31 +933,24 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
                     <ol className="m-0 grid list-none gap-x-10 p-0 md:grid-cols-2">
                       {list.map((q) => (
                         <li
-                          key={q.id}
+                          key={q.key}
                           className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-b border-border py-4 last:border-0"
                         >
-                          <Jump interview={a} second={q.segundo} />
+                          <Jump interview={a} second={q.second} />
                           <span className="grid gap-2">
-                            <span className="leading-snug">{q.texto}</span>
+                            <span className="leading-snug">{q.text}</span>
                             <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
                               <span className="inline-flex items-center gap-1.5">
-                                <i
-                                  aria-hidden="true"
-                                  className={cn(
-                                    'block size-3 rounded-[3px]',
-                                    answerStyles[q.respuesta],
-                                  )}
+                                <IconChip
+                                  name={q.mark.icon}
+                                  color={q.mark.color}
+                                  className="size-6"
                                 />
-                                {answers[q.respuesta]}
+                                {q.answer}
                               </span>
-                              {q.repregunta && (
-                                <span className="inline-flex items-center gap-1.5">
-                                  <MarkIcon kind="repregunta" className="size-5" /> Repregunta
-                                </span>
-                              )}
-                              {shared.has(q.id) && (
-                                <span>También se la hicieron a otros candidatos</span>
-                              )}
+                              {q.notes.filter(Boolean).map((note, n) => (
+                                <span key={n}>{note}</span>
+                              ))}
                             </span>
                           </span>
                         </li>
@@ -808,6 +973,7 @@ export function ReportSections({ interview: a }: { interview: Interview }) {
 function Profile({ interview: a }: { interview: Interview }) {
   const s = speech(a);
   const i = interviewer(a);
+  const c = getCommunication(a.id);
   const who = interviewerOf(a) ?? 'el entrevistador';
   // Cada cifra con su barra, sobre una escala fija e igual para los cuatro.
   type Row = { name: string; value: number | null; scale: number; unit?: string; digits?: number };
@@ -835,41 +1001,105 @@ function Profile({ interview: a }: { interview: Interview }) {
   return (
     <ReportSection id="perfil" title="Su perfil">
       <Grid>
-        <Cell span={6} label="Cómo habla">
-          {rows([
-            { name: 'Ritmo', value: s.pace, scale: 300, unit: 'palabras/min' },
-            { name: 'Muletillas', value: s.fillers, scale: 10, unit: 'por minuto', digits: 1 },
-            { name: 'Titubeos', value: s.stutters, scale: 10, unit: 'por minuto', digits: 1 },
-            {
-              name: 'Pausa antes de responder',
-              value: s.pause,
-              scale: 2,
-              unit: 'segundos',
-              digits: 1,
-            },
-          ])}
-          {s.top.length > 0 && (
-            <p className="m-0 flex flex-wrap items-center gap-2 text-sm">
-              <span className="text-muted-foreground">Las que más repite:</span>
-              {s.top.map(([word, n]) => (
-                <span key={word} className="rounded-full px-3 py-1 ring-1 ring-border">
-                  «{word}» <span className="text-muted-foreground tabular-nums">× {n}</span>
-                </span>
-              ))}
+        {c ? (
+          <Cell span={6} label="Cómo habla">
+            {rows([
+              {
+                name: 'Ritmo, en habla continua',
+                value: c.habla.invitado.palabrasPorMinuto,
+                scale: 300,
+                unit: 'palabras/min',
+              },
+              {
+                name: 'Trabas',
+                value: c.habla.invitado.trabasPor100,
+                scale: 1,
+                unit: 'por 100 palabras',
+                digits: 2,
+              },
+              {
+                name: 'Pausas de más de 0,4 s',
+                value: c.habla.invitado.pausasPor1000,
+                scale: 30,
+                unit: 'por 1.000 palabras',
+                digits: 1,
+              },
+            ])}
+            <p className="m-0 text-sm text-muted-foreground">
+              Del análisis de comunicación: una traba es repetir una palabra o cortarse a media
+              frase. No dicen si alguien está nervioso ni si es sincero.
             </p>
-          )}
-          <p className="m-0 text-sm text-muted-foreground">
-            Son recuentos sobre la transcripción. No dicen si alguien está nervioso ni si es
-            sincero.
-          </p>
-        </Cell>
+          </Cell>
+        ) : (
+          <Cell span={6} label="Cómo habla">
+            {rows([
+              { name: 'Ritmo', value: s.pace, scale: 300, unit: 'palabras/min' },
+              { name: 'Muletillas', value: s.fillers, scale: 10, unit: 'por minuto', digits: 1 },
+              { name: 'Titubeos', value: s.stutters, scale: 10, unit: 'por minuto', digits: 1 },
+              {
+                name: 'Pausa antes de responder',
+                value: s.pause,
+                scale: 2,
+                unit: 'segundos',
+                digits: 1,
+              },
+            ])}
+            {s.top.length > 0 && (
+              <p className="m-0 flex flex-wrap items-center gap-2 text-sm">
+                <span className="text-muted-foreground">Las que más repite:</span>
+                {s.top.map(([word, n]) => (
+                  <span key={word} className="rounded-full px-3 py-1 ring-1 ring-border">
+                    «{word}» <span className="text-muted-foreground tabular-nums">× {n}</span>
+                  </span>
+                ))}
+              </p>
+            )}
+            <p className="m-0 text-sm text-muted-foreground">
+              Son recuentos sobre la transcripción. No dicen si alguien está nervioso ni si es
+              sincero.
+            </p>
+          </Cell>
+        )}
         <Cell span={6} label={`Cómo le trató ${who}`}>
           {rows([
-            { name: 'Tiempo de palabra del entrevistador', value: i.share, scale: 100, unit: '%' },
-            { name: 'Preguntas por minuto', value: i.questionsPerMinute, scale: 3, digits: 1 },
-            { name: 'Repreguntas', value: i.followUps, scale: 20 },
-            { name: 'Veces que le corta', value: i.cuts, scale: 20 },
-            { name: 'Palabras por pregunta', value: i.wordsPerQuestion, scale: 60 },
+            c
+              ? {
+                  name: 'Parte de las palabras del entrevistador',
+                  value: i.share,
+                  scale: 100,
+                  unit: '%',
+                }
+              : {
+                  name: 'Tiempo de palabra del entrevistador',
+                  value: i.share,
+                  scale: 100,
+                  unit: '%',
+                },
+            {
+              name: 'Preguntas por minuto',
+              value: (c?.preguntas.length ?? a.preguntas.length) / (a.duracion / 60 || 1),
+              scale: 3,
+              digits: 1,
+            },
+            {
+              name: c ? 'Repreguntas e insistencias' : 'Repreguntas',
+              value: followUps(a),
+              scale: c ? 60 : 20,
+            },
+            {
+              name: c
+                ? 'Intercambios que cierra con un corte o un comentario'
+                : 'Veces que le corta',
+              value: i.cuts,
+              scale: 20,
+            },
+            c
+              ? {
+                  name: 'Palabras por intervención',
+                  value: c.habla.jordi.palabras / (c.preguntas.length || 1),
+                  scale: 60,
+                }
+              : { name: 'Palabras por pregunta', value: i.wordsPerQuestion, scale: 60 },
           ])}
         </Cell>
       </Grid>
@@ -879,16 +1109,53 @@ function Profile({ interview: a }: { interview: Interview }) {
 
 const times = (n: number) => `${n} ${n === 1 ? 'vez' : 'veces'}`;
 
+// Cómo lo dice, en corto: el titular y las claves del análisis de comunicación, con tres cifras y el
+// enlace al análisis completo.
+function CommunicationSummary({ interview: a }: { interview: Interview }) {
+  const c = getCommunication(a.id);
+  if (!c) return null;
+  const { hard, answered } = pressure(c);
+  // De cada clave, su título en negrita («**Habló sobre todo él.** El 72,8 %…»).
+  const keys = c.claves.flatMap((k) => /^\*\*(.+?)\*\*/.exec(k)?.[1] ?? []).slice(0, 4);
+  return (
+    <Grid className="-mt-8 mb-12">
+      <Cell span={7} label="Cómo lo dice">
+        <p className="m-0 font-heading text-2xl leading-tight">{c.titular}</p>
+        <ul className="m-0 grid list-disc gap-2 pl-5">
+          {keys.map((k) => (
+            <li key={k}>{k}</li>
+          ))}
+        </ul>
+        <Link
+          href={interviewsHref(`${a.id}/${communicationPath}`)}
+          className="inline-flex min-h-11 items-center gap-2 font-medium underline underline-offset-4"
+        >
+          Ver el análisis de comunicación completo <span aria-hidden="true">→</span>
+        </Link>
+      </Cell>
+      <Cell span={5} className="content-start">
+        <Stat
+          value={`${answered} de ${hard}`}
+          caption="preguntas duras que contesta a lo preguntado"
+        />
+        <Stat
+          value={`${c.promesas.verificables} de ${c.promesas.total}`}
+          caption="promesas que se podrán comprobar"
+        />
+      </Cell>
+    </Grid>
+  );
+}
+
 export function InterviewReport({ interview: a }: { interview: Interview }) {
-  const interrupts = a.interrupciones.filter((x) => x.quien === 'candidato').length;
-  const cuts = a.interrupciones.filter((x) => x.quien === 'jordi').length;
-  const complete = a.propuestas.filter((p) => proposalScore(p) === 4).length;
+  const { candidate: interrupts, interviewer: cuts } = interruptions(a);
   const video = videoUrl(a);
   const where = outlet(a);
   const who = interviewerOf(a);
   const day = publishedDay(a);
   const round = roundOf(a);
   const candidate = getCandidate(a.candidato);
+  const communication = getCommunication(a.id);
   return (
     <>
       {a.ficticio && (
@@ -942,32 +1209,115 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
               {interviewName(a)}
               {candidate && <span className="text-muted-foreground"> · la entrevista</span>}
             </h1>
+            {communication?.frase && (
+              <p className="m-0 mt-2 max-w-[60ch] text-lg leading-snug text-muted-foreground">
+                {communication.frase}
+              </p>
+            )}
           </div>
-          <dl className="m-0 flex flex-wrap gap-x-8 gap-y-5 border-t border-border pt-6 max-sm:gap-x-6">
-            {(
-              [
+          <div className="grid w-full gap-x-10 gap-y-6 border-t border-border pt-6 sm:grid-cols-[auto_minmax(0,1fr)]">
+            {/* La valoración, en grande, con su margen sobre la escala de 0 a 10. */}
+            <div className="grid content-start gap-2">
+              <Label>{a.pending ? 'Valoración provisional' : 'Valoración'}</Label>
+              <p className="m-0 font-heading text-6xl leading-none whitespace-nowrap tabular-nums">
+                {decimal(a.nota.global)}
+                <span className="ml-1.5 text-lg text-muted-foreground">
+                  ± {decimal(a.nota.margen)}
+                </span>
+              </p>
+              <span
+                aria-hidden="true"
+                className="relative mt-1 block h-1.5 w-44 rounded-full bg-muted"
+              >
+                <i
+                  className="absolute inset-y-0 rounded-full bg-foreground/25"
+                  style={{
+                    left: `${(a.nota.global - a.nota.margen) * 10}%`,
+                    width: `${a.nota.margen * 20}%`,
+                  }}
+                />
+                <i
+                  className="absolute -inset-y-1 w-0.5 -translate-x-1/2 rounded-full bg-foreground"
+                  style={{ left: `${a.nota.global * 10}%` }}
+                />
+              </span>
+              <span className="text-sm text-muted-foreground">sobre 10</span>
+            </div>
+            <dl className="m-0 grid grid-cols-2 content-start gap-x-6 gap-y-5 md:grid-cols-4">
+              {(
                 [
-                  a.pending ? 'Valoración provisional' : 'Valoración',
-                  decimal(a.nota.global),
-                  `± ${decimal(a.nota.margen)}`,
-                ],
-                ['Al grano', `${a.stats.alGrano} %`],
-                ['Verificaciones', String(a.revisiones.length)],
-                ['Propuestas completas', String(complete)],
-                ['Duración', minute(a.duracion)],
-              ] as const
-            ).map(([name, value, aside]) => (
-              <div key={name} className="grid content-start gap-1">
-                <dt className="whitespace-nowrap">
-                  <Label>{name}</Label>
-                </dt>
-                <dd className="m-0 font-heading text-3xl leading-none whitespace-nowrap tabular-nums lg:text-4xl">
-                  {value}
-                  {aside && <span className="ml-1.5 text-base text-muted-foreground">{aside}</span>}
-                </dd>
-              </div>
-            ))}
-          </dl>
+                  ['Al grano', `${a.stats.alGrano} %`, 'de respuestas'],
+                  communication
+                    ? [
+                        'Compromisos',
+                        String(checkable(a)),
+                        `comprobables de ${communication.compromisos.length}`,
+                      ]
+                    : ['Propuestas', String(checkable(a)), `completas de ${a.propuestas.length}`],
+                  ['Verificaciones', String(a.revisiones.length), 'afirmaciones'],
+                  ['Duración', minute(a.duracion), 'de entrevista'],
+                ] as const
+              ).map(([name, value, aside]) => (
+                <div key={name} className="grid content-start gap-1">
+                  <dt className="whitespace-nowrap">
+                    <Label>{name}</Label>
+                  </dt>
+                  <dd className="m-0 grid gap-1">
+                    <span className="font-heading text-3xl leading-none whitespace-nowrap tabular-nums">
+                      {value}
+                    </span>
+                    <span className="text-sm text-muted-foreground">{aside}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+          {/* Lo que afirma, de un vistazo: cada calificación con su icono, enlazada a su grupo. */}
+          <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
+            {verdictOrder.map((id) => {
+              const n = a.revisiones.filter((r) => r.veredicto === id).length;
+              return (
+                n > 0 && (
+                  <li key={id}>
+                    <a
+                      href={`#v-${id}`}
+                      className="inline-flex min-h-10 items-center gap-2 rounded-full py-1 pr-3.5 pl-1.5 text-sm no-underline ring-1 ring-border hover:bg-muted"
+                    >
+                      <MarkIcon kind={id} color={verdicts[id].color} />
+                      <span className="font-medium tabular-nums">{n}</span>
+                      {verdicts[id].name}
+                    </a>
+                  </li>
+                )
+              );
+            })}
+          </ul>
+          {/* Quién tiene la palabra: su parte, en el color de su partido. */}
+          <div className="grid w-full gap-1.5">
+            <span aria-hidden="true" className="flex h-2 overflow-hidden rounded-full bg-muted">
+              <i
+                style={{
+                  width: `${speakingShare(a, 'candidato')}%`,
+                  background: candidate?.color ?? 'var(--foreground)',
+                }}
+              />
+              <i
+                className="bg-muted-foreground/30"
+                style={{ width: `${speakingShare(a, 'jordi')}%` }}
+              />
+            </span>
+            <p className="m-0 flex flex-wrap justify-between gap-x-4 text-sm text-muted-foreground">
+              <span>
+                <b className="font-medium text-foreground">{speakingShare(a, 'candidato')} %</b>{' '}
+                {communication ? 'de las palabras' : 'del tiempo'}: {interviewName(a)}
+              </span>
+              {who && (
+                <span>
+                  {speakingShare(a, 'jordi')} %: {who}
+                </span>
+              )}
+            </p>
+          </div>
           {a.pending > 0 && (
             <p className="m-0 inline-flex items-center gap-3 rounded-2xl border border-dashed border-foreground/30 px-3.5 py-1.5 text-sm sm:rounded-full">
               <ReviewBar review={a.review} />
@@ -1035,16 +1385,20 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
           </div>
         </div>
       </Card>
+      {communication && <CommunicationSummary interview={a} />}
 
       <PageIndex
         items={[
           ['minuto', 'Minuto a minuto'],
           ['cifras', 'Las cifras'],
           [a.revisiones.length > 0 && 'verificaciones', 'Verificaciones'],
-          [a.momentos.length > 0 && 'momentos', 'Momentos clave'],
-          [a.propuestas.length > 0 && 'propuestas', 'Propuestas'],
+          [(communication?.momentos ?? a.momentos).length > 0 && 'momentos', 'Momentos clave'],
+          [
+            (communication?.compromisos ?? a.propuestas).length > 0 && 'propuestas',
+            communication ? 'Compromisos' : 'Propuestas',
+          ],
           [a.ataques.length > 0 && 'criticas', 'Críticas'],
-          [a.preguntas.length > 0 && 'preguntas', 'Preguntas'],
+          [(communication?.preguntas ?? a.preguntas).length > 0 && 'preguntas', 'Preguntas'],
           ['perfil', 'Perfil'],
         ]}
       />
@@ -1062,10 +1416,21 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
             verificador: 'Verificadores',
             otro: 'Otra persona',
           }}
-          marks={marks(a)}
-          lanes={lanes}
+          marks={
+            communication
+              ? [
+                  // Sus momentos, compromisos y preguntas sustituyen a los nuestros.
+                  ...marks(a).filter(
+                    (m) => !(m.lane in communicationLanes) && m.lane !== 'momentos',
+                  ),
+                  ...communicationMarks(communication),
+                ].sort((x, y) => x.second - y.second)
+              : marks(a)
+          }
+          lanes={communication ? { ...lanes, ...communicationLanes } : lanes}
+          voice={communication?.voz}
           minutes={perMinute(a)}
-          topics={a.temas}
+          topics={topicsOf(a)}
           color={candidate?.color ?? 'var(--foreground)'}
         />
       </ReportSection>
@@ -1075,13 +1440,15 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
           <Cell span={6} label="La valoración, criterio a criterio">
             <Bars
               max={10}
-              rows={criterionIds.map((id) => {
+              rows={criterionIds.flatMap((id) => {
                 const value = a.nota.criterios[id];
-                return {
-                  label: `${criteria[id].name} (${criteria[id].weight} %)`,
-                  value,
-                  display: decimal(value),
-                };
+                return value === undefined
+                  ? []
+                  : {
+                      label: `${criteria[id].name} (${criteria[id].weight} %)`,
+                      value,
+                      display: decimal(value),
+                    };
               })}
             />
             <p className="m-0 text-sm text-muted-foreground">
@@ -1099,17 +1466,34 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
                 .slice(0, 6)
                 .map((t) => ({ label: t.topic, value: t.share, display: `${t.share} %` }))}
             />
+            {communication && (
+              <p className="m-0 text-sm text-muted-foreground">
+                De los {communication.temas.length} tramos, {who ?? 'el entrevistador'} saca{' '}
+                {communication.temas.filter((t) => t.quien === 'jordi').length} y {interviewName(a)}
+                , {communication.temas.filter((t) => t.quien === 'invitado').length}.
+              </p>
+            )}
           </Cell>
           <Cell span={6} label="Cómo responde">
             <Bars
-              rows={Object.entries(answers).map(([id, name]) => {
-                const value = a.preguntas.filter((p) => p.respuesta === id).length;
-                return { label: name, value, display: String(value) };
-              })}
+              rows={
+                communication
+                  ? replyIds.map((id) => {
+                      const value = communication.preguntas.filter(
+                        (q) => q.respuesta === id,
+                      ).length;
+                      return { label: replyNames[id], value, display: String(value) };
+                    })
+                  : Object.entries(answers).map(([id, name]) => {
+                      const value = a.preguntas.filter((p) => p.respuesta === id).length;
+                      return { label: name, value, display: String(value) };
+                    })
+              }
             />
             <p className="m-0 text-sm text-muted-foreground">
-              {a.preguntas.filter((p) => p.repregunta).length} repreguntas: las veces que el
-              entrevistador insiste porque no le han contestado.
+              {communication
+                ? `${followUps(a)} repreguntas e insistencias: las veces que el entrevistador vuelve sobre lo mismo.`
+                : `${followUps(a)} repreguntas: las veces que el entrevistador insiste porque no le han contestado.`}
             </p>
           </Cell>
           <Cell span={6} label="Las afirmaciones verificadas">
@@ -1141,43 +1525,82 @@ export function InterviewReport({ interview: a }: { interview: Interview }) {
                   value: speakingShare(a, 'jordi'),
                   color: 'var(--muted-foreground)',
                 },
-                {
-                  label: 'Otras personas',
-                  value: 100 - speakingShare(a, 'candidato') - speakingShare(a, 'jordi'),
-                  color: 'var(--border)',
-                },
+                ...(communication
+                  ? []
+                  : [
+                      {
+                        label: 'Otras personas',
+                        value: 100 - speakingShare(a, 'candidato') - speakingShare(a, 'jordi'),
+                        color: 'var(--border)',
+                      },
+                    ]),
               ].map((row) => ({ ...row, display: `${row.value} %` }))}
             />
+            {communication && (
+              <p className="m-0 text-sm text-muted-foreground">
+                Su parte de las palabras que dicen los dos.
+              </p>
+            )}
           </Cell>
-          <Cell span={6} label={`Lo que concretan sus ${a.propuestas.length} propuestas`}>
-            <Bars
-              max={100}
-              rows={(
-                [
-                  ['que', 'Qué'],
-                  ['cuanto', 'Cuánto'],
-                  ['cuando', 'Cuándo'],
-                  ['como', 'Cómo'],
-                ] as const
-              ).map(([key, label]) => {
-                const value = a.propuestas.length
-                  ? Math.round(
-                      (a.propuestas.filter((p) => p[key]).length / a.propuestas.length) * 100,
-                    )
-                  : 0;
-                return { label, value, display: `${value} %` };
-              })}
-            />
-          </Cell>
+          {communication ? (
+            <Cell span={6} label={`Sus ${communication.compromisos.length} compromisos`}>
+              <Bars
+                max={100}
+                rows={(
+                  [
+                    ['Comprobables', (x) => x.verificable],
+                    ['Con plazo', (x) => x.plazo !== null],
+                    ['Con condición', (x) => x.condicion !== null],
+                  ] as const satisfies readonly [
+                    string,
+                    (x: Communication['compromisos'][number]) => boolean,
+                  ][]
+                ).map(([label, test]) => {
+                  const value = Math.round(
+                    (communication.compromisos.filter(test).length /
+                      (communication.compromisos.length || 1)) *
+                      100,
+                  );
+                  return { label, value, display: `${value} %` };
+                })}
+              />
+            </Cell>
+          ) : (
+            <Cell span={6} label={`Lo que concretan sus ${a.propuestas.length} propuestas`}>
+              <Bars
+                max={100}
+                rows={(
+                  [
+                    ['que', 'Qué'],
+                    ['cuanto', 'Cuánto'],
+                    ['cuando', 'Cuándo'],
+                    ['como', 'Cómo'],
+                  ] as const
+                ).map(([key, label]) => {
+                  const value = a.propuestas.length
+                    ? Math.round(
+                        (a.propuestas.filter((p) => p[key]).length / a.propuestas.length) * 100,
+                      )
+                    : 0;
+                  return { label, value, display: `${value} %` };
+                })}
+              />
+            </Cell>
+          )}
           <Cell label="A quién critica">
             <Bars
-              rows={[...new Set(a.ataques.map((x) => x.objetivo))].map((target) => {
-                const value = a.ataques.filter((x) => x.objetivo === target).length;
-                return { label: `A ${target}`, value, display: String(value) };
-              })}
+              rows={criticTargets(a)
+                .slice(0, 8)
+                .map(([target, value]) => ({
+                  label: `A ${target}`,
+                  value,
+                  display: String(value),
+                }))}
             />
             <p className="m-0 text-sm text-muted-foreground">
-              Interrumpe {times(interrupts)}; el entrevistador le corta {times(cuts)}.
+              {communication
+                ? `Cuántas de sus ${communication.preguntas.length} respuestas critican a cada uno. Interrumpe de forma notable ${times(interrupts)}; ${who ?? 'el entrevistador'} cierra ${cuts} intercambios con un corte o un comentario suyo.`
+                : `Interrumpe ${times(interrupts)}; el entrevistador le corta ${times(cuts)}.`}
             </p>
           </Cell>
         </Grid>
@@ -1266,54 +1689,138 @@ export function VerificationPage({
   );
 }
 
-// Un filtro de la lista: enlaces, para que cada vista tenga su dirección y funcione sin JavaScript.
+// Un filtro de la lista: pastillas que son enlaces, para que cada vista tenga su dirección y funcione
+// sin JavaScript. Las opciones de `more` quedan plegadas (y abiertas si una está elegida). En móvil,
+// cada fila se desliza de lado en vez de apilarse, y ahí van todas, sin plegar.
+type FilterOption = { href: string; active: boolean; count: number; children: ReactNode };
+function FilterPill({ option: o }: { option: FilterOption }) {
+  return (
+    <Link
+      href={o.href}
+      scroll={false}
+      aria-current={o.active ? 'page' : undefined}
+      className={cn(
+        'inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full px-3.5 text-sm whitespace-nowrap no-underline ring-1 transition-colors motion-reduce:transition-none',
+        o.active ? 'bg-foreground text-background ring-foreground' : 'ring-border hover:bg-muted',
+      )}
+    >
+      {o.children}
+      <span
+        className={cn(
+          'font-mono text-xs tabular-nums',
+          o.active ? 'text-background/70' : 'text-muted-foreground',
+        )}
+      >
+        {o.count}
+      </span>
+    </Link>
+  );
+}
 function FilterLinks({
   label,
   options,
+  more = [],
 }: {
   label: string;
-  options: { href: string; active: boolean; count: number; children: ReactNode }[];
+  options: FilterOption[];
+  more?: FilterOption[];
 }) {
   return (
-    <nav aria-label={label} className="flex flex-wrap items-center gap-2">
-      <span className="mr-2 text-sm text-muted-foreground">{label}</span>
-      {options.map((o) => (
-        <Link
-          key={o.href}
-          href={o.href}
-          scroll={false}
-          aria-current={o.active ? 'page' : undefined}
-          className={buttonVariants({
-            variant: o.active ? 'default' : 'outline',
-            size: 'lg',
-            className: 'h-11 px-4 text-sm',
-          })}
-        >
-          {o.children}
-          <span className="font-mono tabular-nums opacity-70">{o.count}</span>
-        </Link>
-      ))}
+    <nav
+      aria-label={label}
+      className="grid gap-2 sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:items-start sm:gap-4"
+    >
+      <span className="font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase sm:pt-3">
+        {label}
+      </span>
+      <div className="flex flex-wrap gap-2 max-sm:-mx-5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:px-5 max-sm:py-0.5 max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden">
+        {options.map((o) => (
+          <FilterPill key={o.href} option={o} />
+        ))}
+        {more.map((o) => (
+          <span key={o.href} className="contents sm:hidden">
+            <FilterPill option={o} />
+          </span>
+        ))}
+        {more.length > 0 && (
+          <details className="group max-sm:hidden" open={more.some((o) => o.active)}>
+            <summary className="inline-flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-full px-3.5 text-sm ring-1 ring-border hover:bg-muted [&::-webkit-details-marker]:hidden">
+              Más temas
+              <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                {more.length}
+              </span>
+              <span aria-hidden="true" className="flex group-open:rotate-180">
+                <Icon name="abajo" size={14} />
+              </span>
+            </summary>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {more.map((o) => (
+                <FilterPill key={o.href} option={o} />
+              ))}
+            </div>
+          </details>
+        )}
+      </div>
     </nav>
   );
 }
 
+// Las verificaciones de cada página de la lista.
+const perPage = 24;
+
 export function VerificationsIndex({
   verdict,
   candidate,
+  topic,
+  page = 1,
 }: {
   verdict?: Verification['veredicto'];
   candidate?: string;
+  topic?: string;
+  page?: number;
 }) {
-  const all = allVerifications();
-  const ofCandidate = all.filter((v) => !candidate || v.interview.candidato === candidate);
-  const ofVerdict = all.filter((v) => !verdict || v.verification.veredicto === verdict);
+  // Lo que no se sostiene, primero; dentro de cada calificación, en el orden de la entrevista.
+  const all = allVerifications()
+    .map((v) => ({ ...v, topic: topicAt(v.interview, v.verification.segundo) }))
+    .sort(
+      (x, y) =>
+        verdictOrder.indexOf(x.verification.veredicto) -
+          verdictOrder.indexOf(y.verification.veredicto) ||
+        x.interview.candidato.localeCompare(y.interview.candidato) ||
+        x.verification.segundo - y.verification.segundo,
+    );
+  const ofTopic = all.filter((v) => !topic || v.topic === topic);
+  const ofCandidate = ofTopic.filter((v) => !candidate || v.interview.candidato === candidate);
+  const ofVerdict = ofTopic.filter((v) => !verdict || v.verification.veredicto === verdict);
   const shown = ofCandidate.filter((v) => !verdict || v.verification.veredicto === verdict);
-  const href = (q: { calificacion?: string; candidato?: string }) => {
+  // Los temas, de más a menos verificaciones con los otros filtros puestos.
+  const rest = all.filter(
+    (v) =>
+      (!candidate || v.interview.candidato === candidate) &&
+      (!verdict || v.verification.veredicto === verdict),
+  );
+  const inTopic = new Map<string, number>();
+  for (const v of rest) if (v.topic) inTopic.set(v.topic, (inTopic.get(v.topic) ?? 0) + 1);
+  const topics = [...inTopic.keys()].sort((x, y) => inTopic.get(y)! - inTopic.get(x)!);
+  const pages = Math.max(1, Math.ceil(shown.length / perPage));
+  const current = Math.min(Math.max(1, page), pages);
+  const href = (q: {
+    calificacion?: string;
+    candidato?: string;
+    tema?: string;
+    pagina?: string;
+  }) => {
     const query = new URLSearchParams(
       Object.entries(q).filter((e): e is [string, string] => !!e[1]),
     ).toString();
     return interviewsHref(`verificaciones${query ? `?${query}` : ''}`);
   };
+  const topicOption = (name: string) => ({
+    href: href({ calificacion: verdict, candidato: candidate, tema: name }),
+    active: topic === name,
+    count: inTopic.get(name) ?? 0,
+    children: name,
+  });
   const people = [...new Set(all.map((v) => v.interview.candidato))].map((slug) => {
     const interview = all.find((v) => v.interview.candidato === slug)?.interview;
     return { slug, name: interview ? interviewName(interview) : slug };
@@ -1323,31 +1830,88 @@ export function VerificationsIndex({
       <ReportIntro title="Todo lo verificado">
         <p>
           Los datos que dan los candidatos en sus entrevistas, buscados en fuentes oficiales y
-          calificados por la IA. Una segunda pasada de IA confirma o corrige cada calificación;
-          ninguna persona las revisa. Las que llevan «Sin revisar» aún no han pasado por ella.
+          calificados por la IA. Una segunda pasada de IA confirma o corrige cada calificación, y
+          las que no cuadraban con el análisis de comunicación se revisaron a mano: lo dice su
+          ficha. Primero, lo que no se sostiene.
         </p>
       </ReportIntro>
       {all.length === 0 ? (
         <p>Todavía no hay ninguna verificación publicada.</p>
       ) : (
         <>
-          <div className="mb-8 grid gap-4">
+          <Cell label="Cómo salen los datos de cada uno" className="mb-8">
+            <ul className="m-0 grid list-none gap-4 p-0">
+              {people.map((p) => {
+                const own = all.filter((v) => v.interview.candidato === p.slug);
+                return (
+                  <li
+                    key={p.slug}
+                    className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)_auto] items-center gap-4 max-sm:grid-cols-[minmax(0,1fr)_auto]"
+                  >
+                    <Link
+                      href={href({ candidato: p.slug })}
+                      className="font-medium underline-offset-4 hover:underline"
+                    >
+                      {p.name}
+                    </Link>
+                    <span
+                      aria-hidden="true"
+                      className="flex h-3 overflow-hidden rounded-full bg-muted max-sm:order-last max-sm:col-span-2"
+                    >
+                      {verdictOrder.map((id) => (
+                        <i
+                          key={id}
+                          style={{
+                            width: `${(own.filter((v) => v.verification.veredicto === id).length / (own.length || 1)) * 100}%`,
+                            background: verdicts[id].color,
+                          }}
+                        />
+                      ))}
+                    </span>
+                    <span className="flex flex-wrap justify-end gap-x-3 text-sm tabular-nums">
+                      {verdictOrder.slice(0, 2).map((id) => (
+                        <span key={id} className="inline-flex items-center gap-1">
+                          <MarkIcon kind={id} color={verdicts[id].color} className="size-5" />
+                          {own.filter((v) => v.verification.veredicto === id).length}{' '}
+                          {verdicts[id].name}
+                        </span>
+                      ))}
+                      <span className="text-muted-foreground">de {own.length}</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+            <ul className="m-0 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-sm text-muted-foreground">
+              {verdictOrder.map((id) => (
+                <li key={id} className="inline-flex items-center gap-1.5">
+                  <MarkIcon kind={id} color={verdicts[id].color} className="size-5" />
+                  {verdicts[id].name}
+                </li>
+              ))}
+            </ul>
+            <p className="m-0 text-sm text-muted-foreground">
+              No es una nota: cada uno habla de cosas distintas y da más o menos cifras. La
+              valoración sobre 10 de cada entrevista tiene en cuenta mucho más.
+            </p>
+          </Cell>
+          <div className="mb-8 grid gap-5 rounded-2xl p-5 ring-1 ring-border lg:p-6">
             <FilterLinks
               label="Calificación"
               options={[
                 {
-                  href: href({ candidato: candidate }),
+                  href: href({ candidato: candidate, tema: topic }),
                   active: !verdict,
                   count: ofCandidate.length,
                   children: 'Todas',
                 },
-                ...verdictIds.map((id) => ({
-                  href: href({ calificacion: id, candidato: candidate }),
+                ...verdictOrder.map((id) => ({
+                  href: href({ calificacion: id, candidato: candidate, tema: topic }),
                   active: verdict === id,
                   count: ofCandidate.filter((v) => v.verification.veredicto === id).length,
                   children: (
                     <>
-                      <MarkIcon kind={id} color={verdicts[id].color} />
+                      <MarkIcon kind={id} color={verdicts[id].color} className="-ml-2 size-7" />
                       {verdicts[id].name}
                     </>
                   ),
@@ -1359,31 +1923,121 @@ export function VerificationsIndex({
                 label="Candidato"
                 options={[
                   {
-                    href: href({ calificacion: verdict }),
+                    href: href({ calificacion: verdict, tema: topic }),
                     active: !candidate,
                     count: ofVerdict.length,
                     children: 'Todos',
                   },
-                  ...people.map((p) => ({
-                    href: href({ calificacion: verdict, candidato: p.slug }),
-                    active: candidate === p.slug,
-                    count: ofVerdict.filter((v) => v.interview.candidato === p.slug).length,
-                    children: p.name,
-                  })),
+                  ...people.map((p) => {
+                    const c = getCandidate(p.slug);
+                    return {
+                      href: href({ calificacion: verdict, candidato: p.slug, tema: topic }),
+                      active: candidate === p.slug,
+                      count: ofVerdict.filter((v) => v.interview.candidato === p.slug).length,
+                      children: (
+                        <>
+                          {c && (
+                            <Portrait
+                              candidate={c}
+                              kind="avatar"
+                              sizes="56px"
+                              className="-ml-2 size-7"
+                            />
+                          )}
+                          {p.name}
+                        </>
+                      ),
+                    };
+                  }),
                 ]}
               />
             )}
+            {topics.length > 1 && (
+              <FilterLinks
+                label="Tema"
+                options={[
+                  {
+                    href: href({ calificacion: verdict, candidato: candidate }),
+                    active: !topic,
+                    count: rest.length,
+                    children: 'Todos',
+                  },
+                  ...topics.slice(0, 8).map(topicOption),
+                ]}
+                more={topics.slice(8).map(topicOption)}
+              />
+            )}
+            <p className="m-0 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4 text-sm text-muted-foreground">
+              <span>
+                {shown.length} {shown.length === 1 ? 'verificación' : 'verificaciones'}
+                {pages > 1 && ` · página ${current} de ${pages}`}
+              </span>
+              {(verdict || candidate || topic) && (
+                <Link
+                  href={href({})}
+                  scroll={false}
+                  className="text-foreground underline underline-offset-4"
+                >
+                  Quitar los filtros
+                </Link>
+              )}
+            </p>
           </div>
           {shown.length === 0 ? (
             <p>Ninguna verificación con estos filtros.</p>
           ) : (
-            <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
-              {shown.map(({ interview, verification }) => (
-                <li key={`${interview.id}/${verification.id}`} className="grid">
-                  <VerificationCard interview={interview} verification={verification} named />
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul
+                id="lista"
+                className="m-0 grid scroll-mt-28 list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-3"
+              >
+                {shown
+                  .slice((current - 1) * perPage, current * perPage)
+                  .map(({ interview, verification }) => (
+                    <li key={`${interview.id}/${verification.id}`} className="grid">
+                      <VerificationCard interview={interview} verification={verification} named />
+                    </li>
+                  ))}
+              </ul>
+              {pages > 1 && (
+                <nav
+                  aria-label="Páginas"
+                  className="mt-10 flex flex-wrap items-center justify-center gap-2"
+                >
+                  {current > 1 && (
+                    <Link
+                      href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current - 1) })}#lista`}
+                      className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    >
+                      <Icon name="izquierda" size={16} /> Anterior
+                    </Link>
+                  )}
+                  {Array.from({ length: pages }, (_, n) => n + 1).map((n) => (
+                    <Link
+                      key={n}
+                      href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: n > 1 ? String(n) : undefined })}#lista`}
+                      aria-current={n === current ? 'page' : undefined}
+                      className={cn(
+                        'grid size-11 place-items-center rounded-full font-mono text-sm tabular-nums no-underline ring-1',
+                        n === current
+                          ? 'bg-foreground text-background ring-foreground'
+                          : 'ring-border hover:bg-muted',
+                      )}
+                    >
+                      {n}
+                    </Link>
+                  ))}
+                  {current < pages && (
+                    <Link
+                      href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current + 1) })}#lista`}
+                      className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    >
+                      Siguiente <Icon name="derecha" size={16} />
+                    </Link>
+                  )}
+                </nav>
+              )}
+            </>
           )}
         </>
       )}
@@ -1418,8 +2072,11 @@ const metricGroups: { title: string; metrics: Metric[] }[] = [
       ...criterionIds.map((id) => ({
         name: `${criteria[id].name} (${criteria[id].weight} %)`,
         max: 10,
-        value: (a: Interview) => a.nota.criterios[id],
-        display: (a: Interview) => decimal(a.nota.criterios[id]),
+        value: (a: Interview) => a.nota.criterios[id] ?? 0,
+        display: (a: Interview) => {
+          const value = a.nota.criterios[id];
+          return value === undefined ? '—' : decimal(value);
+        },
       })),
     ],
   },
@@ -1432,20 +2089,10 @@ const metricGroups: { title: string; metrics: Metric[] }[] = [
         value: (a) => a.stats.alGrano,
         display: (a) => `${a.stats.alGrano} %`,
       },
+      { name: 'No contesta a lo preguntado', max: 30, value: dodges },
+      { name: 'Repreguntas e insistencias', max: 100, value: followUps },
       {
-        name: 'Evasivas y cambios de tema',
-        max: 20,
-        value: count((a) =>
-          a.preguntas.filter((p) => p.respuesta === 'evasiva' || p.respuesta === 'cambio'),
-        ),
-      },
-      {
-        name: 'Repreguntas',
-        max: 20,
-        value: count((a) => a.preguntas.filter((p) => p.repregunta)),
-      },
-      {
-        name: 'Tiempo de palabra del candidato',
+        name: 'Su parte de la palabra',
         max: 100,
         value: (a) => speakingShare(a, 'candidato'),
         display: (a) => `${speakingShare(a, 'candidato')} %`,
@@ -1453,17 +2100,13 @@ const metricGroups: { title: string; metrics: Metric[] }[] = [
     ],
   },
   {
-    title: 'Las propuestas',
+    title: 'Los compromisos',
     metrics: [
+      { name: 'Comprobables', max: 20, value: checkable },
       {
-        name: 'Propuestas completas',
-        max: 10,
-        value: count((a) => a.propuestas.filter((p) => proposalScore(p) === 4)),
-      },
-      {
-        name: 'Casi completas',
-        max: 10,
-        value: count((a) => a.propuestas.filter((p) => proposalScore(p) === 3)),
+        name: 'En total',
+        max: 40,
+        value: (a) => getCommunication(a.id)?.compromisos.length ?? a.propuestas.length,
       },
     ],
   },
@@ -1493,7 +2136,7 @@ const metricGroups: { title: string; metrics: Metric[] }[] = [
       {
         name: 'Interrumpe',
         max: 20,
-        value: count((a) => a.interrupciones.filter((x) => x.quien === 'candidato')),
+        value: (a) => interruptions(a).candidate,
       },
     ],
   },
@@ -1501,15 +2144,15 @@ const metricGroups: { title: string; metrics: Metric[] }[] = [
     title: 'Cómo le trató el entrevistador',
     metrics: [
       {
-        name: 'Tiempo de palabra del entrevistador',
+        name: 'Parte de la palabra del entrevistador',
         max: 100,
         value: (a) => speakingShare(a, 'jordi'),
         display: (a) => `${speakingShare(a, 'jordi')} %`,
       },
       {
-        name: 'Le interrumpe',
+        name: 'Le corta o cierra el intercambio',
         max: 20,
-        value: count((a) => a.interrupciones.filter((x) => x.quien === 'jordi')),
+        value: (a) => interruptions(a).interviewer,
       },
       {
         name: 'Duración',
@@ -1573,31 +2216,36 @@ export function InterviewsCompare({ roundId }: { roundId?: string }) {
       ]),
     ),
   };
+  // Con análisis de comunicación, sus preguntas y su forma de clasificar las respuestas.
+  const askedIn = (interview: Interview, id: string | undefined) => {
+    const c = getCommunication(interview.id);
+    const q = c?.preguntas.find((p) => p.id === id);
+    if (q) return { text: q.texto, name: replyNames[q.respuesta], ...replyMarks[q.respuesta] };
+    const p = c ? undefined : interview.preguntas.find((x) => x.id === id);
+    return p && { text: p.texto, name: answers[p.respuesta], ...answerMarks[p.respuesta] };
+  };
   const commons: Common[] = commonQuestions(round.id).map((q) => ({
     id: q.id,
     topic: q.tema,
     question: q.pregunta,
     answers: Object.fromEntries(
       all.flatMap(({ candidate, interview }) => {
-        const asked = interview.preguntas.find((p) => p.id === q.respuestas[candidate.slug]);
-        return asked
-          ? [
-              [
-                candidate.slug,
-                { text: asked.texto, answer: asked.respuesta, href: interviewsHref(interview.id) },
-              ],
-            ]
-          : [];
+        const asked = askedIn(interview, q.respuestas[candidate.slug]);
+        return asked ? [[candidate.slug, { ...asked, href: interviewsHref(interview.id) }]] : [];
       }),
     ),
   }));
+  const answerLegend = all.every(({ interview }) => getCommunication(interview.id))
+    ? replyIds.map((id) => ({ name: replyNames[id], ...replyMarks[id] }))
+    : answerIds.map((id) => ({ name: answers[id], ...answerMarks[id] }));
 
   return (
     <>
       <ReportIntro title="Lado a lado">
         <p>
           Las entrevistas de una misma ronda, con las mismas reglas y la misma escala: cómo responde
-          cada candidato, qué preguntas se repitieron y todas las cifras. No hay ganador.
+          cada candidato, qué preguntas se repitieron y todas las cifras. No hay ganador. Pulsa en
+          un candidato de la barra para destacarlo en todos los gráficos.
         </p>
       </ReportIntro>
 
@@ -1630,7 +2278,13 @@ export function InterviewsCompare({ roundId }: { roundId?: string }) {
       </div>
 
       {all.length ? (
-        <CompareBoard people={people} figures={figures} footprint={footprint} commons={commons} />
+        <CompareBoard
+          people={people}
+          figures={figures}
+          footprint={footprint}
+          commons={commons}
+          answers={answerLegend}
+        />
       ) : (
         <Grid>
           <Cell span={7} label="Pendiente">
@@ -1669,19 +2323,18 @@ const average = (values: number[]) => values.reduce((t, v) => t + v, 0) / (value
 const footprintAxes: { name: string; text: string; value: (a: Interview) => number }[] = [
   {
     name: 'Palabra',
-    text: 'Su parte del tiempo hablado',
+    text: 'Su parte de la palabra',
     value: (a) => speakingShare(a, 'candidato') / 100,
   },
   {
     name: 'Directas',
     text: 'Respuestas que van al grano',
-    value: (a) =>
-      a.preguntas.filter((p) => p.respuesta === 'directa').length / (a.preguntas.length || 1),
+    value: directShare,
   },
   {
-    name: 'Propuestas',
-    text: 'Propuestas completas (tope: 10)',
-    value: (a) => a.propuestas.filter((p) => proposalScore(p) === 4).length / 10,
+    name: 'Compromisos',
+    text: 'Compromisos comprobables (tope: 20)',
+    value: (a) => checkable(a) / 20,
   },
   {
     name: 'Intensidad',
@@ -1695,29 +2348,44 @@ const footprintAxes: { name: string; text: string; value: (a: Interview) => numb
   },
   {
     name: 'Interrumpe',
-    text: 'Veces que corta a quien habla (tope: 20)',
-    value: (a) => a.interrupciones.filter((x) => x.quien === 'candidato').length / 20,
+    text: 'Veces que corta a quien habla (tope: 10)',
+    value: (a) => interruptions(a).candidate / 10,
   },
   { name: 'Ritmo', text: 'Palabras por minuto (tope: 300)', value: (a) => speech(a).pace / 300 },
   {
-    name: 'Muletillas',
-    text: 'Muletillas por minuto (tope: 10)',
-    value: (a) => speech(a).fillers / 10,
+    name: 'Trabas',
+    text: 'Trabas por cada 100 palabras (tope: 1)',
+    value: (a) =>
+      getCommunication(a.id)?.habla.invitado.trabasPor100 ??
+      (speech(a).stutters / (speech(a).pace || 1)) * 100,
   },
 ];
 
 // Lo que se marca en cada entrevista, con el icono que lleva en la línea de tiempo.
 const rules: [Mark['kind'], string, string][] = [
-  ['completa', 'Propuesta completa', 'Dice qué, cuánto, cuándo y cómo'],
-  ['casi', 'Casi completa', 'Dice tres de esas cuatro cosas'],
-  ['incompleta', 'Propuesta incompleta', 'Dice menos: se indica lo que le falta'],
-  ['repregunta', 'Repregunta', 'El entrevistador insiste porque no le han contestado'],
-  ['evasiva', 'Evasiva', 'Respuesta evasiva o cambio de tema'],
+  [
+    'comprobable',
+    'Compromiso comprobable',
+    'Tiene una cifra, una ley o un sí o un no que se podrá comprobar',
+  ],
+  [
+    'compromiso',
+    'Compromiso sin objeto comprobable',
+    'Una intención general, como «bajar los impuestos»',
+  ],
+  [
+    'dura',
+    'Pregunta dura sin respuesta clara',
+    'Incómoda, repregunta o insistencia, y la respuesta no contesta del todo a lo preguntado',
+  ],
+  ['pausa', 'Pausa larga', 'Un silencio de un segundo y medio o más en su respuesta'],
+  ['traba', 'Traba', 'Repite una palabra o se corta a media frase'],
+  ['comentado', 'Lo más comentado', 'Un minuto que citan los comentarios de YouTube'],
   ['critica', 'Crítica política', 'Crítica a la política de otro'],
   ['ataque', 'Ataque personal', 'Ataque personal o descalificación'],
   ['interrumpe', 'Interrumpe', 'El candidato corta a quien habla antes de que termine'],
   ['interrumpido', 'Le interrumpen', 'El entrevistador corta al candidato antes de que termine'],
-  ['momento', 'Momento clave', 'Anuncio, choque, titular o rectificación, con su cita literal'],
+  ['momento', 'Momento clave', 'Donde coinciden varias señales, con lo que se oye en ese minuto'],
 ];
 
 const officialSources = [
@@ -1733,14 +2401,13 @@ const officialSources = [
 ];
 // Las señales de «Cómo habla»: nombre, unidad y qué cuenta.
 const speechSignals = [
-  ['Ritmo', 'palabras por minuto', 'Palabras por minuto mientras habla'],
-  ['Muletillas', 'por minuto', 'Veces que dice eh, em, mm, o sea, digamos, en plan o ¿no?'],
-  ['Titubeos', 'por minuto', 'Repite la misma palabra seguida (el el, que que)'],
+  ['Ritmo', 'palabras por minuto', 'Palabras por minuto en los tramos que habla sin pausas'],
   [
-    'Pausa antes de responder',
-    'segundos',
-    'Tiempo medio entre la pregunta y su respuesta, medido en el audio',
+    'Trabas',
+    'por 100 palabras',
+    'Repite una palabra o un grupo de palabras, o se corta a media frase',
   ],
+  ['Pausas', 'por 1.000 palabras', 'Silencios de más de 0,4 segundos dentro de lo que dice'],
 ];
 
 const fairness = [
@@ -1825,22 +2492,15 @@ export function InterviewsMethod() {
             ))}
           </dl>
         </Cell>
-        <Cell span={5} label="Los momentos clave">
-          <dl className="m-0 grid gap-3">
-            {Object.values(moments).map((m) => (
-              <div key={m.name}>
-                <dt className="flex items-center gap-2 font-medium">
-                  <MarkIcon kind="momento" />
-                  {m.name}
-                </dt>
-                <dd className="m-0 text-muted-foreground">{m.text}.</dd>
-              </div>
-            ))}
-          </dl>
+        <Cell span={5} label="Las preguntas, los compromisos y los momentos clave">
+          <p className="m-0">
+            Salen del análisis de comunicación. Cada pregunta se clasifica por su dureza y por cómo
+            se responde; cada compromiso, por si se podrá comprobar. Los momentos clave son puntos
+            donde coinciden varias señales medidas por separado, como la voz, las pausas o cómo se
+            pregunta y se responde.
+          </p>
           <p className="m-0 text-sm text-muted-foreground">
-            Los elige la IA por su interés informativo, nunca por si favorecen o perjudican a
-            alguien. Cada uno lleva una cita literal, comprobada palabra por palabra en la
-            transcripción.
+            Que varias señales coincidan no demuestra relación entre ellas ni intención alguna.
           </p>
         </Cell>
       </Grid>
@@ -1869,7 +2529,7 @@ export function InterviewsMethod() {
             <p className="m-0">
               Cada minuto suma los cambios de turno entre el entrevistador y el candidato (de cuatro
               palabras o más), el triple por cada interrupción y el doble por cada momento de
-              tensión: repreguntas, evasivas, ataques personales, choques y datos que no salen
+              tensión: preguntas duras sin respuesta clara, ataques personales y datos que no salen
               «Cierto».
             </p>
             <p className="m-0 text-sm text-muted-foreground">
@@ -1889,8 +2549,8 @@ export function InterviewsMethod() {
               ))}
             </dl>
             <p className="m-0 text-sm text-muted-foreground">
-              Se cuentan en la transcripción literal, con la misma lista para todos. No dicen si
-              alguien está nervioso ni si es sincero.
+              Las mide el análisis de comunicación, palabra a palabra y con las mismas reglas para
+              todos. No dicen si alguien está nervioso ni si es sincero.
             </p>
           </Cell>
           <Cell label="Lo que solo se ve en el vídeo">
@@ -1905,9 +2565,33 @@ export function InterviewsMethod() {
                 </div>
               ))}
             </dl>
+          </Cell>
+        </Grid>
+      </ReportSection>
+
+      <ReportSection title="El análisis de comunicación">
+        <Grid>
+          <Cell span={7}>
+            <p className="m-0 max-w-[65ch]">
+              Algunas entrevistas tienen, aparte de la revisión, un análisis de comunicación: cómo
+              pregunta el entrevistador y cómo se le responde, la voz, las trabas, los silencios y
+              los movimientos de la cara, con las mismas medidas para todos los de su ronda. No
+              entra en la valoración sobre 10 ni usa sus calificaciones.
+            </p>
+            <p className="m-0 max-w-[65ch] text-sm text-muted-foreground">
+              Las preguntas y las respuestas las clasifica una IA con un criterio escrito; la voz y
+              la cara las mide un programa, frase a frase y fotograma a fotograma. Cada informe dice
+              cómo se ha hecho y qué no puede decir.
+            </p>
+          </Cell>
+          <Cell span={5} label="La cara, solo como movimiento">
+            <p className="m-0">
+              Se mide con unidades de acción del sistema FACS, que nombran movimientos de músculos:
+              cejas, párpados, comisuras. Nunca con etiquetas de emoción, y cada persona se compara
+              con su propia cara.
+            </p>
             <p className="m-0 text-sm text-muted-foreground">
-              Nunca se describen expresiones, emociones ni aspecto físico: no se pueden medir igual
-              para todos.
+              Ni los gestos, ni la voz, ni las pausas sirven para saber si alguien dice la verdad.
             </p>
           </Cell>
         </Grid>

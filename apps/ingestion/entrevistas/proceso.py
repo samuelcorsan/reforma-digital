@@ -2,20 +2,24 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 from .audio import Trozo
 from .citas import coincidencia, en_contraste, flujos, localizar, normalizar, recuperar
 from .esquema import (
     Analisis,
+    Compromiso,
     Dictamen,
     Extraccion,
     Interrupcion,
     Momento,
+    PreguntaComunicacion,
     Revision,
     SegundaRevision,
     Segmento,
@@ -24,6 +28,9 @@ from .esquema import (
     Visual,
 )
 from .metricas import estadisticas, nota
+
+# El análisis de comunicación de cada entrevista, si lo tiene (lo escribe entrevistas.comunicacion)
+COMUNICACION = Path(__file__).resolve().parents[3] / "apps" / "web" / "lib" / "elecciones" / "comunicacion"
 from .modelo import Cliente, Comprobacion, ordenar_fuentes
 
 log = logging.getLogger("entrevistas")
@@ -551,24 +558,50 @@ def segunda_revision(
     return hechas
 
 
+def _comunicacion(a: Analisis) -> dict | None:
+    """El análisis de comunicación de la entrevista, si lo tiene."""
+    ruta = COMUNICACION / f"{a.id}.json"
+    return json.loads(ruta.read_text(encoding="utf-8")) if a.id and ruta.exists() else None
+
+
+def de_comunicacion(a: Analisis) -> tuple[list[PreguntaComunicacion], list[Compromiso]] | None:
+    """Las preguntas y los compromisos del análisis de comunicación de la entrevista, si lo tiene. Las preguntas en
+    que el entrevistador no deja contestar no cuentan."""
+    if not (c := _comunicacion(a)):
+        return None
+    preguntas = [PreguntaComunicacion.model_validate(p) for p in c["preguntas"] if p["respuesta"] != "sin_respuesta"]
+    return preguntas, [Compromiso.model_validate(x) for x in c["compromisos"]]
+
+
 def recalcular(a: Analisis) -> Analisis:
-    """La nota y las estadísticas con las verificaciones aprobadas en la segunda revisión."""
+    """La nota y las estadísticas con las verificaciones aprobadas en la segunda revisión. Si la entrevista tiene
+    análisis de comunicación, sus preguntas y sus compromisos sustituyen a los del análisis."""
+    preguntas, propuestas = de_comunicacion(a) or (a.preguntas, a.propuestas)
     return a.model_copy(
         update={
-            "nota": nota(a.segmentos, a.preguntas, a.propuestas, a.ataques, a.revisiones),
-            "stats": estadisticas(a.preguntas, a.propuestas, a.ataques, a.stats.faltas),
+            "nota": nota(a.segmentos, preguntas, propuestas, a.ataques, a.revisiones),
+            "stats": estadisticas(preguntas, propuestas, a.ataques, a.stats.faltas),
         }
     )
+
+
+def preguntas_de(a: Analisis) -> list[tuple[str, str]]:
+    """El id y el texto de cada pregunta: las del análisis de comunicación, si la entrevista lo tiene, porque son
+    las que publica la web; si no, las del análisis."""
+    if c := _comunicacion(a):
+        return [(p["id"], p["texto"]) for p in c["preguntas"]]
+    return [(p.id, p.texto) for p in a.preguntas]
 
 
 def agrupar_comunes(cliente, entrevistas: dict[str, Analisis]) -> list[dict]:
     """Agrupa las preguntas comunes de varias entrevistas (la misma pregunta a distintos candidatos).
     Solo se aceptan ids que existen y como mucho una pregunta por candidato en cada grupo. Entran todas las
     preguntas: la marca `comun` la pone el análisis de cada entrevista sin ver las demás, y se queda corta."""
-    filas = [f"{slug}:{p.id} | {slug} | {p.texto}" for slug, a in entrevistas.items() for p in a.preguntas]
+    preguntas = {slug: preguntas_de(a) for slug, a in entrevistas.items()}
+    filas = [f"{slug}:{pid} | {slug} | {texto}" for slug, lista in preguntas.items() for pid, texto in lista]
     if not filas:
         return []
-    existentes = {f"{slug}:{p.id}" for slug, a in entrevistas.items() for p in a.preguntas}
+    existentes = {f"{slug}:{pid}" for slug, lista in preguntas.items() for pid, _ in lista}
     salida = []
     for k, g in enumerate(cliente.agrupar_comunes("\n".join(filas)).grupos):
         respuestas: dict[str, str] = {}

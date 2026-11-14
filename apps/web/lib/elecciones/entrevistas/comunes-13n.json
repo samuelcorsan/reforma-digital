@@ -1,0 +1,176 @@
+[
+  {
+    "id": "c1",
+    "tema": "Entrevista",
+    "pregunta": "¿Por qué aceptó venir a esta entrevista?",
+    "respuestas": {
+      "ada-colau": "c1",
+      "alberto-nunez-feijoo": "c1"
+    }
+  },
+  {
+    "id": "c2",
+    "tema": "Polarización",
+    "pregunta": "¿No participan todos los partidos, también el suyo, de la crispación y el juego sucio?",
+    "respuestas": {
+      "alberto-nunez-feijoo": "c7",
+      "pedro-sanchez": "c8"
+    }
+  },
+  {
+    "id": "c3",
+    "tema": "Promesas",
+    "pregunta": "¿Qué garantiza que no cambiará de opinión sobre lo que promete hoy?",
+    "respuestas": {
+      "ada-colau": "c9",
+      "pedro-sanchez": "c142"
+    }
+  },
+  {
+    "id": "c4",
+    "tema": "Trenes",
+    "pregunta": "¿Debería haber dimitido o haber sido cesado el ministro de Transportes tras el primer accidente ferroviario?",
+    "respuestas": {
+      "ada-colau": "c48",
+      "pedro-sanchez": "c14"
+    }
+  },
+  {
+    "id": "c5",
+    "tema": "Zapatero",
+    "pregunta": "¿Cree que el caso de Zapatero es lawfare o pondría la mano en el fuego por él?",
+    "respuestas": {
+      "ada-colau": "c40",
+      "pedro-sanchez": "c110"
+    }
+  },
+  {
+    "id": "c6",
+    "tema": "CNI",
+    "pregunta": "¿Es creíble que el CNI y el Gobierno no supieran de antemano que miles de personas avanzaban hacia Ceuta?",
+    "respuestas": {
+      "ada-colau": "c67",
+      "pedro-sanchez": "c35"
+    }
+  },
+  {
+    "id": "c7",
+    "tema": "Ceuta",
+    "pregunta": "¿Quién es el responsable de la crisis de Ceuta? ¿Lo es Marruecos?",
+    "respuestas": {
+      "ada-colau": "c65",
+      "alberto-nunez-feijoo": "c58",
+      "pedro-sanchez": "c39"
+    }
+  },
+  {
+    "id": "c8",
+    "tema": "Ceuta",
+    "pregunta": "¿Qué habría hecho usted como presidente durante la crisis de Ceuta?",
+    "respuestas": {
+      "ada-colau": "c74",
+      "alberto-nunez-feijoo": "c55"
+    }
+  },
+  {
+    "id": "c9",
+    "tema": "Marruecos",
+    "pregunta": "¿Hay una especie de pleitesía del Gobierno español hacia Marruecos?",
+    "respuestas": {
+      "ada-colau": "c79",
+      "pedro-sanchez": "c47"
+    }
+  },
+  {
+    "id": "c10",
+    "tema": "Vacaciones",
+    "pregunta": "¿Cómo valora que el presidente del Gobierno se fuera de vacaciones durante la crisis de Ceuta?",
+    "respuestas": {
+      "ada-colau": "c69",
+      "pedro-sanchez": "c54"
+    }
+  },
+  {
+    "id": "c11",
+    "tema": "Marruecos",
+    "pregunta": "Si se demuestra que Marruecos participó en la crisis de Ceuta, ¿qué debe hacer el Gobierno de España con Marruecos?",
+    "respuestas": {
+      "ada-colau": "c76",
+      "alberto-nunez-feijoo": "c60"
+    }
+  },
+  {
+    "id": "c12",
+    "tema": "Inmigración",
+    "pregunta": "¿Por qué cree que la inmigración preocupa tanto en España?",
+    "respuestas": {
+      "ada-colau": "c86",
+      "pedro-sanchez": "c69"
+    }
+  },
+  {
+    "id": "c13",
+    "tema": "Demografía",
+    "pregunta": "¿Cómo valora la proyección del INE de que en 50 años alrededor del 40 % de los residentes en España haya nacido fuera?",
+    "respuestas": {
+      "ada-colau": "c100",
+      "alberto-nunez-feijoo": "c71",
+      "pedro-sanchez": "c79"
+    }
+  },
+  {
+    "id": "c14",
+    "tema": "Colau",
+    "pregunta": "¿Cómo definiría a Ada Colau?",
+    "respuestas": {
+      "alberto-nunez-feijoo": "c109",
+      "pedro-sanchez": "c145"
+    }
+  },
+  {
+    "id": "c15",
+    "tema": "Abascal",
+    "pregunta": "¿Cómo definiría a Santiago Abascal?",
+    "respuestas": {
+      "ada-colau": "c167",
+      "alberto-nunez-feijoo": "c110",
+      "pedro-sanchez": "c147"
+    }
+  },
+  {
+    "id": "c16",
+    "tema": "Sánchez",
+    "pregunta": "¿Cómo definiría a Pedro Sánchez?",
+    "respuestas": {
+      "ada-colau": "c164",
+      "alberto-nunez-feijoo": "c111"
+    }
+  },
+  {
+    "id": "c17",
+    "tema": "Feijóo",
+    "pregunta": "¿Cómo definiría a Alberto Núñez Feijóo?",
+    "respuestas": {
+      "ada-colau": "c166",
+      "pedro-sanchez": "c146"
+    }
+  },
+  {
+    "id": "c18",
+    "tema": "Entrevista",
+    "pregunta": "¿Se arrepiente de haber venido a esta entrevista?",
+    "respuestas": {
+      "ada-colau": "c186",
+      "pedro-sanchez": "c151"
+    }
+  },
+  {
+    "id": "c19",
+    "tema": "Alegato",
+    "pregunta": "Tiene la cámara para dirigirse libremente a los votantes: ¿qué les diría?",
+    "respuestas": {
+      "ada-colau": "c187",
+      "pedro-sanchez": "c152"
+    }
+  }
+]
