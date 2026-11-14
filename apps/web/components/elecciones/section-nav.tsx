@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Collapsible,
   CollapsibleContent,
@@ -27,22 +27,19 @@ import {
   type ElectionPage,
 } from '../../lib/elecciones/pages';
 
-// Las secciones de una página. `href` es un ancla (`#id`) o, para lo que vive en otra
-// página, una ruta. Los informes la dan hecha; en las demás páginas sale de sus títulos de sección.
-// Un enlace de la página; con `children`, sus partes, que se despliegan al estar dentro de ellas.
-export type NavItem = { href: string; label: string; children?: { href: string; label: string }[] };
+// Un enlace de la barra; con `children`, sus partes, que se despliegan al estar dentro de ellas.
+export type NavItem = { href: string; label: string; children?: NavItem[] };
+// Dentro de una entrevista, la barra es la suya: de quién es, sus subpáginas y la vuelta al listado.
 export type LocalNav = {
   title: string;
-  sections: { items: NavItem[] }[];
+  subtitle?: string;
+  back: { href: string; label: string };
+  // La subpágina que se marca cuando la ruta no es ninguna de ellas.
+  current?: string;
+  items: NavItem[];
 };
 
-type Section = {
-  key: string;
-  label: string;
-  href?: string;
-  el?: HTMLElement | null;
-  children?: NavItem['children'];
-};
+type Section = { key: string; label: string; el: HTMLElement };
 
 const item = 'h-10 gap-3 px-3 text-[15px] [&_svg]:size-[18px]';
 // Las secciones de la página y las partes del análisis: más pequeñas, y la actual marcada.
@@ -76,42 +73,40 @@ function keepInView(root: HTMLElement | null, center: boolean) {
 const motion = () =>
   matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : ('smooth' as const);
 
-// Un solo árbol: la portada, los grupos que se despliegan con sus apartados y, colgando del apartado
-// en el que se está, las secciones de la página, con la que se está leyendo marcada.
+// El enlace de la barra que corresponde a la ruta: el exacto o, si no, el más largo que la contiene
+// (una verificación concreta cae en «Verificaciones»).
+const currentHref = (items: NavItem[], pathname: string) =>
+  items
+    .flatMap((i) => [i, ...(i.children ?? [])])
+    .map((i) => i.href)
+    .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
+    .sort((a, b) => b.length - a.length)[0];
+
+// Fuera de una entrevista, un solo árbol: la portada, los grupos que se despliegan con sus apartados
+// y, colgando del apartado en el que se está, las secciones de la página. Dentro de una entrevista,
+// la de la entrevista. En los dos casos, la sección que se está leyendo, marcada.
 export function SectionNav({ current, local }: { current?: ElectionPage; local?: LocalNav }) {
   const home = current && electionGroups.find((g) => g.pages.includes(current));
   const pathname = usePathname();
-  const [found, setFound] = useState<Section[]>([]);
-  const sections = useMemo<Section[]>(
-    () =>
-      local ? local.sections.flatMap((s) => s.items.map((i) => ({ key: i.href, ...i }))) : found,
-    [local, found],
-  );
 
   // Las secciones de la página, también las que llegan después (las partes que cargan datos).
+  const [sections, setSections] = useState<Section[]>([]);
   useEffect(() => {
-    if (local || !current) return;
+    if (!current) return;
     const main = document.querySelector('main');
-    const scan = () => setFound(findSections());
+    const scan = () => setSections(findSections());
     scan();
     const watch = new MutationObserver(scan);
     if (main) watch.observe(main, { childList: true, subtree: true });
     return () => watch.disconnect();
-  }, [local, current]);
+  }, [current, pathname]);
 
   // La sección que se está leyendo: la última cuyo título ya ha pasado arriba.
   const [reading, setReading] = useState<string | null>(null);
   useEffect(() => {
-    const targets = sections.map(
-      (s) =>
-        [
-          s.key,
-          s.el ?? (s.href?.startsWith('#') ? document.getElementById(s.href.slice(1)) : null),
-        ] as const,
-    );
     const update = () =>
       setReading(
-        targets.filter(([, el]) => el && el.getBoundingClientRect().top <= 200).at(-1)?.[0] ?? null,
+        sections.filter((s) => s.el.getBoundingClientRect().top <= 200).at(-1)?.key ?? null,
       );
     update();
     window.addEventListener('scroll', update, { passive: true });
@@ -122,6 +117,85 @@ export function SectionNav({ current, local }: { current?: ElectionPage; local?:
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => keepInView(root.current, true), [pathname]);
   useEffect(() => keepInView(root.current, false), [reading]);
+
+  // Sin la que repite el nombre del enlace («Resumen» dentro de Resumen).
+  const onPage = (label: string) => {
+    const list = sections.filter((s) => s.label !== label);
+    return (
+      list.length > 1 && (
+        <ul
+          aria-label={`En esta página: ${label}`}
+          className="m-0 my-1 ml-2 grid list-none gap-0.5 border-l border-sidebar-border p-0 pl-2.5"
+        >
+          {list.map((s) => (
+            <li key={s.key}>
+              <button
+                type="button"
+                onClick={() => s.el.scrollIntoView({ behavior: motion() })}
+                aria-current={s.key === reading ? 'location' : undefined}
+                className={cn(link, s.key === reading && active)}
+              >
+                {s.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )
+    );
+  };
+
+  if (local) {
+    const here = local.current ?? currentHref(local.items, pathname);
+    const tree = (items: NavItem[]) => (
+      <ul className="m-0 my-0.5 ml-2 grid list-none gap-0.5 border-l border-sidebar-border p-0 pl-2.5">
+        {items.map((i) => (
+          <li key={i.href}>
+            <Link
+              href={i.href}
+              aria-current={i.href === here ? 'page' : undefined}
+              className={cn(link, i.href === here && active)}
+            >
+              {i.label}
+            </Link>
+            {i.href === here && onPage(i.label)}
+          </li>
+        ))}
+      </ul>
+    );
+    return (
+      <SidebarGroup ref={root} className="p-0">
+        <Link
+          href={local.back.href}
+          className="mb-4 inline-flex min-h-9 items-center gap-1.5 self-start rounded-md px-3 text-sm text-muted-foreground no-underline hover:bg-sidebar-accent hover:text-foreground"
+        >
+          <Icon name="izquierda" size={14} />
+          {local.back.label}
+        </Link>
+        <div className="mb-3 grid gap-0.5 px-3">
+          <span className="text-[15px] font-medium">{local.title}</span>
+          {local.subtitle && (
+            <span className="text-[13px] leading-snug text-muted-foreground">{local.subtitle}</span>
+          )}
+        </div>
+        <SidebarMenu className="gap-0.5">
+          {local.items.map((i) => (
+            <SidebarMenuItem key={i.href}>
+              <SidebarMenuButton
+                render={<Link href={i.href} />}
+                isActive={i.href === here}
+                aria-current={i.href === here ? 'page' : undefined}
+                className="h-9 text-sm"
+              >
+                <span>{i.label}</span>
+              </SidebarMenuButton>
+              {i.href === here && onPage(i.label)}
+              {here && i.children?.length && here.startsWith(i.href) ? tree(i.children) : null}
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroup>
+    );
+  }
 
   return (
     <SidebarGroup ref={root} className="p-0">
@@ -162,64 +236,7 @@ export function SectionNav({ current, local }: { current?: ElectionPage; local?:
                     >
                       <span>{electionPages[id].short}</span>
                     </SidebarMenuSubButton>
-                    {id === current && sections.length > 1 && (
-                      <ul
-                        aria-label={`En esta página: ${local?.title ?? electionPages[id].short}`}
-                        className="m-0 my-1 ml-2 grid list-none gap-0.5 border-l border-sidebar-border p-0 pl-2.5"
-                      >
-                        {sections.map((s) => {
-                          // Un ancla, si es la que se está leyendo; una subpágina, si es esta.
-                          const here =
-                            s.href?.startsWith('#') === false
-                              ? s.href === pathname
-                              : s.key === reading;
-                          const className = cn(link, here && active);
-                          return (
-                            <li key={s.key}>
-                              {s.href ? (
-                                <Link
-                                  href={s.href}
-                                  aria-current={
-                                    here
-                                      ? s.href.startsWith('#')
-                                        ? 'location'
-                                        : 'page'
-                                      : undefined
-                                  }
-                                  className={className}
-                                >
-                                  {s.label}
-                                </Link>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => s.el?.scrollIntoView({ behavior: motion() })}
-                                  aria-current={here ? 'location' : undefined}
-                                  className={className}
-                                >
-                                  {s.label}
-                                </button>
-                              )}
-                              {s.href && s.children?.length && pathname.startsWith(s.href) ? (
-                                <ul className="m-0 my-0.5 ml-2 grid list-none gap-0.5 border-l border-sidebar-border p-0 pl-2">
-                                  {s.children.map((child) => (
-                                    <li key={child.href}>
-                                      <Link
-                                        href={child.href}
-                                        aria-current={child.href === pathname ? 'page' : undefined}
-                                        className={cn(link, child.href === pathname && active)}
-                                      >
-                                        {child.label}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
-                              ) : null}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
+                    {id === current && onPage(electionPages[id].short)}
                   </SidebarMenuSubItem>
                 ))}
               </SidebarMenuSub>
