@@ -12,6 +12,7 @@ import { Input } from '@reforma-digital/design/ui/input';
 import { Button, buttonVariants } from '@reforma-digital/design/ui/button';
 
 import type { ReactNode } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import type { CongressIndex, SessionCard, Vote, VoteCard } from '../../lib/congreso/schema';
 import { congressBase } from '../../lib/congreso/routes';
@@ -375,6 +376,48 @@ export function Hemicycle({
     </Card>
   );
 }
+const roman: Record<string, number> = { I: 1, V: 5, X: 10, L: 50 };
+const legislatureNumber = (numeral: string) =>
+  [...numeral].reduce((total, c, i) => {
+    const value = roman[c] ?? 0;
+    return total + (value < (roman[numeral[i + 1] ?? ''] ?? 0) ? -value : value);
+  }, 0);
+
+// Foto oficial del Congreso. Solo hay `codigo` para quien está en el plano del hemiciclo
+export function Avatar({
+  index,
+  deputy,
+  size = 56,
+}: {
+  index: CongressIndex;
+  deputy: CongressIndex['diputados'][number];
+  size?: number;
+}) {
+  return (
+    <span
+      className={
+        'cg-avatar grid [place-items:center] overflow-hidden shrink-0 [border:2px_solid] [border-radius:50%] [background:var(--muted)] [font-family:var(--font-brand-mono)]'
+      }
+      style={{ borderColor: index.grupos[deputy.grupo]?.color, width: size, height: size }}
+    >
+      {deputy.codigo ? (
+        <Image
+          src={`https://www.congreso.es/docu/imgweb/diputados/${deputy.codigo}_${legislatureNumber(index.meta.legislatura)}.jpg`}
+          alt=""
+          width={size}
+          height={size}
+          className="size-full object-cover [object-position:50%_20%]"
+        />
+      ) : (
+        deputyName(deputy.nombre)
+          .split(' ')
+          .map((part) => part.charAt(0))
+          .slice(0, 2)
+          .join('')
+      )}
+    </span>
+  );
+}
 export function Deputies({
   index,
   deputies = index.diputados,
@@ -402,18 +445,7 @@ export function Deputies({
           }
         >
           <CardContent>
-            <span
-              className={
-                'cg-avatar grid [place-items:center] w-14 h-14 [border:2px_solid] [border-radius:50%] [background:var(--muted)] [font-family:var(--font-brand-mono)]'
-              }
-              style={{ borderColor: index.grupos[deputy.grupo]?.color }}
-            >
-              {deputyName(deputy.nombre)
-                .split(' ')
-                .map((part) => part.charAt(0))
-                .slice(0, 2)
-                .join('')}
-            </span>
+            <Avatar index={index} deputy={deputy} />
             <h3>{deputyName(deputy.nombre)}</h3>
             <p>{deputy.provincia}</p>
             <span

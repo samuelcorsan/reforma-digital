@@ -401,6 +401,17 @@ export const extraSchema = z.record(
         z.union([z.string(), z.array(z.union([z.string(), z.array(z.string())]))]),
       )
       .optional(),
+    bienes: z
+      .array(
+        z.object({
+          fecha: date,
+          tipo: z.enum(['inicial', 'modificación', 'final', '']),
+          bocg: z.string(),
+          pagina: count,
+          url: sourceUrl,
+        }),
+      )
+      .optional(),
   }),
 );
 

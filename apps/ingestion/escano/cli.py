@@ -21,7 +21,7 @@ from datetime import date, timedelta
 
 import json
 
-from . import agenda, boe, calidad, diario, diputados, hemiciclo, intereses, leyes, llamamiento, organos, preguntas, votaciones
+from . import agenda, bienes, boe, calidad, diario, diputados, hemiciclo, intereses, leyes, llamamiento, organos, preguntas, votaciones
 from .config import CRUDOS, SITIO, VOTACIONES
 from .construir import construir
 
@@ -46,6 +46,7 @@ def actualizar(desde: date, hasta: date, con_ia: bool) -> None:
     print(f"· Comisiones: {len(organos.actualizar())}")
     print(f"· Iniciativas legislativas: {len(leyes.actualizar()['iniciativas'])}")
     print(f"· Declaraciones de intereses: {len(intereses.actualizar())} diputados")
+    print(f"· Declaraciones de bienes (BOCG): {len(bienes.actualizar()['declaraciones'])} diputados")
     pr = preguntas.actualizar()["preguntas"]
     print(f"· Preguntas escritas: {len(pr)}, {sum(p['estado'] == 'pendiente' for p in pr)} sin contestar")
     ag = agenda.actualizar()

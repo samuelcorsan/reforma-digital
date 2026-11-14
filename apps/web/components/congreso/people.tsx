@@ -31,6 +31,7 @@ import {
   Filters,
   Pagination,
   Hemicycle,
+  Avatar,
   date,
   href,
 } from './common';
@@ -144,6 +145,7 @@ export async function People({
     return (
       <>
         <Intro label={`${deputy.grupo} · ${deputy.provincia}`} title={deputyName(deputy.nombre)}>
+          <Avatar index={index} deputy={deputy} size={96} />
           <p>
             {deputy.baja
               ? `De baja desde ${deputy.baja}`
@@ -216,6 +218,41 @@ export async function People({
                 ))}
               </Section>
             )}
+            {extra.bienes?.length ? (
+              <Section title="Declaración de bienes y rentas">
+                <p className="[max-width:70ch] [color:var(--text-secondary)]">
+                  Declaraciones publicadas en el Boletín Oficial de las Cortes Generales. El
+                  Congreso las publica escaneadas: enlazamos la página del original, sin transcribir
+                  cifras.
+                </p>
+                <ul
+                  className={
+                    'cg-list list-none p-0 [&_:is(li,_article)]:flex [&_:is(li,_article)]:justify-between [&_:is(li,_article)]:gap-6 [&_:is(li,_article)]:[padding:16px_0] [&_:is(li,_article)]:[border-bottom:1px_solid_var(--border)] [&_span]:[color:var(--muted-foreground)] [&_.cg-source]:whitespace-nowrap'
+                  }
+                >
+                  {extra.bienes.map((d) => (
+                    <li key={d.url}>
+                      <div className="flex flex-col gap-1">
+                        <b>
+                          {
+                            {
+                              inicial: 'Declaración inicial',
+                              modificación: 'Modificación',
+                              final: 'Declaración final',
+                              '': 'Declaración',
+                            }[d.tipo]
+                          }
+                        </b>
+                        <span className="text-sm">Publicada el {date(d.fecha)}</span>
+                      </div>
+                      <Source url={d.url}>
+                        BOCG {d.bocg}, pág. {d.pagina}
+                      </Source>
+                    </li>
+                  ))}
+                </ul>
+              </Section>
+            ) : null}
           </>
         )}
         <Section title="Cómo votó">
