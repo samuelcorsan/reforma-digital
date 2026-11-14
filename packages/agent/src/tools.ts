@@ -180,7 +180,7 @@ export type EventoAgente =
       estado: 'inicio' | 'fin' | 'error';
       detalle?: string;
     }
-  | { tipo: 'fuentes'; fuentes: Fuente[] }
+  | { tipo: 'fuentes'; actividad: string; fuentes: Fuente[]; consultadas: Fuente[] }
   | { tipo: 'uso'; uso: Uso }
   | { tipo: 'privacidad'; filtrados: number }
   /** Datos ocultos al modelo en el mensaje de la persona. */
@@ -393,8 +393,8 @@ export function crearHerramientas(ctx: Contexto) {
   // El modelo puede pedir varias acciones a la vez: en la página se hacen de una en una, en orden.
   let cola: Promise<unknown> = Promise.resolve();
   const enOrden =
-    <A, R>(fn: (a: A, o: { abortSignal?: AbortSignal }) => Promise<R>) =>
-    (a: A, o: { abortSignal?: AbortSignal }): Promise<R> => {
+    <A, R>(fn: (a: A, o: { abortSignal?: AbortSignal; toolCallId: string }) => Promise<R>) =>
+    (a: A, o: { abortSignal?: AbortSignal; toolCallId: string }): Promise<R> => {
       // Lo que esperaba en la cola no se hace si el turno se ha parado mientras.
       const r = cola.then(() => {
         o.abortSignal?.throwIfAborted();
@@ -454,11 +454,18 @@ export function crearHerramientas(ctx: Contexto) {
           signalDe(opts),
         );
         if (costeUsd !== null) ctx.uso.costeUsd += costeUsd;
+        const consultadas: Fuente[] = [];
         const vistas = resultados.flatMap((r) => {
           const f = ctx.fuentes.añadir(r.url, r.titulo, 'busqueda');
+          if (f) consultadas.push({ ...f, origen: 'busqueda' });
           return f ? [formatoFuente(f, r.extracto.slice(0, 1400))] : [];
         });
-        ctx.evento({ tipo: 'fuentes', fuentes: ctx.fuentes.lista() });
+        ctx.evento({
+          tipo: 'fuentes',
+          actividad: opts.toolCallId,
+          fuentes: ctx.fuentes.lista(),
+          consultadas,
+        });
         return vistas.length
           ? vistas.join('\n\n') +
               '\n\nPara citar un dato necesitas su texto literal: si el extracto no basta, usa leer_pagina.'
@@ -491,7 +498,12 @@ export function crearHerramientas(ctx: Contexto) {
         }
         const f = ctx.fuentes.añadir(p.url, p.titulo, 'pagina');
         if (!f) return `${host(p.url)} no usa https.`;
-        ctx.evento({ tipo: 'fuentes', fuentes: ctx.fuentes.lista() });
+        ctx.evento({
+          tipo: 'fuentes',
+          actividad: opts.toolCallId,
+          fuentes: ctx.fuentes.lista(),
+          consultadas: [f],
+        });
         const trozo = p.texto.slice(desde, desde + 12000);
         const resto =
           p.texto.length > desde + 12000
@@ -665,7 +677,7 @@ export function crearHerramientas(ctx: Contexto) {
       description:
         'Texto completo de la página del navegador (sin elementos), por trozos. Si es una web oficial, queda como fuente citable.',
       inputSchema: z.object({ desde: z.number().int().min(0).optional() }),
-      execute: enOrden(async ({ desde = 0 }) => {
+      execute: enOrden(async ({ desde = 0 }, opts) => {
         const nav = await navegador();
         const { texto, total, titulo } = await leerTextoPagina(nav, desde, 10000);
         ctx.privacidad.actualizar(todosLosDatos(ctx));
@@ -675,13 +687,18 @@ export function crearHerramientas(ctx: Contexto) {
         if (
           isOfficial(nav.url()) &&
           !URL.parse(nav.url())?.search &&
-          !desde &&
+          (!desde || ctx.fuentes.obtener(nav.url())?.origen === 'pagina') &&
           !ctx.privacidad.contieneDatos(texto)
         ) {
           const f = ctx.fuentes.añadir(nav.url(), titulo, 'pagina');
           if (f) {
             cabecera = `[${f.id}] ${f.titulo} — ${host(f.url)} (fuente citable)\n`;
-            ctx.evento({ tipo: 'fuentes', fuentes: ctx.fuentes.lista() });
+            ctx.evento({
+              tipo: 'fuentes',
+              actividad: opts.toolCallId,
+              fuentes: ctx.fuentes.lista(),
+              consultadas: [f],
+            });
           }
         }
         return (
@@ -970,15 +987,22 @@ export function crearHerramientas(ctx: Contexto) {
         );
         if (!normas.length)
           return 'El BOE no tiene ninguna norma con esas palabras en el título. Prueba con menos palabras o con otras.';
+        const consultadas: Fuente[] = [];
         const vistas = normas.flatMap((n) => {
           const f = ctx.fuentes.añadir(n.url, n.titulo, 'busqueda');
+          if (f) consultadas.push({ ...f, origen: 'busqueda' });
           return f
             ? [
                 `[${f.id}] ${n.titulo}${n.rango ? ` — ${n.rango}` : ''}${n.publicada ? `, publicada el ${n.publicada}` : ''}${n.vigente ? '' : ' (ya no está vigente)'}`,
               ]
             : [];
         });
-        ctx.evento({ tipo: 'fuentes', fuentes: ctx.fuentes.lista() });
+        ctx.evento({
+          tipo: 'fuentes',
+          actividad: opts.toolCallId,
+          fuentes: ctx.fuentes.lista(),
+          consultadas,
+        });
         return vistas.join('\n');
       },
     }),

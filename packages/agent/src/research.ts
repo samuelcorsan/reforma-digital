@@ -22,7 +22,8 @@ export class Fuentes {
   }
   lista = () => [...this.porUrl.values()];
   obtener = (idOUrl: string) =>
-    this.porUrl.get(idOUrl) ?? this.lista().find((f) => f.id === idOUrl.trim().toUpperCase());
+    this.porUrl.get(URL.canParse(idOUrl) ? canonicalize(idOUrl) : idOUrl) ??
+    this.lista().find((f) => f.id === idOUrl.trim().toUpperCase());
 
   añadir(url: string, titulo: string, origen: Fuente['origen']): Fuente | undefined {
     if (!url.startsWith('https://')) return;

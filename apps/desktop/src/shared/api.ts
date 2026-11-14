@@ -80,7 +80,7 @@ export type ItemConversacion =
       /** Desde cuándo trabajaba el asistente en lo que llevó a esta acción, y cuándo terminó (ISO). */
       desde?: string;
       hasta?: string;
-      /** Las webs que encontró. */
+      /** Las webs consultadas por esta acción, incluidas las revisitadas. */
       fuentes?: string[];
     }
   | {
