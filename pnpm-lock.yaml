@@ -154,6 +154,9 @@ importers:
       '@reforma-digital/mcp':
         specifier: workspace:*
         version: link:../../packages/mcp
+      '@reforma-digital/renfe':
+        specifier: workspace:*
+        version: link:../../packages/renfe
       '@tailwindcss/postcss':
         specifier: ^4.1.0
         version: 4.3.3
@@ -362,6 +365,15 @@ importers:
       '@reforma-digital/bridge':
         specifier: workspace:*
         version: link:../bridge
+
+  packages/renfe:
+    dependencies:
+      '@modelcontextprotocol/server':
+        specifier: ^2.4.0
+        version: 2.4.0
+      zod:
+        specifier: ^4.1.0
+        version: 4.6.5
 
   packages/retrieval:
     dependencies:
