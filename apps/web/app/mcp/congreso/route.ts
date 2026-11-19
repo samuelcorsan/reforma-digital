@@ -1,5 +1,5 @@
 import { createCongresoMcp } from '@reforma-digital/mcp';
-import { GET as congreso } from '../api/congreso/[[...path]]/route';
+import { GET as congreso } from '../../api/congreso/[[...path]]/route';
 
 export const runtime = 'nodejs';
 
