@@ -13,6 +13,7 @@
     "@reforma-digital/agent": "workspace:*",
     "@reforma-digital/db": "workspace:*",
     "@reforma-digital/design": "workspace:*",
+    "@reforma-digital/mcp": "workspace:*",
     "@tailwindcss/postcss": "^4.1.0",
     "@vercel/analytics": "2.0.1",
     "dotenv": "^17.2.3",
