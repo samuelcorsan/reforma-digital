@@ -8,7 +8,6 @@ import random
 import re
 import time
 import urllib.request
-from contextlib import suppress
 from http.client import HTTPException
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
@@ -272,8 +271,11 @@ class ClienteGemini:
                 )
             return self._a_segundos(self._json("transcripcion", [archivo, texto], TranscripcionCruda, temperatura=temperatura))
         finally:
-            with suppress(Exception):
-                self.cliente.files.delete(name=archivo.name)  # caducaría a las 48 h; se borra en cuanto se usa
+            # Caducaría a las 48 h; se borra en cuanto se usa. Si falla, no tumba la transcripción, pero queda en el log.
+            try:
+                self.cliente.files.delete(name=archivo.name)
+            except Exception as e:
+                log.warning("no se pudo borrar %s de Gemini: %s", archivo.name, e)
 
     @staticmethod
     def _a_segundos(t: TranscripcionCruda) -> Transcripcion:

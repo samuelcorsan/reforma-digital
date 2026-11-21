@@ -231,10 +231,10 @@ def _siluetas(topo: dict, objeto: str, codigos: set[str], lado: float = 100.0) -
 def descargar() -> None:
     from .red import descargar as bajar
     CARPETA_CRUDOS.mkdir(parents=True, exist_ok=True)
-    for nombre in ("provinces", "municipalities"):
-        ruta = CARPETA_CRUDOS / f"{nombre}.json"
-        if not ruta.exists():
-            bajar(ES_ATLAS.format(nombre), ruta)
+    # Las provincias salen del propio fichero de municipios, así que basta con descargar ese.
+    ruta = CARPETA_CRUDOS / "municipalities.json"
+    if not ruta.exists():
+        bajar(ES_ATLAS.format("municipalities"), ruta)
 
 
 def escribir() -> dict:
