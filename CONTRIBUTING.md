@@ -100,7 +100,7 @@ Una PR se fusiona cuando:
 
 1. El check `check` del CI está en verde.
 2. Todos los comentarios de revisión están resueltos: arreglados o contestados con un motivo. GitHub no deja fusionar con conversaciones abiertas.
-3. Si toca una ruta de [CODEOWNERS](.github/CODEOWNERS) (CI y configuración de tests, reglas de lint, instrucciones y hooks de los agentes, frontera de seguridad de la extensión o base de datos), su propietario la ha aprobado.
+3. Si toca una ruta de [CODEOWNERS](.github/CODEOWNERS) (Congreso e ingesta, CI y configuración de tests, reglas de lint, instrucciones y hooks de los agentes, frontera de seguridad de la extensión o base de datos), su propietario la ha aprobado.
 
 En la PR no hay revisión automática, así que la revisión de correctitud la hace quien escribe el cambio antes de abrirla: en una sesión nueva, con contexto limpio y, a ser posible, con el modelo que no lo escribió (`/code-review` en Claude Code o `/review` en Codex). Sigue las [Code Review Rules](AGENTS.md#code-review-rules). Después pasa Ponytail Review para la simplicidad.
 
