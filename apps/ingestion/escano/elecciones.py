@@ -215,7 +215,7 @@ def decretos(leyes: dict, votaciones: list[dict], hoy: date | None = None) -> li
         n = rdl(v.get("titulo", "")) or rdl(v.get("texto", ""))
         if not n:
             continue
-        num = lambda k: int(v.get(k) or 0)
+        num = lambda k: int(v.get(k) or 0)  # noqa: B023 (se usa solo en esta iteración)
         # Los datos de la web no traen «aprobada»: entonces decide la mayoría simple, como en la convalidación.
         voto = {"id": v.get("id"), "fecha": v["fecha"], "si": num("si"), "no": num("no"), "abst": num("abst"),
                 "aprobada": str(v["aprobada"]) == "True" if v.get("aprobada") is not None else num("si") > num("no")}
@@ -293,7 +293,6 @@ def balance(salida: dict) -> dict:
     ajustadas = [v for v in votos if v["si"] + v["no"] > 300 and margen(v) <= 10]
     leyes = salida.get("leyes") or {"iniciativas": [], "aprobadas": []}
     aprobadas = Counter(a["tipo"] for a in leyes["aprobadas"] if a["tipo"] != "Real decreto-ley" or _es_rdl(a))
-    resoluciones = [a["titulo"] for a in leyes["aprobadas"] if a["tipo"] == "Real decreto-ley" and not _es_rdl(a)]
     preguntas = salida.get("preguntas") or []
     estrecha = min(votos, key=lambda v: (margen(v), -(v["si"] + v["no"])), default=None)
     return {

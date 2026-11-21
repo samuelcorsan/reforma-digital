@@ -21,7 +21,7 @@ import math
 import re
 import shutil
 import sys
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone, UTC
 from pathlib import Path
 
 import requests
@@ -261,7 +261,7 @@ def mercados() -> list[dict]:
                 h = json.loads(_bajar(HISTORIA.format(o["token"]))).get("history", [])
                 dias = {}
                 for x in h:
-                    dias[datetime.fromtimestamp(x["t"], timezone.utc).date().isoformat()] = round(float(x["p"]), 4)
+                    dias[datetime.fromtimestamp(x["t"], UTC).date().isoformat()] = round(float(x["p"]), 4)
                 o["hist"] = sorted(dias.items())
             except Exception:
                 o["hist"] = []
