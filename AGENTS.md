@@ -48,7 +48,7 @@
 
 ## Code Review Rules
 
-Codex applies these in its automatic review; `/code-review` and human reviewers use them too. Each finding cites `file:line` and a concrete failure scenario. Formatting, lint and types are CI's job; over-engineering is Ponytail Review's. Skip `pnpm-lock.yaml`, generated data and fixtures captured from official portals.
+`/code-review`, `/review` and human reviewers apply these; there is no automated review on PRs. Each finding cites `file:line` and a concrete failure scenario. Formatting, lint and types are CI's job; over-engineering is Ponytail Review's. Skip `pnpm-lock.yaml`, generated data and fixtures captured from official portals.
 
 ### Official portals
 
