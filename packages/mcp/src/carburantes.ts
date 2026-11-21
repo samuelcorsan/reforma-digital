@@ -26,21 +26,31 @@ const carburantes = {
 type Carburante = keyof typeof carburantes;
 
 type Municipio = { IDMunicipio: string; Municipio: string; Provincia: string; CCAA: string };
-let municipios: Promise<Municipio[]> | undefined;
+// Cada municipio con sus nombres para buscar: el del Ministerio, que pone el artículo detrás
+// («Coruña (A)», «Hospitalet de Llobregat (L')»), y el habitual, con el artículo delante.
+let municipios: Promise<{ m: Municipio; nombres: string[] }[]> | undefined;
 
-async function buscarMunicipio(fetchImpl: Fetch, nombre: string) {
+const conArticulo = (nombre: string) =>
+  nombre.replace(/^(.+) \((\p{L}{1,3}'?)\)$/u, (_, resto: string, articulo: string) =>
+    articulo.endsWith("'") ? articulo + resto : `${articulo} ${resto}`,
+  );
+
+export async function buscarMunicipio(fetchImpl: Fetch, nombre: string) {
   // La lista (unos 8.000) apenas cambia: se pide una vez por proceso.
   municipios ??= get(fetchImpl, `${API}/Listados/Municipios/`)
     .then((r) => r.json() as Promise<Municipio[]>)
+    .then((all) =>
+      all.map((m) => ({ m, nombres: [fold(m.Municipio), fold(conArticulo(m.Municipio))] })),
+    )
     .catch((error: unknown) => {
       municipios = undefined;
       throw error;
     });
-  const q = fold(nombre);
+  const q = fold(nombre).replaceAll('’', "'");
   const all = await municipios;
-  const exact = all.filter((m) => fold(m.Municipio) === q);
-  const partial = all.filter((m) => fold(m.Municipio).includes(q) && !exact.includes(m));
-  return [...exact, ...partial].slice(0, 15).map((m) => ({
+  const exact = all.filter(({ nombres }) => nombres.includes(q));
+  const partial = all.filter((x) => x.nombres.some((n) => n.includes(q)) && !exact.includes(x));
+  return [...exact, ...partial].slice(0, 15).map(({ m }) => ({
     id: m.IDMunicipio,
     municipio: m.Municipio,
     provincia: m.Provincia,

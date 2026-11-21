@@ -3,7 +3,7 @@
 // para lo que se puede romper al leerlas.
 import { describe, expect, it, vi } from 'vitest';
 import { buscarLegislacion, sumario, textoBloque } from './boe';
-import { gasolinerasBaratas } from './carburantes';
+import { buscarMunicipio, gasolinerasBaratas } from './carburantes';
 import { run, SourceError } from './comun';
 import { datosTabla } from './ine';
 
@@ -100,6 +100,25 @@ it('sorts stations by price and leaves out those without the fuel', async () => 
     ['B', 1.649],
   ]);
   expect(result.gasolineras[0]?.latitud).toBe(40.4);
+});
+
+it('finds towns by their usual name when the source puts the article last', async () => {
+  const municipio = (IDMunicipio: string, Municipio: string) => ({
+    IDMunicipio,
+    Municipio,
+    Provincia: 'P',
+    CCAA: 'C',
+  });
+  const fetchImpl = fetchJson([
+    municipio('1', 'Coruña (A)'),
+    municipio('2', "Hospitalet de Llobregat (L')"),
+  ]);
+  expect(await buscarMunicipio(fetchImpl, 'A Coruña')).toMatchObject([
+    { id: '1', municipio: 'Coruña (A)' },
+  ]);
+  expect(await buscarMunicipio(fetchImpl, 'l’hospitalet')).toMatchObject([{ id: '2' }]);
+  // El nombre que devuelve la herramienta también sirve para buscar.
+  expect(await buscarMunicipio(fetchImpl, 'Coruña (A)')).toMatchObject([{ id: '1' }]);
 });
 
 it('filters INE series without accents and dates each period in Madrid time', async () => {
