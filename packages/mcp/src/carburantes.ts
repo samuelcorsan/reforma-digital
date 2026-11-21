@@ -28,7 +28,7 @@ type Carburante = keyof typeof carburantes;
 type Municipio = { IDMunicipio: string; Municipio: string; Provincia: string; CCAA: string };
 let municipios: Promise<Municipio[]> | undefined;
 
-export async function buscarMunicipio(fetchImpl: Fetch, nombre: string) {
+async function buscarMunicipio(fetchImpl: Fetch, nombre: string) {
   // La lista (unos 8.000) apenas cambia: se pide una vez por proceso.
   municipios ??= get(fetchImpl, `${API}/Listados/Municipios/`)
     .then((r) => r.json() as Promise<Municipio[]>)

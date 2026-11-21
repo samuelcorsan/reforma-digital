@@ -22,7 +22,7 @@ const matches = (text: string, q: string[]) => q.every((w) => fold(text).include
 type Operacion = { Id: number; Codigo: string; Nombre: string; Url?: string };
 let operaciones: Promise<Operacion[]> | undefined;
 
-export async function buscarOperacion(fetchImpl: Fetch, q: string) {
+async function buscarOperacion(fetchImpl: Fetch, q: string) {
   operaciones ??= get(fetchImpl, `${API}/OPERACIONES_DISPONIBLES`)
     .then((r) => r.json() as Promise<Operacion[]>)
     .catch((error: unknown) => {
@@ -40,7 +40,7 @@ export async function buscarOperacion(fetchImpl: Fetch, q: string) {
     }));
 }
 
-export async function buscarTabla(fetchImpl: Fetch, operacion: string, q?: string) {
+async function buscarTabla(fetchImpl: Fetch, operacion: string, q?: string) {
   const tablas = (await (
     await get(fetchImpl, `${API}/TABLAS_OPERACION/${encodeURIComponent(operacion)}`)
   ).json()) as { Id: number; Nombre: string; Ultima_Modificacion?: string }[];
@@ -79,7 +79,7 @@ export async function datosTabla(fetchImpl: Fetch, tabla: number, ultimos: numbe
   };
 }
 
-export async function datosSerie(fetchImpl: Fetch, codigo: string, ultimos: number) {
+async function datosSerie(fetchImpl: Fetch, codigo: string, ultimos: number) {
   return serie(
     (await (
       await get(fetchImpl, `${API}/DATOS_SERIE/${encodeURIComponent(codigo)}?nult=${ultimos}`)

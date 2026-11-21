@@ -31,7 +31,7 @@ export async function get(fetchImpl: Fetch, url: string, accept = 'application/j
 }
 
 /** Ejecuta una herramienta: el resultado en JSON con la fuente al final, o el error para el asistente. */
-export async function run(source: string, produce: () => Promise<unknown>) {
+export async function run<T>(source: string, produce: () => Promise<T>) {
   try {
     return {
       content: [

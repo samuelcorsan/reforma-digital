@@ -122,7 +122,7 @@ const norma = z
   .regex(/^BOE-[A-Z]-\d{4}-\d+$/)
   .describe('Identificador de la norma, como BOE-A-2023-12203.');
 
-export async function indiceNorma(fetchImpl: Fetch, id: string) {
+async function indiceNorma(fetchImpl: Fetch, id: string) {
   const [meta, indice] = await Promise.all([
     get(fetchImpl, `${API}/legislacion-consolidada/id/${id}/metadatos`).then((r) => r.json()),
     get(fetchImpl, `${API}/legislacion-consolidada/id/${id}/texto/indice`).then((r) => r.json()),
@@ -163,7 +163,7 @@ export function textoBloque(xml: string) {
   };
 }
 
-export async function verBloque(fetchImpl: Fetch, id: string, bloque: string) {
+async function verBloque(fetchImpl: Fetch, id: string, bloque: string) {
   const xml = await (
     await get(
       fetchImpl,

@@ -62,7 +62,8 @@ describe('BOE', () => {
   it('escapes the search syntax so a title search cannot break the query', async () => {
     const fetchImpl = fetchJson({ data: [] });
     await buscarLegislacion(fetchImpl, 'ley (orgánica)', 1, 5);
-    const url = new URL(String(fetchImpl.mock.calls[0]?.[0]));
+    const pedido = fetchImpl.mock.calls[0]?.[0];
+    const url = new URL(pedido instanceof Request ? pedido.url : (pedido ?? ''));
     expect(JSON.parse(url.searchParams.get('query') ?? '')).toEqual({
       query: { query_string: { query: 'titulo:ley AND titulo:\\(orgánica\\)' } },
     });
