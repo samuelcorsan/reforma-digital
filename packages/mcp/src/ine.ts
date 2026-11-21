@@ -4,13 +4,15 @@
 import { z } from 'zod';
 import { fold, get, READ_ONLY_EXTERNAL, run, server, type Fetch } from './comun';
 
+// `tip=A` hace que el INE dé la periodicidad y el periodo por su nombre (Trimestral, T3) en vez de
+// por un id.
 const API = 'https://servicios.ine.es/wstempus/js/ES';
 const SOURCE = 'Fuente: Instituto Nacional de Estadística (ine.es).';
 
 const INSTRUCTIONS = `Estadísticas oficiales del Instituto Nacional de Estadística (INE): precios, empleo, población, economía…
 Se llega a un dato en tres pasos: buscar_operacion (la estadística, como IPC, EPA o ECP), buscar_tabla (sus tablas) y datos_tabla (las series de una tabla con sus últimos valores, filtradas por texto). Si ya conoces el código de una serie, usa datos_serie.
 Operaciones habituales: IPC (precios de consumo), EPA (población activa y paro), ECP (población residente), CNTR2010 (PIB trimestral), ETDP (compraventa de viviendas), IPV (precios de vivienda).
-Di siempre a qué periodo corresponde cada dato.
+Cada dato lleva su periodo en la notación del INE: 2026M10 es octubre de 2026, 2026T3 el tercer trimestre y 2025 el año entero; si el dato es de un día, la fecha («1 de octubre de 2026»). Di siempre a qué periodo corresponde cada dato.
 ${SOURCE}`;
 
 const words = (q: string | undefined) =>
@@ -42,33 +44,51 @@ async function buscarOperacion(fetchImpl: Fetch, q: string) {
 
 async function buscarTabla(fetchImpl: Fetch, operacion: string, q?: string) {
   const tablas = (await (
-    await get(fetchImpl, `${API}/TABLAS_OPERACION/${encodeURIComponent(operacion)}`)
-  ).json()) as { Id: number; Nombre: string; Ultima_Modificacion?: string }[];
+    await get(fetchImpl, `${API}/TABLAS_OPERACION/${encodeURIComponent(operacion)}?tip=A`)
+  ).json()) as { Id: number; Nombre: string; T3_Periodicidad: string }[];
   const w = words(q);
   const found = tablas.filter((t) => matches(t.Nombre, w));
   return {
     total: found.length,
-    tablas: found.slice(0, 30).map((t) => ({ id: t.Id, nombre: t.Nombre })),
+    tablas: found
+      .slice(0, 30)
+      .map((t) => ({ id: t.Id, nombre: t.Nombre, periodicidad: t.T3_Periodicidad })),
   };
 }
 
 type Serie = {
   COD: string;
   Nombre: string;
-  Data?: { Fecha: number; Anyo: number; Valor: number | null; Secreto?: boolean }[];
+  Data?: {
+    Fecha: string;
+    Anyo: number;
+    T3_Periodo: string;
+    Valor: number | null;
+    Secreto?: boolean;
+  }[];
 };
 
-// La fecha del INE es la medianoche de Madrid del inicio del periodo.
-const day = (ms: number) => new Date(ms).toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
+// El periodo es un código (A para el año, M10, T3) o, en operaciones como la ECP, el principio de
+// una fecha: «1 de octubre de».
+const periodo = ({ Anyo, T3_Periodo }: { Anyo: number; T3_Periodo: string }) =>
+  T3_Periodo === 'A'
+    ? `${Anyo}`
+    : /^[A-Z]+\d+$/.test(T3_Periodo)
+      ? `${Anyo}${T3_Periodo}`
+      : `${T3_Periodo} ${Anyo}`;
+
+// Del más reciente al más antiguo: DATOS_SERIE los da al revés que DATOS_TABLA.
 const serie = (s: Serie) => ({
   codigo: s.COD,
   nombre: s.Nombre.trim(),
-  datos: (s.Data ?? []).map((d) => ({ periodo: day(d.Fecha), valor: d.Secreto ? null : d.Valor })),
+  datos: [...(s.Data ?? [])]
+    .sort((a, b) => Date.parse(b.Fecha) - Date.parse(a.Fecha))
+    .map((d) => ({ periodo: periodo(d), valor: d.Secreto ? null : d.Valor })),
 });
 
 export async function datosTabla(fetchImpl: Fetch, tabla: number, ultimos: number, q?: string) {
   const series = (await (
-    await get(fetchImpl, `${API}/DATOS_TABLA/${tabla}?nult=${ultimos}`)
+    await get(fetchImpl, `${API}/DATOS_TABLA/${tabla}?nult=${ultimos}&tip=A`)
   ).json()) as Serie[];
   const w = words(q);
   const found = series.filter((s) => matches(s.Nombre, w));
@@ -82,7 +102,7 @@ export async function datosTabla(fetchImpl: Fetch, tabla: number, ultimos: numbe
 async function datosSerie(fetchImpl: Fetch, codigo: string, ultimos: number) {
   return serie(
     (await (
-      await get(fetchImpl, `${API}/DATOS_SERIE/${encodeURIComponent(codigo)}?nult=${ultimos}`)
+      await get(fetchImpl, `${API}/DATOS_SERIE/${encodeURIComponent(codigo)}?nult=${ultimos}&tip=A`)
     ).json()) as Serie,
   );
 }
