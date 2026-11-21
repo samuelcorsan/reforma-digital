@@ -119,7 +119,7 @@ describe('las entrevistas', () => {
     for (const c of candidates) {
       // No hay ficha de la persona: su ruta redirige a la entrevista (o a la portada si no tiene).
       await expect(generateMetadata(params([c.slug]))).rejects.toThrow('NEXT_REDIRECT');
-      const latest = interviewsOf(c.slug).at(0);
+      const latest = interviewsOf(c.slug)[0];
       if (!latest) continue;
       const { openGraph } = await generateMetadata(params([latest.id]));
       const image = `/og/entrevistas-${c.slug}.jpg`;

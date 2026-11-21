@@ -16,24 +16,21 @@ const extensionForbidden = [
   'eval',
 ];
 
-// Patterns agents use to make a type error or a failure disappear instead of fixing it.
+// A failure turned into a default value. `as any` and `as unknown as` are already covered by
+// typescript/no-explicit-any and anti-slop/no-chained-type-assertions.
+// Returning a typed result that carries the error (`return { error }`) still propagates it.
+const defaultValue =
+  ":matches([type=/^(Literal|ArrayExpression|ObjectExpression)$/], Identifier[name='undefined']):not(:has(Property[value.type='Identifier']))";
 const slopSelectors = [
   {
-    selector: 'TSAsExpression > TSAnyKeyword',
-    message:
-      '`as any` disables type checking. Narrow the type or validate the value at its boundary.',
-  },
-  {
-    selector: 'TSAsExpression > TSAsExpression',
-    message:
-      '`as unknown as X` launders an incompatible type. Model the real shape or convert explicitly.',
-  },
-  {
-    // Returning a typed result that carries the error (`return { error }`) still propagates it.
-    selector:
-      "CatchClause[body.body.length=1] > BlockStatement > ReturnStatement[argument.type=/^(Literal|ArrayExpression|ObjectExpression)$/]:not(:has(Property[value.type='Identifier']))",
+    selector: `CatchClause[body.body.length=1] > BlockStatement > ReturnStatement > ${defaultValue}.argument`,
     message:
       'This catch only returns a default and hides the error. Rethrow, narrow what you catch, or return the error.',
+  },
+  {
+    selector: `CallExpression[callee.property.name='catch'] > :matches(ArrowFunctionExpression, FunctionExpression) > ${defaultValue}.body`,
+    message:
+      'This .catch only returns a default and hides the error. Let it reject, narrow what you catch, or return the error.',
   },
 ];
 
@@ -100,6 +97,17 @@ export default defineConfig({
         'apps/web/components/elecciones/interviews.tsx',
       ],
       rules: { 'eslint/max-lines': 'off' },
+    },
+    {
+      // No tsconfig includes tests/*.ts yet, so they get a default one without strict or
+      // noUncheckedIndexedAccess, and these rules would mark the guards it requires as unnecessary.
+      // Remove once tests/ has its own tsconfig.
+      files: ['tests/*.ts'],
+      rules: {
+        'typescript/no-unnecessary-condition': 'off',
+        'typescript/no-unnecessary-type-assertion': 'off',
+        'typescript/no-unnecessary-boolean-literal-compare': 'off',
+      },
     },
     {
       // Existing debt: they mock the Congreso data layer until it accepts an injected connection.

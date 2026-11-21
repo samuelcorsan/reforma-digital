@@ -52,9 +52,9 @@ describe('chat web retrieval', () => {
       retrievalOnly: true,
     });
     expect(fetch).toHaveBeenCalledTimes(2);
-    expect(String(fetch.mock.calls[0][0])).toBe('https://api.nan.builders/v1/chat/completions');
-    expect(String(fetch.mock.calls[1][0])).toBe('https://api.exa.ai/search');
-    const init = fetch.mock.calls[1][1] as RequestInit;
+    expect(String(fetch.mock.calls[0]![0])).toBe('https://api.nan.builders/v1/chat/completions');
+    expect(String(fetch.mock.calls[1]![0])).toBe('https://api.exa.ai/search');
+    const init = fetch.mock.calls[1]![1] as RequestInit;
     expect(new Headers(init.headers).get('x-api-key')).toBe('test-only-exa');
     const request = await new Response(init.body).json();
     expect(request).toMatchObject({ query: 'Cómo obtener mi vida laboral', numResults: 8 });
@@ -96,7 +96,7 @@ describe('chat web retrieval', () => {
     expect(result.resolvedQuery).toBeUndefined();
     expect(result.understanding.jurisdiction).toBe('ES-AR');
     expect(result.understanding.region).toBe('ES-AR');
-    const request = await new Response((fetch.mock.calls[1][1] as RequestInit).body).json();
+    const request = await new Response((fetch.mock.calls[1]![1] as RequestInit).body).json();
     expect(request.includeDomains).not.toContain('sede.madrid.es');
   });
 

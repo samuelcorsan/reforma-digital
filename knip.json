@@ -3,7 +3,8 @@
   "treatConfigHintsAsErrors": true,
   "workspaces": {
     ".": {
-      "entry": ["scripts/lib/flow.ts"]
+      "entry": ["scripts/lib/flow.ts"],
+      "project": ["**/*.{js,mjs,cjs,jsx,ts,tsx,mts,cts}", "!.claude/**"]
     },
     "apps/extension": {
       "entry": ["src/content.ts", "src/popup.tsx"]
