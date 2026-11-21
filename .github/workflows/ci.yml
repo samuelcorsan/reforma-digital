@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-# A new push to a PR cancels its previous run; runs on main always finish.
+# A new push to a PR cancels its previous run. Each commit on main has its own group, so none is cancelled.
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}
+  group: ci-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   js:
@@ -23,8 +23,8 @@ jobs:
         with:
           node-version: '24'
           cache: pnpm
-      # Turbo's local cache, restored from the latest run so unchanged typecheck/build tasks replay.
-      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+      # Turbo's local cache. Only main saves it: a PR can read main's caches but not another PR's.
+      - uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
         with:
           path: .turbo
           key: turbo-${{ runner.os }}-${{ github.sha }}
@@ -32,6 +32,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check
       - run: pnpm check
+      - if: github.event_name == 'push'
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
       - run: node scripts/package.mjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
