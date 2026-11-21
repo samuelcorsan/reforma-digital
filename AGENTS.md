@@ -17,7 +17,7 @@
 
 ## Writing code
 
-`pnpm lint` (oxlint with types, anti-slop rules and knip in `pnpm check`) and ruff enforce most of this; the rest is for review.
+`pnpm check` (oxlint with types and anti-slop rules, then knip) and ruff in CI enforce most of this; the rest is for review.
 
 - Validate external input at its trust boundary, then trust the types. Preserve owned contracts internally instead of duplicating types, hiding failures behind defaults, or forcing incompatible values through casts.
 - No optional chaining, `??` defaults or guards for states the types say cannot happen. Missing required data is an error, not a silent fallback.
