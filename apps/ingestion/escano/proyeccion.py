@@ -17,7 +17,6 @@ import heapq
 import json
 import math
 import random
-from datetime import date
 
 from .config import DATOS
 from .elecciones import ESCANOS

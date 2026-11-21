@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import json
 import math
-from pathlib import Path
 
 from .config import CRUDOS, DATOS
 
@@ -232,16 +231,15 @@ def _siluetas(topo: dict, objeto: str, codigos: set[str], lado: float = 100.0) -
 def descargar() -> None:
     from .red import descargar as bajar
     CARPETA_CRUDOS.mkdir(parents=True, exist_ok=True)
-    for nombre in ("provinces", "municipalities"):
-        ruta = CARPETA_CRUDOS / f"{nombre}.json"
-        if not ruta.exists():
-            bajar(ES_ATLAS.format(nombre), ruta)
+    # Las provincias salen del propio fichero de municipios, así que basta con descargar ese.
+    ruta = CARPETA_CRUDOS / "municipalities.json"
+    if not ruta.exists():
+        bajar(ES_ATLAS.format("municipalities"), ruta)
 
 
 def escribir() -> dict:
     """Escribe data/elecciones/geo-provincias.json (52 circunscripciones) y geo-municipios.json."""
     descargar()
-    prov_topo = json.loads((CARPETA_CRUDOS / "provinces.json").read_text())
     muni_topo = json.loads((CARPETA_CRUDOS / "municipalities.json").read_text())
     # La proyección se calcula una vez, con las provincias del fichero de municipios, para que las dos capas casen.
     _, proj = _capa(muni_topo, "provinces", 0.5, 1)

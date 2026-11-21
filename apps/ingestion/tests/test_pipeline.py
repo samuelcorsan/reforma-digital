@@ -131,7 +131,7 @@ def test_session_summary_waits_for_new_analyses(monkeypatch, tmp_path):
     (sessions / "PL-999.json").write_text(json.dumps(session))
     monkeypatch.setattr(run, "DATOS", tmp_path)
     monkeypatch.setattr(analisis, "ANALISIS", tmp_path / "analisis")
-    monkeypatch.setattr(votaciones, "leer_todas", lambda: [])
+    monkeypatch.setattr(votaciones, "leer_todas", list)
     calls = []
 
     def llamar(cliente, mensaje, herramienta, max_tokens):
