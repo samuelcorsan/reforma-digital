@@ -89,10 +89,11 @@ const iconos = {
 } satisfies Record<string, Svg>;
 
 const pixelTurn = { derecha: 0, abajo: 90, izquierda: 180, arriba: 270 } as const;
-// Reproducir y pausa, en píxel como los chevrons: Nucleo no los tiene.
+// Reproducir, pausa y enviar, en píxel como los chevrons: Nucleo no los tiene.
 const pixelGlyph = {
   reproducir: 'M4 2h3v12H4zM7 4h3v8H7zM10 6h3v4h-3z',
   pausa: 'M3 2h4v12H3zM9 2h4v12H9z',
+  enviar: 'M7 2h2v12H7zM5 4h2v2H5zM9 4h2v2H9zM3 6h2v2H3zM11 6h2v2h-2z',
 } as const;
 
 export type IconName =
