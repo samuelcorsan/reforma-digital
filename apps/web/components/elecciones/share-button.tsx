@@ -16,7 +16,8 @@ export function ShareButton({ title }: { title: string }) {
 
   async function share() {
     const url = location.href;
-    if (navigator.share) {
+    // Los tipos dan `share` por hecho, pero no existe en todos los navegadores (Firefox de escritorio).
+    if (typeof navigator.share === 'function') {
       // Si se cancela el menú, no hay nada que avisar.
       await navigator.share({ title, url }).catch(() => {});
       return;

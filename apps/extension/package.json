@@ -6,6 +6,7 @@
   "dependencies": {
     "@reforma-digital/design": "workspace:*",
     "@reforma-digital/registry": "workspace:*",
-    "@reforma-digital/runtime": "workspace:*"
+    "@reforma-digital/runtime": "workspace:*",
+    "tailwindcss": "4.3.3"
   }
 }

@@ -198,16 +198,6 @@ export const replyNames = {
   cambia_tema: 'Cambia de tema',
   sin_respuesta: 'No le dejan contestar',
 } as const satisfies Record<z.infer<typeof reply>, string>;
-export const rapportIds = rapport.options;
-export const rapportNames = {
-  risa_o_broma: 'Bromas',
-  roce: 'Roces',
-  halago: 'Halagos',
-  acuerdo_explicito: 'Acuerdos explícitos',
-  pregunta_devuelta: 'Preguntas devueltas',
-  anecdota_personal: 'Anécdotas personales',
-  interrupcion_notable: 'Interrupciones notables',
-} as const satisfies Record<z.infer<typeof rapport>, string>;
 
 // Una pregunta dura: incómoda, repregunta o insistencia.
 export const isHard = (q: Question) => q.dureza !== 'neutra' && q.dureza !== 'comoda';

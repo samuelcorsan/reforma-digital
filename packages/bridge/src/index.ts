@@ -423,7 +423,7 @@ export function uniqueElement<T extends Element>(
 ): T | null {
   const matches = root.querySelectorAll(selector);
   const match = matches.item(0);
-  return matches.length === 1 && match && guard(match) ? match : null;
+  return matches.length === 1 && guard(match) ? match : null;
 }
 
 export function normalizedLabel(value: string): string {
@@ -442,7 +442,7 @@ export function fieldByLabel(root: ParentNode, label: string): FieldElement | nu
     .filter((element) => {
       const names = [
         element.getAttribute('aria-label') ?? '',
-        ...Array.from(element.labels ?? [], (l) => l.textContent ?? ''),
+        ...Array.from(element.labels ?? [], (l) => l.textContent),
       ];
       const labelledBy = element
         .getAttribute('aria-labelledby')
@@ -457,12 +457,8 @@ export function fieldByLabel(root: ParentNode, label: string): FieldElement | nu
 
 /** The link's URL if it is HTTPS on `host` or one of its subdomains; otherwise null. */
 export function officialHref(link: HTMLAnchorElement, host: string): string | null {
-  let url: URL;
-  try {
-    url = new URL(link.href);
-  } catch {
-    return null;
-  }
+  if (!URL.canParse(link.href)) return null;
+  const url = new URL(link.href);
   const onHost = url.hostname === host || url.hostname.endsWith(`.${host}`);
   return url.protocol === 'https:' && !url.username && !url.password && onHost ? url.href : null;
 }

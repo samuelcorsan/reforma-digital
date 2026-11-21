@@ -119,7 +119,7 @@ describe('las entrevistas', () => {
     for (const c of candidates) {
       // No hay ficha de la persona: su ruta redirige a la entrevista (o a la portada si no tiene).
       await expect(generateMetadata(params([c.slug]))).rejects.toThrow('NEXT_REDIRECT');
-      const latest = interviewsOf(c.slug)[0];
+      const latest = interviewsOf(c.slug).at(0);
       if (!latest) continue;
       const { openGraph } = await generateMetadata(params([latest.id]));
       const image = `/og/entrevistas-${c.slug}.jpg`;
@@ -131,7 +131,7 @@ describe('las entrevistas', () => {
   it('publica el análisis de comunicación solo de entrevistas que existen, con sus cifras', async () => {
     for (const c of allCommunication()) {
       const { title } = await generateMetadata(params([c.id, 'comunicacion']));
-      expect(String(title)).toContain('análisis de comunicación');
+      expect(title).toEqual(expect.stringContaining('análisis de comunicación'));
       // Las cifras del titular salen de las preguntas: no pueden pasar de las que hay.
       const { questions, hard, answered } = pressure(c);
       expect(answered).toBeLessThanOrEqual(hard);

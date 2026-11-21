@@ -52,12 +52,8 @@ const officialSuffixes = [
 
 /** Si la URL es HTTPS y de una administración pública española o europea. */
 export function isOfficial(url: string): boolean {
-  let u: URL;
-  try {
-    u = new URL(url);
-  } catch {
-    return false;
-  }
+  if (!URL.canParse(url)) return false;
+  const u = new URL(url);
   if (u.protocol !== 'https:' || u.username || u.password) return false;
   const host = u.hostname.toLowerCase().replace(/\.$/, '');
   // Sufijo con límite de etiqueta: «sede.agenciatributaria.gob.es» encaja en «gob.es»; «evilgob.es» no.

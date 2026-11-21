@@ -25,7 +25,6 @@ import {
   Section,
   Stats,
   Source,
-  Votes,
   Empty,
   Deputies,
   Filters,

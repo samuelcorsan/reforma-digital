@@ -55,7 +55,7 @@ export function LogoLink({ className, children }: { className: string; children:
         {children}
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem closeOnClick={false} onClick={copiar}>
+        <ContextMenuItem closeOnClick={false} onClick={() => void copiar()}>
           <span className="flex w-4 justify-center">
             <LogoMark size={14} />
           </span>

@@ -17,7 +17,7 @@ import { Icon } from '../brand/icon';
 import { href } from '../congreso/common';
 import { electionData } from './election-data';
 import { Hemicycle, ProvinceSection } from './province-section';
-import { Cell, Grid, Heading, Legend, ReportIntro, SectionHeading, Stat } from './report';
+import { Cell, Grid, Heading, ReportIntro, SectionHeading, Stat } from './report';
 import { Tips } from './tips';
 
 const millions = (n: number) => `${decimal(n / 1e6, 2)} M`;

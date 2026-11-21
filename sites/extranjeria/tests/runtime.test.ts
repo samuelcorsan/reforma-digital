@@ -23,7 +23,7 @@ const shadowText = () => Array.from(hosts(), (h) => h.shadowRoot?.textContent ??
 const button = (text: RegExp) =>
   Array.from(hosts())
     .flatMap((h) => Array.from(h.shadowRoot?.querySelectorAll('button') ?? []))
-    .find((b) => text.test(b.textContent ?? ''))!;
+    .find((b) => text.test(b.textContent))!;
 function mount(name: Fixture, url: string) {
   fixture(name);
   controller = mountAdapter(adapter, { url: new URL(url) });
@@ -61,7 +61,7 @@ it('drives the official province select and the official Aceptar button', async 
     .flatMap((h) =>
       Array.from(h.shadowRoot?.querySelectorAll<HTMLInputElement>('input[type="radio"]') ?? []),
     )
-    .find((r) => r.parentElement?.textContent?.trim() === 'Madrid')!;
+    .find((r) => r.parentElement?.textContent.trim() === 'Madrid')!;
   madrid.click();
   expect(select.options[select.selectedIndex]?.text).toBe('Madrid');
   expect(change).toHaveBeenCalled();

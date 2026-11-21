@@ -32,7 +32,7 @@ type Session = { apiKey: string; token: string; expiresAt: number; sessionId: st
 /** La sesión de la última instancia que acuñó una: el equivalente del fichero `session.json` de la CLI. */
 let saved: Session | undefined;
 
-export const BASE_HEADERS = {
+const BASE_HEADERS = {
   'user-agent': config.USER_AGENT,
   'accept-language': config.ACCEPT_LANGUAGE,
 };
@@ -41,8 +41,10 @@ function claims(token: string): Record<string, unknown> {
   try {
     const value = JSON.parse(Buffer.from(token.split('.')[1] ?? '', 'base64url').toString('utf8'));
     return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
-  } catch {
-    return {};
+  } catch (error) {
+    // Un token cuya parte central no es JSON no lleva claims.
+    if (error instanceof SyntaxError) return {};
+    throw error;
   }
 }
 
@@ -85,7 +87,10 @@ export async function request(
   }
 }
 
-export async function checkedJson(response: Response, label: string): Promise<unknown> {
+/** Un valor tal como lo da JSON.parse. */
+type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
+
+export async function checkedJson(response: Response, label: string): Promise<Json> {
   const status = response.status;
   const ctype = (response.headers.get('content-type') ?? '').toLowerCase();
   if (ctype.includes('html'))
@@ -125,9 +130,12 @@ export async function checkedJson(response: Response, label: string): Promise<un
   if ([400, 404, 409, 422].includes(status)) {
     let code: string | undefined;
     try {
-      const value = (JSON.parse(text) as { codeError?: unknown }).codeError;
+      const value = (JSON.parse(text) as { codeError?: unknown } | null)?.codeError;
       code = typeof value === 'string' && RENFE_CODE.test(value) ? value : undefined;
-    } catch {}
+    } catch (error) {
+      // Un cuerpo de error que no es JSON se queda sin código.
+      if (!(error instanceof SyntaxError)) throw error;
+    }
     throw new UsageError(`${label}: Renfe rejected the request (${status})`, { status, code });
   }
   throw new ApiShapeError(`${label}: unexpected HTTP status ${status}`, { status });
@@ -165,7 +173,7 @@ export class RsvClient {
       accept: 'application/json',
     })) as {
       arch?: { security?: { apiKey?: unknown } };
-    };
+    } | null;
     const key = cfg?.arch?.security?.apiKey;
     if (typeof key !== 'string' || !API_KEY.test(key))
       throw new ApiShapeError('web config: no usable api key at arch.security.apiKey');
@@ -187,7 +195,7 @@ export class RsvClient {
           'x-api-key': key,
           channel: config.CHANNEL,
         },
-      )) as { accessToken?: unknown; expiresIn?: unknown };
+      )) as { accessToken?: unknown; expiresIn?: unknown } | null;
       token = body?.accessToken;
       lifetime = body?.expiresIn;
       if (typeof token !== 'string' || !JWT.test(token))

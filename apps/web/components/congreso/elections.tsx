@@ -12,12 +12,12 @@ import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import { mapSchema } from '../../lib/congreso/schema';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getElections, getPolls, getGeography, read, slug } from '../../lib/congreso/data';
+import { getPolls, getGeography, read, slug } from '../../lib/congreso/data';
 import { municipalities } from '../../lib/congreso/queries';
 import { pollsHidden } from '../../lib/congreso/polls';
-import { Intro, Stats, Source, Filters, Pagination, Empty, href, number } from './common';
+import { Intro, Stats, Source, Filters, Pagination, href, number } from './common';
 import { ElectionContext } from './election-context';
-import { Bars, ReportIntro } from '../elecciones/report';
+import { ReportIntro } from '../elecciones/report';
 import { The350 } from '../elecciones/the-350';
 import { Election } from '../elecciones/election';
 import { ElectionHistory } from '../elecciones/history';
@@ -190,7 +190,6 @@ export async function Elections({
   electionId?: string;
 }) {
   if (detail === 'escano') return <SeatPrice election={electionId} />;
-  const election = await getElections();
   const selected = detail ?? '';
   if (['caducan', 'legislatura', 'repite', 'metricas', 'mapa', 'voto'].includes(selected))
     return <ElectionContext detail={selected} query={query} page={page} />;

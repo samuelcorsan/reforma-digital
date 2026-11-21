@@ -6,7 +6,7 @@ import congresoEscena from './escenas/congreso.png';
 import renfeEscena from './escenas/renfe.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
-export type Servidor = {
+type Servidor = {
   id: string;
   name: string;
   category: Category;
@@ -50,7 +50,7 @@ const servidores: Servidor[] = [
   },
 ];
 
-export type Param = {
+type Param = {
   name: string;
   type: string;
   description?: string;

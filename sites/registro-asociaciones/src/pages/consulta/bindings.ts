@@ -1,14 +1,14 @@
 import { requireElements, textOf } from '@reforma-digital/bridge';
 
 /** Selectores de «Consulta asociaciones» (sede.interior.gob.es), verificados el 2026-09-27. */
-export const CONSULTA = {
+const CONSULTA = {
   title: 'main#main-content > .container-fluid > h2',
   content: 'main#main-content > .container-components',
   denominacion: 'main#main-content form input#denominacion',
   buscar: 'main#main-content form button#buscar',
 } as const;
 export const RESULTS_TABLE = 'main#main-content table.custom-table';
-export const RESULT_ROWS = `${RESULTS_TABLE} tr:not(.table-header):not(#no-data-row)`;
+const RESULT_ROWS = `${RESULTS_TABLE} tr:not(.table-header):not(#no-data-row)`;
 const ACTIVE_PAGE = 'main#main-content .pagination .page-item.active .page-link';
 
 export interface ConsultaBindings {

@@ -1,7 +1,7 @@
 import { requireElements, textOf } from '@reforma-digital/bridge';
 
 /** Selectores de oficina y trámite (<app>/citar?p=NN y <app>/selectSede), verificados el 2026-09-27. */
-export const TRAMITES = {
+const TRAMITES = {
   header: '#mainWindow .mf-window-header',
   content: '#mainWindow .mf-layout--main-content > .mf-main--content',
   form: 'form#portadaForm',
@@ -48,7 +48,7 @@ export function tramitesBindings(document: Document): TramitesBindings | null {
     return null;
   const groups = Array.from(document.querySelectorAll<HTMLSelectElement>(GROUPS)).map((select) => ({
     select,
-    label: textOf(select.labels?.[0]) || 'Trámites',
+    label: textOf(select.labels[0]) || 'Trámites',
   }));
   if (!groups.length || groups.some(({ select }) => select.form !== els.form)) return null;
   const back = document.querySelector(BACK);

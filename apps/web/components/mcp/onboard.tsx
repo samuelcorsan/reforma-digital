@@ -37,7 +37,9 @@ export function OnboardButton({ prompt, className }: { prompt: string; className
       setCopied(true);
       clearTimeout(timer.current);
       timer.current = setTimeout(() => setCopied(false), 2200);
-    } catch {}
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === 'NotAllowedError')) throw error;
+    }
   }
 
   return (

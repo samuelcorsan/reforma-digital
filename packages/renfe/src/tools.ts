@@ -23,7 +23,7 @@ async function withClient<T>(produce: (client: RsvClient) => Promise<T>): Promis
   }
 }
 
-export function parseDate(text: string, now = Date.now()): string {
+function parseDate(text: string, now = Date.now()): string {
   const day = today(now);
   const word = text.trim().toLowerCase();
   if (word === 'today' || word === 'hoy') return day;
@@ -42,7 +42,7 @@ export function parseDate(text: string, now = Date.now()): string {
 }
 
 /** HH:MM en minutos desde medianoche. */
-export function parseTime(text: string | undefined, option: string): number | undefined {
+function parseTime(text: string | undefined, option: string): number | undefined {
   if (text === undefined) return undefined;
   const t = text.trim();
   if (!/^([01]?\d|2[0-3]):[0-5]\d$/.test(t))
@@ -51,7 +51,7 @@ export function parseTime(text: string | undefined, option: string): number | un
   return h * 60 + m;
 }
 
-export function trainNumber(text: string): string {
+function trainNumber(text: string): string {
   const compact = text.trim().replace(/\s*\+\s*/g, '+');
   const parts = /^[0-9]{1,6}(\+[0-9]{1,6})*$/.test(compact)
     ? compact.split('+').map(live.key)
@@ -116,7 +116,10 @@ export async function searchTrains(args: {
       live.annotate(out.trains, board);
     } catch (err) {
       live.annotate(out.trains, null); // el mapa nunca hace fallar una búsqueda
-      [board, why] = [null, `${live.LABEL}: unexpected error (${(err as Error)?.name ?? 'Error'})`];
+      [board, why] = [
+        null,
+        `${live.LABEL}: unexpected error (${err instanceof Error ? err.name : 'Error'})`,
+      ];
     }
     out.delays_included = board !== null;
     if (why)
