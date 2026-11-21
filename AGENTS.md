@@ -3,7 +3,7 @@
 ## Scope and Ponytail
 
 - Before implementing a code change, read and use [Ponytail](.agents/skills/ponytail/SKILL.md). Use its default `full` mode unless the user specifies another mode. Let it guide reuse, dependencies, abstractions, and the smallest correct solution.
-- Before requesting review, run an independent correctness review of the complete task diff in a fresh context, preferably with the model that did not write it: `/code-review` in Claude Code or `/review` in Codex. It follows the [review guidelines](#review-guidelines). Fix or rebut every finding, then run [Ponytail Review](.agents/skills/ponytail-review/SKILL.md) as a separate simplicity pass. Fix bugs before simplifying.
+- Before requesting review, run an independent correctness review of the complete task diff in a fresh context, preferably with the model that did not write it: `/code-review` in Claude Code or `/review` in Codex. It follows the [Code Review Rules](#code-review-rules). Fix or rebut every finding, then run [Ponytail Review](.agents/skills/ponytail-review/SKILL.md) as a separate simplicity pass. Fix bugs before simplifying.
 - Stay within the requested objective. Do not include unrelated linting, formatting, refactoring, or import changes. A Ponytail finding does not authorize a repository-wide cleanup.
 - Preserve user-owned changes. Report unrelated findings without fixing them or creating issues automatically.
 - Challenge unnecessary complexity with a concrete alternative. Do not simplify away explicitly requested behavior, validation, security, accessibility, or error handling.
@@ -46,15 +46,26 @@
 - Do not merge or deploy without authorization for that action. Respect GitHub's required checks and any required reviews; do not bypass them.
 - Every review comment, human or automated, ends fixed or answered with a reason. Never resolve one silently.
 
-## Review guidelines
+## Code Review Rules
 
-For automated reviewers (Codex, Claude) and humans reviewing a pull request.
+Codex applies these in its automatic review; `/code-review` and human reviewers use them too. Each finding cites `file:line` and a concrete failure scenario. Formatting, lint and types are CI's job; over-engineering is Ponytail Review's. Skip `pnpm-lock.yaml`, generated data and fixtures captured from official portals.
 
-- Report only problems that matter: wrong behavior, an unhandled error that loses data, exposure of secrets or personal data, injection, a broken API, data or portal contract, a test deleted, skipped or weakened to pass, new branching logic without a test, or a lint, CI or test rule relaxed to admit the change.
-- Each finding cites `file:line` and a concrete failure scenario. No speculative "consider…" comments. Style belongs to oxlint, Prettier, TypeScript and ruff; over-engineering to Ponytail Review.
-- Read the test changes first. An assertion changed to match new output is a finding unless the PR explains why the old expectation was wrong.
-- Always check that portal adaptations keep the original controls and stop before personal data or CAPTCHA, that extension code does not reach forbidden network or storage APIs, that workflows never run pull request code with secrets, and that changes to lint configuration, `knip.json`, `ruff.toml` or workflows belong to the PR's objective.
-- Skip `pnpm-lock.yaml`, generated data and fixtures captured from official portals.
+### Official portals
+
+- Flag an adaptation that replaces, removes or bypasses an original CAPTCHA, signature, certificate, password or file-upload control, submits on the user's behalf, or reads cookies, tokens or session data. Users must complete the official procedure with its validation and security intact. Safe path: keep the control original, or bind it through `DomBridge` while the official control stays in its form (CONTRIBUTING.md).
+- Flag extension or site code that reaches network, storage or dynamic-code APIs, or new manifest permissions. The extension promises users it sends and stores nothing. Safe path: none in the extension; server features belong in `apps/web`.
+
+### Published data
+
+- Flag a catch, fallback or default that turns a failed or missing source into plausible data shown to users, such as a zero count, an empty list or a stale result presented as current. This project publishes civic and electoral data; a silent default is misinformation. Safe path: an explicit error or empty state that says the data is unavailable.
+
+### Tests and quality gates
+
+- Flag a test deleted or skipped, an assertion changed to match new output, or a relaxed lint rule, timeout, retry, exclusion, debt list or CI step. Safe path: the PR description explains why the old expectation was wrong, or the change is the PR's stated objective.
+
+### Secrets and personal data
+
+- Flag secrets or personal data in fixtures, logs, screenshots or commits, and workflows that expose secrets to pull request code (`pull_request_target`, or secrets in jobs that run fork code). Safe path: synthetic or anonymized fixtures; secrets only in push, schedule or manual workflows and environments.
 
 ## Delivery
 
