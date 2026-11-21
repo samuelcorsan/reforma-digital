@@ -8,7 +8,7 @@
 
 ## Verification
 
-<!-- Report the commands run and their results, manual checks, and pending verification. Include the diff review and Ponytail Review. Do not claim checks you have not performed. -->
+<!-- Report the commands run and their results, manual checks, and pending verification. Name the independent review (tool and model) and how each finding was resolved, and the Ponytail Review. Do not claim checks you have not performed. -->
 
 <!-- For portal adaptations, distinguish fixture-based tests from checks on the real portal and identify the fixture provenance. -->
 
