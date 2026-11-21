@@ -1,9 +1,15 @@
 import { POST as congreso } from '../../app/mcp/congreso/route';
 import { POST as renfe } from '../../app/mcp/renfe/route';
+import { POST as boe } from '../../app/mcp/boe/route';
+import { POST as carburantes } from '../../app/mcp/carburantes/route';
+import { POST as ine } from '../../app/mcp/ine/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
 import renfeEscena from './escenas/renfe.png';
+import boeEscena from './escenas/boe.png';
+import carburantesEscena from './escenas/carburantes.png';
+import ineEscena from './escenas/ine.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 export type Servidor = {
@@ -48,6 +54,49 @@ const servidores: Servidor[] = [
       '¿Qué trenes llevan ahora más de 15 minutos de retraso?',
     ],
   },
+  {
+    id: 'boe',
+    name: 'BOE',
+    category: 'normativa',
+    logo: { src: '/organismos/boe-sello.png' },
+    escena: boeEscena,
+    summary:
+      'El sumario de cada día y el texto vigente de leyes, reales decretos y demás normas consolidadas.',
+    examples: [
+      '¿Qué es un gran tenedor según la Ley de Vivienda?',
+      '¿Qué se ha publicado hoy en el BOE sobre becas?',
+      '¿Hay oposiciones nuevas en el BOE de hoy?',
+    ],
+  },
+  {
+    id: 'ine',
+    name: 'INE',
+    category: 'estadistica',
+    logo: { src: '/organismos/ine.svg' },
+    escena: ineEscena,
+    summary:
+      'Las estadísticas oficiales del INE: precios, empleo, población, vivienda y economía, con su último dato.',
+    examples: [
+      '¿Cuál es la última tasa de inflación?',
+      '¿Cómo ha evolucionado el paro este año?',
+      '¿Cuánto han subido los precios de la vivienda?',
+    ],
+  },
+  {
+    id: 'carburantes',
+    name: 'Precios de carburantes',
+    category: 'consumo',
+    // Sin logo propio: un surtidor (Lucide).
+    logo: { src: '/mcp/carburantes.svg' },
+    escena: carburantesEscena,
+    summary:
+      'El precio de cada carburante en cada gasolinera de España, actualizado varias veces al día.',
+    examples: [
+      '¿Dónde está el diésel más barato en Madrid?',
+      '¿Qué gasolinera de mi provincia tiene la gasolina 95 más barata?',
+      '¿Cuánto cuesta el GLP en Zaragoza?',
+    ],
+  },
 ];
 
 export type Param = {
@@ -68,7 +117,7 @@ export type McpServer = Servidor & { tools: Tool[] };
 type Entry = Servidor & { handler: (request: Request) => Promise<Response> };
 
 // Las herramientas se le piden al propio servidor (`servers()`), así la ficha no puede quedarse atrás.
-const handlers: Record<string, Entry['handler']> = { congreso, renfe };
+const handlers: Record<string, Entry['handler']> = { congreso, renfe, boe, ine, carburantes };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];
   if (!handler) throw new Error(`Falta el handler del servidor MCP ${s.id}`);

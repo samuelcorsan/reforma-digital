@@ -136,3 +136,7 @@ export function createCongresoMcp(api: CongresoApi) {
     { responseMode: 'json' },
   );
 }
+
+export { createBoeMcp } from './boe';
+export { createCarburantesMcp } from './carburantes';
+export { createIneMcp } from './ine';
