@@ -35,7 +35,17 @@ const config: NextConfig = {
       { source: '/propuesta', destination: '/#iniciativa', permanent: true },
       { source: '/congreso/elecciones/calendario', destination: '/elecciones', permanent: true },
       { source: '/congreso/elecciones/:path*', destination: '/elecciones/:path*', permanent: true },
+      // La documentación vive en /developers. Solo /api exacto: /api/congreso sigue siendo la API.
+      { source: '/api', destination: '/developers/api', permanent: true },
+      { source: '/mcp', destination: '/developers/mcp', permanent: true },
+      { source: '/mcp/servidores/:id', destination: '/developers/mcp/:id', permanent: true },
+      // /developers no es una página: es la sección del menú.
+      { source: '/developers', destination: '/developers/api', permanent: false },
     ];
+  },
+  // Cualquier página de /developers, en Markdown para agentes: la misma ruta con `.md`.
+  rewrites() {
+    return [{ source: '/developers/:path(.+)\\.md', destination: '/developers/md/:path' }];
   },
 };
 export default config;
