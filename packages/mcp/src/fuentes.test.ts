@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { buscarLegislacion, sumario, textoBloque } from './boe';
 import { buscarMunicipio, gasolinerasBaratas } from './carburantes';
 import { run, SourceError } from './comun';
-import { datosTabla } from './ine';
+import { buscarTabla, datosTabla } from './ine';
 
 const fetchJson = (body: unknown, status = 200) =>
   vi.fn<typeof fetch>(async () => Response.json(body, { status }));
@@ -177,6 +177,21 @@ it('filters INE series without accents and names each period, newest first', asy
       datos: [{ periodo: '1 de octubre de 2026', valor: 49935642 }],
     },
   ]);
+});
+
+it('asks the INE for the tables of an operation once, and again after a failure', async () => {
+  const fetchImpl = vi
+    .fn<typeof fetch>()
+    .mockResolvedValueOnce(Response.json({}, { status: 500 }))
+    .mockImplementation(async () =>
+      Response.json([{ Id: 1, Nombre: 'Tasas de paro', T3_Periodicidad: 'Trimestral' }]),
+    );
+  await expect(buscarTabla(fetchImpl, 'PRUEBA')).rejects.toThrow(SourceError);
+  await buscarTabla(fetchImpl, 'prueba');
+  expect(await buscarTabla(fetchImpl, 'PRUEBA', 'paro')).toMatchObject({
+    tablas: [{ id: 1, periodicidad: 'Trimestral' }],
+  });
+  expect(fetchImpl).toHaveBeenCalledTimes(2);
 });
 
 it('only tells the assistant the reason of source errors', async () => {
