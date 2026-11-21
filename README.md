@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/samuelcorsan/reforma-digital/actions/workflows/check.yml"><img src="https://github.com/samuelcorsan/reforma-digital/actions/workflows/check.yml/badge.svg" alt="Comprobaciones y empaquetado"></a>
+  <a href="https://github.com/samuelcorsan/reforma-digital/actions/workflows/ci.yml"><img src="https://github.com/samuelcorsan/reforma-digital/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="sites"><img src="https://img.shields.io/badge/estado-experimental-ad182b?labelColor=141414" alt="Estado: experimental"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licencia-MIT-f1c232?labelColor=141414" alt="Licencia MIT"></a>
 </p>
