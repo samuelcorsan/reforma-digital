@@ -222,6 +222,48 @@
   initial-value: 0;
 }
 
+/* Mientras se espera una respuesta (el buscador de la biblioteca MCP): manchas de sol amarillas que
+   cruzan la píldora por dentro. */
+@keyframes comprobando-deriva {
+  to {
+    background-position: -150% 50%;
+  }
+}
+
+.comprobando {
+  isolation: isolate;
+}
+
+.comprobando::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      closest-side at 20% 55%,
+      color-mix(in srgb, var(--brand-yellow) 40%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      closest-side at 60% 45%,
+      color-mix(in srgb, var(--brand-yellow) 22%, transparent),
+      transparent
+    );
+  background-size: 60% 180%;
+  background-position: 0% 50%;
+  background-repeat: repeat-x;
+  animation: comprobando-deriva 2.4s linear infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comprobando::after {
+    animation: none;
+  }
+}
+
 :root,
 :host {
   --bg-ink: 20 20 20;

@@ -26,7 +26,17 @@ const retrasos = ['delay-0', 'delay-[60ms]', 'delay-[120ms]'];
 const muelle = '[transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]';
 
 /** Copia el prompt para que un agente con terminal o ficheros (Claude Code, Cursor, Codex…) se configure solo. */
-export function OnboardButton({ prompt, className }: { prompt: string; className?: string }) {
+export function OnboardButton({
+  prompt,
+  className,
+  label = 'Conecta tu agente',
+  title = 'Copia un prompt para que tu agente añada el servidor a su configuración',
+}: {
+  prompt: string;
+  className?: string;
+  label?: string;
+  title?: string;
+}) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -47,7 +57,7 @@ export function OnboardButton({ prompt, className }: { prompt: string; className
       type="button"
       onClick={() => void copy()}
       data-copiado={copied || undefined}
-      title="Copia un prompt para que tu agente añada el servidor a su configuración"
+      title={title}
       className={cn(
         // Mismo alto que los botones `xl` (36 px a la vista, 44 px de zona de clic).
         'group relative inline-flex h-9 items-center gap-2.5 rounded-full border border-border bg-background pr-3.5 pl-1 text-[15px] font-medium transition-[background-color,scale] duration-150 after:absolute after:inset-x-0 after:-inset-y-1 hover:bg-muted active:scale-[0.97] motion-reduce:transition-none',
@@ -74,7 +84,7 @@ export function OnboardButton({ prompt, className }: { prompt: string; className
       </span>
       <span className="grid overflow-hidden py-0.5 text-left" aria-hidden="true">
         <span className="[grid-area:1/1] transition-[translate,opacity] duration-300 ease-(--ease-brand) group-data-copiado:-translate-y-full group-data-copiado:opacity-0 motion-reduce:transition-none">
-          Conecta tu agente
+          {label}
         </span>
         <span className="[grid-area:1/1] translate-y-full opacity-0 transition-[translate,opacity] duration-300 ease-(--ease-brand) group-data-copiado:translate-y-0 group-data-copiado:opacity-100 motion-reduce:transition-none">
           ¡Copiado!
@@ -93,7 +103,7 @@ export function OnboardButton({ prompt, className }: { prompt: string; className
           <Icon name="hecho" size={16} />
         </span>
       </span>
-      <span className="sr-only">Conecta tu agente</span>
+      <span className="sr-only">{label}</span>
       <span className="sr-only" aria-live="polite">
         {copied ? 'Prompt copiado. Pégalo en tu agente.' : ''}
       </span>

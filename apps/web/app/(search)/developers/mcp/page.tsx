@@ -11,6 +11,7 @@ import {
 import { OnboardButton } from '../../../../components/mcp/onboard';
 import { servers } from '../../../../lib/mcp/catalog';
 import { agentPrompt } from '../../../../lib/mcp/rutas';
+import { links } from '../../../../lib/site';
 import { breadcrumbs, pageMetadata, webPage } from '../../../../lib/seo';
 
 const title = 'Biblioteca MCP';
@@ -53,6 +54,7 @@ export default async function Page({ searchParams }: Props) {
       <Biblioteca
         servers={summaries}
         initial={Object.hasOwn(orders, orden) ? (orden as Order) : 'destacados'}
+        repo={links.repo}
       >
         <h1 className="mx-auto max-w-[16ch] text-balance font-heading text-[clamp(40px,6vw,72px)] leading-[1.05]">
           Datos públicos para tu asistente
