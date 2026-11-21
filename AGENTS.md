@@ -14,7 +14,18 @@
 - Follow the nearest applicable `AGENTS.md`. In `apps/web`, follow its instructions for the installed Next.js version.
 - Portal adaptations belong in `sites/<portal>`, shared capabilities in `packages/`, and application composition in `apps/`. Import other workspaces through their public exports and respect the existing dependency checks.
 - Keep server dependencies out of browser code. Use the shared design components and tokens before adding new ones.
-- Validate external input at its trust boundary. Preserve owned contracts internally instead of duplicating types, hiding failures behind defaults, or forcing incompatible values through casts.
+
+## Writing code
+
+`pnpm check` (oxlint with types and anti-slop rules, then knip) and ruff in CI enforce most of this; the rest is for review.
+
+- Validate external input at its trust boundary, then trust the types. Preserve owned contracts internally instead of duplicating types, hiding failures behind defaults, or forcing incompatible values through casts.
+- No optional chaining, `??` defaults or guards for states the types say cannot happen. Missing required data is an error, not a silent fallback.
+- Catch only the errors you expect and can handle, and rethrow the rest. Never return a default to hide a failure.
+- Fix a defect where it originates, not where it surfaced: one fix in the shared function instead of a guard in every caller.
+- Reuse what exists in `packages/` before writing a helper. Delete instead of deprecating: no compatibility shims, aliases or re-exports without a current consumer.
+- Comments explain why, never what the code does.
+- A defect your change introduced is fixed in the same PR, not left for later. When review catches the same mistake twice, propose a lint rule instead of another line here.
 
 ## Portal and data boundaries
 
