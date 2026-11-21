@@ -94,6 +94,18 @@ Las pruebas de cada portal deben cubrir coincidencia exacta de dominio/ruta, DOM
 
 `npm run check:workspaces` verifica los límites de dependencias. Un portal puede usar paquetes comunes, pero no importar código de otro portal o de una aplicación. Las utilidades compartidas deben moverse a `packages/`.
 
+## Revisión de código
+
+Una PR se fusiona cuando:
+
+1. El check `check` del CI está en verde.
+2. Todos los comentarios, de personas o de la revisión automática, están resueltos: arreglados o contestados con un motivo. GitHub no deja fusionar con conversaciones abiertas.
+3. Si toca una ruta de [CODEOWNERS](.github/CODEOWNERS) (CI, reglas de lint, frontera de seguridad de la extensión o base de datos), su propietario la ha aprobado.
+
+Antes de abrir la PR, quien la escribe pasa una revisión de correctitud con contexto limpio, a ser posible con el modelo que no escribió el cambio: `/code-review` en Claude Code o `/review` en Codex. Después pasa Ponytail Review para la simplicidad. En la PR, Codex revisa automáticamente con las [pautas de revisión](AGENTS.md#review-guidelines).
+
+Para revisar una PR, lee en este orden: la descripción y sus evidencias, los cambios en los tests, los contratos (tipos públicos, esquemas, `site.config.json`, manifiesto), los comentarios abiertos y, por último, el resto del diff. Si pasa de unas 1.500 líneas escritas a mano, pide que se divida.
+
 ## Versiones de la extensión
 
 El repositorio usa una versión de distribución en el `package.json` raíz. Los workspaces son privados: se empaquetan dentro de la extensión y no se publican individualmente en npm. Los cambios de interfaces llegan mediante una nueva versión completa de la extensión.

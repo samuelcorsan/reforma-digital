@@ -3,7 +3,7 @@
 ## Scope and Ponytail
 
 - Before implementing a code change, read and use [Ponytail](.agents/skills/ponytail/SKILL.md). Use its default `full` mode unless the user specifies another mode. Let it guide reuse, dependencies, abstractions, and the smallest correct solution.
-- Before finalizing a code change or requesting review, use [Ponytail Review](.agents/skills/ponytail-review/SKILL.md) on the complete task diff. It reviews unnecessary complexity; also review correctness, security, accessibility, and behavior.
+- Before requesting review, run an independent correctness review of the complete task diff in a fresh context, preferably with the model that did not write it: `/code-review` in Claude Code or `/review` in Codex. It follows the [review guidelines](#review-guidelines). Fix or rebut every finding, then run [Ponytail Review](.agents/skills/ponytail-review/SKILL.md) as a separate simplicity pass. Fix bugs before simplifying.
 - Stay within the requested objective. Do not include unrelated linting, formatting, refactoring, or import changes. A Ponytail finding does not authorize a repository-wide cleanup.
 - Preserve user-owned changes. Report unrelated findings without fixing them or creating issues automatically.
 - Challenge unnecessary complexity with a concrete alternative. Do not simplify away explicitly requested behavior, validation, security, accessibility, or error handling.
@@ -41,9 +41,20 @@
 - Use `type(scope): concrete result` for commit and PR titles. Types: `feat`, `fix`, `docs`, `refactor`, `test`, `perf`, and `chore`. Use a scope matching the affected area.
 - For PR titles, write the title text after the `type(scope):` prefix in Spanish, preserving technical identifiers. Example: `feat(search): añade filtros por organismo`.
 - Write commit and PR descriptions in Spanish, preserving technical identifiers. Example: `fix(chat): conserva la respuesta al cancelar la búsqueda`.
-- Keep one objective per PR and complete the [PR template](.github/pull_request_template.md). Link the relevant issue; use `Closes #N` only when the PR resolves it. Trivial changes do not require an issue solely for process.
+- Keep one objective per PR and under about 1,500 hand-written changed lines; split larger work. Generated data, captured fixtures and lockfiles do not count. Complete the [PR template](.github/pull_request_template.md). Link the relevant issue; use `Closes #N` only when the PR resolves it. Trivial changes do not require an issue solely for process.
 - Update the PR description when its scope changes. Identify material agent assistance and the verification performed.
 - Do not merge or deploy without authorization for that action. Respect GitHub's required checks and any required reviews; do not bypass them.
+- Every review comment, human or automated, ends fixed or answered with a reason. Never resolve one silently.
+
+## Review guidelines
+
+For automated reviewers (Codex, Claude) and humans reviewing a pull request.
+
+- Report only problems that matter: wrong behavior, an unhandled error that loses data, exposure of secrets or personal data, injection, a broken API, data or portal contract, a test deleted, skipped or weakened to pass, new branching logic without a test, or a lint, CI or test rule relaxed to admit the change.
+- Each finding cites `file:line` and a concrete failure scenario. No speculative "consider…" comments. Style belongs to oxlint, Prettier, TypeScript and ruff; over-engineering to Ponytail Review.
+- Read the test changes first. An assertion changed to match new output is a finding unless the PR explains why the old expectation was wrong.
+- Always check that portal adaptations keep the original controls and stop before personal data or CAPTCHA, that extension code does not reach forbidden network or storage APIs, that workflows never run pull request code with secrets, and that changes to lint configuration, `knip.json`, `ruff.toml` or workflows belong to the PR's objective.
+- Skip `pnpm-lock.yaml`, generated data and fixtures captured from official portals.
 
 ## Delivery
 
