@@ -8,6 +8,8 @@ import random
 import re
 import time
 import urllib.request
+from contextlib import suppress
+from http.client import HTTPException
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
 from dataclasses import dataclass
@@ -122,7 +124,7 @@ def url_final(url: str, espera: float = 5.0) -> str | None:
             peticion = urllib.request.Request(url, method=metodo, headers={"User-Agent": "Mozilla/5.0 (Reforma Digital)"})
             with urllib.request.urlopen(peticion, timeout=espera) as r:
                 destino = r.geturl()
-        except Exception:
+        except (OSError, ValueError, HTTPException):
             continue
         if destino.startswith("http") and REDIRECCION_GOOGLE not in urlparse(destino).netloc:
             return destino
@@ -174,7 +176,7 @@ class ClienteGemini:
                     lambda: self.cliente.models.generate_content(
                         model=self.modelo,
                         contents=contenidos,
-                        config=types.GenerateContentConfig(system_instruction=prompts.SISTEMA, **config, **extra),
+                        config=types.GenerateContentConfig(system_instruction=prompts.SISTEMA, **config, **extra),  # noqa: B023 (se llama en esta iteración)
                     ),
                     paso,
                 )
@@ -220,7 +222,7 @@ class ClienteGemini:
         while getattr(archivo.state, "name", str(archivo.state)) == "PROCESSING":
             time.sleep(2)
             nombre = archivo.name
-            archivo = con_reintentos(lambda: self.cliente.files.get(name=nombre), f"estado de {ruta.name}")
+            archivo = con_reintentos(lambda: self.cliente.files.get(name=nombre), f"estado de {ruta.name}")  # noqa: B023 (se llama en esta iteración)
         return archivo
 
     def transcribir(self, trozo, candidato: str, contexto: str = "", intento: int = 0) -> Transcripcion:
@@ -270,10 +272,8 @@ class ClienteGemini:
                 )
             return self._a_segundos(self._json("transcripcion", [archivo, texto], TranscripcionCruda, temperatura=temperatura))
         finally:
-            try:
+            with suppress(Exception):
                 self.cliente.files.delete(name=archivo.name)  # caducaría a las 48 h; se borra en cuanto se usa
-            except Exception:
-                pass
 
     @staticmethod
     def _a_segundos(t: TranscripcionCruda) -> Transcripcion:
@@ -368,7 +368,7 @@ class ClienteSimulado:
         # Solo lo que cae dentro del bloque recibido, como haría el modelo
         marcas = [int(m) for m in re.findall(r"^\[(\d+)\]", transcripcion, flags=re.M)]
         desde, hasta = (min(marcas), max(marcas)) if marcas else (0, 10**9)
-        dentro = lambda xs: [x for x in xs if desde <= x.segundo <= hasta]  # noqa: E731
+        dentro = lambda xs: [x for x in xs if desde <= x.segundo <= hasta]
         return self._e.model_copy(
             update={
                 "temas": [t for t in self._e.temas if desde <= t.inicio <= hasta],

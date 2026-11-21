@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import json
 import math
-from pathlib import Path
 
 from .config import CRUDOS, DATOS
 
@@ -241,7 +240,6 @@ def descargar() -> None:
 def escribir() -> dict:
     """Escribe data/elecciones/geo-provincias.json (52 circunscripciones) y geo-municipios.json."""
     descargar()
-    prov_topo = json.loads((CARPETA_CRUDOS / "provinces.json").read_text())
     muni_topo = json.loads((CARPETA_CRUDOS / "municipalities.json").read_text())
     # La proyección se calcula una vez, con las provincias del fichero de municipios, para que las dos capas casen.
     _, proj = _capa(muni_topo, "provinces", 0.5, 1)

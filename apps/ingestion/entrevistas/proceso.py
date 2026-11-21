@@ -28,10 +28,10 @@ from .esquema import (
     Visual,
 )
 from .metricas import estadisticas, nota
+from .modelo import Cliente, Comprobacion, ordenar_fuentes
 
 # El análisis de comunicación de cada entrevista, si lo tiene (lo escribe entrevistas.comunicacion)
 COMUNICACION = Path(__file__).resolve().parents[3] / "apps" / "web" / "lib" / "elecciones" / "comunicacion"
-from .modelo import Cliente, Comprobacion, ordenar_fuentes
 
 log = logging.getLogger("entrevistas")
 
@@ -235,7 +235,7 @@ def extraer_por_bloques(cliente: Cliente, segmentos: list[Segmento], candidato: 
     with ThreadPoolExecutor(max_workers=max(1, hilos)) as ex:
         partes = list(ex.map(uno, trozos))
 
-    por_segundo = lambda x: x.segundo  # noqa: E731
+    por_segundo = lambda x: x.segundo
     # Candidatos en orden cronológico (posición de su cita en la transcripción)
     texto = " ".join(s.texto for s in segmentos)
     unicos = {m.cita.strip().lower(): m for p in partes for m in p.momentos}  # sin repetir la misma cita

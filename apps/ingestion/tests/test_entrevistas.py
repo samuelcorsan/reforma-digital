@@ -381,7 +381,7 @@ def test_discusion_cruzada_cuenta_como_una_interrupcion():
 def test_rotulos_sin_informacion_se_descartan():
     from entrevistas.esquema import Visual
 
-    vacio = lambda d: proceso.rotulo_vacio(Visual(segundo=0, tipo="rotulo", descripcion=d), "Pedro Sánchez")  # noqa: E731
+    vacio = lambda d: proceso.rotulo_vacio(Visual(segundo=0, tipo="rotulo", descripcion=d), "Pedro Sánchez")
     assert vacio("Rótulo sobreimpreso en pantalla: PEDRO SÁNCHEZ")
     assert vacio("rtve play")
     assert not vacio("El paro baja al 10,5 %")
@@ -398,7 +398,7 @@ def test_video_fuera_de_youtube_se_descarga():
 def test_visuales_sin_expresiones_ni_promocion():
     from entrevistas.esquema import Visual
 
-    v = lambda t, d: proceso.neutral(Visual(segundo=0, tipo=t, descripcion=d))  # noqa: E731
+    v = lambda t, d: proceso.neutral(Visual(segundo=0, tipo=t, descripcion=d))
     assert not v("documento", "En la pantalla se muestra una fotografía de un diputado con el semblante serio")
     assert not v("accion", "El candidato sonríe mientras escucha")
     assert not v("rotulo", "TODOS LOS EPISODIOS Y ENTREVISTAS EN RTVE.ES/LAREVUELTA")
@@ -410,7 +410,7 @@ def test_visuales_sin_expresiones_ni_promocion():
 def test_rotulos_de_tele_sin_teletipo_ni_repetidos_ni_citas():
     from entrevistas.esquema import Visual
 
-    r = lambda t, d: Visual(segundo=t, tipo="rotulo", descripcion=d)  # noqa: E731
+    r = lambda t, d: Visual(segundo=t, tipo="rotulo", descripcion=d)
     segmentos = [seg(100, "Vivimos en una sociedad capitalista y parece que el éxito se mide en el dinero")]
     visuales = [
         r(10, "08:40:55 | PONE TVE Y EL PP VE UN INTENTO DE BOICOT"),
@@ -425,7 +425,7 @@ def test_rotulos_de_tele_sin_teletipo_ni_repetidos_ni_citas():
 def test_rotulos_de_reloj_y_de_programa_fuera():
     from entrevistas.esquema import Visual
 
-    r = lambda d: Visual(segundo=0, tipo="rotulo", descripcion=d)  # noqa: E731
+    r = lambda d: Visual(segundo=0, tipo="rotulo", descripcion=d)
     quedan = proceso.filtrar_visuales(
         [r("09:06:30 TEGIA PROVOCADORA EN REDES Y EL PSOE"), r("Ada Colau, en 'La Hora'"), r("Entrevista a Ada Colau"),
          r("Clamor por la muerte de Maricarmen")],
@@ -531,7 +531,7 @@ def test_lo_que_no_tiene_fuente_se_publica_y_no_cuenta_en_la_nota():
     base = Revision(id="r1", candidato="X", segundo=0, cita="c", veredicto="legal", explicacion="", fuentes=[])
     cierta = base.model_copy(update={"estado": "aprobada"})
     sin_fuente = base.model_copy(update={"estado": "aprobada", "veredicto": "sinfuente"})
-    veracidad = lambda revisiones: metricas.criterios([], [], [], [], revisiones)["veracidad"]  # noqa: E731
+    veracidad = lambda revisiones: metricas.criterios([], [], [], [], revisiones)["veracidad"]
     assert veracidad([cierta, sin_fuente]) == veracidad([cierta])
 
 
