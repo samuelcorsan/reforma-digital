@@ -36,7 +36,7 @@ const ejemplos = [
   'En la cita del DNI no sé qué es el número de soporte ni dónde lo encuentro…',
   'En el catálogo de Hacienda busco «renta» y no me sale la cita que necesito…',
   'Querría que El Congreso me avisara cuando se vote una ley sobre vivienda…',
-  'Querría un servidor MCP del BOE para preguntarle a mi agente por las ayudas nuevas…',
+  'Querría un servidor MCP de la AEMET para preguntarle a mi agente por los avisos de mi zona…',
 ];
 
 export function PromptComposer() {
