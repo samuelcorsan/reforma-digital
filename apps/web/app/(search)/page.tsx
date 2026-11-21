@@ -288,7 +288,7 @@ export default function HomePage() {
             <Proyecto
               titulo="API"
               texto="Votaciones, preguntas, Diarios de Sesiones y datasets del Congreso, en abierto."
-              enlace={{ href: '/api', texto: 'Leer la documentación' }}
+              enlace={{ href: '/developers/api', texto: 'Leer la documentación' }}
               fondo={amarillo}
             >
               <div className="h-full px-6 pt-6">
