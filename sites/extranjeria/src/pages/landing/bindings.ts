@@ -3,7 +3,7 @@ import config from '../../../site.config.json';
 import { linkText, type OfficialLink } from '../../components/official';
 
 /** Selectores de la página informativa de la Sede, verificados el 2026-09-27. */
-export const LANDING = {
+const LANDING = {
   header: '#mainWindow .mf-window-header',
   content: '#mainWindow .mf-layout--main-content > .mf-main--content',
   form: 'form#formulario',
@@ -28,12 +28,9 @@ export function landingBindings(document: Document): LandingBindings | null {
   const els = requireElements(document, LANDING);
   if (!els || !(els.submit instanceof HTMLInputElement) || !(els.form instanceof HTMLFormElement))
     return null;
-  let destinationHost: string;
-  try {
-    destinationHost = new URL(els.form.getAttribute('action') ?? '', document.baseURI).hostname;
-  } catch {
-    return null;
-  }
+  const action = els.form.getAttribute('action') ?? '';
+  if (!URL.canParse(action, document.baseURI)) return null;
+  const destinationHost = new URL(action, document.baseURI).hostname;
   const officialHosts = config.routes.map((route) => new URL(route.origin).hostname);
   if (!officialHosts.includes(destinationHost)) return null;
 

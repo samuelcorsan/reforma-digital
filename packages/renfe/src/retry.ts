@@ -4,7 +4,7 @@
 
 import { RenfeError, type Retry } from './errors';
 
-export const PAUSES = [1000, 2000];
+const PAUSES = [1000, 2000];
 export const LEGACY_STATUSES = [500, 502];
 const STATUSES = [500, 502, 503, 504];
 
@@ -19,7 +19,7 @@ export function statusFailure(status: number, statuses = STATUSES): string | und
 
 /** Qué falló al conectar, como lo nombra renfe-cli; undefined para un timeout. */
 export function connectionFailure(error: unknown): string | undefined {
-  const code = (error as { cause?: { code?: string } })?.cause?.code ?? '';
+  const code = (error as { cause?: { code?: string } } | null | undefined)?.cause?.code ?? '';
   if (/ECONNREFUSED|ENOTFOUND|EAI_AGAIN|EHOSTUNREACH|ENETUNREACH|CONNECT_TIMEOUT/.test(code))
     return 'no connection (ConnectError)';
   return 'connection dropped (ReadError)';

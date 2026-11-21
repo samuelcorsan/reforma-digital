@@ -13,7 +13,9 @@ export function CopyButton({ label, code }: { label: string; code: string }) {
       await navigator.clipboard.writeText(code);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {}
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === 'NotAllowedError')) throw error;
+    }
   }
 
   return (

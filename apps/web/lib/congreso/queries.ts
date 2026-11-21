@@ -24,7 +24,7 @@ import {
 // Las vistas que usan una parte de los datos la piden a Postgres: filtrar, ordenar y paginar
 // ocurre en la base de datos y solo viaja lo que se pinta. Cada consulta llama a
 // `congreso_publication`, que falla si la publicación ha cambiado desde el inicio del render.
-export const PAGE_SIZE = 24;
+const PAGE_SIZE = 24;
 type Limit = number | null;
 
 export const like = (query: string) => `%${query.replace(/[\\%_]/g, '\\$&')}%`;
@@ -47,7 +47,7 @@ function single<T>(schema: z.ZodType<T>, rows: readonly unknown[]) {
   return content === undefined || content === null ? null : schema.parse(content);
 }
 
-export async function periodMonths(period: string) {
+async function periodMonths(period: string) {
   const months = (await getIndex()).meses.map(({ mes }) => mes).sort();
   if (period === 'todo') return months;
   if (period === 'reciente') return months.slice(-3);

@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 const sesion = crypto.randomUUID();
 
 /** Cuenta un evento en las estadísticas de uso (api/eventos), que solo admite los de su lista. */
-export function contar(evento: string, datos: Record<string, string> = {}) {
+function contar(evento: string, datos: Record<string, string> = {}) {
   navigator.sendBeacon('/api/eventos', JSON.stringify({ ...datos, evento, sesion }));
 }
 

@@ -1,14 +1,14 @@
 import { officialHref, requireElements, textOf } from '@reforma-digital/bridge';
 
 /** Selectores de «Asistencia y Cita» en la Sede (GC29), verificados el 2026-09-27. */
-export const ASISTENCIA = {
+const ASISTENCIA = {
   title: 'main#acc-main h1#js-nombre-canal',
   description: '#js-descripcion-canal',
   gestiones: '.js-gestiones-destacadas',
   catalogo: 'main#acc-main a[href*="/wlpl/TOCP-MUTE/ServiciosAsocCat"]',
 } as const;
 
-export interface AsistenciaOption {
+interface AsistenciaOption {
   /** Enlace oficial de la gestión (lleva a la aplicación de cita). */
   element: HTMLAnchorElement;
   label: string;

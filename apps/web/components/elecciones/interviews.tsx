@@ -9,7 +9,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@reforma-digital/design/ui/collapsible';
-import { decimal, formatDate, longDate, minute } from '../../lib/elecciones/format';
+import { decimal, formatDate, minute } from '../../lib/elecciones/format';
 import {
   allVerifications,
   answerIds,
@@ -73,7 +73,6 @@ import {
   pressure,
   replyIds,
   replyNames,
-  type Communication,
 } from '../../lib/elecciones/communication';
 import { electionPages, electionsHref } from '../../lib/elecciones/pages';
 import { Icon } from '../brand/icon';
@@ -92,7 +91,7 @@ import { PhotoCredits, Portrait } from './portrait';
 import { ScoreSimulator } from './score-simulator';
 import { ShareButton } from './share-button';
 import { DaysUntil } from './days-until';
-import { Bars, Cell, Grid, Label, ReportIntro, ReportSection, Stat } from './report';
+import { Bars, Cell, Grid, Label, ReportIntro, ReportSection } from './report';
 
 export const interviewsHref = (path = '') => electionsHref(`entrevistas${path ? `/${path}` : ''}`);
 

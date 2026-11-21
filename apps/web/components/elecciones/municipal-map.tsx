@@ -360,7 +360,7 @@ export function MunicipalMap({
                 ))}
                 {selected && data.geo.municipios[selected] && (
                   <path
-                    d={data.geo.municipios[selected]?.[1]}
+                    d={data.geo.municipios[selected][1]}
                     fill="none"
                     className="pointer-events-none stroke-foreground [stroke-width:2.5]"
                     vectorEffect="non-scaling-stroke"

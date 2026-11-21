@@ -3,7 +3,6 @@ import { buttonVariants, Button } from '@reforma-digital/design/ui/button';
 import { Card } from '@reforma-digital/design/ui/card';
 
 import { FilterSelect } from '../../../../components/congreso/common';
-import { Icon } from '../../../../components/brand/icon';
 
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
@@ -22,7 +21,6 @@ import {
   Votes,
   Hemicycle,
   Empty,
-  Source,
   date,
   href,
 } from '../../../../components/congreso/common';

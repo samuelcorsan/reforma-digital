@@ -19,7 +19,7 @@ beforeEach(() => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (_url: string, init: RequestInit) => {
-      enviados.push(JSON.parse(String(init.body)));
+      enviados.push(await new Response(init.body).json());
       return new Response(null, { status: 200 });
     }),
   );

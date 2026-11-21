@@ -398,7 +398,7 @@ export const proposalKind = (p: Interview['propuestas'][number]): keyof typeof p
   return score === 4 ? 'completa' : score === 3 ? 'casi' : 'incompleta';
 };
 // «Le falta el cuándo y el cómo», o qué dice si no le falta nada.
-export function lacking(p: Interview['propuestas'][number]) {
+function lacking(p: Interview['propuestas'][number]) {
   const lacks = (['que', 'cuanto', 'cuando', 'como'] as const)
     .filter((k) => !p[k])
     .map((k) => missing[k]);
@@ -716,15 +716,6 @@ export function directShare(a: Interview) {
         .map((q) => q.respuesta === 'responde')
     : a.preguntas.map((p) => p.respuesta === 'directa');
   return list.filter(Boolean).length / (list.length || 1);
-}
-// A quién critica y cuántas veces: con comunicación, las respuestas que critican a cada uno; sin
-// ella, las críticas y ataques del análisis.
-export function criticTargets(a: Interview) {
-  const c = getCommunication(a.id);
-  const names = c ? c.preguntas.flatMap((q) => q.aQuienCritica) : a.ataques.map((x) => x.objetivo);
-  const count = new Map<string, number>();
-  for (const name of names) count.set(name, (count.get(name) ?? 0) + 1);
-  return [...count].sort((x, y) => y[1] - x[1]);
 }
 // Los cortes: con comunicación, sus interrupciones notables y los intercambios que cierra el
 // entrevistador con un corte o un comentario suyo; sin ella, las interrupciones del análisis.

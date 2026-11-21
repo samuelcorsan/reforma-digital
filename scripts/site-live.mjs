@@ -26,7 +26,7 @@ for (const site of await sitesWithFlow()) {
     const ctx = flowContext(site, page, { prefix: 'mejorada', fixtures: false, results });
     await site.flow.enhanced(ctx);
     // Per-site switch, as the popup does it (chrome.storage.local.disabledSites).
-    const [worker] = context.serviceWorkers();
+    const worker = context.serviceWorkers().at(0);
     const extensionPage = await context.newPage();
     const extensionId = worker
       ? new URL(worker.url()).host

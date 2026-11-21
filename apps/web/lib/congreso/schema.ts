@@ -342,7 +342,7 @@ export type Intervention = z.infer<typeof interventionSchema>;
 
 // El resto de los conjuntos públicos conserva su contrato JSON original para descarga y reutilización.
 export const jsonSchema = z.json();
-export const datasetSchemas = new Map<string, z.ZodType>([
+const datasetSchemas = new Map<string, z.ZodType>([
   ['indice.json', indexSchema],
   ['leyes.json', lawsSchema],
   ['preguntas.json', questionsSchema],
@@ -706,7 +706,7 @@ export const balanceSchema = z.object({
   }),
 });
 
-export const metricsSchema = z.object({
+const metricsSchema = z.object({
   elecciones: z.array(
     z.object({
       id: z.string(),
@@ -723,7 +723,6 @@ export const municipalityVotesSchema = z.object({
   municipios: z.record(z.string(), z.array(z.number())),
 });
 
-export const municipalityNamesSchema = municipalitiesSchema;
 // El contorno de cada municipio en el plano del mapa de España: [nombre, trazado SVG].
 export const geoMunicipalitiesSchema = z.object({
   ancho: z.number(),

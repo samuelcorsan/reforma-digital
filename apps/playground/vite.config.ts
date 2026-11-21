@@ -16,6 +16,18 @@ const fixtureRoutes = readdirSync(sitesDir).flatMap((id) => {
   return existsSync(file) ? [{ id, file }] : [];
 });
 
+/** The synthetic page for an official path, or undefined if no site claims it. */
+async function fixturePage(route: string): Promise<string | undefined> {
+  for (const { id, file } of fixtureRoutes) {
+    const routes = JSON.parse(await readFile(file, 'utf8')) as Record<string, string>;
+    const fixture = routes[route];
+    if (fixture) return readFile(path.join(sitesDir, id, 'fixtures', fixture), 'utf8');
+    if (routes['*'] && route.startsWith(routes['*']))
+      return '<!doctype html><html lang="es"><title>Pantalla desconocida</title><body><h1>Pantalla sin adaptación</h1><input aria-label="Control original"></body></html>';
+  }
+  return undefined;
+}
+
 export default defineConfig({
   root: path.resolve('apps/playground'),
   css: {
@@ -34,25 +46,13 @@ export default defineConfig({
     {
       name: 'synthetic-official-pages',
       configureServer(server) {
-        server.middlewares.use(async (req, res, next) => {
-          const route = req.url?.split('?')[0] ?? '';
-          for (const { id, file } of fixtureRoutes) {
-            const routes = JSON.parse(await readFile(file, 'utf8')) as Record<string, string>;
-            const fixture = routes[route];
-            if (fixture) {
-              res.setHeader('Content-Type', 'text/html; charset=utf-8');
-              res.end(await readFile(path.join(sitesDir, id, 'fixtures', fixture), 'utf8'));
-              return;
-            }
-            if (routes['*'] && route.startsWith(routes['*'])) {
-              res.setHeader('Content-Type', 'text/html; charset=utf-8');
-              res.end(
-                '<!doctype html><html lang="es"><title>Pantalla desconocida</title><body><h1>Pantalla sin adaptación</h1><input aria-label="Control original"></body></html>',
-              );
-              return;
-            }
-          }
-          next();
+        server.middlewares.use((req, res, next) => {
+          // A failed read goes to Vite's error handler instead of leaving the request hanging.
+          fixturePage(req.url?.split('?')[0] ?? '').then((html) => {
+            if (html === undefined) return next();
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.end(html);
+          }, next);
         });
       },
     },

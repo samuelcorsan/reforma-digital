@@ -47,7 +47,7 @@ export function wall(ms: number, tz = MADRID): Wall {
 }
 
 /** Minutos de diferencia con UTC en ese instante. */
-export function offset(ms: number, tz = MADRID): number {
+function offset(ms: number, tz = MADRID): number {
   const w = wall(ms, tz);
   const asUtc = Date.UTC(w.y, w.mo - 1, w.d, w.h, w.mi, w.s);
   return Math.round((asUtc - Math.floor(ms / 1000) * 1000) / MINUTE);
@@ -62,7 +62,7 @@ export function zoned(y: number, mo: number, d: number, h = 0, mi = 0, s = 0, tz
 
 const pad = (n: number, width = 2) => String(Math.abs(n)).padStart(width, '0');
 
-export function offsetText(minutes: number) {
+function offsetText(minutes: number) {
   return `${minutes < 0 ? '-' : '+'}${pad(Math.trunc(Math.abs(minutes) / 60))}:${pad(Math.abs(minutes) % 60)}`;
 }
 

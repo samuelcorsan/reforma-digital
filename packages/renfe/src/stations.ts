@@ -30,7 +30,7 @@ export function pyRepr(text: string) {
   return quote + text.replaceAll('\\', '\\\\').replaceAll(quote, `\\${quote}`) + quote;
 }
 
-export function parse(raw: unknown): Station[] {
+function parse(raw: unknown): Station[] {
   if (!Array.isArray(raw)) throw new ApiShapeError('stations: expected a list');
   if (!raw.length) throw new ApiShapeError('stations: Renfe returned an empty station list');
   return raw.map((item) => {
@@ -148,7 +148,7 @@ export function suggestions(query: string): Station[] {
   return ranked.slice(0, 5).map(([s]) => s);
 }
 
-export function resolve(query: string, stations: Station[]): Station {
+function resolve(query: string, stations: Station[]): Station {
   const all = scored(query, stations);
   if (!all.length)
     throw new NoMatch(`no station matches ${pyRepr(query)}; try \`renfe stations ${query}\``);

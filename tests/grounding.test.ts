@@ -63,7 +63,7 @@ describe('Jurisdiction precedes similarity', () => {
     ['ES-MD-MADRID', undefined, false],
     ['ES', undefined, true],
   ])('%s / %s', (doc, target, expected) =>
-    expect(compatibleJurisdiction(doc, target as string | undefined)).toBe(expected),
+    expect(compatibleJurisdiction(doc, target)).toBe(expected),
   );
   it('does not invent location', () =>
     expect(understandQuery('¿Dónde saco mi vida laboral?').jurisdiction).toBeUndefined());
@@ -98,10 +98,10 @@ describe('Citation integrity, fail closed', () => {
       validateAnswer({ ...answer, answer: 'Debes pagar 999 euros.' }, [evidence], q).answer,
     ).not.toContain('999'));
   it.each([
-    { ...answer, citations: [{ ...answer.citations[0]!, chunkId: 'forged' }] },
+    { ...answer, citations: [{ ...answer.citations[0], chunkId: 'forged' }] },
     {
       ...answer,
-      citations: [{ ...answer.citations[0]!, quote: 'El trámite cuesta 999 euros.' }],
+      citations: [{ ...answer.citations[0], quote: 'El trámite cuesta 999 euros.' }],
     },
     {
       ...answer,
@@ -110,9 +110,9 @@ describe('Citation integrity, fail closed', () => {
     { ...answer, relatedOfficialLinks: [{ documentId: 'forged' }] },
     {
       ...answer,
-      claims: [{ ...answer.claims[0]!, text: 'Entra en https://evil.com' }],
+      claims: [{ ...answer.claims[0], text: 'Entra en https://evil.com' }],
     },
-    { ...answer, claims: [answer.claims[0]!, answer.claims[0]!] },
+    { ...answer, claims: [answer.claims[0], answer.claims[0]] },
   ])('rejects invalid references', (raw) =>
     expect(validateAnswer(raw, [evidence], q).status).toBe('insufficient_evidence'),
   );
@@ -204,8 +204,7 @@ describe('Query understanding failures found by full-v1.1', () => {
 describe('Server-resolved citation excerpts', () => {
   it('uses the original stored fragment, never a model rewrite', () => {
     expect(
-      resolveCitationText([{ claimId: 'a', documentId: 'd1', chunkId: 'c1' }], [evidence])[0]!
-        .quote,
+      resolveCitationText([{ claimId: 'a', documentId: 'd1', chunkId: 'c1' }], [evidence])[0].quote,
     ).toBe(evidence.content);
   });
   it('leaves invented IDs unresolvable so validation fails closed', () => {

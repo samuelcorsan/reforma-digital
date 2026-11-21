@@ -8,7 +8,7 @@ export function officialAccessLink(document: Document): HTMLAnchorElement | null
         config.origins.includes(url.origin) &&
         url.pathname === '/citaPreviaDni/InicioDNINIE.action' &&
         !url.search &&
-        link.textContent?.trim() === 'Acceso con datos DNI/NIE'
+        link.textContent.trim() === 'Acceso con datos DNI/NIE'
       );
     },
   );

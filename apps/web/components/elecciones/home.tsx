@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { Badge } from '@reforma-digital/design/ui/badge';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
 import {
   deputyName,
   getElections,
@@ -26,7 +24,6 @@ import { origins } from '../../lib/elecciones/laws';
 import { electionPages, electionsHref, type ElectionPage } from '../../lib/elecciones/pages';
 import { href } from '../congreso/common';
 import { ProvincePicker, type ProvinceSummary } from './province-picker';
-import { Icon } from '../brand/icon';
 import { candidates } from '../../lib/elecciones/candidates';
 import { Portrait } from './portrait';
 import { Bars, CardCta, Cell, Chapter, Grid, Label, Legend, PageCard, Stat } from './report';
