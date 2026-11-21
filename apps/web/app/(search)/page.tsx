@@ -22,6 +22,7 @@ import {
   websiteId,
 } from '../../lib/seo';
 import { JsonLd } from '../../components/json-ld';
+import { PromptComposer } from '../../components/prompt-composer';
 
 const title = 'Reforma Digital · Lo público, a la altura de las personas';
 const description =
@@ -57,34 +58,12 @@ const graph = [
   },
 ];
 
-const mejoras = [
-  [
-    'Encontrar el camino.',
-    'Partir de lo que necesitas para llegar al organismo, los requisitos y el trámite que te corresponden, con fuentes oficiales que puedas consultar.',
-  ],
-  [
-    'Entender cada paso.',
-    'Dar contexto a los formularios, ordenar las opciones y mostrar los avisos donde hacen falta, conservando la información y las validaciones oficiales.',
-  ],
-  [
-    'Aprender una vez.',
-    'Compartir criterios de diseño entre sedes para que lo aprendido en un trámite sirva en el siguiente.',
-  ],
-  [
-    'Poder participar.',
-    'Hacer públicas las propuestas, las decisiones de diseño y las comprobaciones, para que cualquiera pueda discutirlas y mejorarlas.',
-  ],
-] as const;
-
 const titularSeccion = 'm-0 font-heading text-[clamp(32px,4vw,52px)] leading-[1.05] font-normal';
 const entradilla = 'm-0 text-[clamp(17px,1.4vw,19px)] leading-[1.6]';
 const enlaceTexto = 'flex min-h-11 w-fit items-center gap-2 underline underline-offset-[0.25em]';
 const aire = 'scroll-mt-20 pt-24 max-[480px]:pt-16';
 const contenedor = 'mx-auto max-w-(--container-content) px-(--page-gutter)';
 const seccion = `${aire} ${contenedor}`;
-// Rejilla de celdas con bordes compartidos: las líneas son el fondo que asoma por los huecos de 1 px.
-const celdas = 'm-0 grid list-none gap-px border border-border bg-border p-0';
-const celda = 'flex flex-col items-start gap-3 bg-background p-8 max-lg:p-6';
 // Fondos de la imagen de cada proyecto.
 const amarillo =
   'bg-[radial-gradient(100%_100%_at_100%_0%,color-mix(in_oklch,var(--brand-yellow),var(--background)_60%)_0%,transparent_70%),linear-gradient(150deg,var(--brand-yellow)_35%,color-mix(in_oklch,var(--brand-yellow),var(--brand-orange)_55%)_100%)]';
@@ -320,17 +299,6 @@ export default function HomePage() {
               </p>
             </div>
           </div>
-          <ul
-            className={cn(celdas, 'mt-12 grid-cols-4 max-lg:grid-cols-2 max-sm:grid-cols-1')}
-            aria-label="Qué queremos mejorar"
-          >
-            {mejoras.map(([titulo, texto]) => (
-              <li key={titulo} className={celda}>
-                <h3 className="m-0 font-heading text-xl leading-[1.2] font-normal">{titulo}</h3>
-                <p className="m-0 text-(--text-secondary)">{texto}</p>
-              </li>
-            ))}
-          </ul>
         </section>
 
         <section
@@ -345,14 +313,9 @@ export default function HomePage() {
             Cuéntanos dónde te atascaste o qué cambiarías abriendo una issue en GitHub. No hace
             falta programar. Es pública: no incluyas datos personales.
           </p>
-          <a
-            href={`${links.repo}/issues/new`}
-            data-slot="button"
-            data-variant="sunset"
-            className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }), 'mt-3')}
-          >
-            Abrir una issue <Icon name="externo" size={16} />
-          </a>
+          <div className="mt-3 w-full max-w-[760px] min-w-0">
+            <PromptComposer />
+          </div>
         </section>
       </main>
       <Footer />
