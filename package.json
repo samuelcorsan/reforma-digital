@@ -34,7 +34,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "eval": "tsx --env-file-if-exists=.env packages/evals/src/cli.ts",
-    "eval:agent": "tsx --env-file-if-exists=.env packages/evals/src/agent/cli.ts",
     "db:migrate": "tsx --env-file-if-exists=.env packages/db/src/migrate.ts",
     "feedback:export": "tsx --env-file-if-exists=.env packages/evals/src/feedback.ts",
     "doctor": "tsx --env-file-if-exists=.env scripts/doctor.ts",

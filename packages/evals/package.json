@@ -14,9 +14,6 @@
     "@reforma-digital/government": "workspace:*",
     "@reforma-digital/db": "workspace:*",
     "@reforma-digital/ai": "workspace:*",
-    "zod": "^4.1.0",
-    "@reforma-digital/agent": "workspace:*",
-    "@playwright/test": "1.63.0",
-    "ai": "^7.0.137"
+    "zod": "^4.1.0"
   }
 }

@@ -1,47 +1,33 @@
 import { z } from 'zod';
-import { leerCuerpo } from '../../../lib/escritorio';
 import { siteUrl } from '../../../lib/site';
 
 /**
- * Las estadísticas de uso de la web y de la app de escritorio, que se ven en PostHog (UE). Solo
- * pasan los eventos de esta lista, con valores cerrados y el identificador aleatorio de una pestaña
- * o de una sesión de la app, que solo vive en memoria. PostHog recibe la petición de este servidor,
- * así que no ve la IP ni el navegador de nadie, y no crea perfiles de persona.
+ * Las estadísticas de uso de la web, que se ven en PostHog (UE). Solo pasan las páginas vistas,
+ * con la ruta y el identificador aleatorio de una pestaña, que solo vive en memoria. PostHog
+ * recibe la petición de este servidor, así que no ve la IP ni el navegador de nadie, y no crea
+ * perfiles de persona.
  */
-const sesion = z.uuid();
-const app = {
-  sesion,
-  version: z.string().regex(/^\d+\.\d+\.\d+$/),
-  plataforma: z.enum(['darwin', 'win32', 'linux']),
-  proveedor: z.enum(['app', 'propio']),
-};
-const eventoEsquema = z.union([
-  z.strictObject({
-    sesion,
-    evento: z.literal('$pageview'),
-    ruta: z
-      .string()
-      .max(200)
-      .regex(/^\/[\w\-/%.~]*$/),
-  }),
-  z.strictObject({
-    sesion,
-    evento: z.literal('descarga_escritorio'),
-    sistema: z.enum(['macos', 'windows', 'linux']),
-  }),
-  z.strictObject({
-    ...app,
-    evento: z.enum([
-      'app_abierta',
-      'tramite_creado',
-      'mensaje_enviado',
-      'pregunta_respondida',
-      'tramite_detenido',
-      'tramite_borrado',
-      'perfil_guardado',
-    ]),
-  }),
-]);
+const eventoEsquema = z.strictObject({
+  sesion: z.uuid(),
+  evento: z.literal('$pageview'),
+  ruta: z
+    .string()
+    .max(200)
+    .regex(/^\/[\w\-/%.~]*$/),
+});
+
+/** Lee el cuerpo sin pasar de `max` bytes; `null` si es más grande, sin leer el resto. */
+async function leerCuerpo(request: Request, max: number) {
+  if (Number(request.headers.get('content-length') ?? 0) > max) return null;
+  const trozos: Uint8Array[] = [];
+  let bytes = 0;
+  for await (const trozo of request.body ?? []) {
+    bytes += trozo.byteLength;
+    if (bytes > max) return null;
+    trozos.push(trozo);
+  }
+  return new TextDecoder().decode(Buffer.concat(trozos));
+}
 
 export async function POST(request: Request) {
   const clave = process.env.POSTHOG_KEY;
@@ -56,11 +42,7 @@ export async function POST(request: Request) {
   }
   const e = eventoEsquema.safeParse(json);
   if (!e.success) return new Response(null, { status: 400 });
-  const { evento, sesion, ...datos } = e.data;
-  const propiedades =
-    'ruta' in datos
-      ? { $current_url: new URL(datos.ruta, siteUrl).href, $pathname: datos.ruta }
-      : datos;
+  const { evento, sesion, ruta } = e.data;
   const res = await fetch('https://eu.i.posthog.com/i/v0/e/', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -68,7 +50,12 @@ export async function POST(request: Request) {
       api_key: clave,
       event: evento,
       distinct_id: sesion,
-      properties: { ...propiedades, $process_person_profile: false, $geoip_disable: true },
+      properties: {
+        $current_url: new URL(ruta, siteUrl).href,
+        $pathname: ruta,
+        $process_person_profile: false,
+        $geoip_disable: true,
+      },
     }),
     signal: AbortSignal.timeout(5000),
   }).catch(() => null);

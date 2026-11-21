@@ -1,4 +1,4 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src/**/*.ts", "../../tests/e2e/agente-guionado.spec.ts"]
+  "include": ["src/**/*.ts"]
 }

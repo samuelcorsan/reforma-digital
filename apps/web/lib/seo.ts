@@ -9,7 +9,6 @@ type OgImage =
   | 'portada'
   | 'equipo'
   | 'privacidad'
-  | 'escritorio'
   | 'api'
   | 'congreso'
   | 'elecciones'

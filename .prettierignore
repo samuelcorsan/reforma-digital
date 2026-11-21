@@ -12,4 +12,3 @@ sites/dni/fixtures/real-*.html
 sites/hacienda/fixtures/*.html
 sites/registro-asociaciones/fixtures/*.html
 .astro
-apps/desktop/out
