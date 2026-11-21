@@ -16,6 +16,8 @@ const lint = spawnSync(bin('oxlint'), ['--fix', '--deny-warnings', file], {
   cwd: root,
   encoding: 'utf8',
 });
+// Without `pnpm install` there is nothing to run; CI still lints the change.
+if (lint.error) process.exit(0);
 if (lint.status !== 0) {
   process.stderr.write(`${lint.stdout}${lint.stderr}`);
   process.exit(2);
