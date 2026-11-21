@@ -15,6 +15,7 @@
     "@reforma-digital/renfe": "workspace:*",
     "@tailwindcss/postcss": "^4.1.0",
     "@vercel/analytics": "2.0.1",
+    "ai": "^7.0.137",
     "dotenv": "^17.2.3",
     "next": "16.3.8",
     "nucleo-ui-essential-outline-18": "^1.1.8",
