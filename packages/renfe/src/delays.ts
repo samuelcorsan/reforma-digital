@@ -137,7 +137,7 @@ function offsetSeconds(text: string): number | null {
   return h * 3600 + m * 60 + s;
 }
 
-export function parseTimetable(data: Buffer, days: Set<string>, numbers: Set<string>): Trips {
+function parseTimetable(data: Buffer, days: Set<string>, numbers: Set<string>): Trips {
   try {
     const files = unzip(data);
     const active = services(files, days);

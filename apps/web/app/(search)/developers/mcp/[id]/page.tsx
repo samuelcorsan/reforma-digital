@@ -137,12 +137,19 @@ function Connect({ server }: { server: McpServer }) {
   const vscode = `vscode:mcp/install?${encodeURIComponent(
     JSON.stringify({ name, type: 'http', url }),
   )}`;
-  const json = (value: object) => JSON.stringify(value, null, 2);
   const samples: Sample[] = [
     { label: 'Claude Code', lang: 'bash', code: `claude mcp add --transport http ${name} ${url}` },
     { label: 'Codex', lang: 'bash', code: `codex mcp add ${name} --url ${url}` },
-    { label: 'Cursor', lang: 'json', code: json({ mcpServers: { [name]: { url } } }) },
-    { label: 'VS Code', lang: 'json', code: json({ servers: { [name]: { type: 'http', url } } }) },
+    {
+      label: 'Cursor',
+      lang: 'json',
+      code: JSON.stringify({ mcpServers: { [name]: { url } } }, null, 2),
+    },
+    {
+      label: 'VS Code',
+      lang: 'json',
+      code: JSON.stringify({ servers: { [name]: { type: 'http', url } } }, null, 2),
+    },
   ];
   const appButton = cn(buttonVariants({ variant: 'outline', size: 'xl' }), 'rounded-full');
 

@@ -712,5 +712,3 @@ export const servicios: Servicio[] = [
     channels: ['Asistente Virtual', 'Atención en Oficina'],
   },
 ];
-
-export const categorias = [...new Set(servicios.map((s) => s.category))];

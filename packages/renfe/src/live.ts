@@ -33,7 +33,7 @@ export type Board = { updated: number | null; trains: Map<string, Entry> };
 export const key = (number: string) => number.replace(/^0+/, '') || '0';
 export const zfill = (number: string) => number.padStart(5, '0');
 
-export class MapChanged extends ApiShapeError {
+class MapChanged extends ApiShapeError {
   override hint =
     "Renfe's live map may have moved or changed; check config.LIVE_MAP_URL and update renfe/live.py.";
 }
@@ -83,7 +83,7 @@ function notAhead(moment: number | null, around: number | null): number | null {
 }
 
 export function parse(doc: unknown): Board {
-  const trenes = (doc as { trenes?: unknown })?.trenes;
+  const trenes = (doc as { trenes?: unknown } | null | undefined)?.trenes;
   if (!doc || typeof doc !== 'object' || !Array.isArray(trenes))
     throw new MapChanged(`${LABEL}: no list of trains`);
   const updated = madrid((doc as Record<string, unknown>).fechaActualizacion);
@@ -128,8 +128,9 @@ export function status(
 ) {
   const entry = board.trains.get(key(number));
   const station = (c: string | null) => (c ? { code: c, name: names.get(c) ?? null } : null);
+  const train = entry ? entry.number : zfill(number);
   const out: Record<string, unknown> = {
-    train: entry ? entry.number : zfill(number),
+    train,
     on_map: entry !== undefined,
     delay_minutes: null,
     origin: null,
@@ -147,13 +148,13 @@ export function status(
       ? ''
       : "Renfe's live map lists no trains right now (it is empty at night). ";
     out.notice =
-      `${empty}Train ${out.train} isn't on Renfe's live map, which lists long- and medium-distance trains only ` +
+      `${empty}Train ${train} isn't on Renfe's live map, which lists long- and medium-distance trains only ` +
       "while they run: it may not have left yet, may have arrived or been cancelled, or isn't one of those trains. " +
       'Its delay is unknown, not zero.';
     return out;
   }
-  const next = station(entry.next) as Record<string, unknown> | null;
-  if (next) next.expected_arrival = isoOrNull(entry.expected);
+  const at = station(entry.next);
+  const next = at && { ...at, expected_arrival: isoOrNull(entry.expected) };
   Object.assign(out, {
     delay_minutes: entry.delay,
     origin: station(entry.origin),
@@ -194,7 +195,7 @@ export function inBackground(): () => Promise<[Board | null, string | null, Retr
       void (got.why =
         err instanceof RenfeError
           ? err.message
-          : `${LABEL}: unexpected error (${(err as Error)?.name ?? 'Error'})`),
+          : `${LABEL}: unexpected error (${err instanceof Error ? err.name : 'Error'})`),
   );
   return async () => {
     let timer: ReturnType<typeof setTimeout> | undefined;

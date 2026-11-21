@@ -23,7 +23,7 @@ import {
 
 type Doc = Record<string, unknown>;
 
-export function utcWindow(day: string): [string, string] {
+function utcWindow(day: string): [string, string] {
   return [new Date(midnight(day)).toISOString(), new Date(midnight(addDays(day, 1))).toISOString()];
 }
 
@@ -40,7 +40,10 @@ function local(moment: number, tz: unknown): string {
   if (typeof tz === 'string' && tz) {
     try {
       return iso(moment, tz);
-    } catch {}
+    } catch (error) {
+      // Una zona horaria que Intl no conoce: se usa la de Madrid.
+      if (!(error instanceof RangeError)) throw error;
+    }
   }
   return iso(moment, MADRID);
 }
@@ -139,7 +142,7 @@ function parseFaresUnchecked(doc: unknown): Map<string, Priced> {
   const routes = ((offer.travels as Doc[])[0] as Doc).routes;
   if (!Array.isArray(routes)) throw new ApiShapeError('journey-search: routes is not a list');
   const families = new Map<unknown, unknown>();
-  for (const f of (offer.product_families as unknown[]) || [])
+  for (const f of (offer.product_families as unknown[] | null | undefined) || [])
     if (f && typeof f === 'object') families.set((f as Doc).id, (f as Doc).name);
   const out = new Map<string, Priced>();
   for (const route of routes as Doc[]) {
@@ -153,7 +156,7 @@ function parseFaresUnchecked(doc: unknown): Map<string, Priced> {
       ]),
     );
     const fares: Priced['fares'] = [];
-    for (const bundle of ((route.bundles as Doc[]) || []) as Doc[]) {
+    for (const bundle of (route.bundles as Doc[] | null | undefined) || []) {
       const price = bundle.price;
       if (typeof price !== 'number') continue;
       if (!Number.isFinite(price) || price < 0)
@@ -249,7 +252,7 @@ async function fetchFares(
   if (bug) throw bug;
   if (errors.some((e) => e instanceof BlockedError))
     return answers.map((a) => (a instanceof Error && !(a instanceof BlockedError) ? SKIPPED : a));
-  if (errors.length) throw errors[0];
+  if (errors[0]) throw errors[0];
   return answers;
 }
 

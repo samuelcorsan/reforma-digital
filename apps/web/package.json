@@ -9,7 +9,6 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "5.3.0",
     "@reforma-digital/db": "workspace:*",
     "@reforma-digital/design": "workspace:*",
     "@reforma-digital/mcp": "workspace:*",
@@ -17,13 +16,11 @@
     "@tailwindcss/postcss": "^4.1.0",
     "@vercel/analytics": "2.0.1",
     "dotenv": "^17.2.3",
-    "lucide-react": "^0.468.0",
     "next": "16.3.8",
     "nucleo-ui-essential-outline-18": "^1.1.8",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "shiki": "4.5.0",
-    "tailwindcss": "^4.1.0",
     "zod": "^4.1.0"
   },
   "devDependencies": {

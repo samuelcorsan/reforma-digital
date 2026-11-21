@@ -50,7 +50,7 @@ import {
 } from './interviews';
 import { answerStyles } from './mark-icon';
 import { Portrait } from './portrait';
-import { Bars, Cell, Explore, Grid, Label, Legend, ReportSection } from './report';
+import { Bars, Cell, Grid, Label, Legend, ReportSection } from './report';
 import { ShareButton } from './share-button';
 
 // El análisis de comunicación de una entrevista: el informe, con sus gráficas. Todo sale de
@@ -720,7 +720,7 @@ const commBlurb: Record<CommView, string> = {
   comparativa: 'Las mismas medidas para todos los candidatos de la ronda',
   metodologia: 'Qué no puede decir este análisis, cómo se ha hecho y los datos completos',
 };
-export const commHref = (id: string, view: CommView = 'resumen') =>
+const commHref = (id: string, view: CommView = 'resumen') =>
   interviewsHref(`${id}/${communicationPath}${view === 'resumen' ? '' : `/${view}`}`);
 // Las subpáginas que tiene este análisis.
 export function commAvailable(c: Communication): CommView[] {

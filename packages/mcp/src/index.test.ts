@@ -2,7 +2,11 @@
 import { expect, it, vi } from 'vitest';
 import { createCongresoMcp } from './index';
 
-async function callTool(api: Parameters<typeof createCongresoMcp>[0], name: string, args: object) {
+async function callTool(
+  api: Parameters<typeof createCongresoMcp>[0],
+  name: string,
+  args: Record<string, string>,
+) {
   const response = await createCongresoMcp(api).fetch(
     new Request('http://localhost/mcp', {
       method: 'POST',

@@ -453,7 +453,7 @@ export function InterviewPlayer({
               </span>
               {!!marksBySegment[i]?.length && (
                 <span className="ml-auto flex flex-wrap gap-1">
-                  {marksBySegment[i]?.map((m) => (
+                  {marksBySegment[i].map((m) => (
                     <span
                       key={m.id}
                       className="inline-flex items-center gap-1 rounded-full bg-background py-0.5 pr-2.5 pl-0.5 text-xs ring-1 ring-border"
@@ -497,11 +497,6 @@ export function InterviewPlayer({
   };
   const share = (second: number) => (second - from) / (to - from);
   const visible = (second: number) => second >= from && second <= to;
-  const seekAt = (event: MouseEvent<HTMLElement>) => {
-    const r = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - r.left - edge) / (r.width - 2 * edge);
-    seek(from + Math.min(1, Math.max(0, x)) * (to - from));
-  };
 
   const topicNames = [...new Set(topics.map((t) => t.tema))];
   const topic = topics.find((t) => t.inicio <= time && time < t.fin)?.tema;

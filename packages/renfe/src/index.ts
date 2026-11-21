@@ -25,7 +25,11 @@ const READ_ONLY = {
 
 /** Un RenfeError se devuelve con su JSON; cualquier otro error, solo con su tipo (el mensaje podría llevar URLs,
  * cabeceras o tokens). */
-async function run(produce: () => Promise<unknown>) {
+type ToolOutput = Awaited<
+  ReturnType<typeof findStations | typeof searchTrains | typeof trainStatus | typeof listDelays>
+>;
+
+async function run(produce: () => Promise<ToolOutput>) {
   try {
     return { content: [{ type: 'text' as const, text: JSON.stringify(await produce(), null, 2) }] };
   } catch (err) {
@@ -34,7 +38,7 @@ async function run(produce: () => Promise<unknown>) {
         ? err.toDict()
         : {
             type: 'internal',
-            message: `unexpected internal error: ${(err as Error)?.name ?? 'Error'}`,
+            message: `unexpected internal error: ${err instanceof Error ? err.name : 'Error'}`,
             exit_code: 1,
           };
     return { content: [{ type: 'text' as const, text: JSON.stringify(body) }], isError: true };
