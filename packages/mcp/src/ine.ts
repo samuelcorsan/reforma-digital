@@ -42,10 +42,27 @@ async function buscarOperacion(fetchImpl: Fetch, q: string) {
     }));
 }
 
-async function buscarTabla(fetchImpl: Fetch, operacion: string, q?: string) {
-  const tablas = (await (
-    await get(fetchImpl, `${API}/TABLAS_OPERACION/${encodeURIComponent(operacion)}?tip=A`)
-  ).json()) as { Id: number; Nombre: string; T3_Periodicidad: string }[];
+type Tabla = { Id: number; Nombre: string; T3_Periodicidad: string };
+// Las tablas de una operación cambian poco y las de la EPA (más de 1.000) tardan 10-15 s en llegar:
+// se piden una vez por proceso, como las operaciones. Con un tope, porque el código lo elige el
+// cliente.
+const tablasPorOperacion = new Map<string, Promise<Tabla[]>>();
+
+export async function buscarTabla(fetchImpl: Fetch, operacion: string, q?: string) {
+  // El INE solo reconoce los códigos en mayúsculas: «ipv» responde 500.
+  const codigo = operacion.toUpperCase();
+  let pedidas = tablasPorOperacion.get(codigo);
+  if (!pedidas) {
+    if (tablasPorOperacion.size >= 50) tablasPorOperacion.clear();
+    pedidas = get(fetchImpl, `${API}/TABLAS_OPERACION/${encodeURIComponent(codigo)}?tip=A`)
+      .then((r) => r.json() as Promise<Tabla[]>)
+      .catch((error: unknown) => {
+        tablasPorOperacion.delete(codigo);
+        throw error;
+      });
+    tablasPorOperacion.set(codigo, pedidas);
+  }
+  const tablas = await pedidas;
   const w = words(q);
   const found = tablas.filter((t) => matches(t.Nombre, w));
   return {
