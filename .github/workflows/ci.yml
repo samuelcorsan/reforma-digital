@@ -73,6 +73,7 @@ jobs:
           python-version: '3.12'
           activate-environment: true
           cache-dependency-glob: apps/ingestion/requirements.txt
+      - run: uvx ruff@0.17.5 check apps/ingestion
       - run: uv pip install -r apps/ingestion/requirements.txt
       - run: python -m pytest -p no:cacheprovider apps/ingestion/tests
 
