@@ -53,7 +53,7 @@ Codex applies these in its automatic review; `/code-review` and human reviewers 
 ### Official portals
 
 - Flag an adaptation that replaces, removes or bypasses an original CAPTCHA, signature, certificate, password or file-upload control, submits on the user's behalf, or reads cookies, tokens or session data. Users must complete the official procedure with its validation and security intact. Safe path: keep the control original, or bind it through `DomBridge` while the official control stays in its form (CONTRIBUTING.md).
-- Flag extension or site code that reaches network, storage or dynamic-code APIs, or new manifest permissions. The extension promises users it sends and stores nothing. Safe path: none in the extension; server features belong in `apps/web`.
+- Flag new manifest permissions or host matches, and extension or site code that keeps or passes on what users type into official forms. The extension only stores its activation preferences in `chrome.storage.local` (SECURITY.md); lint and `audit:bundle` already block network, page-storage and dynamic-code APIs. Safe path: form data stays in the official form; server features belong in `apps/web`.
 
 ### Published data
 
