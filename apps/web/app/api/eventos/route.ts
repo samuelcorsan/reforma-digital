@@ -58,6 +58,14 @@ export async function POST(request: Request) {
       },
     }),
     signal: AbortSignal.timeout(5000),
-  }).catch(() => null);
+  }).catch((error: unknown) => {
+    // Sin conexión o PostHog tarda más de 5 s: se responde 502.
+    if (
+      error instanceof TypeError ||
+      (error instanceof DOMException && error.name === 'TimeoutError')
+    )
+      return null;
+    throw error;
+  });
   return new Response(null, { status: res?.ok ? 204 : 502 });
 }

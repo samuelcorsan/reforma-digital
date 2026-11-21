@@ -2,7 +2,7 @@ import { officialHref, requireElements, textOf } from '@reforma-digital/bridge';
 import { linkText, type OfficialLink } from '../../components/official';
 
 /** Selectores de la información del trámite (<app>/acInfo), verificados el 2026-09-27. */
-export const INFO = {
+const INFO = {
   header: '#mainWindow .mf-window-header',
   content: '#mainWindow .mf-layout--main-content > .mf-main--content',
   form: 'form[name="info"]',
@@ -15,7 +15,7 @@ const OPTION_TEXT = '.tjus';
 const CLAVE_INFO = 'a[href*="clave.gob.es"]';
 const BACK = '#btnVolver';
 
-export interface AccessOption {
+interface AccessOption {
   /** Opción oficial: un <div> clicable (con onclick o manejador de la propia web). */
   element: HTMLElement;
   title: string;

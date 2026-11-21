@@ -141,7 +141,7 @@ export async function GET(request: Request, context: { params: Promise<{ path?: 
       const rows =
         await sql`SELECT content FROM congreso_sessions WHERE legislature=${legislatura} AND id=${path[1]}`;
       return rows[0]
-        ? Response.json(jsonSchema.parse(rows[0]?.content), { headers: cached })
+        ? Response.json(jsonSchema.parse(rows[0].content), { headers: cached })
         : error(404, 'Sesión desconocida');
     }
     // COUNT y página pertenecen a la misma instantánea de la transacción.

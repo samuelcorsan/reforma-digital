@@ -2,7 +2,7 @@ import { requireElements, textOf } from '@reforma-digital/bridge';
 import { officialLinks, type OfficialLink } from '../../components/official';
 
 /** Selectores de la selección de provincia (<app>/index.html), verificados el 2026-09-27. */
-export const PROVINCIAS = {
+const PROVINCIAS = {
   header: '#mainWindow .mf-window-header',
   content: '#mainWindow .mf-layout--main-content > .mf-main--content',
   select: '#divProvincias select#form',

@@ -4,7 +4,7 @@ import { Icon, type IconName } from '../brand/icon';
 
 // El icono de cada marca de una entrevista: el mismo en la línea de tiempo, en la leyenda y en las
 // calificaciones.
-export const markIcons: Record<Mark['kind'], IconName> = {
+const markIcons: Record<Mark['kind'], IconName> = {
   momento: 'estrella',
   completa: 'diana',
   casi: 'casi',

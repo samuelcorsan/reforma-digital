@@ -9,7 +9,6 @@
 // módulo cuando pase la fecha de corte.
 
 import { request } from './client';
-import * as config from './config';
 import { ApiShapeError, BlockedError, type Retry, UpstreamError } from './errors';
 import * as retry from './retry';
 import type { Station } from './stations';
@@ -172,10 +171,7 @@ function searchForm(origin: Station, destination: Station, day: string): Record<
 }
 
 function resultsRedirect(status: number, location: string): string {
-  let target: URL | undefined;
-  try {
-    target = new URL(location, SEARCH_URL);
-  } catch {}
+  const target = URL.canParse(location, SEARCH_URL) ? new URL(location, SEARCH_URL) : undefined;
   if (
     status !== 302 ||
     target?.protocol !== 'https:' ||
@@ -513,7 +509,8 @@ export function readLiteral(text: string, start = 0): [unknown, number] {
     const m = TOKEN.exec(text);
     if (!m) throw new ApiShapeError('legacy shop train list: unreadable answer');
     i = TOKEN.lastIndex;
-    const kind = KINDS[m.slice(1).findIndex((g) => g !== undefined)]!;
+    // Los grupos que no casan son undefined, aunque RegExpExecArray los declare string.
+    const kind = KINDS[m.slice(1).findIndex((g: string | undefined) => g !== undefined)]!;
     let part = m[0];
     if (kind === 'key') part = JSON.stringify(part);
     else if (kind === 'string')

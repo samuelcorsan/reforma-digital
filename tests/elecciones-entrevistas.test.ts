@@ -131,7 +131,7 @@ describe('las entrevistas', () => {
   it('publica el análisis de comunicación solo de entrevistas que existen, con sus cifras', async () => {
     for (const c of allCommunication()) {
       const { title } = await generateMetadata(params([c.id, 'comunicacion']));
-      expect(String(title)).toContain('análisis de comunicación');
+      expect(title).toEqual(expect.stringContaining('análisis de comunicación'));
       // Las cifras del titular salen de las preguntas: no pueden pasar de las que hay.
       const { questions, hard, answered } = pressure(c);
       expect(answered).toBeLessThanOrEqual(hard);

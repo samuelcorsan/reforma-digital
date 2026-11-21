@@ -52,7 +52,7 @@ const active = 'bg-sidebar-accent font-medium text-foreground';
 const findSections = (): Section[] =>
   [...document.querySelectorAll<HTMLElement>('main [data-section-title]')].map((el, i) => ({
     key: `s${i}`,
-    label: el.textContent?.trim() ?? '',
+    label: el.textContent.trim(),
     el,
   }));
 

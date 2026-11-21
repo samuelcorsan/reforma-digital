@@ -63,7 +63,7 @@ describe('Jurisdiction precedes similarity', () => {
     ['ES-MD-MADRID', undefined, false],
     ['ES', undefined, true],
   ])('%s / %s', (doc, target, expected) =>
-    expect(compatibleJurisdiction(doc, target as string | undefined)).toBe(expected),
+    expect(compatibleJurisdiction(doc, target)).toBe(expected),
   );
   it('does not invent location', () =>
     expect(understandQuery('¿Dónde saco mi vida laboral?').jurisdiction).toBeUndefined());

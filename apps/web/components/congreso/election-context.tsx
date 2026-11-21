@@ -1,5 +1,3 @@
-import { balanceSchema } from '../../lib/congreso/schema';
-import { getElections, read } from '../../lib/congreso/data';
 import { GeographyVote } from '../elecciones/geography-vote';
 import { Metrics } from '../elecciones/metrics';
 import { Municipalities } from '../elecciones/municipalities';
@@ -7,7 +5,7 @@ import { Expiring } from '../elecciones/expiring';
 import { LegislatureFigures } from '../elecciones/legislature';
 import { Repeat } from '../elecciones/repeat';
 
-export async function ElectionContext({
+export function ElectionContext({
   detail,
   query,
   page,
@@ -16,8 +14,6 @@ export async function ElectionContext({
   query: string;
   page: number;
 }) {
-  const election = await getElections();
-  const source = await read('elecciones/elecciones.json', balanceSchema);
   if (detail === 'caducan') return <Expiring />;
   if (detail === 'legislatura') return <LegislatureFigures />;
   if (detail === 'metricas') return <Metrics />;

@@ -3,7 +3,7 @@
 // son "hora de pared de Madrid en ms" (Date.UTC de la hora local) y solo se pasan a instantes al escribirlas.
 
 import groupsText from '../data/train-number-groups';
-import { type Block, matchingBlocks } from './difflib';
+import { matchingBlocks } from './difflib';
 import { key, zfill } from './live';
 import { DAY, HOUR, iso, zoned } from './time';
 
@@ -51,7 +51,7 @@ type Edge = [string, number | null, string, number | null];
 
 export const tripKey = (day: string, number: string) => `${day}|${number}`;
 const dayOf = (wallMs: number) => new Date(wallMs).toISOString().slice(0, 10);
-export const wallMidnight = (day: string) => Date.parse(`${day}T00:00:00Z`);
+const wallMidnight = (day: string) => Date.parse(`${day}T00:00:00Z`);
 
 /** La hora de pared de Madrid como instante, escrita como `isoformat()`. */
 function wallIso(wallMs: number) {
@@ -86,7 +86,7 @@ function* legs(
       for (let j = i + 1; j < route.length; j++) {
         const end = route[j]!;
         if (end.code === dest && end.arrival !== null && start.departure < end.arrival)
-          yield { number, stops: route.slice(i, j + 1) } as Leg;
+          yield { number, stops: route.slice(i, j + 1) };
       }
     }
   }
@@ -98,7 +98,7 @@ const edgeKey = (e: Edge) => e.join('|');
 
 function* sharedRanges(a: Edge[], b: Edge[]): Generator<[number, number]> {
   // Se comparan movimientos con hora. En los bordes de un tramo solo cuentan la salida y la llegada.
-  for (const [i, , length] of matchingBlocks(a, b, edgeKey) as Block[]) {
+  for (const [i, , length] of matchingBlocks(a, b, edgeKey)) {
     let start = i;
     for (let k = i; k < i + length; k++) {
       const [src, dep, dest, arr] = a[k]!;
