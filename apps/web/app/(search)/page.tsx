@@ -8,7 +8,6 @@ import type { ReactNode } from 'react';
 import { Icon } from '../../components/brand/icon';
 import { Header } from '../../components/brand/header';
 import { Footer } from '../../components/brand/footer';
-import { DesktopScene } from '../../components/brand/desktop-scene';
 import { ProjectScene } from '../../components/brand/project-scene';
 import { links } from '../../lib/site';
 import { congressBase } from '../../lib/congreso/routes';
@@ -227,9 +226,8 @@ export default function HomePage() {
             Lo público, a la altura de las personas.
           </h1>
           <p className={cn(entradilla, 'max-w-[62ch]')}>
-            Herramientas gratuitas y de código abierto: un asistente que te ayuda a hacer tus
-            trámites, una extensión que hace más fáciles de usar las webs oficiales, y la actividad
-            del Congreso y las elecciones con datos oficiales.
+            Herramientas gratuitas y de código abierto: una extensión que hace más fáciles de usar
+            las webs oficiales, y la actividad del Congreso y las elecciones con datos oficiales.
           </p>
           <a
             href="#proyectos"
@@ -257,16 +255,6 @@ export default function HomePage() {
               los bordes de la ventana. Desde ahí se corta en el ancho de la retícula: la fila mide
               48 px más por cada lado y en ese margen las tarjetas se funden. */}
           <ul className="m-0 flex snap-x snap-mandatory list-none gap-6 overflow-x-auto [padding:0_max(var(--page-gutter),_calc((100%_-_var(--container-content))_/_2_+_var(--page-gutter)))_16px] [scroll-padding-inline:max(var(--page-gutter),_calc((100%_-_var(--container-content))_/_2_+_var(--page-gutter)))] xl:mx-auto xl:max-w-[calc(var(--container-content)+48px)] xl:scroll-px-12 xl:px-12 xl:[mask-image:linear-gradient(to_right,transparent,black_48px,black_calc(100%_-_48px),transparent)]">
-            <Proyecto
-              titulo="App de escritorio"
-              texto="Le dices qué necesitas: busca el trámite en las webs oficiales, te explica los pasos y rellena el formulario contigo. Tus datos personales no llegan a la IA."
-              enlace={{ href: '/escritorio', texto: 'Ver la app' }}
-              fondo={amarillo}
-            >
-              <div className="px-6 pt-6">
-                <DesktopScene height={800} />
-              </div>
-            </Proyecto>
             <Proyecto
               titulo="El Congreso"
               texto="Consulta qué se debate, cómo se vota y quién te representa, con enlaces a las fuentes oficiales."

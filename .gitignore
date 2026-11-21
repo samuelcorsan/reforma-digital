@@ -18,6 +18,3 @@ coverage/
 artifacts/runs/
 artifacts/feedback/
 artifacts/crawl/
-
-# App de escritorio (apps/desktop): compilación y paquetes.
-apps/desktop/out/

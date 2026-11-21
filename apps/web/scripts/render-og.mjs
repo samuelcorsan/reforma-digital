@@ -26,13 +26,6 @@ const pages = [
     texto: 'Sin cuenta y sin cookies publicitarias. Esta web no te pide datos personales.',
   },
   {
-    slug: 'escritorio',
-    escena: 'marca',
-    etiqueta: 'App de escritorio',
-    titular: 'Tus trámites, con un asistente.',
-    texto: 'Para macOS, Windows y Linux. Te guía en la web oficial y tus datos no llegan a la IA.',
-  },
-  {
     slug: 'api',
     escena: 'marca',
     etiqueta: 'API abierta',

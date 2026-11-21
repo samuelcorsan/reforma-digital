@@ -41,7 +41,6 @@ const logo =
 
 export function Header({ current }: { current?: string }) {
   const links = [
-    { href: '/escritorio', text: 'App', current: current === '/escritorio' },
     { href: '/congreso', text: 'El Congreso', current: current === '/congreso' },
     { href: '/elecciones', text: 'Elecciones', current: current === '/elecciones' },
     {

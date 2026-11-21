@@ -12,6 +12,7 @@ try {
       '0005_congreso',
       '0006_congreso_month_rows',
       '0007_congreso_search',
+      '0008_retire_request_buckets',
     ]) {
       const done = await tx`SELECT id FROM schema_migrations WHERE id=${id}`;
       if (!done.length) {

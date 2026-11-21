@@ -28,9 +28,7 @@ La compatibilidad con validaciones personalizadas, restricciones del navegador, 
 
 No incluyas sesiones, documentos personales, tokens reales o datos identificativos en issues, fixtures, logs ni capturas. Para un fallo de seguridad, utiliza el canal privado de reporte del repositorio cuando esté habilitado; evita publicar detalles que expongan datos de usuarios.
 
-La app de escritorio (`apps/desktop`) tiene su propio protocolo: qué datos guarda, qué llega al proveedor de IA, las capas que lo impiden, lo que queda fuera y qué comprobar antes de cambiarlo. Consulta [apps/desktop/security-protocol.md](apps/desktop/security-protocol.md).
-
-El registro de actividades de tratamiento y la evaluación de impacto del RGPD están en [docs/proteccion-de-datos.md](docs/proteccion-de-datos.md).
+El registro de actividades de tratamiento del RGPD está en [docs/proteccion-de-datos.md](docs/proteccion-de-datos.md).
 
 Referencias técnicas consultadas:
 

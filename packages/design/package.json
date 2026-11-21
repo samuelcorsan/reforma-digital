@@ -13,7 +13,6 @@
     "./ui/*": "./ui/*.tsx",
     "./lib/*": "./lib/*.ts",
     "./web.css": "./styles/web.css",
-    "./desktop.css": "./styles/desktop.css",
     "./hooks/*": "./hooks/*.ts",
     "./theme.css": "./styles/theme.css",
     "./chat": "./chat.tsx",

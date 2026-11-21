@@ -13,7 +13,6 @@ const pages = [
   '/developers/api',
   '/developers/mcp',
   ...serverIds.map(fichaPath),
-  '/escritorio',
   ...congressSections.flatMap(({ pages }) =>
     pages.map(([, path]) => `${congressBase}${path ? `/${path}` : ''}`),
   ),

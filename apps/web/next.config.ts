@@ -39,6 +39,8 @@ const config: NextConfig = {
       { source: '/api', destination: '/developers/api', permanent: true },
       { source: '/mcp', destination: '/developers/mcp', permanent: true },
       { source: '/mcp/servidores/:id', destination: '/developers/mcp/:id', permanent: true },
+      // La app de escritorio ya no existe.
+      { source: '/escritorio', destination: '/developers/mcp', permanent: true },
       // /developers no es una página: es la sección del menú.
       { source: '/developers', destination: '/developers/api', permanent: false },
     ];
