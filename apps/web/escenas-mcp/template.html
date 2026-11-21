@@ -229,6 +229,42 @@
         background: var(--aviso-fondo);
         color: var(--aviso);
       }
+
+      /* BOE: un artículo citado, con su norma y su vigencia. */
+      .cita {
+        padding-left: 12px;
+        border-left: 3px solid var(--linea);
+        color: var(--tinta-2);
+      }
+
+      /* INE: el último dato en grande y los seis anteriores en barras. */
+      .cifra {
+        font-size: 40px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+      .barras {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        align-items: end;
+        gap: 8px;
+        height: 72px;
+      }
+      .barras i {
+        border-radius: 4px 4px 0 0;
+        background: var(--linea);
+      }
+      .barras i:last-child {
+        background: var(--tinta);
+      }
+      .meses {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        color: var(--tinta-3);
+        font-size: 12px;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -374,6 +410,132 @@
             >
             <span class="suave">1 h 52 min</span>
             <span class="mono">33,90 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="boe">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué es un gran tenedor según la Ley de Vivienda?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/boe-sello.png" alt="" /></span
+            >buscar_legislacion</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/boe-sello.png" alt="" /></span>ver_bloque</span
+          >
+        </div>
+        <div class="tarjeta">
+          <div class="fila">
+            <span class="titulo">Ley 12/2023, por el derecho a la vivienda</span>
+            <span class="estado">Vigente</span>
+          </div>
+          <p class="suave">Artículo 3 k)</p>
+          <p class="cita">
+            La persona física o jurídica que sea titular de más de diez inmuebles urbanos de uso
+            residencial o una superficie construida de más de 1.500 m² de uso residencial,
+            excluyendo en todo caso garajes y trasteros.
+          </p>
+          <p class="mono suave" style="font-size: 12px">BOE-A-2023-12203</p>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="carburantes">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Dónde está el diésel más barato en Madrid?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/mcp/carburantes.svg" alt="" /></span>buscar_municipio</span
+          >
+          <span class="chip"
+            ><span><img src="../public/mcp/carburantes.svg" alt="" /></span
+            >gasolineras_baratas</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Diésel en Madrid</span>
+            <span class="suave">Hoy</span>
+          </div>
+          <div class="tren">
+            <span>Calle Sierra de la Demanda, 2</span>
+            <span class="suave">24 h</span>
+            <span class="mono">1,579 €</span>
+          </div>
+          <div class="tren">
+            <span>Calle José Paulete</span>
+            <span class="suave">24 h</span>
+            <span class="mono">1,649 €</span>
+          </div>
+          <div class="tren">
+            <span>Carretera N-III, km 11,8</span>
+            <span class="suave">24 h</span>
+            <span class="mono">1,649 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="ine">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Cuál es la última tasa de inflación?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/ine.svg" alt="" /></span>buscar_tabla</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/ine.svg" alt="" /></span>datos_tabla</span
+          >
+        </div>
+        <div class="tarjeta">
+          <div class="fila">
+            <span class="titulo">IPC, variación anual</span>
+            <span class="suave">Octubre de 2026</span>
+          </div>
+          <p class="cifra">4,9 %</p>
+          <div class="barras">
+            <i style="height: 65%"></i><i style="height: 65%"></i><i style="height: 73%"></i
+            ><i style="height: 88%"></i><i style="height: 100%"></i><i style="height: 100%"></i>
+          </div>
+          <div class="meses">
+            <span>may</span><span>jun</span><span>jul</span><span>ago</span><span>sep</span
+            ><span>oct</span>
           </div>
         </div>
       </div>
