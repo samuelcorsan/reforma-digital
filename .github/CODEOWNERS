@@ -1,0 +1,33 @@
+# Changes here need the owner's approval: they define what the CI enforces, what agents
+# are told and run, what the extension may do in official portals, and the database.
+# Everything else relies on CI and automated review.
+
+# Quality gates
+/.github/ @samuelcorsan
+/oxlint.config.ts @samuelcorsan
+/knip.json @samuelcorsan
+/apps/ingestion/ruff.toml @samuelcorsan
+/package.json @samuelcorsan
+/pnpm-workspace.yaml @samuelcorsan
+/turbo.json @samuelcorsan
+tsconfig*.json @samuelcorsan
+/vitest.config.ts @samuelcorsan
+/playwright.config.ts @samuelcorsan
+/scripts/audit-bundle.mjs @samuelcorsan
+/scripts/check-workspaces.mjs @samuelcorsan
+
+# Agent rules, skills and hooks (hooks run on the machine of whoever opens the repo)
+/AGENTS.md @samuelcorsan
+/CLAUDE.md @samuelcorsan
+/.agents/ @samuelcorsan
+/.claude/ @samuelcorsan
+
+# Extension security boundary
+/apps/extension/ @samuelcorsan
+/packages/bridge/ @samuelcorsan
+/packages/runtime/ @samuelcorsan
+/scripts/build.mjs @samuelcorsan
+/SECURITY.md @samuelcorsan
+
+# Database schema and migrations
+/packages/db/ @samuelcorsan
