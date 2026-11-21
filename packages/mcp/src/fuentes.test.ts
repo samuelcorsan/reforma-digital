@@ -121,25 +121,60 @@ it('finds towns by their usual name when the source puts the article last', asyn
   expect(await buscarMunicipio(fetchImpl, 'Coruña (A)')).toMatchObject([{ id: '1' }]);
 });
 
-it('filters INE series without accents and dates each period in Madrid time', async () => {
+it('filters INE series without accents and names each period, newest first', async () => {
   const result = await datosTabla(
     fetchJson([
       {
         COD: 'IPC1',
         Nombre: 'Nacional. Índice general. Variación anual. ',
-        Data: [{ Fecha: 1790805600000, Anyo: 2026, Valor: 4.9 }],
+        Data: [
+          { Fecha: '2026-09-01T00:00:00.000+02:00', Anyo: 2026, T3_Periodo: 'M09', Valor: 4.9 },
+          { Fecha: '2026-10-01T00:00:00.000+02:00', Anyo: 2026, T3_Periodo: 'M10', Valor: 4.9 },
+        ],
+      },
+      {
+        COD: 'EPA1',
+        Nombre: 'Tasa de paro. Variación anual. ',
+        Data: [
+          { Fecha: '2025-01-01T00:00:00.000+01:00', Anyo: 2025, T3_Periodo: 'A', Valor: 10.5 },
+        ],
+      },
+      {
+        COD: 'ECP1',
+        Nombre: 'Población. Variación anual. ',
+        Data: [
+          {
+            Fecha: '2026-10-01T00:00:00.000+02:00',
+            Anyo: 2026,
+            T3_Periodo: '1 de octubre de',
+            Valor: 49935642,
+          },
+        ],
       },
       { COD: 'IPC2', Nombre: 'Nacional. Índice general. Índice. ', Data: [] },
     ]),
     76134,
-    1,
+    2,
     'variacion ANUAL',
   );
   expect(result.series).toEqual([
     {
       codigo: 'IPC1',
       nombre: 'Nacional. Índice general. Variación anual.',
-      datos: [{ periodo: '2026-10-01', valor: 4.9 }],
+      datos: [
+        { periodo: '2026M10', valor: 4.9 },
+        { periodo: '2026M09', valor: 4.9 },
+      ],
+    },
+    {
+      codigo: 'EPA1',
+      nombre: 'Tasa de paro. Variación anual.',
+      datos: [{ periodo: '2025', valor: 10.5 }],
+    },
+    {
+      codigo: 'ECP1',
+      nombre: 'Población. Variación anual.',
+      datos: [{ periodo: '1 de octubre de 2026', valor: 49935642 }],
     },
   ]);
 });
