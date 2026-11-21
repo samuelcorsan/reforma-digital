@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${server.name} · Biblioteca MCP`,
     description: `Servidor MCP: ${server.summary} Conéctalo a Claude, ChatGPT, Cursor o VS Code.`,
     path: fichaPath(server.id),
-    og: 'api',
+    og: 'mcp',
   });
 }
 

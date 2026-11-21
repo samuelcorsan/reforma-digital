@@ -34,6 +34,13 @@ const pages = [
       'Votaciones, preguntas y Diarios de Sesiones en JSON, sin registro y con licencia CC BY 4.0.',
   },
   {
+    slug: 'mcp',
+    escena: 'mcp',
+    etiqueta: '',
+    titular: 'Biblioteca de MCPs',
+    texto: 'Para ciudadanos',
+  },
+  {
     slug: 'congreso',
     escena: 'horizonte',
     etiqueta: 'Un proyecto de Reforma Digital',

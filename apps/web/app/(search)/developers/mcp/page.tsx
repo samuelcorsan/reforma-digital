@@ -21,7 +21,7 @@ export const metadata: Metadata = pageMetadata({
   title,
   description,
   path: '/developers/mcp',
-  og: 'api',
+  og: 'mcp',
 });
 
 const graph = [

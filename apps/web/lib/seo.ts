@@ -10,6 +10,7 @@ type OgImage =
   | 'equipo'
   | 'privacidad'
   | 'api'
+  | 'mcp'
   | 'congreso'
   | 'elecciones'
   | 'entrevistas'
