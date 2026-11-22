@@ -2,7 +2,7 @@
 // BOE, Carburantes e INE sin red: respuestas con la forma de cada API (recortadas de las reales)
 // para lo que se puede romper al leerlas.
 import { describe, expect, it, vi } from 'vitest';
-import { buscarLegislacion, sumario, textoBloque } from './boe';
+import { buscarLegislacion, createBoeMcp, sumario, textoBloque } from './boe';
 import { buscarMunicipio, gasolinerasBaratas } from './carburantes';
 import { run, SourceError } from './comun';
 import { buscarTabla, datosTabla } from './ine';
@@ -76,6 +76,33 @@ describe('BOE', () => {
       pagina: 1,
       resultados: [],
     });
+  });
+
+  it('accepts the ids of consolidated regional norms, as search returns them', async () => {
+    const fetchImpl = fetchJson({
+      data: [{ titulo: 'Decreto Foral Legislativo 4/2008', url_html_consolidada: 'https://boe' }],
+    });
+    const response = await createBoeMcp(fetchImpl).fetch(
+      new Request('http://localhost/mcp', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json, text/event-stream',
+          'mcp-protocol-version': '2025-06-18',
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name: 'indice_norma', arguments: { id: 'BON-n-2008-90013' } },
+        }),
+      }),
+    );
+    expect(await response.text()).toContain('Decreto Foral Legislativo 4/2008');
+    expect(fetchImpl).toHaveBeenCalledWith(
+      expect.stringContaining('/id/BON-n-2008-90013/metadatos'),
+      expect.anything(),
+    );
   });
 
   it('reads the latest version of a block as plain text', () => {
