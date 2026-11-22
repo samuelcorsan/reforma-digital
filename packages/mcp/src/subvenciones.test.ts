@@ -185,6 +185,14 @@ describe('Subvenciones (BDNS)', () => {
       await estado({ fechaInicioSolicitud: '2026-12-02', fechaFinSolicitud: '2026-12-20' }),
     ).toBe('aun_no_abierta');
     expect(await estado({ abierto: true })).toBe('indefinida');
+    // Anulada: la BDNS solo lo dice en el título, y las fechas siguen en plazo.
+    expect(
+      await estado({
+        descripcion: 'ANULADA Convocatoria de becas',
+        fechaInicioSolicitud: '2026-11-03',
+        fechaFinSolicitud: '2026-12-01',
+      }),
+    ).toBe('anulada');
     // Sin fechas, un texto no se interpreta: «desconocido», con el texto para el asistente.
     expect(
       await conPlazo({ textInicio: 'Desde el día siguiente a la publicación en el BOPV' }),
