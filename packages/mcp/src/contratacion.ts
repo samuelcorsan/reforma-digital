@@ -354,7 +354,12 @@ async function pagina(fetchImpl: Fetch, url: string, fuente: Fuente): Promise<Pa
   }
   if (!xml.includes('<feed'))
     throw new SourceError('La Plataforma de Contratación no devolvió un feed ATOM.');
-  const next = /<link href="([^"]+)" rel="next"\/>/.exec(xml)?.[1];
+  // Un feed cortado a medias daría una lista incompleta como si fuera la página entera.
+  const abiertas = xml.match(/<entry>/g)?.length ?? 0;
+  if (!xml.trimEnd().endsWith('</feed>') || abiertas !== (xml.match(/<\/entry>/g)?.length ?? 0))
+    throw new SourceError('La Plataforma de Contratación devolvió un feed incompleto.');
+  const enlace = [...xml.matchAll(/<link\b[^>]*>/g)].find((m) => /\brel="next"/.test(m[0]));
+  const next = enlace && /\bhref="([^"]+)"/.exec(enlace[0])?.[1];
   return {
     entradas: all(xml, 'entry').map((e) => licitacion(e, fuente)),
     // Las retiradas del feed: `<at:comment type="ANULADA"/>` o `"CERRADA"`.
@@ -435,9 +440,13 @@ type Filtros = {
 export async function buscarLicitaciones(fetchImpl: Fetch, f: Filtros) {
   // Los filtros se validan antes de descargar nada.
   const prefijo = f.provincia === undefined ? undefined : nuts(f.provincia);
-  // Sin el dígito de control ni los ceros del final, que no acotan (45421000 → 45421), sin bajar
-  // de la división (90000000 → 90, no 9).
-  const cpv = f.cpv?.replace(/-\d$/, '').replace(/^(\d{2}\d*?)0+$/, '$1');
+  // De un código entero, sin el dígito de control ni los ceros del final, que no acotan
+  // (45421000 → 45421), sin bajar de la división (90000000 → 90, no 9). Un prefijo más corto se
+  // toma tal cual: «45420» no es «4542».
+  const sinControl = f.cpv?.replace(/-\d$/, '');
+  const cpv = sinControl?.length === 8 ? sinControl.replace(/^(\d{2}\d*?)0+$/, '$1') : sinControl;
+  // «En plazo» en la fuente sigue así unos días después de cerrar: se mira también la fecha.
+  const hoy = new Date().toISOString().slice(0, 10);
   const w = words(f.texto);
   const estado = f.estado && ESTADOS[ESTADO_FILTRO[f.estado]];
   const fuentes: Fuente[] = f.fuente === 'ambas' ? ['placsp', 'agregadas'] : [f.fuente];
@@ -448,6 +457,8 @@ export async function buscarLicitaciones(fetchImpl: Fetch, f: Filtros) {
   const found = todas.filter((l) => {
     if (w.length && !matches([l.titulo, l.organo, l.expediente].join(' '), w)) return false;
     if (estado && l.estado !== estado) return false;
+    if (f.estado === 'en_plazo' && l.plazo_presentacion && l.plazo_presentacion.slice(0, 10) < hoy)
+      return false;
     if (cpv && !l.cpv.some((c) => c.startsWith(cpv))) return false;
     if (prefijo) {
       const codes = [l.lugar, ...l.lotes.map((x) => x.lugar)].flatMap((x) => x?.nuts ?? []);

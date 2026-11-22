@@ -697,9 +697,39 @@ describe('Licitaciones', () => {
       '20558211',
       '20500001',
     ]);
-    // La versión antigua de 20849627 estaba en plazo; la vigente, no.
-    const enPlazo = await buscarLicitaciones(feeds(), { ...base, estado: 'en_plazo' });
-    expect(enPlazo.licitaciones.map((l) => l.id)).toEqual(['20977272']);
+    vi.useFakeTimers({ toFake: ['Date'] });
+    try {
+      vi.setSystemTime(new Date('2026-11-22T12:00:00Z'));
+      // La versión antigua de 20849627 estaba en plazo; la vigente, no.
+      const enPlazo = await buscarLicitaciones(feeds(), { ...base, estado: 'en_plazo' });
+      expect(enPlazo.licitaciones.map((l) => l.id)).toEqual(['20977272']);
+      // La fuente la sigue dando «en plazo» después del 2026-12-09, pero ya no lo está.
+      vi.setSystemTime(new Date('2026-12-10T12:00:00Z'));
+      const cerrada = await buscarLicitaciones(feeds(), { ...base, estado: 'en_plazo' });
+      expect(cerrada.total).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('takes a short CPV as a prefix as it is, and a whole one without its trailing zeros', async () => {
+    // «45420» no es «4542»: 45421000 y 45421130 no empiezan por 45420.
+    expect((await buscarLicitaciones(feeds(), { ...base, cpv: '45420' })).total).toBe(0);
+    // El código entero 45420000 es la clase 4542: sus tres licitaciones vigentes.
+    expect((await buscarLicitaciones(feeds(), { ...base, cpv: '45420000' })).total).toBe(3);
+  });
+
+  it('follows the next page whatever the order of its attributes', async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async (url) => {
+      if (url === HEAD)
+        return new Response(
+          page1.replace(`<link href="${NEXT}" rel="next"/>`, `<link rel="next" href="${NEXT}" />`),
+        );
+      if (url === NEXT) return new Response(page2);
+      return new Response('no', { status: 404 });
+    });
+    const result = await buscarLicitaciones(fetchImpl, base);
+    expect(result.revisado).toEqual([expect.objectContaining({ paginas: 2 })]);
   });
 
   it('gives the lots and the award of each one', async () => {
@@ -754,6 +784,17 @@ describe('Licitaciones', () => {
         base,
       ),
     ).rejects.toThrow('no devolvió un feed ATOM');
+    // Cortado a media entrada, o sin el cierre del feed: incompleto, no una lista más corta.
+    for (const cortado of [
+      page1.slice(0, page1.lastIndexOf('</entry>')),
+      page1.replace('</feed>', ''),
+    ])
+      await expect(
+        buscarLicitaciones(
+          vi.fn<typeof fetch>(async () => new Response(cortado)),
+          { ...base, paginas: 1 },
+        ),
+      ).rejects.toThrow('devolvió un feed incompleto');
   });
 });
 
