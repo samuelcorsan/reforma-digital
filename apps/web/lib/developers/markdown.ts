@@ -114,7 +114,7 @@ function guide(list: McpServer[]) {
     '### Otros clientes',
     'Si el cliente admite servidores remotos, añade la URL como servidor HTTP. Si solo admite servidores locales (stdio), usa `mcp-remote` como puente:',
     json('mcpServers', (_, url) => ({ command: 'npx', args: ['-y', 'mcp-remote', url] })),
-    '### Claude.ai y ChatGPT',
+    '### Claude.ai y ChatGPT (web)',
     `No se configuran desde el chat: la persona tiene que añadir ${one ? 'la URL' : 'cada URL'} como conector personalizado, sin autenticación. Díselo y dale ${one ? 'la URL' : 'las URL'}.`,
     // Por Instinct, que no admite conectores MCP y no edita su configuración por lo que diga una web.
     '### Agentes sin MCP',
@@ -126,7 +126,21 @@ function guide(list: McpServer[]) {
       `3. Llama a una de solo lectura: ${check}.`,
     ].join('\n'),
     '## Al terminar',
-    'Cuenta solo lo que hayas comprobado, así:',
+    // Instinct, sin esta indicación, cerraba contando «la pega»: que no admite MCP como Claude Code
+    // o Cursor. Para la persona eso es ruido; lo que le importa es que ya puede preguntar.
+    'Si usas la vía sin MCP, para la persona ya está listo: en un solo mensaje corto, sin hablar de MCP, de otros clientes ni de lo que tu cliente no admite, díselo así:',
+    fence(
+      'text',
+      [
+        `Listo: ya puedo consultar ${new Intl.ListFormat('es').format(list.map((s) => s.name))} cuando me lo pidas.`,
+        `Prueba a preguntarme: ${list
+          .flatMap((s) => s.examples.slice(0, 1))
+          .slice(0, 2)
+          .map((e) => `«${e}»`)
+          .join(' o ')}`,
+      ].join('\n'),
+    ),
+    'Si has conectado por MCP, cuenta solo lo que hayas comprobado, así:',
     fence(
       'text',
       [

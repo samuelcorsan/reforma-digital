@@ -178,7 +178,7 @@ function Connect({ server }: { server: McpServer }) {
       </div>
       <CodeBlock samples={samples} />
 
-      <h3 className={cn(via, 'mt-10')}>Claude.ai o ChatGPT</h3>
+      <h3 className={cn(via, 'mt-10')}>Claude.ai o ChatGPT (web)</h3>
       <p className="max-w-[65ch] text-muted-foreground">
         Añádelo como conector personalizado, sin autenticación, con esta URL: en Claude.ai, desde
         Ajustes → Conectores; en ChatGPT, con el modo desarrollador activado. La frase de «Conecta
