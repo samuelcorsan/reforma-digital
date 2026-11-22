@@ -3,6 +3,7 @@ import { POST as renfe } from '../../app/mcp/renfe/route';
 import { POST as boe } from '../../app/mcp/boe/route';
 import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
+import { POST as eustat } from '../../app/mcp/eustat/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -10,6 +11,7 @@ import renfeEscena from './escenas/renfe.png';
 import boeEscena from './escenas/boe.png';
 import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
+import eustatEscena from './escenas/eustat.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -83,6 +85,20 @@ const servidores: Servidor[] = [
     ],
   },
   {
+    id: 'eustat',
+    name: 'Eustat',
+    category: 'estadistica',
+    logo: { src: '/organismos/eustat.png' },
+    escena: eustatEscena,
+    summary:
+      'Las estadísticas oficiales de Euskadi y de cada territorio histórico: precios, empleo, población, economía y turismo.',
+    examples: [
+      '¿Cuál es la última tasa de inflación en Gipuzkoa?',
+      '¿Cuántas pernoctaciones turísticas hubo en Bizkaia el último mes?',
+      '¿Cuál es la tasa de paro en Gipuzkoa?',
+    ],
+  },
+  {
     id: 'carburantes',
     name: 'Precios de carburantes',
     category: 'consumo',
@@ -119,7 +135,14 @@ export type McpServer = Servidor & { tools: Tool[] };
 type Entry = Servidor & { handler: (request: Request) => Promise<Response> };
 
 // Las herramientas se le piden al propio servidor (`servers()`), así la ficha no puede quedarse atrás.
-const handlers: Record<string, Entry['handler']> = { congreso, renfe, boe, ine, carburantes };
+const handlers: Record<string, Entry['handler']> = {
+  congreso,
+  renfe,
+  boe,
+  ine,
+  eustat,
+  carburantes,
+};
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];
   if (!handler) throw new Error(`Falta el handler del servidor MCP ${s.id}`);

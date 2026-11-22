@@ -44,7 +44,15 @@ describe('preguntar a la biblioteca MCP', () => {
   it('offers every catalog server and «ninguno», and says which one answers', async () => {
     const m = modelo('boe', { boe: 0.92 });
     expect(await pregunta(m)).toEqual({ servidor: 'boe', seguro: true });
-    expect(m.vistas[0]).toEqual(['congreso', 'renfe', 'boe', 'ine', 'carburantes', 'ninguno']);
+    expect(m.vistas[0]).toEqual([
+      'congreso',
+      'renfe',
+      'boe',
+      'ine',
+      'eustat',
+      'carburantes',
+      'ninguno',
+    ]);
   });
 
   it('answers «maybe» when the model is unsure about a server', async () => {
