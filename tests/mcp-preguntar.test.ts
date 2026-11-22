@@ -53,6 +53,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'carburantes',
       'alsa',
       'contratacion',
+      'radioterapia',
       'ninguno',
     ]);
   });

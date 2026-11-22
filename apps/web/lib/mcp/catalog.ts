@@ -6,6 +6,7 @@ import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
 import { POST as contratacion } from '../../app/mcp/contratacion/route';
+import { POST as radioterapia } from '../../app/mcp/radioterapia/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -16,6 +17,7 @@ import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
 import contratacionEscena from './escenas/contratacion.png';
+import radioterapiaEscena from './escenas/radioterapia.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -146,6 +148,21 @@ const servidores: Servidor[] = [
       '¿Qué obras se han adjudicado estos días en Bizkaia, a quién y por cuánto?',
     ],
   },
+  {
+    id: 'radioterapia',
+    name: 'Licitaciones de radioterapia',
+    category: 'contratacion',
+    // Sin logo propio: el símbolo de radiación (Lucide).
+    logo: { src: '/mcp/radioterapia.svg' },
+    escena: radioterapiaEscena,
+    summary:
+      'Las licitaciones de radioterapia de la Plataforma de Contratación y de TED, cada una con lo que compra: aceleradores, SGRT, simulación, braquiterapia, dosimetría, planificación, mantenimiento, búnkeres…',
+    examples: [
+      '¿Qué licitaciones de radioterapia siguen abiertas en España?',
+      '¿Qué mantenimientos de aceleradores se han adjudicado en Andalucía, a quién y con cuántas ofertas?',
+      '¿Ha salido algún contrato de radioterapia guiada por superficie este año?',
+    ],
+  },
 ];
 
 type Param = {
@@ -177,6 +194,7 @@ const handlers: Record<string, Entry['handler']> = {
   carburantes,
   alsa,
   contratacion,
+  radioterapia,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];

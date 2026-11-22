@@ -329,7 +329,7 @@ function licitacion(entry: string, fuente: Fuente) {
       .map((d) => ({ nombre: text(d, 'cbc:ID'), url: text(d, 'cbc:URI') })),
   };
 }
-type Licitacion = ReturnType<typeof licitacion>;
+export type Licitacion = ReturnType<typeof licitacion>;
 
 type Borrada = { id: string; motivo: string | undefined; fecha: string | undefined };
 type Pagina = { entradas: Licitacion[]; borradas: Borrada[]; siguiente: string | undefined };
@@ -370,7 +370,7 @@ async function pagina(fetchImpl: Fetch, url: string, fuente: Fuente): Promise<Pa
  * Las entradas de las `paginas` más recientes de un feed, sin repetir expediente: la primera que
  * aparece es la versión más reciente. Con `id`, deja de leer en cuanto lo encuentra.
  */
-async function leer(fetchImpl: Fetch, fuente: Fuente, paginas: number, id?: string) {
+export async function leer(fetchImpl: Fetch, fuente: Fuente, paginas: number, id?: string) {
   const vistas = new Set<string>();
   const nueva = (x: { id: string }) => !vistas.has(x.id) && Boolean(vistas.add(x.id));
   const entradas: Licitacion[] = [];
