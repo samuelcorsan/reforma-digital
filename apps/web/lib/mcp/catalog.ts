@@ -5,6 +5,7 @@ import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
+import { POST as presupuestos } from '../../app/mcp/presupuestos/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -14,6 +15,7 @@ import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
+import presupuestosEscena from './escenas/presupuestos.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -129,6 +131,21 @@ const servidores: Servidor[] = [
       '¿Hay algún autobús directo de Barcelona a Valencia que llegue antes de las dos?',
     ],
   },
+  {
+    id: 'presupuestos',
+    name: 'Presupuestos Generales del Estado',
+    category: 'cuentas',
+    // Sin logo propio: un edificio público (Lucide).
+    logo: { src: '/mcp/presupuestos.svg' },
+    escena: presupuestosEscena,
+    summary:
+      'El presupuesto en vigor (el de 2023, prorrogado) por políticas, ministerios y programas, y las previsiones de ingresos por impuesto.',
+    examples: [
+      '¿En qué gasta más dinero el Estado este año?',
+      '¿Cuánto hay presupuestado para becas?',
+      '¿Cuánto prevé recaudar el Estado por el IVA?',
+    ],
+  },
 ];
 
 type Param = {
@@ -159,6 +176,7 @@ const handlers: Record<string, Entry['handler']> = {
   eustat,
   carburantes,
   alsa,
+  presupuestos,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];
