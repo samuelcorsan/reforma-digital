@@ -41,11 +41,22 @@ type Package = {
   resources: Resource[];
 };
 
+// El portal rechaza con 503 las peticiones simultáneas (de cinco a la vez, tres o cuatro), y los
+// asistentes llaman a las herramientas en paralelo: cada petición espera a que acabe la anterior.
+let previous: Promise<unknown> = Promise.resolve();
+function ckan<T>(fetchImpl: Fetch, action: string, params: Record<string, string>) {
+  const request = () => ckanNow<T>(fetchImpl, action, params);
+  // Tras un fallo, la siguiente sale igual: el error lo recibe quien hizo esa petición.
+  const current = previous.then(request, request);
+  previous = current;
+  return current;
+}
+
 /**
  * Una acción de CKAN. Sus 409 dicen en JSON qué parámetro no vale («filters: invalid value "nope"»):
  * se le pasa al asistente para que corrija la llamada.
  */
-async function ckan<T>(fetchImpl: Fetch, action: string, params: Record<string, string>) {
+async function ckanNow<T>(fetchImpl: Fetch, action: string, params: Record<string, string>) {
   let response: Response;
   try {
     // Un parámetro repetido hace que el portal responda 500: cada uno va una sola vez.

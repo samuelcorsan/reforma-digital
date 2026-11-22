@@ -259,6 +259,34 @@ describe('Open Data BCN', () => {
     );
   });
 
+  it('sends one request at a time, as the portal rejects simultaneous ones, and goes on after a failure', async () => {
+    let inFlight = 0;
+    let maxInFlight = 0;
+    let calls = 0;
+    const fetchImpl = vi.fn<typeof fetch>(async () => {
+      calls += 1;
+      inFlight += 1;
+      maxInFlight = Math.max(maxInFlight, inFlight);
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      inFlight -= 1;
+      return calls === 2
+        ? new Response('<h1>Service Unavailable</h1>', { status: 503 })
+        : Response.json({ success: true, result: { total: 1, fields: [], records: [{}] } });
+    });
+    const args = { recurso: 'x', limite: 1, desde: 0 };
+    const results = await Promise.allSettled(
+      [1, 2, 3, 4, 5].map(() => consultarDatos(fetchImpl, args)),
+    );
+    expect(maxInFlight).toBe(1);
+    expect(results.map((r) => r.status)).toEqual([
+      'fulfilled',
+      'rejected',
+      'fulfilled',
+      'fulfilled',
+      'fulfilled',
+    ]);
+  });
+
   it('gives only the status when the portal fails with an HTML page', async () => {
     const html = (status: number) =>
       vi.fn<typeof fetch>(async () => new Response('<h1>Server Error</h1>', { status }));
