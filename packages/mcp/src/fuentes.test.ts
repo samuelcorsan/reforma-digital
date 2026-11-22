@@ -1,5 +1,5 @@
 // @vitest-environment node
-// BOE, Carburantes e INE sin red: respuestas con la forma de cada API (recortadas de las reales)
+// BOE, Carburantes, INE, Eustat y Red Eléctrica sin red: respuestas con la forma de cada API (recortadas de las reales)
 // para lo que se puede romper al leerlas.
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -14,6 +14,7 @@ import { buscarMunicipio, gasolinerasBaratas } from './carburantes';
 import { run, SourceError } from './comun';
 import { buscarTabla as buscarTablaEustat, datosTabla as datosTablaEustat } from './eustat';
 import { avisoInterrumpida, buscarTabla, datosSerie, datosTabla } from './ine';
+import { generacion, precioLuz, precioLuzPeriodo } from './red-electrica';
 
 const fetchJson = (body: unknown, status = 200) =>
   vi.fn<typeof fetch>(async () => Response.json(body, { status }));
@@ -512,6 +513,216 @@ describe('Eustat', () => {
     // 2 territorios × 2 índices × 300 meses.
     await expect(datosTablaEustat(fetchImpl, 'PX_ipc.px', 300)).rejects.toThrow('pide 1200 datos');
     expect(fetchImpl).toHaveBeenCalledTimes(4);
+  });
+});
+
+describe('Red Eléctrica', () => {
+  // PVPC real del 25 de octubre de 2026, el día de 25 horas: la 02:00 sale dos veces.
+  const pvpcDst = [
+    ['00:00+02:00', 261.99],
+    ['01:00+02:00', 233.96],
+    ['02:00+02:00', 226.3],
+    ['02:00+01:00', 212.01],
+    ...[
+      190.29, 177.63, 187.3, 213.09, 232.58, 118.97, 44.08, 42.76, 41.66, 41.38, 42.14, 42.86,
+      46.32, 54.49, 187.66, 309.45, 332.48, 346.83, 332.4, 325.84, 314.04,
+    ].map((v, i) => [`${String(i + 3).padStart(2, '0')}:00+01:00`, v] as const),
+  ] as const;
+  const at = (dia: string, hora: string) =>
+    `${dia}T${hora.slice(0, 5)}:00.000${hora.slice(5) || '+01:00'}`;
+  const serie = (
+    id: string,
+    title: string,
+    values: { value: number; datetime: string }[],
+    type = title,
+  ) => ({
+    id,
+    type: title,
+    attributes: { title, type, 'last-update': '2026-10-24T20:46:05.000+02:00', values },
+  });
+  const pvpc = (values: { value: number; datetime: string }[]) => serie('1001', 'PVPC', values);
+  const mercado = (values: { value: number; datetime: string }[]) =>
+    serie('600', 'Precio mercado spot', values);
+  const horas = (dia: string, n: number, value: (h: number) => number) =>
+    Array.from({ length: n }, (_, h) => ({
+      value: value(h),
+      datetime: at(dia, `${String(h).padStart(2, '0')}:00`),
+    }));
+  const respuesta = (...included: unknown[]) => Response.json({ data: {}, included });
+
+  it('labels the 25 hours of the October change in local time, none lost or merged', async () => {
+    const valores = pvpcDst.map(([h, value]) => ({ value, datetime: at('2026-10-25', h) }));
+    const fetchImpl = vi.fn<typeof fetch>(async () => respuesta(pvpc(valores), mercado(valores)));
+    const dia = await precioLuz(fetchImpl, '2026-10-25', 'peninsular');
+    expect(fetchImpl).toHaveBeenCalledWith(
+      'https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real?start_date=2026-10-25T00:00&end_date=2026-10-25T23:59&time_trunc=hour',
+      expect.anything(),
+    );
+    expect(dia.horas_del_dia).toBe(25);
+    expect(dia.pvpc?.horas.slice(2, 4)).toEqual([
+      { hora: '02:00', inicio: '2026-10-25T02:00:00+02:00', eur_kwh: 0.2263, eur_mwh: 226.3 },
+      { hora: '02:00', inicio: '2026-10-25T02:00:00+01:00', eur_kwh: 0.21201, eur_mwh: 212.01 },
+    ]);
+    expect(dia.mercado_diario?.horas).toHaveLength(25);
+    expect(dia.pvpc?.mas_baratas[0]).toEqual({
+      hora: '12:00',
+      inicio: '2026-10-25T12:00:00+01:00',
+      eur_kwh: 0.04138,
+    });
+    expect(dia.pvpc?.mas_caras[0]?.eur_kwh).toBe(0.34683);
+    expect(dia.nota).toContain('25 horas');
+  });
+
+  it('says tomorrow’s PVPC is not out yet instead of giving today’s', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-22T13:30:00+01:00'));
+    try {
+      const fetchImpl = vi.fn<typeof fetch>(async () =>
+        respuesta(mercado(horas('2026-11-23', 96 / 4, () => 205.2))),
+      );
+      const manana = await precioLuz(fetchImpl, '2026-11-23', 'peninsular');
+      // REData guarda cada URL un día: la de mañana pedida antes de publicarse no puede servir luego.
+      expect(fetchImpl).toHaveBeenCalledWith(
+        expect.stringContaining('end_date=2026-11-23T23:51'),
+        expect.anything(),
+      );
+      expect(manana.pvpc).toBeUndefined();
+      expect(manana.nota).toContain('aún no está publicado');
+      await expect(precioLuz(fetchImpl, '2026-11-24', 'peninsular')).rejects.toThrow(
+        'No hay precios del 2026-11-24',
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('rejects an incomplete day, a missing PVPC and systems without prices', async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
+      respuesta(
+        pvpc(horas('2026-11-21', 23, () => 200)),
+        mercado(horas('2026-11-21', 24, () => 190)),
+      ),
+    );
+    await expect(precioLuz(fetchImpl, '2026-11-21', 'peninsular')).rejects.toThrow(
+      'REE ha publicado 23 valores de PVPC para el 2026-11-21, que tiene 24 horas',
+    );
+    const sinPvpc = vi.fn<typeof fetch>(async () =>
+      respuesta(mercado(horas('2026-11-21', 24, () => 190))),
+    );
+    await expect(precioLuz(sinPvpc, '2026-11-21', 'peninsular')).rejects.toThrow(
+      'no ha devuelto todos los precios',
+    );
+    // El mismo hueco antes de la tarifa 2.0TD no es un fallo: se dice que no hay PVPC.
+    const antiguo = vi.fn<typeof fetch>(async () =>
+      respuesta(mercado(horas('2014-01-15', 24, () => 50))),
+    );
+    expect((await precioLuz(antiguo, '2014-01-15', 'peninsular')).nota).toContain(
+      'no tiene el PVPC antes del 2021-06-01',
+    );
+    await expect(precioLuz(fetchImpl, '2026-11-21', 'canarias')).rejects.toThrow(
+      'solo publica el PVPC y el precio del mercado del sistema peninsular',
+    );
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it('averages a range by month, with the market per hour and partial months marked', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-22T13:30:00+01:00'));
+    try {
+      const fetchImpl = vi.fn<typeof fetch>(async (url) => {
+        const path = url instanceof Request ? url.url : url.toString();
+        const dia = /start_date=(\d{4}-\d{2}-\d{2})/.exec(path)![1]!;
+        // Octubre en cuartos de hora: el 30 a 100 €/MWh, el 31 a 200 en cuatro cuartos por hora.
+        if (dia === '2026-10-30')
+          return respuesta(
+            pvpc([...horas('2026-10-30', 24, () => 100), ...horas('2026-10-31', 24, () => 300)]),
+            mercado([
+              ...horas('2026-10-30', 24, () => 100),
+              ...horas('2026-10-31', 24, () => 200).flatMap((v) => [v, v, v, v]),
+            ]),
+          );
+        return respuesta(
+          pvpc(horas('2026-11-01', 24, () => 50)),
+          mercado(horas('2026-11-01', 24, () => 40)),
+        );
+      });
+      const r = await precioLuzPeriodo(fetchImpl, '2026-10-30', '2026-11-01', 'mes');
+      expect(fetchImpl).toHaveBeenCalledTimes(2);
+      expect(r.periodos).toEqual([
+        {
+          periodo: '2026-10',
+          parcial: 'solo del 2026-10-30 al 2026-10-31',
+          pvpc_media_eur_kwh: 0.2,
+          pvpc_min_eur_kwh: 0.1,
+          pvpc_max_eur_kwh: 0.3,
+          mercado_media_eur_mwh: 150,
+        },
+        {
+          periodo: '2026-11',
+          parcial: 'solo del 2026-11-01 al 2026-11-01',
+          pvpc_media_eur_kwh: 0.05,
+          pvpc_min_eur_kwh: 0.05,
+          pvpc_max_eur_kwh: 0.05,
+          mercado_media_eur_mwh: 40,
+        },
+      ]);
+      await expect(precioLuzPeriodo(fetchImpl, '2026-11-01', '2026-11-23', 'dia')).rejects.toThrow(
+        'El PVPC de mañana (2026-11-23) aún no está publicado',
+      );
+      await expect(precioLuzPeriodo(fetchImpl, '2021-05-01', '2021-06-30', 'dia')).rejects.toThrow(
+        'antes del 2021-06-01',
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('gives the mix of the system asked for, its renewable share, and refuses today', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-22T13:30:00+01:00'));
+    try {
+      const dia = (value: number) => [{ value, datetime: '2026-11-21T00:00:00.000+01:00' }];
+      // Canarias el 21 de noviembre de 2026, recortado a tres tecnologías.
+      const fetchImpl = vi.fn<typeof fetch>(async (url) =>
+        (url instanceof Request ? url.url : url.toString()).includes('demanda')
+          ? respuesta(serie('10297', 'Demanda', dia(13849.21)))
+          : respuesta(
+              serie('1454', 'Ciclo combinado', dia(11821.24), 'No-Renovable'),
+              serie('10291', 'Eólica', dia(1152.64), 'Renovable'),
+              serie('1458', 'Solar fotovoltaica', dia(875.33), 'Renovable'),
+              serie('10296', 'Generación total', dia(13849.21), 'total'),
+            ),
+      );
+      const r = await generacion(fetchImpl, '2026-11-21', '2026-11-21', 'dia', 'canarias');
+      expect(fetchImpl).toHaveBeenCalledWith(
+        // Ayer aún puede cambiar: la URL cambia cada dos horas para no recibir la copia guardada.
+        'https://apidatos.ree.es/es/datos/generacion/estructura-generacion?start_date=2026-11-21T00:00&end_date=2026-11-21T23:51&time_trunc=day&geo_trunc=electric_system&geo_limit=canarias&geo_ids=8742',
+        expect.anything(),
+      );
+      expect(r).toMatchObject({
+        generacion_mwh: 13849.2,
+        renovable_pct: 14.6,
+        demanda_mwh: 13849.2,
+      });
+      expect(r.tecnologias[0]).toEqual({
+        tecnologia: 'Ciclo combinado',
+        renovable: false,
+        mwh: 11821.2,
+        pct: 85.4,
+      });
+      await expect(
+        generacion(fetchImpl, '2026-11-22', '2026-11-22', 'dia', 'nacional'),
+      ).rejects.toThrow('Pide hasta ayer (2026-11-21)');
+      // Un día pedido que no llega es un hueco, no un total más bajo.
+      await expect(
+        generacion(fetchImpl, '2026-11-20', '2026-11-21', 'dia', 'nacional'),
+      ).rejects.toThrow('de 1 de los 2 periodos');
+      await expect(
+        generacion(fetchImpl, '2026-10-01', '2026-11-05', 'dia', 'nacional'),
+      ).rejects.toThrow('el máximo es 31');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 
