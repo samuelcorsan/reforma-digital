@@ -91,6 +91,9 @@ describe('SERPAVI', () => {
     const narnia = await llamar(mcp, 'buscar_municipio', { nombre: 'molar', provincia: 'Narnia' });
     expect(narnia).toMatchObject({ isError: true });
     expect(narnia.texto).toContain('No hay ninguna provincia');
+    expect(await llamar(mcp, 'buscar_municipio', { nombre: '  ' })).toMatchObject({
+      isError: true,
+    });
   });
 
   it('ranks a province by rent or derived €/m², only with towns that have a rent', async () => {
@@ -165,6 +168,50 @@ describe('SERPAVI', () => {
     const r = await llamar(mcp, 'alquiler_municipio', { codigo: '28079' });
     expect(r.datos().aviso).toContain('No se ha podido comprobar');
     expect(r.datos().aviso).toContain(PUBLICADO);
+    expect(r.datos()).toMatchObject({ colectiva: { renta_eur_mes: { mediana: 868.8 } } });
+  });
+
+  it('keeps the earlier copy, with a warning, if a new download is cut midway', async () => {
+    const bytes = new TextEncoder().encode(csv);
+    let trozos = 0;
+    const cortada = () =>
+      new Response(
+        new ReadableStream<Uint8Array>({
+          pull(controller) {
+            if (trozos++ === 0) controller.enqueue(bytes.slice(0, bytes.length / 2));
+            else controller.error(new TypeError('terminated'));
+          },
+        }),
+        { headers: { 'last-modified': 'Sat, 23 May 2026 09:00:00 GMT' } },
+      );
+    const fetchImpl = fuente();
+    const mcp = createSerpaviMcp(fetchImpl);
+    await llamar(mcp, 'alquiler_municipio', { codigo: '28079' });
+    fetchImpl.mockImplementation(async () => cortada());
+    const r = await llamar(mcp, 'alquiler_municipio', { codigo: '28079' });
+    expect(r.datos().aviso).toContain('se ha cortado');
+    expect(r.datos()).toMatchObject({
+      csv_actualizado: PUBLICADO,
+      colectiva: { renta_eur_mes: { mediana: 868.8 } },
+    });
+  });
+
+  it('refuses a CSV with only the header instead of replacing the copy with an empty one', async () => {
+    // La cabecera tal como llega: con el BOM y el CRLF.
+    const soloCabecera = csv.slice(0, csv.indexOf('\n') + 1);
+    const vacio = async () => new Response(soloCabecera);
+    const sinCopia = await llamar(createSerpaviMcp(vi.fn(vacio)), 'alquiler_municipio', {
+      codigo: '28079',
+    });
+    expect(sinCopia).toMatchObject({ isError: true });
+    expect(sinCopia.texto).toContain('no trae ningún municipio');
+
+    const fetchImpl = fuente();
+    const mcp = createSerpaviMcp(fetchImpl);
+    await llamar(mcp, 'alquiler_municipio', { codigo: '28079' });
+    fetchImpl.mockImplementation(vacio);
+    const r = await llamar(mcp, 'alquiler_municipio', { codigo: '28079' });
+    expect(r.datos().aviso).toContain('no trae ningún municipio');
     expect(r.datos()).toMatchObject({ colectiva: { renta_eur_mes: { mediana: 868.8 } } });
   });
 

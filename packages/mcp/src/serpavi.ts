@@ -75,7 +75,6 @@ const claves = (nombre: string) => [
 const formato = (motivo: string) =>
   new SourceError(`El CSV del Ministerio ha cambiado de formato (${motivo}): no se puede leer.`);
 
-const cortada = () => new SourceError('La descarga del CSV se ha cortado. Prueba más tarde.');
 const sinCr = (linea: string) => (linea.endsWith('\r') ? linea.slice(0, -1) : linea);
 
 /**
@@ -100,7 +99,7 @@ async function* lineas(body: ReadableStream<Uint8Array>) {
       } catch {
         terminada = true;
         // Un corte a mitad de los 37 MB no es un SourceError, pero es la misma caída de la fuente.
-        throw cortada();
+        throw new SourceError('La descarga del CSV se ha cortado. Prueba más tarde.');
       }
       if (trozo.done) {
         terminada = true;
@@ -168,6 +167,8 @@ async function leerCsv(body: ReadableStream<Uint8Array>): Promise<Indice> {
     valores[bloque + HUECO[TIPO[tipo]] + ELEMENTO[elemento] + MEDIDA[medida]] = Number(valor);
   }
   if (n === 0) throw formato('la cabecera no es la esperada');
+  // Un CSV sin filas sustituiría una copia buena por un índice vacío.
+  if (!municipios.size) throw formato('no trae ningún municipio');
   return { municipios, valores };
 }
 
@@ -444,7 +445,7 @@ export function createSerpaviMcp(fetchImpl: Fetch = fetch) {
           description:
             'Municipios cuyo nombre contiene el texto (sin distinguir tildes; entiende «L’Hospitalet», «El Molar» y cada lengua de «Donostia / San Sebastián»), con su código INE, provincia y años con datos. Los homónimos salen todos.',
           inputSchema: z.object({
-            nombre: z.string().min(2).max(80),
+            nombre: z.string().trim().min(2).max(80),
             provincia: z
               .string()
               .max(40)
@@ -500,7 +501,10 @@ export function createSerpaviMcp(fetchImpl: Fetch = fetch) {
               .max(40)
               .describe('Código de 2 cifras (28) o nombre (Madrid, A Coruña, Bizkaia).'),
             anio: anio.describe('Año de los datos. Por defecto, el último con renta publicada.'),
-            tipo_vivienda: z.enum(TIPOS).default('colectiva'),
+            tipo_vivienda: z
+              .enum(TIPOS)
+              .default('colectiva')
+              .describe('«colectiva» (pisos) o «unifamiliar» (casas). Por defecto, colectiva.'),
             orden: z.enum(['renta', 'eur_m2']).default('renta'),
             limite: z.number().int().min(1).max(50).default(10),
           }),
