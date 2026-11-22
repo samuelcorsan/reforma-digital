@@ -9,6 +9,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@reforma-digital/alsa": "workspace:*",
     "@reforma-digital/db": "workspace:*",
     "@reforma-digital/design": "workspace:*",
     "@reforma-digital/mcp": "workspace:*",

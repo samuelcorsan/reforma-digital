@@ -3,6 +3,7 @@ import { POST as renfe } from '../../app/mcp/renfe/route';
 import { POST as boe } from '../../app/mcp/boe/route';
 import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
+import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
@@ -11,6 +12,7 @@ import renfeEscena from './escenas/renfe.png';
 import boeEscena from './escenas/boe.png';
 import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
+import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
@@ -113,6 +115,20 @@ const servidores: Servidor[] = [
       '¿Cuánto cuesta el GLP en Zaragoza?',
     ],
   },
+  {
+    id: 'alsa',
+    name: 'ALSA',
+    category: 'transporte',
+    logo: { src: '/organismos/alsa.svg' },
+    escena: alsaEscena,
+    summary:
+      'Paradas, horarios y precios de los autobuses de ALSA para cualquier fecha y viajeros, si quedan plazas y los bonos de cada ruta.',
+    examples: [
+      '¿Qué autobuses hay el viernes de Granada a Madrid y cuánto cuestan?',
+      '¿Cuánto cuesta ir y volver de Oviedo a León con dos niños?',
+      '¿Hay algún autobús directo de Barcelona a Valencia que llegue antes de las dos?',
+    ],
+  },
 ];
 
 type Param = {
@@ -142,6 +158,7 @@ const handlers: Record<string, Entry['handler']> = {
   ine,
   eustat,
   carburantes,
+  alsa,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];

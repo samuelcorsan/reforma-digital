@@ -112,6 +112,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@reforma-digital/alsa':
+        specifier: workspace:*
+        version: link:../../packages/alsa
       '@reforma-digital/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -179,6 +182,18 @@ importers:
       ai:
         specifier: ^7.0.124
         version: 7.0.124(zod@4.6.5)
+      zod:
+        specifier: ^4.1.0
+        version: 4.6.5
+
+  packages/alsa:
+    dependencies:
+      '@reforma-digital/mcp':
+        specifier: workspace:*
+        version: link:../mcp
+      '@reforma-digital/renfe':
+        specifier: workspace:*
+        version: link:../renfe
       zod:
         specifier: ^4.1.0
         version: 4.6.5

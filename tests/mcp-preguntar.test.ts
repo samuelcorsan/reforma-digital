@@ -51,6 +51,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'ine',
       'eustat',
       'carburantes',
+      'alsa',
       'ninguno',
     ]);
   });

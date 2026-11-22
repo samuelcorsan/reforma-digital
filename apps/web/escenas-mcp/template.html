@@ -198,7 +198,7 @@
         padding: 4px 0;
       }
 
-      /* Renfe: los trenes de una mañana, uno con retraso. */
+      /* Renfe: los trenes de una mañana, uno con retraso. ALSA pinta sus autobuses con las mismas filas. */
       .trenes {
         gap: 0;
         padding: 8px 16px;
@@ -410,6 +410,67 @@
             >
             <span class="suave">1 h 52 min</span>
             <span class="mono">33,90 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="alsa">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué autobuses hay el viernes de Granada a Madrid?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/alsa.svg" alt="" /></span>find_stops</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/alsa.svg" alt="" /></span>search_buses</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo flecha" style="gap: 8px"
+              >Granada <svg width="15" height="15"><use href="#derecha" /></svg> Madrid</span
+            >
+            <span class="suave">Viernes</span>
+          </div>
+          <div class="tren">
+            <span
+              ><span class="mono flecha"
+                >07:00 <svg width="15" height="15"><use href="#derecha" /></svg> 12:00</span
+              ><span class="etiqueta">Comfort</span></span
+            >
+            <span class="suave">5 h</span>
+            <span class="mono">23,28 €</span>
+          </div>
+          <div class="tren">
+            <span
+              ><span class="mono flecha"
+                >09:00 <svg width="15" height="15"><use href="#derecha" /></svg> 13:30</span
+              ><span class="etiqueta">Supra</span></span
+            >
+            <span class="suave">4 h 30 min</span>
+            <span class="mono">47,35 €</span>
+          </div>
+          <div class="tren">
+            <span
+              ><span class="mono flecha"
+                >15:00 <svg width="15" height="15"><use href="#derecha" /></svg> 20:00</span
+              ><span class="etiqueta">Comfort</span
+              ><span class="etiqueta retraso">Agotado</span></span
+            >
+            <span class="suave">5 h</span>
+            <span class="mono">23,28 €</span>
           </div>
         </div>
       </div>
