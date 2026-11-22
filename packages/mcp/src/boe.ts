@@ -122,10 +122,33 @@ const norma = z
   .regex(/^BOE-[A-Z]-\d{4}-\d+$/)
   .describe('Identificador de la norma, como BOE-A-2023-12203.');
 
-async function indiceNorma(fetchImpl: Fetch, id: string) {
+const notFound = (error: unknown) => error instanceof SourceError && error.status === 404;
+
+async function metadatos(fetchImpl: Fetch, id: string) {
+  try {
+    return await (await get(fetchImpl, `${API}/legislacion-consolidada/id/${id}/metadatos`)).json();
+  } catch (error) {
+    // Hay disposiciones del BOE que no se consolidan (nombramientos, condecoraciones…): que el id
+    // no esté aquí no prueba que no exista, y buscar_legislacion tampoco las encuentra.
+    if (notFound(error))
+      throw new SourceError(
+        `${id} no está en la legislación consolidada del BOE: el identificador no existe o es de una disposición que no se consolida. Busca la norma consolidada por su título con buscar_legislacion. El texto publicado de cualquier disposición del BOE está en https://www.boe.es/buscar/doc.php?id=${id}.`,
+      );
+    throw error;
+  }
+}
+
+export async function indiceNorma(fetchImpl: Fetch, id: string) {
+  const pedido = metadatos(fetchImpl, id);
   const [meta, indice] = await Promise.all([
-    get(fetchImpl, `${API}/legislacion-consolidada/id/${id}/metadatos`).then((r) => r.json()),
-    get(fetchImpl, `${API}/legislacion-consolidada/id/${id}/texto/indice`).then((r) => r.json()),
+    pedido,
+    // Si falla también el índice, manda el error de los metadatos, que es el que se entiende.
+    get(fetchImpl, `${API}/legislacion-consolidada/id/${id}/texto/indice`)
+      .then((r) => r.json())
+      .catch(async (error: unknown) => {
+        await pedido;
+        throw error;
+      }),
   ]);
   const m = (meta as { data: { titulo: string; url_html_consolidada: string }[] }).data[0];
   const bloques = (indice as { data: { bloque: { id: string; titulo: string }[] }[] }).data[0]
@@ -163,14 +186,23 @@ export function textoBloque(xml: string) {
   };
 }
 
-async function verBloque(fetchImpl: Fetch, id: string, bloque: string) {
-  const xml = await (
-    await get(
+export async function verBloque(fetchImpl: Fetch, id: string, bloque: string) {
+  let response: Response;
+  try {
+    response = await get(
       fetchImpl,
       `${API}/legislacion-consolidada/id/${id}/texto/bloque/${bloque}`,
       'application/xml',
-    )
-  ).text();
+    );
+  } catch (error) {
+    if (!notFound(error)) throw error;
+    // El 404 es el mismo si falta la norma o si falta el bloque: los metadatos lo distinguen.
+    await metadatos(fetchImpl, id);
+    throw new SourceError(
+      `La norma ${id} no tiene el bloque ${bloque}. Consulta los ids de sus bloques con indice_norma.`,
+    );
+  }
+  const xml = await response.text();
   const texto = textoBloque(xml);
   if (!texto) throw new SourceError('Ese bloque no tiene texto. Revisa el índice de la norma.');
   return { id, bloque, ...texto };
