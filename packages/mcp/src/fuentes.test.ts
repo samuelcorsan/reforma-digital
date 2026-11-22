@@ -223,29 +223,48 @@ it('warns when the publication of a series has moved on without it', () => {
 });
 
 it('gives the warning with the data of the series, and the data error for an unknown code', async () => {
-  const api = (datos: Response) =>
+  const api = (datos: Response, meta = 200) =>
     vi.fn<typeof fetch>(async (url) => {
       const path = url instanceof Request ? url.url : url.toString();
       if (path.includes('/DATOS_SERIE/')) return datos;
       if (path.includes('/SERIE/'))
-        return Response.json({
-          Operacion: { Codigo: 'IPC' },
-          Publicacion: { Id: 8, Nombre: 'Índice de Precios de Consumo' },
-        });
+        return Response.json(
+          {
+            Operacion: { Codigo: 'IPC' },
+            Publicacion: { Id: 8, Nombre: 'Índice de Precios de Consumo' },
+          },
+          { status: meta },
+        );
       expect(path).toContain('/PUBLICACIONFECHA_PUBLICACION/8?');
       return Response.json([
         { Fecha: '2026-10-14T09:00:00.000+02:00', Anyo: 2026, T3_Periodo: 'M09' },
         { Fecha: '2026-11-13T09:00:00.000+01:00', Anyo: 2026, T3_Periodo: 'M10' },
       ]);
     });
-  const viejo = Response.json({
-    COD: 'IPC251856',
-    Nombre: 'Nacional. Índice general. Variación anual. ',
-    Data: [{ Fecha: '2025-12-01T00:00:00.000+01:00', Anyo: 2025, T3_Periodo: 'M12', Valor: 2.9 }],
-  });
-  expect(await datosSerie(api(viejo), 'IPC251856', 1)).toMatchObject({
+  const viejo = () =>
+    Response.json({
+      COD: 'IPC251856',
+      Nombre: 'Nacional. Índice general. Variación anual. ',
+      Data: [{ Fecha: '2025-12-01T00:00:00.000+01:00', Anyo: 2025, T3_Periodo: 'M12', Valor: 2.9 }],
+    });
+  expect(await datosSerie(api(viejo()), 'IPC251856', 1)).toMatchObject({
     aviso: expect.stringContaining('acaba en 2025M12'),
     datos: [{ periodo: '2025M12', valor: 2.9 }],
+  });
+  // Si la comprobación falla, los datos salen con un aviso de que no se ha podido hacer.
+  expect(await datosSerie(api(viejo(), 503), 'IPC251856', 1)).toMatchObject({
+    aviso: expect.stringContaining('No se ha podido comprobar'),
+    datos: [{ periodo: '2025M12', valor: 2.9 }],
+  });
+  const calendarioVacio = vi.fn<typeof fetch>(async (url) => {
+    const path = url instanceof Request ? url.url : url.toString();
+    if (path.includes('/DATOS_SERIE/')) return viejo();
+    if (path.includes('/SERIE/'))
+      return Response.json({ Operacion: { Codigo: 'IPC' }, Publicacion: { Id: 8, Nombre: 'IPC' } });
+    return new Response('');
+  });
+  expect(await datosSerie(calendarioVacio, 'IPC251856', 1)).toMatchObject({
+    aviso: expect.stringContaining('No se ha podido comprobar'),
   });
   // El INE responde 500 a DATOS_SERIE y 200 sin cuerpo a SERIE.
   const desconocida = vi.fn<typeof fetch>(async (url) =>

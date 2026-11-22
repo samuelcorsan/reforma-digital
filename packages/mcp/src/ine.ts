@@ -2,7 +2,7 @@
 // (https://servicios.ine.es/wstempus), sin clave. Los códigos de serie cambian con cada cambio de
 // base, así que no se fijan: el asistente llega a los datos como en la web, por operación y tabla.
 import { z } from 'zod';
-import { fold, get, READ_ONLY_EXTERNAL, run, server, type Fetch } from './comun';
+import { fold, get, READ_ONLY_EXTERNAL, run, server, SourceError, type Fetch } from './comun';
 
 // `tip=A` hace que el INE dé la periodicidad y el periodo por su nombre (Trimestral, T3) en vez de
 // por un id.
@@ -154,25 +154,33 @@ export function avisoInterrumpida(s: Serie, meta: Metadatos, calendario: Publica
   return `Esta serie${base} acaba en ${periodo(ultimo)}, pero el INE ya ha publicado «${meta.Publicacion.Nombre}» con ${periodos.size} periodos posteriores, hasta ${periodo(reciente)}. Probablemente esté interrumpida (por ejemplo, por un cambio de base) y su último dato no sea el más reciente. Si hay una serie que la sustituye, búscala con buscar_tabla en la operación ${meta.Operacion.Codigo}.`;
 }
 
+const NO_COMPROBADA =
+  'No se ha podido comprobar si esta serie sigue actualizándose: el INE no ha dado sus metadatos o su calendario de publicación. Su último dato puede no ser el más reciente.';
+
 export async function datosSerie(fetchImpl: Fetch, codigo: string, ultimos: number) {
   const cod = encodeURIComponent(codigo);
-  const pedidos = get(fetchImpl, `${API}/DATOS_SERIE/${cod}?nult=${ultimos}&tip=A`).then((r) =>
-    r.json(),
+  const pedidos = get(fetchImpl, `${API}/DATOS_SERIE/${cod}?nult=${ultimos}&tip=A`).then(
+    (r) => r.json() as Promise<Serie>,
   );
-  const [datos, meta] = (await Promise.all([
+  const comprobar = async () => {
+    const meta = (await (await get(fetchImpl, `${API}/SERIE/${cod}?det=1`)).json()) as Metadatos;
+    const calendario = (await (
+      await get(fetchImpl, `${API}/PUBLICACIONFECHA_PUBLICACION/${meta.Publicacion.Id}?tip=A`)
+    ).json()) as Publicada[];
+    return avisoInterrumpida(await pedidos, meta, calendario);
+  };
+  const [datos, aviso] = await Promise.all([
     pedidos,
-    // Con un código que no existe, SERIE responde 200 sin cuerpo: manda el error de los datos.
-    get(fetchImpl, `${API}/SERIE/${cod}?det=1`)
-      .then((r) => r.json())
-      .catch(async (error: unknown) => {
-        await pedidos;
-        throw error;
-      }),
-  ])) as [Serie, Metadatos];
-  const calendario = (await (
-    await get(fetchImpl, `${API}/PUBLICACIONFECHA_PUBLICACION/${meta.Publicacion.Id}?tip=A`)
-  ).json()) as Publicada[];
-  return { aviso: avisoInterrumpida(datos, meta, calendario), ...serie(datos) };
+    comprobar().catch(async (error: unknown) => {
+      // Si fallan los datos, manda su error: con un código que no existe, SERIE responde 200 sin
+      // cuerpo. Si solo falla la comprobación (sin respuesta, o un 200 vacío que no es JSON), los
+      // datos salen, pero sin darlos por actuales.
+      await pedidos;
+      if (error instanceof SourceError || error instanceof SyntaxError) return NO_COMPROBADA;
+      throw error;
+    }),
+  ]);
+  return { aviso, ...serie(datos) };
 }
 
 const ultimos = z
