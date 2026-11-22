@@ -116,6 +116,9 @@ function guide(list: McpServer[]) {
     json('mcpServers', (_, url) => ({ command: 'npx', args: ['-y', 'mcp-remote', url] })),
     '### Claude.ai y ChatGPT',
     `No se configuran desde el chat: la persona tiene que añadir ${one ? 'la URL' : 'cada URL'} como conector personalizado, sin autenticación. Díselo y dale ${one ? 'la URL' : 'las URL'}.`,
+    // Por Instinct, que no admite conectores MCP y no edita su configuración por lo que diga una web.
+    '### Agentes sin MCP',
+    `Si el cliente no admite servidores MCP, no hace falta conectar nada: cada herramienta también se lee con un GET a \`<URL del servidor>/<herramienta>?parámetro=valor\`, que responde el mismo texto que la herramienta. ${one ? 'La URL de cada herramienta está en su sección.' : 'La URL de cada herramienta está en la ficha de su servidor.'}`,
     '## 2. Comprueba que funciona',
     [
       '1. Recarga la lista de servidores del cliente; si no aparecen, pide permiso para reiniciarlo.',
@@ -141,6 +144,10 @@ function tools(server: McpServer) {
       lines(
         `### ${tool.title} (\`${tool.name}\`)`,
         tool.description,
+        `Sin MCP: \`GET ${endpoint(server.id)}/${tool.name}${tool.params
+          .filter((p) => p.required)
+          .map((p, i) => `${i === 0 ? '?' : '&'}${p.name}=<${p.name}>`)
+          .join('')}\``,
         tool.params.length > 0 &&
           tool.params
             .map(
