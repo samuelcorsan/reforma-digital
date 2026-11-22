@@ -116,12 +116,63 @@ export async function datosTabla(fetchImpl: Fetch, tabla: number, ultimos: numbe
   };
 }
 
-async function datosSerie(fetchImpl: Fetch, codigo: string, ultimos: number) {
-  return serie(
-    (await (
-      await get(fetchImpl, `${API}/DATOS_SERIE/${encodeURIComponent(codigo)}?nult=${ultimos}&tip=A`)
-    ).json()) as Serie,
+type Metadatos = {
+  Operacion: { Codigo: string };
+  Publicacion: { Id: number; Nombre: string };
+  // Falta en series sin clasificación, como las de la TIC-H.
+  Clasificacion?: { Nombre: string };
+};
+type Publicada = { Fecha: string; Anyo: number; T3_Periodo: string };
+
+// Para comparar periodos del mismo tipo (M, T, S o A); los de fecha, como en la ECP, no se comparan.
+const orden = ({ Anyo, T3_Periodo }: { Anyo: number; T3_Periodo: string }) => {
+  const m = /^([A-Z]+)(\d*)$/.exec(T3_Periodo);
+  return m && { tipo: m[1], n: Anyo * 100 + Number(m[2]) };
+};
+
+/**
+ * Un aviso si la publicación de la serie ya ha salido con dos periodos o más posteriores a su
+ * último dato. Se compara con el calendario de la propia publicación, no con la fecha de hoy, para
+ * no marcar las series que el INE publica con meses o años de retraso.
+ */
+export function avisoInterrumpida(s: Serie, meta: Metadatos, calendario: Publicada[]) {
+  const ultimo = [...(s.Data ?? [])].sort((a, b) => Date.parse(b.Fecha) - Date.parse(a.Fecha))[0];
+  const u = ultimo && orden(ultimo);
+  if (!u) return undefined;
+  // El calendario incluye las publicaciones previstas: solo cuentan las que ya han salido. Y las
+  // proyecciones se apuntan con el año final («2076» en las de 2026), que no es un dato publicado.
+  const posteriores = calendario
+    .filter((p) => Date.parse(p.Fecha) <= Date.now() && p.Anyo <= new Date(p.Fecha).getFullYear())
+    .flatMap((p) => {
+      const o = orden(p);
+      return o && o.tipo === u.tipo && o.n > u.n ? [{ p, n: o.n }] : [];
+    });
+  const periodos = new Set(posteriores.map(({ n }) => n));
+  if (periodos.size < 2) return undefined;
+  const reciente = posteriores.reduce((a, b) => (b.n > a.n ? b : a)).p;
+  const base = meta.Clasificacion ? ` (${meta.Clasificacion.Nombre})` : '';
+  return `Esta serie${base} acaba en ${periodo(ultimo)}, pero el INE ya ha publicado «${meta.Publicacion.Nombre}» con ${periodos.size} periodos posteriores, hasta ${periodo(reciente)}. Probablemente esté interrumpida (por ejemplo, por un cambio de base) y su último dato no sea el más reciente. Si hay una serie que la sustituye, búscala con buscar_tabla en la operación ${meta.Operacion.Codigo}.`;
+}
+
+export async function datosSerie(fetchImpl: Fetch, codigo: string, ultimos: number) {
+  const cod = encodeURIComponent(codigo);
+  const pedidos = get(fetchImpl, `${API}/DATOS_SERIE/${cod}?nult=${ultimos}&tip=A`).then((r) =>
+    r.json(),
   );
+  const [datos, meta] = (await Promise.all([
+    pedidos,
+    // Con un código que no existe, SERIE responde 200 sin cuerpo: manda el error de los datos.
+    get(fetchImpl, `${API}/SERIE/${cod}?det=1`)
+      .then((r) => r.json())
+      .catch(async (error: unknown) => {
+        await pedidos;
+        throw error;
+      }),
+  ])) as [Serie, Metadatos];
+  const calendario = (await (
+    await get(fetchImpl, `${API}/PUBLICACIONFECHA_PUBLICACION/${meta.Publicacion.Id}?tip=A`)
+  ).json()) as Publicada[];
+  return { aviso: avisoInterrumpida(datos, meta, calendario), ...serie(datos) };
 }
 
 const ultimos = z
@@ -181,7 +232,8 @@ export function createIneMcp(fetchImpl: Fetch = fetch) {
       'datos_serie',
       {
         title: 'Datos de una serie',
-        description: 'Los últimos valores de una serie por su código, como IPC290751.',
+        description:
+          'Los últimos valores de una serie por su código, como IPC290751. Si el INE sigue publicando la estadística pero esta serie se ha quedado atrás (por un cambio de base, por ejemplo), `aviso` lo dice; si se dejó de publicar la estadística entera, no hay aviso.',
         inputSchema: z.object({ codigo: z.string().regex(/^\w+$/).max(30), ultimos }),
         annotations: READ_ONLY_EXTERNAL,
       },

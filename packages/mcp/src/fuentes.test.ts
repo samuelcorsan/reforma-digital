@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { buscarLegislacion, sumario, textoBloque } from './boe';
 import { buscarMunicipio, gasolinerasBaratas } from './carburantes';
 import { run, SourceError } from './comun';
-import { buscarTabla, datosTabla } from './ine';
+import { avisoInterrumpida, buscarTabla, datosSerie, datosTabla } from './ine';
 
 const fetchJson = (body: unknown, status = 200) =>
   vi.fn<typeof fetch>(async () => Response.json(body, { status }));
@@ -177,6 +177,83 @@ it('filters INE series without accents and names each period, newest first', asy
       datos: [{ periodo: '1 de octubre de 2026', valor: 49935642 }],
     },
   ]);
+});
+
+it('warns when the publication of a series has moved on without it', () => {
+  const meta = {
+    Operacion: { Codigo: 'IPC' },
+    Publicacion: { Id: 8, Nombre: 'Índice de Precios de Consumo' },
+    Clasificacion: { Nombre: 'Base 2021 (IPC)' },
+  };
+  const ultimo = (Anyo: number, T3_Periodo: string) => ({
+    COD: 'S',
+    Nombre: 'Nacional. Índice general. Variación anual. ',
+    Data: [{ Fecha: `${Anyo}-01-01T00:00:00.000+01:00`, Anyo, T3_Periodo, Valor: 2.9 }],
+  });
+  const salio = (Fecha: string, Anyo: number, T3_Periodo: string) => ({
+    Fecha: `${Fecha}T09:00:00.000+01:00`,
+    Anyo,
+    T3_Periodo,
+  });
+  const calendario = [
+    salio('2026-01-30', 2026, 'M01'), // avance
+    salio('2026-02-13', 2026, 'M01'),
+    salio('2026-02-18', 2020, 'M06'), // republicación de un periodo antiguo
+    salio('2026-11-13', 2026, 'M10'),
+    salio('2099-12-15', 2099, 'M11'), // prevista, aún no ha salido
+    salio('2026-02-25', 2025, 'A'),
+    salio('2024-06-24', 2074, 'A'), // proyecciones: se apuntan con su año final
+    salio('2026-06-17', 2076, 'A'),
+  ];
+  expect(avisoInterrumpida(ultimo(2025, 'M12'), meta, calendario)).toBe(
+    'Esta serie (Base 2021 (IPC)) acaba en 2025M12, pero el INE ya ha publicado «Índice de Precios de Consumo» con 2 periodos posteriores, hasta 2026M10. Probablemente esté interrumpida (por ejemplo, por un cambio de base) y su último dato no sea el más reciente. Si hay una serie que la sustituye, búscala con buscar_tabla en la operación IPC.',
+  );
+  const { Clasificacion: _, ...sinClasificacion } = meta;
+  expect(avisoInterrumpida(ultimo(2025, 'M12'), sinClasificacion, calendario)).toMatch(
+    /^Esta serie acaba en 2025M12,/,
+  );
+  // Al día, o un solo periodo por detrás (como cuando ha salido el avance y aún no el dato): sin aviso.
+  expect(avisoInterrumpida(ultimo(2026, 'M10'), meta, calendario)).toBeUndefined();
+  expect(avisoInterrumpida(ultimo(2026, 'M09'), meta, calendario)).toBeUndefined();
+  // Un año se compara con los años publicados (2025, en 2026), no con los meses ni con el año final
+  // de unas proyecciones.
+  expect(avisoInterrumpida(ultimo(2025, 'A'), meta, calendario)).toBeUndefined();
+  // Los datos de un día, como los de la ECP, no se comparan.
+  expect(avisoInterrumpida(ultimo(2025, '1 de octubre de'), meta, calendario)).toBeUndefined();
+});
+
+it('gives the warning with the data of the series, and the data error for an unknown code', async () => {
+  const api = (datos: Response) =>
+    vi.fn<typeof fetch>(async (url) => {
+      const path = url instanceof Request ? url.url : url.toString();
+      if (path.includes('/DATOS_SERIE/')) return datos;
+      if (path.includes('/SERIE/'))
+        return Response.json({
+          Operacion: { Codigo: 'IPC' },
+          Publicacion: { Id: 8, Nombre: 'Índice de Precios de Consumo' },
+        });
+      expect(path).toContain('/PUBLICACIONFECHA_PUBLICACION/8?');
+      return Response.json([
+        { Fecha: '2026-10-14T09:00:00.000+02:00', Anyo: 2026, T3_Periodo: 'M09' },
+        { Fecha: '2026-11-13T09:00:00.000+01:00', Anyo: 2026, T3_Periodo: 'M10' },
+      ]);
+    });
+  const viejo = Response.json({
+    COD: 'IPC251856',
+    Nombre: 'Nacional. Índice general. Variación anual. ',
+    Data: [{ Fecha: '2025-12-01T00:00:00.000+01:00', Anyo: 2025, T3_Periodo: 'M12', Valor: 2.9 }],
+  });
+  expect(await datosSerie(api(viejo), 'IPC251856', 1)).toMatchObject({
+    aviso: expect.stringContaining('acaba en 2025M12'),
+    datos: [{ periodo: '2025M12', valor: 2.9 }],
+  });
+  // El INE responde 500 a DATOS_SERIE y 200 sin cuerpo a SERIE.
+  const desconocida = vi.fn<typeof fetch>(async (url) =>
+    (url instanceof Request ? url.url : url.toString()).includes('/DATOS_SERIE/')
+      ? Response.json({}, { status: 500 })
+      : new Response(''),
+  );
+  await expect(datosSerie(desconocida, 'NOEXISTE1', 1)).rejects.toThrow('La fuente respondió 500.');
 });
 
 it('asks the INE for the tables of an operation once, and again after a failure', async () => {
