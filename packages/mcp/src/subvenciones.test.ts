@@ -268,11 +268,12 @@ describe('Subvenciones (BDNS)', () => {
       1: detalle('1', { fechaInicioSolicitud: '2026-11-03', fechaFinSolicitud: '2026-12-02' }),
       2: detalle('2', { fechaInicioSolicitud: '2026-01-01', fechaFinSolicitud: '2026-03-31' }),
       3: detalle('3', { textInicio: 'Desde la publicación en el BOG' }),
-      // Nominativa: sus fechas son las de la actividad, no un plazo para pedirla.
+      // Nominativa, como la 943832 (Pollença, RD 1016/2026): la entidad nombrada tiene un plazo
+      // para pedirla. Se da con su estado y marcada, no como «sin solicitud».
       4: detalle('4', {
         tipoConvocatoria: 'Concesión directa - instrumental',
-        fechaInicioSolicitud: '2026-01-01',
-        fechaFinSolicitud: '2026-12-31',
+        fechaInicioSolicitud: '2026-11-21',
+        fechaFinSolicitud: '2026-11-27',
       }),
     });
     const result = await buscarConvocatorias(fetchImpl, { abiertas: true, pagina: 2 });
@@ -280,10 +281,15 @@ describe('Subvenciones (BDNS)', () => {
     expect(pedida(fetchImpl).get('page')).toBe('1');
     expect(result.abiertas).toMatchObject({
       revisadas: 4,
-      por_estado: { abierta: 1, cerrada: 1, desconocido: 1, sin_solicitud: 1 },
+      por_estado: { abierta: 2, cerrada: 1, desconocido: 1 },
     });
     expect(result.abiertas?.nota).toContain('página 3');
-    expect(result.convocatorias.map((c) => c.numero)).toEqual(['1']);
+    expect(
+      result.convocatorias.map((c) => [c.numero, c.plazo.solo_beneficiarios_nombrados]),
+    ).toEqual([
+      ['1', undefined],
+      ['4', true],
+    ]);
     vi.useRealTimers();
   });
 
@@ -299,6 +305,18 @@ describe('Subvenciones (BDNS)', () => {
     await expect(buscarConvocatorias(fetchImpl, { region: 'narnia' })).rejects.toThrow(
       'Ninguna región se llama «narnia»',
     );
+    // Sin ninguna palabra, el filtro lo aceptaría todo.
+    await expect(buscarConvocatorias(fetchImpl, { region: '!!' })).rejects.toThrow(
+      '«!!» no tiene ninguna palabra que buscar',
+    );
+    // Sin resultados con «Pollença», se repite con «Pollen» y se dice.
+    const pollensa = vi.fn<typeof fetch>(async () => Response.json(pagina([], 0)));
+    await buscarConvocatorias(pollensa, { texto: 'Pollença' });
+    expect(
+      pollensa.mock.calls.map(([u]) =>
+        new URL(u instanceof Request ? u.url : u).searchParams.get('descripcion'),
+      ),
+    ).toEqual(['Pollença', 'Pollen']);
     await expect(
       buscarConvocatorias(fetchImpl, { organo: 'eibar', administracion: 'estado' }),
     ).rejects.toThrow('Ningún órgano de la administración estado');
@@ -315,6 +333,10 @@ describe('Subvenciones (BDNS)', () => {
       'La búsqueda tiene 4 páginas (40 resultados)',
     );
     await expect(buscarConvocatorias(bdns({ advertencia: 'aviso legal' }), {})).rejects.toThrow(
+      'respuesta incompleta',
+    );
+    // Un total sin páginas no deja saber dónde están los resultados.
+    await expect(buscarConvocatorias(bdns({ content: [], totalElements: 20 }), {})).rejects.toThrow(
       'respuesta incompleta',
     );
     await expect(verConvocatoria(bdns(pagina([])), '999999999')).rejects.toThrow(
@@ -439,6 +461,12 @@ describe('Subvenciones (BDNS)', () => {
       { nif: 'A12345678', beneficiario: 'EJEMPLO, S.A.' },
       { nombre_omitido: true, beneficiario: null },
     ]);
+    // Si el CIF está guardado de las dos formas, no se da una como si fuera el total.
+    await expect(
+      buscarConcesiones(bdns(pagina([concesion('A12345678 EJEMPLO, S.A.')], 3)), {
+        nif: 'A12345678',
+      }),
+    ).rejects.toThrow('guardadas de dos formas');
   });
 
   it('turns a page rejected by the firewall or a too long query into errors', async () => {

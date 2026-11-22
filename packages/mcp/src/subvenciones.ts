@@ -21,8 +21,9 @@ const MAX_URL = 2000;
 
 const INSTRUCTIONS = `Convocatorias de subvenciones y ayudas públicas de todas las administraciones de España (Estado, comunidades autónomas, entidades locales y otros organismos), tal como se registran en la Base de Datos Nacional de Subvenciones (BDNS), y las concesiones ya otorgadas.
 - buscar_convocatorias da las más recientes primero, 10 por página (20 con abiertas=true), con su plazo de solicitud; ver_convocatoria da el detalle de una (beneficiarios, regiones, presupuesto, bases reguladoras, extracto en el diario oficial y documentos).
-- El estado del plazo se calcula con las fechas que registra el órgano y la fecha de hoy en Madrid: «abierta», «indefinida» (sin fechas, la BDNS la marca de solicitud indefinida; puede llevar años así sin que nadie la cierre: mira la fecha de registro y compruébalo en las bases o la sede), «aun_no_abierta», «cerrada», «sin_solicitud» (convocatoria instrumental: una subvención nominativa, directa o de un convenio, que según la BDNS no admite solicitudes) o «desconocido» (sin fechas, solo un texto como «desde el día siguiente a la publicación»). No supongas que una convocatoria «desconocido» está abierta: da el texto y remite a las bases o a la sede.
+- El estado del plazo se calcula con las fechas que registra el órgano y la fecha de hoy en Madrid: «abierta», «indefinida» (sin fechas, la BDNS la marca de solicitud indefinida; puede llevar años así sin que nadie la cierre: mira la fecha de registro y compruébalo en las bases o la sede), «aun_no_abierta», «cerrada» o «desconocido» (sin fechas, solo un texto como «desde el día siguiente a la publicación»). No supongas que una convocatoria «desconocido» está abierta: da el texto y remite a las bases o a la sede.
 - La BDNS no filtra por plazo: con abiertas=true se revisa cada convocatoria de la página pedida y se dejan las «abierta» y las «indefinida», así que la página siguiente puede tener más. Buena parte de las convocatorias registradas son instrumentales.
+- solo_beneficiarios_nombrados marca una convocatoria instrumental (subvención nominativa, directa o de un convenio): solo puede pedirla la entidad que nombra. Sus fechas pueden ser el plazo que esa entidad tiene para presentar la solicitud o las de la actividad; dilo así y remite al decreto o al convenio, sin presentarla como abierta a cualquiera.
 - La región es la zona de impacto que registra el órgano e incluye las que tiene dentro (Euskadi incluye Gipuzkoa), pero no las de fuera: una convocatoria para toda España no sale al filtrar por Gipuzkoa. El órgano es quien convoca («eibar», «diputacion foral de bizkaia», «pais vasco», «ministerio de industria»).
 - No todas las administraciones registran todo en la BDNS; si falta una convocatoria, mira el boletín oficial del órgano (por ejemplo con el servidor del BOE).
 - buscar_concesiones da las concesiones de una convocatoria o de una entidad por su CIF. Los nombres de las personas físicas son datos personales y no se devuelven: sale sin nombre (nombre_omitido) todo beneficiario que no tenga CIF de persona jurídica, también algunas entidades extranjeras; tampoco se busca por DNI o NIE.
@@ -55,7 +56,10 @@ const GOBIERNO = /^(gobierno|junta|xunta|generalitat|govern)( de la| de| del)? (
 const query = (q: string) => {
   const f = fold(q);
   const sin = f.replace(GOBIERNO, '');
-  return tokens(ALIAS[f] ?? ALIAS[sin] ?? sin);
+  const q2 = tokens(ALIAS[f] ?? ALIAS[sin] ?? sin);
+  // Sin palabras, el filtro lo aceptaría todo y la respuesta parecería filtrada.
+  if (!q2.length) throw new SourceError(`«${q}» no tiene ninguna palabra que buscar.`);
+  return q2;
 };
 const contiene = (text: string, q: string[]) => {
   const t = tokens(text);
@@ -223,7 +227,14 @@ async function resolverFinalidad(fetchImpl: Fetch, texto: string) {
 type Pagina<T> = { content: T[]; totalElements: number; totalPages: number };
 
 function pagina<T>(body: Pagina<T> | undefined, numero: number) {
-  if (!body || !Array.isArray(body.content) || typeof body.totalElements !== 'number')
+  // Un total sin páginas, o una página vacía que debería tener resultados, es una respuesta rota.
+  if (
+    !body ||
+    !Array.isArray(body.content) ||
+    typeof body.totalElements !== 'number' ||
+    typeof body.totalPages !== 'number' ||
+    (body.totalElements > 0 && numero <= body.totalPages && !body.content.length)
+  )
     throw new SourceError('La BDNS ha devuelto una respuesta incompleta. Prueba más tarde.');
   if (body.totalElements > 0 && numero > body.totalPages)
     throw new SourceError(
@@ -298,11 +309,12 @@ function plazo(d: Detalle, dia = hoy()) {
       throw new SourceError(
         `La BDNS ha devuelto un plazo con una fecha que no se entiende («${f}»).`,
       );
-  // Según la BDNS, en una instrumental «técnicamente no hay convocatoria, no se pueden presentar
-  // solicitudes»: sus fechas son las del convenio o la actividad, no un plazo para pedirla.
-  const estado = fold(d.tipoConvocatoria ?? '').endsWith('instrumental')
-    ? 'sin_solicitud'
-    : fin && fin < dia
+  // Una instrumental (nominativa, directa o de un convenio) no está abierta a cualquiera, pero sus
+  // fechas pueden ser el plazo en que la entidad nombrada tiene que pedirla (RD 1016/2026, art. 4.3):
+  // se calcula el estado igual y se marca, en vez de decir que no admite solicitudes.
+  const instrumental = fold(d.tipoConvocatoria ?? '').endsWith('instrumental');
+  const estado =
+    fin && fin < dia
       ? 'cerrada'
       : inicio && inicio > dia
         ? 'aun_no_abierta'
@@ -315,6 +327,7 @@ function plazo(d: Detalle, dia = hoy()) {
             : 'desconocido';
   return {
     estado,
+    solo_beneficiarios_nombrados: instrumental || undefined,
     inicio,
     fin,
     texto_inicio: limpio(d.textInicio),
@@ -395,10 +408,21 @@ export async function buscarConvocatorias(fetchImpl: Fetch, f: FiltrosConvocator
     params.set('finalidad', String(fin.id));
     filtros.finalidad = fin.descripcion;
   }
-  const body = pagina(
+  let body = pagina(
     await json<Pagina<Convocatoria>>(fetchImpl, 'convocatorias/busqueda', params),
     numero,
   );
+  // La BDNS guarda la ñ y la ç de más de una forma: «Pollença» no encuentra una convocatoria cuyo
+  // título sí la tiene, y «Pollen» sí. Sin resultados, se repite con la palabra cortada antes.
+  const cortado = f.texto?.replace(/(\p{L}{3,}?)[ñçÑÇ]\p{L}*/gu, '$1');
+  if (!body.totalElements && f.texto && cortado !== f.texto) {
+    params.set('descripcion', cortado!);
+    body = pagina(
+      await json<Pagina<Convocatoria>>(fetchImpl, 'convocatorias/busqueda', params),
+      numero,
+    );
+    filtros.texto = `${cortado} (sin resultados con «${f.texto}»: la BDNS escribe la ñ y la ç de más de una forma)`;
+  }
   const dia = hoy();
   const convocatorias = [];
   // Una a una: en paralelo, la API responde 429 en cuanto van unas pocas a la vez.
@@ -535,10 +559,19 @@ export async function buscarConcesiones(
     await json<Pagina<Concesion>>(fetchImpl, 'concesiones/busqueda', params),
     numero,
   );
-  // La API busca el NIF exacto, y algunos CIF están guardados con ceros delante.
-  if (f.nif && !body.totalElements) {
+  // La API busca el NIF exacto, y algunos CIF están guardados con ceros delante: se miran las dos
+  // formas, y si las dos tienen concesiones no se da una sola como si fuera el total.
+  if (f.nif) {
     params.set('nifCif', `000${f.nif}`);
-    body = pagina(await json<Pagina<Concesion>>(fetchImpl, 'concesiones/busqueda', params), numero);
+    const relleno = pagina(
+      await json<Pagina<Concesion>>(fetchImpl, 'concesiones/busqueda', params),
+      numero,
+    );
+    if (body.totalElements && relleno.totalElements)
+      throw new SourceError(
+        `La BDNS tiene concesiones de ${f.nif} guardadas de dos formas (${f.nif}: ${body.totalElements}; 000${f.nif}: ${relleno.totalElements}) y no se pueden listar juntas. Búscalas por convocatoria.`,
+      );
+    if (!body.totalElements) body = relleno;
   }
   return {
     total: body.totalElements,
