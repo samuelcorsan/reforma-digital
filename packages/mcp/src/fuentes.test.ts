@@ -2,7 +2,14 @@
 // BOE, Carburantes e INE sin red: respuestas con la forma de cada API (recortadas de las reales)
 // para lo que se puede romper al leerlas.
 import { describe, expect, it, vi } from 'vitest';
-import { buscarLegislacion, createBoeMcp, sumario, textoBloque } from './boe';
+import {
+  buscarLegislacion,
+  createBoeMcp,
+  indiceNorma,
+  sumario,
+  textoBloque,
+  verBloque,
+} from './boe';
 import { buscarMunicipio, gasolinerasBaratas } from './carburantes';
 import { run, SourceError } from './comun';
 import { buscarTabla, datosTabla } from './ine';
@@ -102,6 +109,25 @@ describe('BOE', () => {
     expect(fetchImpl).toHaveBeenCalledWith(
       expect.stringContaining('/id/BON-n-2008-90013/metadatos'),
       expect.anything(),
+    );
+  });
+
+  it('tells a norm that is not consolidated from a block the norm does not have', async () => {
+    // La API responde igual, 404 con este XML, si falta la norma o si falta el bloque.
+    const missing = `<response><status><code>404</code><text>La información solicitada no existe</text></status><data/></response>`;
+    const api = (existing: string) =>
+      vi.fn<typeof fetch>(async (url) =>
+        (url instanceof Request ? url.url : url.toString()).includes(`/id/${existing}/metadatos`)
+          ? Response.json({ data: [{ titulo: 'Ley', url_html_consolidada: 'https://boe' }] })
+          : new Response(missing, { status: 404 }),
+      );
+    const noNorm = /BOE-A-2004-21950 no está en la legislación consolidada.*buscar_legislacion/;
+    await expect(verBloque(api('BOE-A-2015-11430'), 'BOE-A-2004-21950', 'a1')).rejects.toThrow(
+      noNorm,
+    );
+    await expect(indiceNorma(api('BOE-A-2015-11430'), 'BOE-A-2004-21950')).rejects.toThrow(noNorm);
+    await expect(verBloque(api('BOE-A-2015-11430'), 'BOE-A-2015-11430', 'a999')).rejects.toThrow(
+      'La norma BOE-A-2015-11430 no tiene el bloque a999. Consulta los ids de sus bloques con indice_norma.',
     );
   });
 

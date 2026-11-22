@@ -11,7 +11,14 @@ export const READ_ONLY_EXTERNAL = {
 } as const;
 
 /** Un fallo de la fuente que sí se puede contar al asistente (código y motivo). */
-export class SourceError extends Error {}
+export class SourceError extends Error {
+  constructor(
+    message: string,
+    readonly status?: number,
+  ) {
+    super(message);
+  }
+}
 
 export type Fetch = typeof fetch;
 
@@ -26,7 +33,8 @@ export async function get(fetchImpl: Fetch, url: string, accept = 'application/j
   } catch {
     throw new SourceError('La fuente no responde. Prueba más tarde.');
   }
-  if (!response.ok) throw new SourceError(`La fuente respondió ${response.status}.`);
+  if (!response.ok)
+    throw new SourceError(`La fuente respondió ${response.status}.`, response.status);
   return response;
 }
 
