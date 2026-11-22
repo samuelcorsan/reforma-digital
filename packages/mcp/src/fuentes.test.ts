@@ -694,7 +694,46 @@ describe('BORME', () => {
     await expect(buscarEmpresa(fetchImpl, 'talleres', 'Gipuzkoa', 3, '2999-01-01')).rejects.toThrow(
       'es una fecha futura',
     );
+    // Un filtro dado pero en blanco no se ignora: la respuesta parecería filtrada.
+    await expect(
+      actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', { ...filtros, acto: '   ' }),
+    ).rejects.toThrow('El tipo de acto necesita al menos una palabra');
+    // Los días anteriores a 2009 saldrían como días sin BORME.
+    await expect(buscarEmpresa(fetchImpl, 'talleres', 'Gipuzkoa', 5, '2009-01-03')).rejects.toThrow(
+      'La API del BORME empieza el 2009-01-01',
+    );
     expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('takes a type of act by its exact name before the ones that contain it', async () => {
+    const cancelaciones = xml.replace(
+      'Acto que aún no se conoce. Extinción.',
+      'Cancelaciones de oficio de nombramientos. Adm. Unico: PERSONA TRES.',
+    );
+    const fetchImpl = vi.fn<typeof fetch>(async (url) =>
+      ruta(url).includes('xml.php') ? new Response(cancelaciones) : Response.json(dia),
+    );
+    const filtros = { pagina: 1, limite: 25 };
+    const nombramientos = await actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', {
+      ...filtros,
+      acto: 'nombramientos',
+    });
+    expect(nombramientos.inscripciones.map((i) => i.numero)).toEqual(['500001']);
+    const canceladas = await actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', {
+      ...filtros,
+      acto: 'cancelaciones',
+    });
+    expect(canceladas.inscripciones.map((i) => i.numero)).toEqual(['500003']);
+  });
+
+  it('refuses a summary without the section of registered acts instead of reporting none', async () => {
+    const sinA = structuredClone(dia);
+    const diario = sinA.data.sumario.diario[0]!;
+    diario.seccion = diario.seccion.filter((s) => s.codigo !== 'A');
+    const fetchImpl = vi.fn<typeof fetch>(async () => Response.json(sinA));
+    await expect(
+      actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', { pagina: 1, limite: 25 }),
+    ).rejects.toThrow('El sumario del BORME no trae la sección de actos inscritos');
   });
 
   it('refuses a document whose entries cannot be read instead of reporting no acts', async () => {

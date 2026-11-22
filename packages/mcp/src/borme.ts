@@ -29,7 +29,8 @@ const DESDE = '2009-01-01';
 /** Las palabras de un filtro; uno sin ninguna de tres letras lo aceptaría casi todo. */
 function filtro(text: string | undefined, nombre: string) {
   const q = words(text);
-  if (q.length > 0 && !q.some((w) => w.length >= 3))
+  // Un filtro dado pero vacío no filtraría nada y la respuesta parecería filtrada.
+  if (text !== undefined && !q.some((w) => w.length >= 3))
     throw new SourceError(`${nombre} necesita al menos una palabra de tres letras o más.`);
   return q;
 }
@@ -295,12 +296,23 @@ export async function sumarioBorme(fetchImpl: Fetch, fecha: string) {
 }
 
 /** El documento de actos inscritos de la provincia ese día, si lo hay. */
-const documento = (dias: Diario[], codigo: string) =>
-  dias
+function documento(dias: Diario[], codigo: string) {
+  const items = dias
     .flatMap((d) => list(d.seccion))
     .filter((s) => s.codigo === 'A')
-    .flatMap((s) => list(s.item))
-    .find((i) => i.identificador.endsWith(`-${codigo}`));
+    .flatMap((s) => list(s.item));
+  // Un día con BORME siempre trae la sección primera: sin ella, el formato ha cambiado.
+  if (items.length === 0)
+    throw new SourceError('El sumario del BORME no trae la sección de actos inscritos.');
+  return items.find((i) => i.identificador.endsWith(`-${codigo}`));
+}
+
+/** Los tipos de acto que pide el filtro: si uno se llama exactamente así, solo ese. */
+function tiposDeActo(acto: string[]) {
+  const nombres = ACTOS.map(([n]) => n).filter((n) => matches(n, acto));
+  const exacto = nombres.filter((n) => words(n).join(' ') === acto.join(' '));
+  return new Set(exacto.length > 0 ? exacto : nombres);
+}
 
 async function leer(fetchImpl: Fetch, item: Item) {
   const xml = await (await get(fetchImpl, item.url_xml, 'application/xml')).text();
@@ -322,8 +334,9 @@ export async function actosProvincia(
 ) {
   const p = provincia(nombre);
   const acto = filtro(filtros.acto, 'El tipo de acto');
+  const tipos = tiposDeActo(acto);
   // Un tipo de acto que no existe daría cero resultados como si no hubiera ninguno ese día.
-  if (acto.length > 0 && !ACTOS.some(([n]) => matches(n, acto)))
+  if (acto.length > 0 && tipos.size === 0)
     throw new SourceError(
       `«${filtros.acto}» no es un tipo de acto del BORME. Los tipos son: ${ACTOS.map(([n]) => n).join(', ')}.`,
     );
@@ -338,11 +351,14 @@ export async function actosProvincia(
       inscripciones: [],
       nota: `El BORME del ${fecha} no publica actos inscritos de ${p.nombre}.`,
     };
-  const empresa = filtro(nombreEmpresa(filtros.empresa ?? ''), 'El nombre de la empresa');
+  const empresa = filtro(
+    filtros.empresa === undefined ? undefined : nombreEmpresa(filtros.empresa),
+    'El nombre de la empresa',
+  );
   const todas = (await leer(fetchImpl, item)).filter(
     (i) =>
       matches(nombreEmpresa(i.empresa), empresa) &&
-      (acto.length === 0 || i.actos.some((a) => matches(a.acto, acto))),
+      (acto.length === 0 || i.actos.some((a) => tipos.has(a.acto))),
   );
   const desde = (filtros.pagina - 1) * filtros.limite;
   return {
@@ -382,12 +398,14 @@ export async function buscarEmpresa(
 ) {
   const p = provincia(nombreProvincia);
   const q = filtro(nombreEmpresa(nombre), 'El nombre de la empresa');
-  if (q.length === 0)
-    throw new SourceError('El nombre de la empresa necesita al menos una palabra.');
   // Un día futuro saldría como día sin BORME.
   if (hasta > hoy())
     throw new SourceError(`${hasta} es una fecha futura: busca hasta hoy como mucho.`);
-  const porDia = await porDias(fechas(hasta, dias), async (fecha) => {
+  const lista = fechas(hasta, dias);
+  // Antes de 2009 la API no tiene datos: esos días saldrían como días sin BORME.
+  if (lista.at(-1)! < DESDE)
+    throw new SourceError(`La API del BORME empieza el ${DESDE}: busca desde esa fecha.`);
+  const porDia = await porDias(lista, async (fecha) => {
     const d = await diarios(fetchImpl, fecha);
     if (!d) return { fecha, publicado: false, inscripciones: [], anuncios: [] };
     const item = documento(d, p.codigo);
