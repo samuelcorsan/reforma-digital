@@ -15,12 +15,26 @@ export class SourceError extends Error {}
 
 export type Fetch = typeof fetch;
 
-/** GET con tiempo límite: la respuesta si es 2xx; si no, un SourceError con el código. */
-export async function get(fetchImpl: Fetch, url: string, accept = 'application/json') {
+/**
+ * GET con tiempo límite (o POST, si lleva un cuerpo JSON): la respuesta si es 2xx; si no, un
+ * SourceError con el código.
+ */
+export async function get(
+  fetchImpl: Fetch,
+  url: string,
+  accept = 'application/json',
+  body?: unknown,
+) {
   let response: Response;
   try {
     response = await fetchImpl(url, {
-      headers: { Accept: accept },
+      ...(body === undefined
+        ? { headers: { Accept: accept } }
+        : {
+            method: 'POST',
+            headers: { Accept: accept, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          }),
       signal: AbortSignal.timeout(20_000),
     });
   } catch {
