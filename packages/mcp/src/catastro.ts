@@ -170,7 +170,19 @@ type Pagina = { pagina: number; limite: number };
 
 /** Un inmueble con su detalle, o la lista de una parcela o dirección con varios, por páginas. */
 function inmuebles({ bico, lrcdnp, control }: Resultado, { pagina, limite }: Pagina) {
-  if (bico) return detalle(bico);
+  if (bico) {
+    // Un solo inmueble es una sola página: otra no daría lo mismo como si fuera la pedida.
+    if (pagina > 1) throw new SourceError('Es un solo inmueble: no hay más páginas.');
+    // El recuento de construcciones y de cultivos va aparte: si no cuadra, la lista llegó cortada.
+    if (
+      (control.cucons ?? 0) !== (bico.lcons?.length ?? 0) ||
+      (control.cucul ?? 0) !== (bico.lspr?.length ?? 0)
+    )
+      throw new SourceError(
+        'El Catastro devolvió las construcciones o los cultivos del inmueble incompletos. Prueba más tarde.',
+      );
+    return detalle(bico);
+  }
   const todos = lrcdnp?.rcdnp;
   // El recuento del Catastro va aparte: si no coincide, la lista ha llegado cortada.
   if (!todos || todos.length !== control.cudnp)
@@ -504,9 +516,22 @@ export async function buscarDireccion(fetchImpl: Fetch, d: Direccion, pagina: Pa
       `En ${sitio} no hay inmuebles con ${filtros.map((f) => `${f} ${d[f]}`).join(', ')}. Repite sin ${filtros.length > 1 ? 'esos filtros' : 'ese filtro'} para ver los que hay.`,
     );
   if (fallo) throw new SourceError(motivo(fallo));
-  // El Catastro da con el número sus duplicados (28 y 28B), y no deja pedir uno solo.
+  // El Catastro aplica los filtros; si algún inmueble no los cumple, no se dan como filtrados.
+  const locs = r.bico
+    ? [r.bico.bi.dt.locs?.lous?.lourb.loint]
+    : (r.lrcdnp?.rcdnp ?? []).map((u) => u.dt.locs?.lous?.lourb.loint);
+  const sinCeros = (s: string | undefined) => fold(s ?? '').replace(/^0+(?=.)/, '');
+  const campo = { bloque: 'bq', escalera: 'es', planta: 'pt', puerta: 'pu' } as const;
+  for (const f of filtros)
+    if (locs.some((l) => sinCeros(l?.[campo[f]]) !== sinCeros(d[f])))
+      throw new SourceError(
+        `El Catastro devolvió en ${sitio} inmuebles que no son de ${f} ${d[f]}: no se dan como filtrados. Repite sin ese filtro.`,
+      );
+  // El Catastro da con el número sus duplicados (28 y 28B), y no deja pedir uno solo; con un solo
+  // inmueble, puede ser solo el de la letra (1D al pedir el 1).
+  const dts = r.bico ? [r.bico.bi.dt] : (r.lrcdnp?.rcdnp ?? []).map((u) => u.dt);
   const numeros = new Set(
-    r.lrcdnp?.rcdnp.map(({ dt }) => {
+    dts.map((dt) => {
       const dir = dt.locs?.lous?.lourb.dir;
       return `${dir?.pnp ?? ''}${dir?.plp ?? ''}`.trim();
     }),
@@ -515,7 +540,7 @@ export async function buscarDireccion(fetchImpl: Fetch, d: Direccion, pagina: Pa
   return {
     direccion: sitio,
     aviso: numeros.size
-      ? `La lista incluye también los números ${[...numeros].join(', ')}: mira la dirección de cada inmueble.`
+      ? `${r.bico ? 'El inmueble es del número' : 'La lista incluye también los números'} ${[...numeros].join(', ')}, no del ${d.numero}: mira la dirección de cada inmueble.`
       : undefined,
     ...inmuebles(r, pagina),
   };

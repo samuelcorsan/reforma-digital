@@ -62,33 +62,32 @@ describe('Catastro', () => {
   };
 
   it('reads a property with its constructions, and checks the control letters', async () => {
-    const fetchImpl = catastro({
-      Consulta_DNPRC: {
-        control: { cudnp: 1, cucons: 2 },
-        bico: {
-          bi: {
-            idbi: { cn: 'UR', rc: unidad('0004', 'UM', '01', 'DR', '').rc },
-            dt: unidad('0004', 'UM', '01', 'DR', '').dt,
-            ldt: 'CL FUENCARRAL 83 Es:1 Pl:01 Pt:DR 28004 MADRID (MADRID)',
-            debi: { luso: 'Residencial', sfc: '77', cpt: '5,499900', ant: '1900' },
-          },
-          finca: {
-            ltp: 'Parcela con varios inmuebles (division horizontal)',
-            dff: { ss: '213' },
-            infgraf: { igraf: 'https://www1.sedecatastro.gob.es/Cartografia/mapa.aspx?refcat=x' },
-          },
-          lcons: [
-            {
-              lcd: 'VIVIENDA',
-              dt: { lourb: { loint: { es: '1', pt: '01', pu: 'DR' } } },
-              dfcons: { stl: '70' },
-              dvcons: { dtip: 'VIVIENDA COLECTIVA' },
-            },
-            { lcd: 'ELEMENTOS COMUNES', dfcons: { stl: '7' } },
-          ],
+    const fuencarral = {
+      control: { cudnp: 1, cucons: 2 },
+      bico: {
+        bi: {
+          idbi: { cn: 'UR', rc: unidad('0004', 'UM', '01', 'DR', '').rc },
+          dt: unidad('0004', 'UM', '01', 'DR', '').dt,
+          ldt: 'CL FUENCARRAL 83 Es:1 Pl:01 Pt:DR 28004 MADRID (MADRID)',
+          debi: { luso: 'Residencial', sfc: '77', cpt: '5,499900', ant: '1900' },
         },
+        finca: {
+          ltp: 'Parcela con varios inmuebles (division horizontal)',
+          dff: { ss: '213' },
+          infgraf: { igraf: 'https://www1.sedecatastro.gob.es/Cartografia/mapa.aspx?refcat=x' },
+        },
+        lcons: [
+          {
+            lcd: 'VIVIENDA',
+            dt: { lourb: { loint: { es: '1', pt: '01', pu: 'DR' } } },
+            dfcons: { stl: '70' },
+            dvcons: { dtip: 'VIVIENDA COLECTIVA' },
+          },
+          { lcd: 'ELEMENTOS COMUNES', dfcons: { stl: '7' } },
+        ],
       },
-    });
+    };
+    const fetchImpl = catastro({ Consulta_DNPRC: fuencarral });
     const piso = await verInmueble(fetchImpl, '0555705 VK4705F 0004 um', { pagina: 1, limite: 50 });
     expect(pedida(fetchImpl, 'Consulta_DNPRC').get('RefCat')).toBe('0555705VK4705F0004UM');
     expect(piso).toMatchObject({
@@ -113,6 +112,17 @@ describe('Catastro', () => {
       verInmueble(fetchImpl, '0555705VK4705F0004UX', { pagina: 1, limite: 50 }),
     ).rejects.toThrow('no cuadran');
     expect(fetchImpl).toHaveBeenCalledTimes(1);
+    // Un solo inmueble no tiene página 2, y una lista de construcciones cortada no se da por entera.
+    await expect(
+      verInmueble(fetchImpl, '0555705VK4705F0004UM', { pagina: 2, limite: 50 }),
+    ).rejects.toThrow('Es un solo inmueble');
+    await expect(
+      verInmueble(
+        catastro({ Consulta_DNPRC: { ...fuencarral, control: { cudnp: 1, cucons: 3 } } }),
+        '0555705VK4705F0004UM',
+        { pagina: 1, limite: 50 },
+      ),
+    ).rejects.toThrow('construcciones o los cultivos del inmueble incompletos');
   });
 
   it('pages the properties of a parcel and refuses a list cut short', async () => {
@@ -193,7 +203,7 @@ describe('Catastro', () => {
   });
 
   it('resolves names without accents and passes every filter of the address', async () => {
-    const fetchImpl = catastro({
+    const alicante = {
       ObtenerProvincias: provincias,
       ObtenerMunicipios: {
         control: { cumun: 2 },
@@ -213,7 +223,14 @@ describe('Catastro', () => {
               },
             }
           : ninguna,
-      Consulta_DNPLOC: bloque,
+    };
+    const fetchImpl = catastro({
+      ...alicante,
+      // Como el Catastro real: con escalera 1 y planta 1 solo da los de la planta 01.
+      Consulta_DNPLOC: {
+        control: { cudnp: 2 },
+        lrcdnp: { rcdnp: bloque.lrcdnp.rcdnp.slice(1) },
+      },
     });
     const result = await buscarDireccion(
       fetchImpl,
@@ -240,8 +257,22 @@ describe('Catastro', () => {
     });
     expect(result).toMatchObject({
       direccion: 'PZ ESPAÑA 10, ALICANTE/ALACANT (ALACANT)',
-      total: 3,
+      total: 2,
     });
+    // Si el Catastro devolviera también el sótano, la respuesta no se daría como filtrada.
+    await expect(
+      buscarDireccion(
+        catastro({ ...alicante, Consulta_DNPLOC: bloque }),
+        {
+          provincia: 'Alicante',
+          municipio: 'alicante',
+          via: 'Plaza de Espana',
+          numero: 10,
+          planta: '1',
+        },
+        { pagina: 1, limite: 50 },
+      ),
+    ).rejects.toThrow('inmuebles que no son de planta 1');
   });
 
   it('answers a wrong address with what does exist', async () => {
