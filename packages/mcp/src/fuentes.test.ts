@@ -630,6 +630,19 @@ describe('BORME', () => {
     ]);
   });
 
+  it('reads the acts that older bulletins write without accents', () => {
+    // Como en el BORME de 2009 a 2019.
+    const antiguo = `<documento><texto>
+    <p class="articulo">127044 - MONTAJES EJEMPLO SL.</p>
+    <p class="parrafo">Ampliacion del objeto social. Montaje de instalaciones eléctricas. Pérdida del caracter de unipersonalidad. Adaptación de sociedad.  Datos registrales. T 2100 , F 1, S 8, H SS 1, I/A 5 (2.03.09).</p>
+  </texto></documento>`;
+    expect(inscripciones(antiguo)[0]?.actos).toEqual([
+      { acto: 'Ampliación del objeto social', detalle: 'Montaje de instalaciones eléctricas' },
+      { acto: 'Pérdida del carácter de unipersonalidad' },
+      { acto: 'Adaptación', detalle: 'Adaptación de sociedad' },
+    ]);
+  });
+
   it('lists the documents of the day and says when there is no BORME', async () => {
     const fetchImpl = borme();
     const result = await sumarioBorme(fetchImpl, '2026-11-20');

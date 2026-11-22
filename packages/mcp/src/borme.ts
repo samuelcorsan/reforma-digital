@@ -136,9 +136,12 @@ const ACTOS: [string, string?][] = [
   ['Desembolso de dividendos pasivos'],
   ['Emisión de obligaciones'],
   ['Modificaciones estatutarias'],
-  ['Adaptación', String.raw`Adaptación (?:Ley [\d/]+|a la Ley de Sociedades de Capital[^.]*)`],
+  [
+    'Adaptación',
+    String.raw`Adaptación (?:de sociedad|Ley [\d/]+|a la Ley de Sociedades de Capital[^.]*)`,
+  ],
   ['Declaración de unipersonalidad'],
-  ['Pérdida del carácter de unipersonalidad', 'Pérdida del car[aá]cter de unipersonalidad'],
+  ['Pérdida del carácter de unipersonalidad'],
   ['Sociedad unipersonal'],
   ['Cambio de identidad del socio único'],
   ['Transformación de sociedad'],
@@ -153,6 +156,7 @@ const ACTOS: [string, string?][] = [
   ['Extinción'],
   ['Reactivación de la sociedad', String.raw`Reactivación de la sociedad(?: \([^)]*\))?`],
   ['Situación concursal'],
+  ['Crédito incobrable'],
   ['Anotación preventiva'],
   [
     'Cierre provisional de la hoja registral',
@@ -165,11 +169,14 @@ const ACTOS: [string, string?][] = [
   ['Otros conceptos'],
 ];
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// Los BORME antiguos escriben muchos actos sin tilde («Ampliacion del objeto social»).
+const TILDES: Record<string, string> = { á: '[áa]', é: '[ée]', í: '[íi]', ó: '[óo]', ú: '[úu]' };
+const sinTilde = (patron: string) => patron.replace(/[áéíóú]/g, (c) => TILDES[c] ?? c);
 // Un acto empieza la inscripción o una frase (a veces tras «.-»), y acaba en punto o dos puntos:
 // así «Constitución» dentro del objeto social («…constitución de sociedades») no corta el texto.
 // Un grupo por acto, para saber cuál es aunque el boletín use una variante.
 const ACTO = new RegExp(
-  String.raw`(?<=^|\.-?\s+)(?:${ACTOS.map(([nombre, patron]) => `(${patron ?? escape(nombre)})`).join('|')})(?=\s*[.:])`,
+  String.raw`(?<=^|\.-?\s+)(?:${ACTOS.map(([nombre, patron]) => `(${sinTilde(patron ?? escape(nombre))})`).join('|')})(?=\s*[.:])`,
   'g',
 );
 
@@ -186,6 +193,9 @@ const limpio = (text: string) =>
     .replace(/^[\s.:]+/, '')
     .replace(/[\s.-]+$/, '')
     .replace(/\s+/g, ' ');
+
+/** Un título en una línea: los de fusiones y escisiones traen saltos entre las sociedades. */
+const unaLinea = (text: string) => text.replace(/\s+/g, ' ').trim();
 
 /** Una inscripción por empresa: «524236 - EMPRESA SL.» y el párrafo con sus actos. */
 export function inscripciones(xml: string): Inscripcion[] {
@@ -215,7 +225,10 @@ export function inscripciones(xml: string): Inscripcion[] {
       const encabezado = corte[0];
       const resto = limpio(actos.slice(corte.index + encabezado.length, cortes[i + 1]?.index));
       // La variante del boletín («hoja registral Art.485 TRLC») va al detalle; el acto, con su nombre.
-      const detalle = [encabezado === acto ? '' : encabezado, resto].filter(Boolean).join('. ');
+      // Sin tilde es el mismo acto, no una variante.
+      const detalle = [fold(encabezado) === fold(acto) ? '' : encabezado, resto]
+        .filter(Boolean)
+        .join('. ');
       inscripcion.actos.push(detalle ? { acto, detalle } : { acto });
     });
   }
@@ -280,11 +293,15 @@ export async function sumarioBorme(fetchImpl: Fetch, fecha: string) {
       secciones: list(d.seccion).map((s) => ({
         seccion: s.nombre,
         documentos: [
-          ...list(s.item).map((i) => ({ id: i.identificador, titulo: i.titulo, url: i.url_html })),
+          ...list(s.item).map((i) => ({
+            id: i.identificador,
+            titulo: unaLinea(i.titulo),
+            url: i.url_html,
+          })),
           ...list(s.apartado).flatMap((a) =>
             list(a.item).map((i) => ({
               id: i.identificador,
-              titulo: i.titulo,
+              titulo: unaLinea(i.titulo),
               apartado: a.nombre,
               url: i.url_html,
             })),
@@ -424,7 +441,7 @@ export async function buscarEmpresa(
           .map((i) => ({
             fecha,
             id: i.identificador,
-            empresa: i.titulo,
+            empresa: unaLinea(i.titulo),
             apartado: a.nombre,
             url: i.url_html,
           })),
