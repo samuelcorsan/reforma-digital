@@ -5,6 +5,7 @@ import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
+import { POST as idescat } from '../../app/mcp/idescat/route';
 import { POST as redElectrica } from '../../app/mcp/red-electrica/route';
 import { POST as catastro } from '../../app/mcp/catastro/route';
 import { POST as contratacion } from '../../app/mcp/contratacion/route';
@@ -17,6 +18,7 @@ import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
+import idescatEscena from './escenas/idescat.png';
 import redElectricaEscena from './escenas/red-electrica.png';
 import catastroEscena from './escenas/catastro.png';
 import contratacionEscena from './escenas/contratacion.png';
@@ -104,6 +106,20 @@ const servidores: Servidor[] = [
       '¿Cuál es la última tasa de inflación en Gipuzkoa?',
       '¿Cuántas pernoctaciones turísticas hubo en Bizkaia el último mes?',
       '¿Cuál es la tasa de paro en Gipuzkoa?',
+    ],
+  },
+  {
+    id: 'idescat',
+    name: 'Idescat',
+    category: 'estadistica',
+    logo: { src: '/organismos/idescat.png' },
+    escena: idescatEscena,
+    summary:
+      'Las estadísticas oficiales de Cataluña, sus comarcas y municipios: población, empleo, afiliación, nacimientos y economía.',
+    examples: [
+      '¿Cuántos habitantes tiene Girona?',
+      '¿Cuál es la tasa de paro en Cataluña?',
+      '¿Cuántos afiliados a la Seguridad Social viven en el Baix Llobregat?',
     ],
   },
   {
@@ -206,6 +222,7 @@ const handlers: Record<string, Entry['handler']> = {
   boe,
   ine,
   eustat,
+  idescat,
   catastro,
   carburantes,
   'red-electrica': redElectrica,
