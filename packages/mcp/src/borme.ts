@@ -170,8 +170,7 @@ const ACTOS: [string, string?][] = [
 ];
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // Los BORME antiguos escriben muchos actos sin tilde («Ampliacion del objeto social»).
-const TILDES: Record<string, string> = { á: '[áa]', é: '[ée]', í: '[íi]', ó: '[óo]', ú: '[úu]' };
-const sinTilde = (patron: string) => patron.replace(/[áéíóú]/g, (c) => TILDES[c] ?? c);
+const sinTilde = (patron: string) => patron.replace(/[áéíóú]/g, (c) => `[${c}${fold(c)}]`);
 // Un acto empieza la inscripción o una frase (a veces tras «.-»), y acaba en punto o dos puntos:
 // así «Constitución» dentro del objeto social («…constitución de sociedades») no corta el texto.
 // Un grupo por acto, para saber cuál es aunque el boletín use una variante.
