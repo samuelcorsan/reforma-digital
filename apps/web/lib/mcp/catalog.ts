@@ -120,6 +120,8 @@ type Param = {
   type: string;
   description?: string;
   required: boolean;
+  /** Para pasar a número lo que llega como texto en GET /mcp/<servidor>/<herramienta>. */
+  numeric: boolean;
   default?: string;
 };
 export type Tool = {
@@ -144,7 +146,11 @@ const entries: Entry[] = servidores.map((s) => {
 export const serverIds = entries.map(({ id }) => id);
 
 // Llamada JSON-RPC al handler en el mismo proceso: no sale a internet ni toca la base de datos.
-async function rpc(handler: Entry['handler'], method: string) {
+async function rpc(
+  handler: Entry['handler'],
+  method: string,
+  params?: { name: string; arguments: Record<string, string | number> },
+) {
   const response = await handler(
     new Request('http://localhost/mcp', {
       method: 'POST',
@@ -152,7 +158,7 @@ async function rpc(handler: Entry['handler'], method: string) {
         'content-type': 'application/json',
         accept: 'application/json, text/event-stream',
       },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method }),
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
     }),
   );
   const text = await response.text();
@@ -195,6 +201,7 @@ function params(schema: JsonSchema | undefined): Param[] {
         : (typeNames[prop.type ?? ''] ?? prop.type ?? '—'),
     description: prop.description,
     required: schema?.required?.includes(name) ?? false,
+    numeric: prop.type === 'integer' || prop.type === 'number',
     default: prop.default === undefined ? undefined : JSON.stringify(prop.default),
   }));
 }
@@ -224,4 +231,36 @@ export function servers(): Promise<McpServer[]> {
     throw error;
   });
   return loaded;
+}
+
+/**
+ * Una herramienta por GET, con sus parámetros en la query. Existe por Instinct, que no admite
+ * conectores MCP pero sí abre URLs: así puede usar las mismas herramientas sin configurar nada.
+ * `undefined` si no existe el servidor o la herramienta.
+ */
+export async function callTool(id: string, name: string, query: URLSearchParams) {
+  const entry = entries.find((e) => e.id === id);
+  const tool = (await servers()).find((s) => s.id === id)?.tools.find((t) => t.name === name);
+  if (!entry || !tool) return undefined;
+  // La query solo trae texto: los parámetros numéricos del esquema se pasan como número, y uno
+  // vacío (`limite=`) se omite para que valga su valor por defecto.
+  const numeric = new Set(tool.params.filter((p) => p.numeric).map((p) => p.name));
+  const args = Object.fromEntries(
+    [...query]
+      .filter(([, value]) => value !== '')
+      .map(([key, value]) => [
+        key,
+        numeric.has(key) && Number.isFinite(Number(value)) ? Number(value) : value,
+      ]),
+  );
+  const result = (await rpc(entry.handler, 'tools/call', { name, arguments: args })) as {
+    content: { type: string; text?: string }[];
+    isError?: boolean;
+  };
+  // Un error de la herramienta puede ser un parámetro que no vale, algo que no existe o la fuente
+  // caída, y el SDK no los distingue: 422 para todos, con el motivo en el texto.
+  return {
+    status: result.isError ? 422 : 200,
+    text: result.content.map((c) => c.text ?? '').join('\n\n'),
+  };
 }
