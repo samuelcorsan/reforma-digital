@@ -548,6 +548,15 @@ describe('Red Eléctrica', () => {
       value: value(h),
       datetime: at(dia, `${String(h).padStart(2, '0')}:00`),
     }));
+  // El mercado en cuartos de hora, como desde octubre de 2025: cuatro valores por hora.
+  const cuartos = (dia: string, n: number, value: (h: number) => number) =>
+    Array.from({ length: n * 4 }, (_, q) => ({
+      value: value(Math.floor(q / 4)),
+      datetime: at(
+        dia,
+        `${String(Math.floor(q / 4)).padStart(2, '0')}:${String((q % 4) * 15).padStart(2, '0')}`,
+      ),
+    }));
   const respuesta = (...included: unknown[]) => Response.json({ data: {}, included });
 
   it('labels the 25 hours of the October change in local time, none lost or merged', async () => {
@@ -623,6 +632,18 @@ describe('Red Eléctrica', () => {
       'solo publica el PVPC y el precio del mercado del sistema peninsular',
     );
     expect(fetchImpl).toHaveBeenCalledTimes(1);
+    // 24 valores con la 02:00 repetida y sin la 03:00 no son un día entero.
+    const repetida = horas('2026-11-21', 24, () => 200);
+    repetida[3] = { ...repetida[3]!, datetime: repetida[2]!.datetime };
+    await expect(
+      precioLuz(
+        vi.fn<typeof fetch>(async () =>
+          respuesta(pvpc(repetida), mercado(cuartos('2026-11-21', 24, () => 190))),
+        ),
+        '2026-11-21',
+        'peninsular',
+      ),
+    ).rejects.toThrow('el día está incompleto');
   });
 
   it('averages a range by month, with the market per hour and partial months marked', async () => {
@@ -638,7 +659,7 @@ describe('Red Eléctrica', () => {
             pvpc([...horas('2026-10-30', 24, () => 100), ...horas('2026-10-31', 24, () => 300)]),
             mercado([
               ...horas('2026-10-30', 24, () => 100),
-              ...horas('2026-10-31', 24, () => 200).flatMap((v) => [v, v, v, v]),
+              ...cuartos('2026-10-31', 24, () => 200),
             ]),
           );
         return respuesta(
@@ -720,6 +741,40 @@ describe('Red Eléctrica', () => {
       await expect(
         generacion(fetchImpl, '2026-10-01', '2026-11-05', 'dia', 'nacional'),
       ).rejects.toThrow('el máximo es 31');
+      // Un año por meses se pide de trimestre en trimestre y vuelve como una sola serie.
+      const porTrimestre = vi.fn<typeof fetch>(async (url) => {
+        const path = url instanceof Request ? url.url : url.toString();
+        const [, d, h] = /start_date=(\d{4}-\d{2})-\d{2}.*end_date=(\d{4}-\d{2})/.exec(path)!;
+        const mesesDel = Number(h!.slice(5)) - Number(d!.slice(5)) + 1;
+        const vals = (v: number) =>
+          Array.from({ length: mesesDel }, (_, i) => ({
+            value: v,
+            datetime: `2025-${String(Number(d!.slice(5)) + i).padStart(2, '0')}-01T00:00:00.000+01:00`,
+          }));
+        return path.includes('demanda')
+          ? respuesta(serie('10297', 'Demanda', vals(90)))
+          : respuesta(
+              serie('10291', 'Eólica', vals(60), 'Renovable'),
+              serie('1454', 'Ciclo combinado', vals(40), 'No-Renovable'),
+              serie('10296', 'Generación total', vals(100), 'total'),
+            );
+      });
+      const anual = await generacion(porTrimestre, '2025-01-01', '2025-12-31', 'mes', 'nacional');
+      expect(porTrimestre).toHaveBeenCalledTimes(8);
+      expect(anual).toMatchObject({ generacion_mwh: 1200, renovable_pct: 60, demanda_mwh: 1080 });
+      // Sin la eólica, las tecnologías no suman el total: no se da un % renovable más bajo.
+      const sinEolica = vi.fn<typeof fetch>(async (url) =>
+        (url instanceof Request ? url.url : url.toString()).includes('demanda')
+          ? respuesta(serie('10297', 'Demanda', dia(13849.21)))
+          : respuesta(
+              serie('1454', 'Ciclo combinado', dia(11821.24), 'No-Renovable'),
+              serie('1458', 'Solar fotovoltaica', dia(875.33), 'Renovable'),
+              serie('10296', 'Generación total', dia(13849.21), 'total'),
+            ),
+      );
+      await expect(
+        generacion(sinEolica, '2026-11-21', '2026-11-21', 'dia', 'canarias'),
+      ).rejects.toThrow('no suma su generación total');
     } finally {
       vi.useRealTimers();
     }

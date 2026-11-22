@@ -127,7 +127,10 @@ function porDia(valores: Valor[]) {
 function comprobarDia(fecha: string, horas: Valor[] | undefined, serie: string, porHora: number[]) {
   const esperadas = horasDelDia(fecha);
   const n = horas?.length ?? 0;
-  if (!porHora.some((k) => n === esperadas * k))
+  // Cada valor tiene su hora o su cuarto, distintos también el día de 25 horas (+02:00 y +01:00):
+  // una hora repetida y otra que falta darían la cuenta sin estar el día entero.
+  const distintas = new Set(horas?.map((v) => v.datetime)).size;
+  if (distintas !== n || !porHora.some((k) => n === esperadas * k))
     throw new SourceError(
       `REE ha publicado ${n} valores de ${serie} para el ${fecha}, que tiene ${esperadas} horas: el día está incompleto y no se da como si estuviera entero.`,
     );
@@ -247,6 +250,27 @@ function meses(desde: string, hasta: string) {
   return out;
 }
 
+/** Las series de varios trozos del mismo periodo, cada una con sus valores seguidos. */
+function juntar(trozos: Serie[][]) {
+  const porId = new Map<string, Serie>();
+  for (const s of trozos.flat()) {
+    const antes = porId.get(s.id);
+    porId.set(
+      s.id,
+      antes
+        ? {
+            ...antes,
+            attributes: {
+              ...antes.attributes,
+              values: [...antes.attributes.values, ...s.attributes.values],
+            },
+          }
+        : s,
+    );
+  }
+  return [...porId.values()];
+}
+
 const finDeMes = (mes: string) => {
   const [y, m] = mes.split('-').map(Number) as [number, number];
   return new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
@@ -355,10 +379,17 @@ export async function generacion(
     );
   comprobarRango(desde, hasta, GENERACION_DESDE, ayer, agrupacion === 'dia' ? 31 : 366);
   const trunc = agrupacion === 'dia' ? 'day' : 'month';
-  const [tecnologias, demanda] = await Promise.all([
-    ree(fetchImpl, 'generacion/estructura-generacion', desde, hasta, trunc, sistema),
-    ree(fetchImpl, 'demanda/evolucion', desde, hasta, trunc, sistema),
-  ]);
+  // REE tarda unos 9 s por trimestre sin caché y más de 30 s por año: se pide de tres en tres meses.
+  const todos = meses(desde, hasta);
+  const trimestres = Array.from({ length: Math.ceil(todos.length / 3) }, (_, i) => {
+    const t = todos.slice(i * 3, i * 3 + 3);
+    return { desde: t[0]!.desde, hasta: t.at(-1)!.hasta };
+  });
+  const pedir = (widget: string) =>
+    Promise.all(trimestres.map((t) => ree(fetchImpl, widget, t.desde, t.hasta, trunc, sistema)));
+  const [tecnologias, demanda] = (
+    await Promise.all([pedir('generacion/estructura-generacion'), pedir('demanda/evolucion')])
+  ).map(juntar) as [Serie[], Serie[]];
   const clave = (v: Valor) => v.datetime.slice(0, agrupacion === 'dia' ? 10 : 7);
   const total = tecnologias.find((s) => s.attributes.type === 'total');
   const demandaSerie = demanda.find((s) => s.attributes.title === 'Demanda');
@@ -381,6 +412,17 @@ export async function generacion(
       }
       return { tecnologia: s.attributes.title, renovable: s.attributes.type === 'Renovable', mwh };
     });
+  // Las tecnologías suman el total de REE; si no, falta alguna y el mix y el % renovable mentirían.
+  const sumaPorPeriodo = new Map<string, number>();
+  for (const s of tecnologias)
+    if (s !== total)
+      for (const v of s.attributes.values)
+        sumaPorPeriodo.set(clave(v), (sumaPorPeriodo.get(clave(v)) ?? 0) + v.value);
+  for (const v of total.attributes.values)
+    if (Math.abs((sumaPorPeriodo.get(clave(v)) ?? 0) - v.value) > Math.abs(v.value) * 0.001)
+      throw new SourceError(
+        `REE ha devuelto un desglose por tecnologías de ${clave(v)} que no suma su generación total: faltan datos y no se da el mix.`,
+      );
   const generado = total.attributes.values.reduce((a, v) => a + v.value, 0);
   const renovableTotal = [...renovable.values()].reduce((a, b) => a + b, 0);
   const pct = (parte: number, todo: number) => redondea((parte / todo) * 100, 1);
