@@ -5,6 +5,7 @@ import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
+import { POST as serpavi } from '../../app/mcp/serpavi/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -14,6 +15,7 @@ import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
+import serpaviEscena from './escenas/serpavi.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -129,6 +131,21 @@ const servidores: Servidor[] = [
       '¿Hay algún autobús directo de Barcelona a Valencia que llegue antes de las dos?',
     ],
   },
+  {
+    id: 'serpavi',
+    name: 'Alquiler de vivienda (SERPAVI)',
+    category: 'vivienda',
+    // El escudo del logotipo del Ministerio de Vivienda y Agenda Urbana.
+    logo: { src: '/organismos/mivau.svg' },
+    escena: serpaviEscena,
+    summary:
+      'La renta mensual del alquiler en cada municipio, con su superficie y el número de viviendas, según el Ministerio de Vivienda y Agenda Urbana.',
+    examples: [
+      '¿Cuánto cuesta alquilar un piso en Madrid?',
+      '¿Qué municipios de Barcelona tienen el alquiler más caro?',
+      'Compara el alquiler de Madrid y Móstoles en 2024.',
+    ],
+  },
 ];
 
 type Param = {
@@ -159,6 +176,7 @@ const handlers: Record<string, Entry['handler']> = {
   eustat,
   carburantes,
   alsa,
+  serpavi,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];
