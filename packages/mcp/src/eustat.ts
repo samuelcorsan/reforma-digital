@@ -3,7 +3,17 @@
 // tener varias tablas por cambio de base o de serie, y las viejas siguen publicadas: por eso la
 // búsqueda pone primero las actualizadas hace menos.
 import { z } from 'zod';
-import { fold, get, READ_ONLY_EXTERNAL, run, server, SourceError, type Fetch } from './comun';
+import {
+  fold,
+  get,
+  matches,
+  READ_ONLY_EXTERNAL,
+  run,
+  server,
+  SourceError,
+  words,
+  type Fetch,
+} from './comun';
 
 const API = 'https://www.eustat.eus/bankupx/api/v1/es/DB';
 const SOURCE = 'Fuente: Eustat, Instituto Vasco de Estadística (eustat.eus).';
@@ -11,16 +21,10 @@ const SOURCE = 'Fuente: Eustat, Instituto Vasco de Estadística (eustat.eus).';
 const MAX_DATOS = 1000;
 
 const INSTRUCTIONS = `Estadísticas oficiales del Eustat, el Instituto Vasco de Estadística: precios, empleo, población, economía, turismo… de la C.A. de Euskadi, sus territorios históricos (Araba/Álava, Bizkaia, Gipuzkoa) y, en algunas tablas, sus capitales o municipios.
-Se llega a un dato en tres pasos: buscar_tabla (por palabras del título), ver_tabla (sus variables y valores) y datos_tabla (los datos, filtrando cada variable por palabras de sus valores).
+Se llega a un dato en tres pasos: buscar_tabla (por palabras del tema, sin el lugar: los títulos dicen «por territorio histórico», no «Gipuzkoa»), ver_tabla (sus variables y valores) y datos_tabla (los datos, filtrando cada variable por palabras de sus valores).
 Una estadística suele tener varias tablas de bases o series distintas, y las antiguas ya no se actualizan: mira la fecha «actualizada» y usa la más reciente.
 El periodo va como «2026-10» (mes) o «2026» (año). Algunas tablas llevan el trimestre en una variable aparte, con el año como periodo. Di siempre a qué periodo corresponde cada dato; un valor null es un dato que aún no existe.
 ${SOURCE}`;
-
-const words = (q: string | undefined) =>
-  fold(q ?? '')
-    .split(/\s+/)
-    .filter(Boolean);
-const matches = (text: string, q: string[]) => q.every((w) => fold(text).includes(w));
 
 type Tabla = { id: string; text: string; updated: string };
 let tablas: Promise<Tabla[]> | undefined;
@@ -142,6 +146,10 @@ export async function datosTabla(
   let total = 1;
   const query = variables.map((v) => {
     if (v.time) {
+      if (Object.keys(filtros).some((nombre) => fold(nombre) === fold(v.code)))
+        throw new SourceError(
+          `«${v.code}» no se filtra: pide los últimos periodos con \`ultimos\` y elige entre ellos.`,
+        );
       total *= Math.min(ultimos, v.values.length);
       return { code: v.code, selection: { filter: 'top', values: [String(ultimos)] } };
     }
@@ -173,7 +181,7 @@ export function createEustatMcp(fetchImpl: Fetch = fetch) {
       {
         title: 'Buscar tabla',
         description:
-          'Las tablas del Eustat cuyo título contiene las palabras de `q`, como «IPC Gipuzkoa» o «paro municipio», de la actualizada más recientemente a la más antigua.',
+          'Las tablas del Eustat cuyo título contiene las palabras de `q`, de la actualizada más recientemente a la más antigua. Los títulos nombran el tema y las variables, no los lugares: busca «IPC territorio histórico» o «pernoctaciones», no «IPC Gipuzkoa», y elige el lugar con los filtros de datos_tabla.',
         inputSchema: z.object({ q: z.string().min(2).max(100) }),
         annotations: READ_ONLY_EXTERNAL,
       },

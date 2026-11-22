@@ -331,7 +331,7 @@ describe('Eustat', () => {
     );
   });
 
-  it('refuses unknown variables, empty filters and oversized queries before asking for data', async () => {
+  it('refuses unknown variables, empty or period filters and oversized queries before asking for data', async () => {
     const meses = Array.from({ length: 300 }, (_, i) => String(i));
     const largo = {
       ...ipc,
@@ -347,9 +347,13 @@ describe('Eustat', () => {
     await expect(
       datosTablaEustat(fetchImpl, 'PX_ipc.px', 1, { índice: 'mensual' }),
     ).rejects.toThrow('Ningún valor de «índice»');
+    // Un año pedido por filtro daría el último periodo como si fuera ese año.
+    await expect(datosTablaEustat(fetchImpl, 'PX_ipc.px', 1, { periodo: '2024' })).rejects.toThrow(
+      '«periodo» no se filtra',
+    );
     // 2 territorios × 2 índices × 300 meses.
     await expect(datosTablaEustat(fetchImpl, 'PX_ipc.px', 300)).rejects.toThrow('pide 1200 datos');
-    expect(fetchImpl).toHaveBeenCalledTimes(3);
+    expect(fetchImpl).toHaveBeenCalledTimes(4);
   });
 });
 

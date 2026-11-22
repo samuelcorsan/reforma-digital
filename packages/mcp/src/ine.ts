@@ -2,7 +2,7 @@
 // (https://servicios.ine.es/wstempus), sin clave. Los códigos de serie cambian con cada cambio de
 // base, así que no se fijan: el asistente llega a los datos como en la web, por operación y tabla.
 import { z } from 'zod';
-import { fold, get, READ_ONLY_EXTERNAL, run, server, type Fetch } from './comun';
+import { get, matches, READ_ONLY_EXTERNAL, run, server, words, type Fetch } from './comun';
 
 // `tip=A` hace que el INE dé la periodicidad y el periodo por su nombre (Trimestral, T3) en vez de
 // por un id.
@@ -14,12 +14,6 @@ Se llega a un dato en tres pasos: buscar_operacion (la estadística, como IPC, E
 Operaciones habituales: IPC (precios de consumo), EPA (población activa y paro), ECP (población residente), CNTR2010 (PIB trimestral), ETDP (compraventa de viviendas), IPV (precios de vivienda).
 Cada dato lleva su periodo en la notación del INE: 2026M10 es octubre de 2026, 2026T3 el tercer trimestre y 2025 el año entero; si el dato es de un día, la fecha («1 de octubre de 2026»). Di siempre a qué periodo corresponde cada dato.
 ${SOURCE}`;
-
-const words = (q: string | undefined) =>
-  fold(q ?? '')
-    .split(/\s+/)
-    .filter(Boolean);
-const matches = (text: string, q: string[]) => q.every((w) => fold(text).includes(w));
 
 type Operacion = { Id: number; Codigo: string; Nombre: string; Url?: string };
 let operaciones: Promise<Operacion[]> | undefined;
