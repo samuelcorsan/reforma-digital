@@ -128,18 +128,7 @@ function guide(list: McpServer[]) {
     '## Al terminar',
     // Instinct, sin esta indicación, cerraba contando «la pega»: que no admite MCP como Claude Code
     // o Cursor. Para la persona eso es ruido; lo que le importa es que ya puede preguntar.
-    'Si usas la vía sin MCP, para la persona ya está listo: en un solo mensaje corto, sin hablar de MCP, de otros clientes ni de lo que tu cliente no admite, díselo así:',
-    fence(
-      'text',
-      [
-        `Listo: ya puedo consultar ${new Intl.ListFormat('es').format(list.map((s) => s.name))} cuando me lo pidas.`,
-        `Prueba a preguntarme: ${list
-          .flatMap((s) => s.examples.slice(0, 1))
-          .slice(0, 2)
-          .map((e) => `«${e}»`)
-          .join(' o ')}`,
-      ].join('\n'),
-    ),
+    'Si usas la vía sin MCP, para la persona ya está listo. Díselo con tus palabras, en un solo mensaje corto: que ya puedes consultar estos datos cuando te lo pida, qué cubren y alguna pregunta que podría hacerte. No le hables de MCP, de otros clientes ni de lo que tu cliente no admite.',
     'Si has conectado por MCP, cuenta solo lo que hayas comprobado, así:',
     fence(
       'text',
