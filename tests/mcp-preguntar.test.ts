@@ -48,6 +48,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'congreso',
       'renfe',
       'boe',
+      'borme',
       'ine',
       'eustat',
       'carburantes',

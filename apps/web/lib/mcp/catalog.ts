@@ -1,6 +1,7 @@
 import { POST as congreso } from '../../app/mcp/congreso/route';
 import { POST as renfe } from '../../app/mcp/renfe/route';
 import { POST as boe } from '../../app/mcp/boe/route';
+import { POST as borme } from '../../app/mcp/borme/route';
 import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
@@ -10,6 +11,7 @@ import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
 import renfeEscena from './escenas/renfe.png';
 import boeEscena from './escenas/boe.png';
+import bormeEscena from './escenas/borme.png';
 import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
@@ -70,6 +72,21 @@ const servidores: Servidor[] = [
       '¿Qué es un gran tenedor según la Ley de Vivienda?',
       '¿Qué se ha publicado hoy en el BOE sobre becas?',
       '¿Hay oposiciones nuevas en el BOE de hoy?',
+    ],
+  },
+  {
+    id: 'borme',
+    name: 'BORME',
+    category: 'empresas',
+    // Lo publica la Agencia Estatal BOE, con el mismo sello.
+    logo: { src: '/organismos/boe-sello.png' },
+    escena: bormeEscena,
+    summary:
+      'Los actos que inscriben cada día los registros mercantiles: constituciones, nombramientos, ceses, cambios de domicilio, disoluciones y concursos de empresas.',
+    examples: [
+      '¿Qué empresas se constituyeron ayer en Gipuzkoa?',
+      '¿Qué empresas de Madrid han entrado en concurso esta semana?',
+      '¿Qué ha publicado el BORME este mes sobre una empresa de Bizkaia?',
     ],
   },
   {
@@ -155,6 +172,7 @@ const handlers: Record<string, Entry['handler']> = {
   congreso,
   renfe,
   boe,
+  borme,
   ine,
   eustat,
   carburantes,

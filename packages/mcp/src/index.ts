@@ -138,6 +138,7 @@ export function createCongresoMcp(api: CongresoApi) {
 }
 
 export { createBoeMcp } from './boe';
+export { createBormeMcp } from './borme';
 export { createCarburantesMcp } from './carburantes';
 export { createEustatMcp } from './eustat';
 export { createIneMcp } from './ine';

@@ -1,7 +1,16 @@
 // Servidor MCP del BOE: el sumario de cada día y la legislación consolidada, de la API de datos
 // abiertos del BOE (https://www.boe.es/datosabiertos/), sin clave.
 import { z } from 'zod';
-import { get, READ_ONLY_EXTERNAL, run, server, SourceError, type Fetch } from './comun';
+import {
+  decode,
+  get,
+  list,
+  READ_ONLY_EXTERNAL,
+  run,
+  server,
+  SourceError,
+  type Fetch,
+} from './comun';
 
 const API = 'https://www.boe.es/datosabiertos/api';
 const SOURCE =
@@ -13,10 +22,6 @@ const INSTRUCTIONS = `El Boletín Oficial del Estado: lo que se publica cada dí
 - La legislación consolidada incluye normas autonómicas, entre ellas las leyes forales de Navarra. La mayoría llevan identificador BOE-A-…; algunas, el de su boletín (BON-n-…, DOGC-f-…). Las normas forales de Álava, Bizkaia y Gipuzkoa no están.
 - Las fechas son AAAA-MM-DD. Cita siempre el identificador (BOE-A-…, BON-n-…) y el enlace.
 ${SOURCE}`;
-
-/** La API devuelve un objeto cuando hay uno solo y una lista cuando hay varios. */
-const list = <T>(value: T | T[] | undefined): T[] =>
-  value === undefined ? [] : Array.isArray(value) ? value : [value];
 
 type Item = { identificador: string; titulo: string; url_html?: string };
 type Grupo = { nombre: string; item?: Item | Item[]; epigrafe?: Grupo | Grupo[] };
@@ -166,16 +171,6 @@ export async function indiceNorma(fetchImpl: Fetch, id: string) {
     bloques: (bloques ?? []).map(({ id, titulo }) => ({ id, titulo })),
   };
 }
-
-const entities: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
-const decode = (text: string) =>
-  text.replace(/&(#x?[\da-f]+|\w+);/gi, (all, code: string) =>
-    code[0] === '#'
-      ? String.fromCodePoint(
-          Number.parseInt(code.slice(code[1] === 'x' ? 2 : 1), code[1] === 'x' ? 16 : 10),
-        )
-      : (entities[code] ?? all),
-  );
 
 /** El texto vigente de un bloque: la última de sus versiones, un párrafo por línea. */
 export function textoBloque(xml: string) {
