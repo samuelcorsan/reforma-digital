@@ -226,7 +226,9 @@ async function resolverFinalidad(fetchImpl: Fetch, texto: string) {
 
 type Pagina<T> = { content: T[]; totalElements: number; totalPages: number };
 
-function pagina<T>(body: Pagina<T> | undefined, numero: number) {
+/** Una página de una búsqueda, comprobada antes de darla por buena. */
+async function pagina<T>(fetchImpl: Fetch, path: string, params: URLSearchParams, numero: number) {
+  const body = await json<Pagina<T>>(fetchImpl, path, params);
   // Un total sin páginas, o una página vacía que debería tener resultados, es una respuesta rota.
   if (
     !body ||
@@ -297,7 +299,7 @@ type Detalle = {
 const organo = (o: { nivel1: string; nivel2: string; nivel3: string | null }) =>
   [o.nivel1, o.nivel2, o.nivel3].filter(Boolean).join(' · ');
 // Muchas convocatorias antiguas e instrumentales registran 0: es que no lo dan, no que sea 0 €.
-const presupuesto = (p: number | null) => (p ? p : null);
+const presupuesto = (p: number | null) => p || null;
 const limpio = (t: string | null) => (t?.trim() ? t.trim() : undefined);
 
 /** El plazo de solicitud y si está abierto hoy, solo con las fechas registradas. */
@@ -411,19 +413,13 @@ export async function buscarConvocatorias(fetchImpl: Fetch, f: FiltrosConvocator
     params.set('finalidad', String(fin.id));
     filtros.finalidad = fin.descripcion;
   }
-  let body = pagina(
-    await json<Pagina<Convocatoria>>(fetchImpl, 'convocatorias/busqueda', params),
-    numero,
-  );
+  let body = await pagina<Convocatoria>(fetchImpl, 'convocatorias/busqueda', params, numero);
   // La BDNS guarda la ñ y la ç de más de una forma: «Pollença» no encuentra una convocatoria cuyo
   // título sí la tiene, y «Pollen» sí. Sin resultados, se repite con la palabra cortada antes.
   const cortado = f.texto?.replace(/(\p{L}{3,}?)[ñçÑÇ]\p{L}*/gu, '$1');
   if (!body.totalElements && f.texto && cortado !== f.texto) {
     params.set('descripcion', cortado!);
-    body = pagina(
-      await json<Pagina<Convocatoria>>(fetchImpl, 'convocatorias/busqueda', params),
-      numero,
-    );
+    body = await pagina<Convocatoria>(fetchImpl, 'convocatorias/busqueda', params, numero);
     filtros.texto = `${cortado} (sin resultados con «${f.texto}»: la BDNS escribe la ñ y la ç de más de una forma)`;
   }
   const dia = hoy();
@@ -558,18 +554,12 @@ export async function buscarConcesiones(
   if (f.nif) params.set('nifCif', f.nif);
   if (f.desde) params.set('fechaDesde', dmy(f.desde));
   if (f.hasta) params.set('fechaHasta', dmy(f.hasta));
-  let body = pagina(
-    await json<Pagina<Concesion>>(fetchImpl, 'concesiones/busqueda', params),
-    numero,
-  );
+  let body = await pagina<Concesion>(fetchImpl, 'concesiones/busqueda', params, numero);
   // La API busca el NIF exacto, y algunos CIF están guardados con ceros delante: se miran las dos
   // formas, y si las dos tienen concesiones no se da una sola como si fuera el total.
   if (f.nif) {
     params.set('nifCif', `000${f.nif}`);
-    const relleno = pagina(
-      await json<Pagina<Concesion>>(fetchImpl, 'concesiones/busqueda', params),
-      numero,
-    );
+    const relleno = await pagina<Concesion>(fetchImpl, 'concesiones/busqueda', params, numero);
     if (body.totalElements && relleno.totalElements)
       throw new SourceError(
         `La BDNS tiene concesiones de ${f.nif} guardadas de dos formas (${f.nif}: ${body.totalElements}; 000${f.nif}: ${relleno.totalElements}) y no se pueden listar juntas. Búscalas por convocatoria.`,
