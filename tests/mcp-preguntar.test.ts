@@ -52,6 +52,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'eustat',
       'carburantes',
       'alsa',
+      'contratacion',
       'ninguno',
     ]);
   });

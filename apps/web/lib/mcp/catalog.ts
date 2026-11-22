@@ -5,6 +5,7 @@ import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
+import { POST as contratacion } from '../../app/mcp/contratacion/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -14,6 +15,7 @@ import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
+import contratacionEscena from './escenas/contratacion.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -129,6 +131,21 @@ const servidores: Servidor[] = [
       '¿Hay algún autobús directo de Barcelona a Valencia que llegue antes de las dos?',
     ],
   },
+  {
+    id: 'contratacion',
+    name: 'Licitaciones públicas',
+    category: 'contratacion',
+    // El símbolo de la marca de la Plataforma de Contratación del Sector Público.
+    logo: { src: '/organismos/placsp.svg' },
+    escena: contratacionEscena,
+    summary:
+      'Las licitaciones publicadas o actualizadas hace poco en la Plataforma de Contratación del Sector Público y en las plataformas autonómicas: importes, plazos, lotes y adjudicatarios.',
+    examples: [
+      '¿Qué obras de carpintería han salido a licitación estos días en el País Vasco?',
+      '¿Qué licitaciones de Gipuzkoa siguen en plazo?',
+      '¿Qué obras se han adjudicado estos días en Bizkaia, a quién y por cuánto?',
+    ],
+  },
 ];
 
 type Param = {
@@ -159,6 +176,7 @@ const handlers: Record<string, Entry['handler']> = {
   eustat,
   carburantes,
   alsa,
+  contratacion,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];
