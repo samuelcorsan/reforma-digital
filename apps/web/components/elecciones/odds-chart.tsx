@@ -141,7 +141,7 @@ export function OddsChart({
     return { m, x, y, ends, near, below, above };
   }, [W, series, dissolution]);
   if (!series.length)
-    return <p className="m-0 text-sm text-muted-foreground">Aún no hay historia.</p>;
+    return <p className="m-0 text-sm text-muted-foreground">Sin datos históricos.</p>;
 
   return (
     <div ref={box}>

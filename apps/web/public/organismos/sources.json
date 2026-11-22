@@ -1,8 +1,7 @@
 {
-  "clave.png": "https://clave.gob.es/content/experience-fragments/clave/es/experience-fragment/header/_jcr_content/root/header_dintel/img2.coreimg.png/1745911890791/logo-clave.png",
-  "gobierno.svg": "https://clave.gob.es/content/experience-fragments/clave/es/experience-fragment/header/_jcr_content/root/header_dintel/img1.coreimg.svg/1761166163737/logo-gobierno.svg",
-  "sepe.svg": "https://www.sepe.es/dam/jcr:a0f14b29-31c9-4ddd-9433-0f5093549248/SEPE_web_cas.svg",
-  "boe.svg": "https://www.boe.es/imagenes/logoBOE.svg",
-  "dgt.svg": "https://www.dgt.es/.content/.assets/logo_dgt.svg",
-  "madrid.svg": "https://www.comunidad.madrid/themes/custom/cm_pcen/logo.svg"
+  "renfe.png": "https://www.renfe.com/content/dam/renfe-viajeros/logo/renfe-isotipo.png",
+  "boe-sello.png": "https://www.boe.es/apple-touch-icon.png (recortado: solo el sello BOE)",
+  "ine.svg": "https://www.ine.es/menus/_b/img/LogoINESiglasMini.svg (en tinta en vez de blanco)",
+  "alsa.svg": "https://estaticos.alsa.es/o/Alsa-main-theme/images/web2020/logo-alsa.svg",
+  "eustat.png": "https://commons.wikimedia.org/wiki/File:LogoEustat_Oficial.png (recortado: solo el símbolo)"
 }

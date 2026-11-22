@@ -33,7 +33,5 @@
     "tests/e2e",
     "vitest.config.ts",
     "playwright.config.ts"
-  ],
-  // Usa el arnés de evaluación del agente: lo comprueba el tsconfig de packages/evals.
-  "exclude": ["tests/e2e/agente-guionado.spec.ts"]
+  ]
 }

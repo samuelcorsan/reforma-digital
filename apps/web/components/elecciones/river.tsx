@@ -292,7 +292,7 @@ export function River({
                 fill="transparent"
                 className="cursor-pointer"
                 data-tip={e.long}
-                data-tip-text={`${tipText(j)}. Pulsa para verla en toda la página.`}
+                data-tip-text={`${tipText(j)}. Pulsa para seleccionarla.`}
                 onPointerEnter={() => setHover(j)}
                 onClick={() => router.push(e.href, { scroll: false })}
               />

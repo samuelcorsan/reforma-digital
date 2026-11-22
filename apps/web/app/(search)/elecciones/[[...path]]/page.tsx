@@ -88,7 +88,7 @@ export default async function Page({ params, searchParams }: Props) {
     <main
       id="main"
       tabIndex={-1}
-      className="mx-auto max-w-(--container-content) px-(--page-gutter) pt-8 pb-20"
+      className="mx-auto max-w-(--container-content) px-(--page-gutter) pt-8 pb-20 min-[1100px]:max-w-(--elecciones-ancho)"
     >
       {page && detail ? (
         <ElectionsFrame
@@ -117,9 +117,11 @@ export default async function Page({ params, searchParams }: Props) {
           )}
         </ElectionsFrame>
       ) : (
-        <Suspense fallback={<DataLoading />}>
-          <ElectionsHome />
-        </Suspense>
+        <ElectionsFrame>
+          <Suspense fallback={<DataLoading />}>
+            <ElectionsHome />
+          </Suspense>
+        </ElectionsFrame>
       )}
     </main>
   );

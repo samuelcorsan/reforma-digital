@@ -4,7 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from pathlib import Path
 
 from vercel.blob import BlobClient
@@ -47,7 +47,7 @@ def raw_file(path: Path, *, save: bool, source: str | None = None) -> bool:
         if previous:
             history = [*history, {k: v for k, v in previous.items() if k != "versions"}]
         entries[name] = {"sha256": digest, "url": put(f"congreso/raw/{digest}/{path.name}", path),
-                         "source": source, "downloaded_at": datetime.now(timezone.utc).isoformat(), "versions": history}
+                         "source": source, "downloaded_at": datetime.now(UTC).isoformat(), "versions": history}
         temporary = manifest.with_suffix(".tmp")
         temporary.write_text(json.dumps(entries))
         temporary.replace(manifest)

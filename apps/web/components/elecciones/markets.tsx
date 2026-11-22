@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getElections, getPolls, read } from '../../lib/congreso/data';
 import { marketsSchema, projectionSchema } from '../../lib/congreso/schema';
 import { chance, longDate as date, thousands } from '../../lib/elecciones/format';
-import { electionsHref } from '../../lib/elecciones/pages';
+import { electionsHref, electionPages } from '../../lib/elecciones/pages';
 import { OddsChart } from './odds-chart';
 import { Cell, Grid, ReportIntro, SectionHeading } from './report';
 
@@ -17,10 +17,11 @@ const people: Record<string, string> = {
 const palette = ['#8A8F98', '#B98A16', '#7B4BA8', '#1FA8A0'];
 const order = ['ganador', 'presidente', 'fuera'] as const;
 const intro = {
-  ganador: 'El partido con más escaños el 29N.',
-  presidente: 'Quién sale investido después del 29N. Las opciones con menos del 0,5 % van juntas.',
+  ganador: 'Candidatura con más escaños el 29N.',
+  presidente:
+    'Candidato investido presidente del Gobierno tras el 29N. Las opciones con menos del 0,5 % se agrupan en «Otros».',
   fuera:
-    'Sánchez sigue en funciones hasta que el nuevo Congreso invista presidente: las Cortes se constituyen el 23 de diciembre y la investidura puede no llegar antes de Año Nuevo.',
+    'Sánchez sigue en funciones hasta la investidura del nuevo presidente. Las Cortes se constituyen el 23 de diciembre y la investidura puede no producirse antes del 1 de enero.',
 };
 
 // «Los mercados»: lo que se apuesta en Polymarket sobre quién gana, quién preside y cuándo se va
@@ -45,13 +46,13 @@ export async function Markets() {
   const headline = {
     ganador: (name: string) => `${name} gana las elecciones`,
     presidente: (name: string) => `${name.split(' ').at(-1)}, próximo presidente`,
-    fuera: (name: string) => `Sánchez, fuera antes del ${name.replace(/ de 20\d\d$/, '')}`,
+    fuera: (name: string) => `Salida de Sánchez antes del ${name.replace(/ de 20\d\d$/, '')}`,
   };
   const S = projection.simulacion;
   const option = (t: 'ganador' | 'presidente', re: RegExp) =>
     by[t]?.opciones.find((o) => re.test(o.nombre));
   const compare = [
-    ['El PP saca más escaños que nadie', '', option('ganador', /^PP$/)?.p, S.primero.PP ?? 0],
+    ['PP, candidatura con más escaños', '', option('ganador', /^PP$/)?.p, S.primero.PP ?? 0],
     [
       'Feijóo, presidente',
       'En la proyección: PP y Vox suman 176.',
@@ -60,7 +61,7 @@ export async function Markets() {
     ],
     [
       'Sánchez, presidente',
-      'En la proyección: él y sus socios de 2023 suman 176.',
+      'En la proyección: PSOE y socios de investidura de 2023 suman 176.',
       option('presidente', /Sánchez/)?.p,
       S.bloques['PSOE y sus socios de 2023']?.p176,
     ],
@@ -68,17 +69,17 @@ export async function Markets() {
 
   return (
     <>
-      <ReportIntro title="Los mercados">
+      <ReportIntro title={electionPages.mercados.title}>
         <p>
-          Lo que apuestan en Polymarket: quién gana, quién preside y cuándo se va Sánchez, día a
-          día.
+          Probabilidades de Polymarket sobre el ganador, la Presidencia del Gobierno y la fecha de
+          salida de Pedro Sánchez, actualizadas a diario.
         </p>
       </ReportIntro>
       <section className="grid gap-6">
-        <SectionHeading title="Lo que apuestan">
-          En Polymarket se apuesta dinero a lo que pasará; el precio de cada apuesta es la
-          probabilidad que le da el mercado. No es una encuesta: es lo que creen, con dinero,
-          quienes apuestan. Datos del {date(markets.actualizado)}.
+        <SectionHeading title="Probabilidades actuales">
+          Polymarket es un mercado de apuestas con dinero sobre hechos futuros. El precio de cada
+          apuesta equivale a la probabilidad que le asigna el mercado. Datos del{' '}
+          {date(markets.actualizado)}.
         </SectionHeading>
         <Grid>
           {present.map((m) => {
@@ -116,7 +117,7 @@ export async function Markets() {
                   </svg>
                 )}
                 <p className="m-0 font-mono text-sm text-muted-foreground">
-                  {dollars(m.volumen)} apostados
+                  Volumen: {dollars(m.volumen)}
                 </p>
               </Cell>
             );
@@ -162,9 +163,9 @@ export async function Markets() {
                   ))}
                 </ul>
                 <p className="m-0 text-sm text-muted-foreground">
-                  {dollars(m.volumen)} apostados desde el {date(m.inicio)} ·{' '}
+                  Volumen: {dollars(m.volumen)} desde el {date(m.inicio)} ·{' '}
                   <Link href={m.url} className="underline underline-offset-4">
-                    el mercado en Polymarket
+                    Mercado en Polymarket
                   </Link>
                 </p>
               </Cell>
@@ -187,12 +188,12 @@ export async function Markets() {
       })}
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Las apuestas y la proyección">
-          Lo que dice el mercado al lado de lo que sale de nuestra{' '}
+        <SectionHeading title="Comparación con la proyección">
+          Probabilidades de Polymarket frente a la{' '}
           <Link href={electionsHref('proyeccion')} className="underline underline-offset-4">
-            proyección
+            proyección de escaños
           </Link>{' '}
-          con la media de las encuestas.
+          basada en la media de encuestas.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -226,9 +227,9 @@ export async function Markets() {
               </tbody>
             </table>
             <p className="m-0 max-w-[65ch] text-sm text-muted-foreground">
-              Las dos cosas no miden lo mismo: la proyección dice qué pasaría si se votara hoy como
-              dicen las encuestas; el mercado apuesta por lo que pasará el 29N y después (pactos,
-              investidura). Un mercado con poco dinero se mueve con pocas apuestas.
+              Las dos cifras no miden lo mismo. La proyección estima el resultado si se votara hoy
+              según las encuestas. El mercado apuesta por lo que ocurrirá el 29N y después,
+              incluidos pactos e investidura. Un mercado con poco volumen varía con pocas apuestas.
             </p>
           </Cell>
         </Grid>

@@ -1,0 +1,17 @@
+{
+  "name": "@reforma-digital/renfe",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./difflib": "./src/difflib.ts",
+    "./time": "./src/time.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.4.0",
+    "zod": "^4.1.0"
+  }
+}

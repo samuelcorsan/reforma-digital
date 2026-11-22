@@ -6,7 +6,6 @@
   "exports": "./src/index.ts",
   "dependencies": {
     "@reforma-digital/bridge": "workspace:*",
-    "@reforma-digital/design": "workspace:*",
     "@reforma-digital/react": "workspace:*",
     "@reforma-digital/registry": "workspace:*"
   }

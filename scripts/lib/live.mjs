@@ -126,7 +126,9 @@ export function flowContext(site, page, { prefix, fixtures, results }) {
       try {
         await page.waitForSelector(selector, { state: 'attached', timeout: 30_000 });
       } catch (error) {
-        const text = await page.evaluate(() => document.body?.innerText ?? '').catch(() => '');
+        const text = await page
+          .evaluate(() => document.querySelector('body')?.innerText ?? '')
+          .catch((evaluateError) => `(could not read the page: ${evaluateError})`);
         console.error(
           `Missing ${selector} on ${page.url()}\n--- visible text ---\n${text.slice(0, 800)}`,
         );

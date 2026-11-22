@@ -77,7 +77,11 @@ try {
     const existing = await readFile(
       path.join(repoRoot, 'packages/evals/baselines/baseline.json'),
       'utf8',
-    ).catch(() => null);
+    ).catch((error: unknown) => {
+      // Todavía no hay baseline: se guarda el primero.
+      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') return null;
+      throw error;
+    });
     if (existing && JSON.parse(existing).approved)
       throw new Error(
         'No se sobrescribe un baseline aprobado. Guarda el experimento y propón su revisión.',

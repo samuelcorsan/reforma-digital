@@ -4,6 +4,7 @@ import { href } from '../congreso/common';
 import { Figures } from './figures';
 import { Cell, Grid, ReportIntro, Heading } from './report';
 import { thousands } from '../../lib/elecciones/format';
+import { electionPages } from '../../lib/elecciones/pages';
 
 // «La legislatura en cifras»: cada día de la legislatura y por cuántos votos se decidió cada
 // votación. Estructura de Escaño Abierto.
@@ -21,10 +22,10 @@ export async function LegislatureFigures() {
     ) + 1;
   return (
     <>
-      <ReportIntro title="La legislatura en cifras">
+      <ReportIntro title={electionPages.legislatura.title}>
         <p>
-          La XV legislatura, de la sesión constitutiva a la disolución: votaciones, leyes, decretos
-          y preguntas.
+          Actividad de la XV legislatura desde la sesión constitutiva hasta la disolución:
+          votaciones, leyes, decretos-leyes y preguntas.
         </p>
       </ReportIntro>
       <Grid>
@@ -39,14 +40,11 @@ export async function LegislatureFigures() {
             voteHref={href('votacion')}
             intro={{
               calendar: (
-                <Heading title="La legislatura, día a día">
-                  Cada cuadrado es uno de los {thousands(days)} días entre la sesión constitutiva y
-                  la disolución. Dale a reproducir para recorrerla y ver subir los contadores, o
-                  elige qué pintar. Pasa por un día para ver qué pasó; púlsalo para ir a sus
-                  votaciones.
+                <Heading title="Actividad diaria">
+                  Los {thousands(days)} días entre la sesión constitutiva y la disolución.
                 </Heading>
               ),
-              margins: <Heading title="Por cuántos votos" />,
+              margins: <Heading title="Márgenes de votación" />,
             }}
           />
         </Cell>

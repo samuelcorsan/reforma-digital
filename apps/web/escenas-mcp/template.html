@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Escenas de la biblioteca MCP</title>
+    <!--
+      Fuente de las escenas de las fichas de /developers/mcp (DESIGN.md §8.10): un asistente usando cada
+      servidor, con datos ilustrativos. No es código de la web. Para cambiarlas, edita este HTML,
+      ábrelo en un navegador y captura cada [data-escena] a 3x y sin fondo en
+      lib/mcp/escenas/<id>.png. Los colores son los de Sol; Geist viene de Google Fonts.
+    -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=block"
+    />
+    <style>
+      :root {
+        --muted: #f5f5f5;
+        --fondo: #ffffff;
+        --tinta: #0a0a0a;
+        --tinta-2: #4d4d4d;
+        --tinta-3: #737373;
+        --linea: #e5e5e5;
+        --primario: #171717;
+        --exito: #05603a;
+        --exito-fondo: #ecfdf3;
+        --peligro: #991b1b;
+        --aviso: #78350f;
+        --aviso-fondo: #fffbeb;
+        --texto: 'Geist', ui-sans-serif, system-ui, sans-serif;
+        --mono: 'Geist Mono', ui-monospace, monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: grid;
+        gap: 40px;
+        padding: 40px;
+        font: 14px/1.5 var(--texto);
+        color: var(--tinta);
+        background: transparent;
+        -webkit-font-smoothing: antialiased;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      .suave {
+        color: var(--tinta-3);
+      }
+
+      .ventana {
+        display: flex;
+        flex-direction: column;
+        width: 520px;
+        overflow: hidden;
+        border-radius: 16px;
+        background: var(--muted);
+      }
+      .semaforo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 52px;
+        padding: 0 20px;
+      }
+      .semaforo i {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .chat {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 0 24px;
+      }
+      .pregunta {
+        align-self: flex-end;
+        padding: 12px 16px;
+        border-radius: 16px;
+        background: var(--fondo);
+        font-size: 15px;
+      }
+      .usado {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+      }
+      .chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px 4px 4px;
+        border-radius: 999px;
+        background: var(--fondo);
+        color: var(--tinta-2);
+        font: 12px/1.5 var(--mono);
+      }
+      .chip span {
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        padding: 2px;
+        border: 1px solid var(--linea);
+        border-radius: 7px;
+      }
+      .chip img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .tarjeta {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 16px;
+        background: var(--fondo);
+        font-size: 15px;
+      }
+      .fila {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .titulo {
+        font-weight: 500;
+      }
+      .flecha {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .compositor {
+        margin: 24px 24px 20px;
+        padding: 16px 20px 10px;
+        border-radius: 28px;
+        background: var(--fondo);
+      }
+      .compositor p {
+        height: 24px;
+        color: var(--tinta-3);
+      }
+      .enviar {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        margin: 4px 0 0 auto;
+        border-radius: 50%;
+        background: var(--primario);
+        color: #fafafa;
+      }
+
+      /* Congreso: una votación del Pleno. Los colores del resultado son datos (sí, no, abstención). */
+      .estado {
+        padding: 2px 10px;
+        border-radius: 999px;
+        background: var(--exito-fondo);
+        color: var(--exito);
+        font-size: 12px;
+      }
+      .barra {
+        display: flex;
+        height: 12px;
+        overflow: hidden;
+        border-radius: 999px;
+      }
+      .leyenda {
+        display: flex;
+        gap: 20px;
+      }
+      .leyenda span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--tinta-3);
+      }
+      .leyenda i {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+      .grupos {
+        display: grid;
+        padding-top: 8px;
+        border-top: 1px solid var(--linea);
+      }
+      .grupos div {
+        display: grid;
+        grid-template-columns: 1fr auto 48px;
+        gap: 16px;
+        padding: 4px 0;
+      }
+
+      /* Renfe: los trenes de una mañana, uno con retraso. ALSA pinta sus autobuses con las mismas filas. */
+      .trenes {
+        gap: 0;
+        padding: 8px 16px;
+      }
+      .trenes .fila:first-child {
+        padding: 8px 0;
+      }
+      .tren {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        align-items: center;
+        gap: 16px;
+        padding: 10px 0;
+        border-top: 1px solid var(--linea);
+      }
+      .tren > span:first-child {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .etiqueta {
+        padding: 2px 6px;
+        border-radius: 6px;
+        background: var(--muted);
+        font-size: 12px;
+      }
+      .retraso {
+        background: var(--aviso-fondo);
+        color: var(--aviso);
+      }
+
+      /* BOE: un artículo citado, con su norma y su vigencia. */
+      .cita {
+        padding-left: 12px;
+        border-left: 3px solid var(--linea);
+        color: var(--tinta-2);
+      }
+
+      /* INE: el último dato en grande y los seis anteriores en barras. */
+      .cifra {
+        font-size: 40px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+      .barras {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        align-items: end;
+        gap: 8px;
+        height: 72px;
+      }
+      .barras i {
+        border-radius: 4px 4px 0 0;
+        background: var(--linea);
+      }
+      .barras i:last-child {
+        background: var(--tinta);
+      }
+      .meses {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        color: var(--tinta-3);
+        font-size: 12px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Iconos de Lucide (ISC): flecha a la derecha y flecha de enviar. -->
+    <svg width="0" height="0" style="position: absolute">
+      <symbol
+        id="derecha"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M5 12h14" />
+        <path d="m12 5 7 7-7 7" />
+      </symbol>
+      <symbol
+        id="enviar"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m5 12 7-7 7 7" />
+        <path d="M12 19V5" />
+      </symbol>
+    </svg>
+
+    <div class="ventana" data-escena="congreso">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué votó cada grupo en la última votación sobre vivienda?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/congreso/hemiciclo.svg" alt="" /></span
+            >buscar_votaciones</span
+          >
+          <span class="chip"
+            ><span><img src="../public/congreso/hemiciclo.svg" alt="" /></span>ver_votacion</span
+          >
+        </div>
+        <div class="tarjeta">
+          <div class="fila">
+            <span class="titulo">Votación del Pleno sobre vivienda</span>
+            <span class="estado">Aprobada</span>
+          </div>
+          <div class="barra">
+            <i style="width: 51.3%; background: var(--exito)"></i>
+            <i style="width: 47.8%; background: var(--peligro)"></i>
+            <i style="width: 0.9%; background: var(--tinta-3)"></i>
+          </div>
+          <div class="leyenda">
+            <span
+              ><i style="background: var(--exito)"></i>Sí
+              <b class="mono" style="font-weight: 400; color: var(--tinta)">178</b></span
+            >
+            <span
+              ><i style="background: var(--peligro)"></i>No
+              <b class="mono" style="font-weight: 400; color: var(--tinta)">166</b></span
+            >
+            <span
+              ><i style="background: var(--tinta-3)"></i>Abstención
+              <b class="mono" style="font-weight: 400; color: var(--tinta)">3</b></span
+            >
+          </div>
+          <div class="grupos">
+            <div>
+              <span>Grupo A</span><span class="suave">Sí</span
+              ><span class="mono" style="text-align: right">121</span>
+            </div>
+            <div>
+              <span>Grupo B</span><span class="suave">No</span
+              ><span class="mono" style="text-align: right">137</span>
+            </div>
+            <div>
+              <span>Grupo C</span><span class="suave">Sí</span
+              ><span class="mono" style="text-align: right">31</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="renfe">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué trenes hay mañana de Madrid a Valencia por la mañana?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/renfe.png" alt="" /></span>find_stations</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/renfe.png" alt="" /></span>search_trains</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo flecha" style="gap: 8px"
+              >Madrid <svg width="15" height="15"><use href="#derecha" /></svg> Valencia</span
+            >
+            <span class="suave">Mañana</span>
+          </div>
+          <div class="tren">
+            <span
+              ><span class="mono flecha"
+                >07:00 <svg width="15" height="15"><use href="#derecha" /></svg> 08:52</span
+              ><span class="etiqueta">AVE</span></span
+            >
+            <span class="suave">1 h 52 min</span>
+            <span class="mono">27,50 €</span>
+          </div>
+          <div class="tren">
+            <span
+              ><span class="mono flecha"
+                >08:05 <svg width="15" height="15"><use href="#derecha" /></svg> 09:57</span
+              ><span class="etiqueta">Avlo</span><span class="etiqueta retraso">+12 min</span></span
+            >
+            <span class="suave">1 h 52 min</span>
+            <span class="mono">15,00 €</span>
+          </div>
+          <div class="tren">
+            <span
+              ><span class="mono flecha"
+                >09:30 <svg width="15" height="15"><use href="#derecha" /></svg> 11:22</span
+              ><span class="etiqueta">AVE</span></span
+            >
+            <span class="suave">1 h 52 min</span>
+            <span class="mono">33,90 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="alsa">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué autobuses hay el viernes de Granada a Madrid?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/alsa.svg" alt="" /></span>find_stops</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/alsa.svg" alt="" /></span>search_buses</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo flecha" style="gap: 8px"
+              >Granada <svg width="15" height="15"><use href="#derecha" /></svg> Madrid</span
+            >
+            <span class="suave">Viernes</span>
+          </div>
+          <div class="tren">
+            <span
+              ><span class="mono flecha"
+                >07:00 <svg width="15" height="15"><use href="#derecha" /></svg> 12:00</span
+              ><span class="etiqueta">Comfort</span></span
+            >
+            <span class="suave">5 h</span>
+            <span class="mono">23,28 €</span>
+          </div>
+          <div class="tren">
+            <span
+              ><span class="mono flecha"
+                >09:00 <svg width="15" height="15"><use href="#derecha" /></svg> 13:30</span
+              ><span class="etiqueta">Supra</span></span
+            >
+            <span class="suave">4 h 30 min</span>
+            <span class="mono">47,35 €</span>
+          </div>
+          <div class="tren">
+            <span
+              ><span class="mono flecha"
+                >15:00 <svg width="15" height="15"><use href="#derecha" /></svg> 20:00</span
+              ><span class="etiqueta">Comfort</span
+              ><span class="etiqueta retraso">Agotado</span></span
+            >
+            <span class="suave">5 h</span>
+            <span class="mono">23,28 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="boe">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué es un gran tenedor según la Ley de Vivienda?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/boe-sello.png" alt="" /></span
+            >buscar_legislacion</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/boe-sello.png" alt="" /></span>ver_bloque</span
+          >
+        </div>
+        <div class="tarjeta">
+          <div class="fila">
+            <span class="titulo">Ley 12/2023, por el derecho a la vivienda</span>
+            <span class="estado">Vigente</span>
+          </div>
+          <p class="suave">Artículo 3 k)</p>
+          <p class="cita">
+            La persona física o jurídica que sea titular de más de diez inmuebles urbanos de uso
+            residencial o una superficie construida de más de 1.500 m² de uso residencial,
+            excluyendo en todo caso garajes y trasteros.
+          </p>
+          <p class="mono suave" style="font-size: 12px">BOE-A-2023-12203</p>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="carburantes">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Dónde está el diésel más barato en Madrid?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/mcp/carburantes.svg" alt="" /></span>buscar_municipio</span
+          >
+          <span class="chip"
+            ><span><img src="../public/mcp/carburantes.svg" alt="" /></span
+            >gasolineras_baratas</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Diésel en Madrid</span>
+            <span class="suave">Hoy</span>
+          </div>
+          <div class="tren">
+            <span>Calle Sierra de la Demanda, 2</span>
+            <span class="suave">24 h</span>
+            <span class="mono">1,579 €</span>
+          </div>
+          <div class="tren">
+            <span>Calle José Paulete</span>
+            <span class="suave">24 h</span>
+            <span class="mono">1,649 €</span>
+          </div>
+          <div class="tren">
+            <span>Carretera N-III, km 11,8</span>
+            <span class="suave">24 h</span>
+            <span class="mono">1,649 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="ine">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Cuál es la última tasa de inflación?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/ine.svg" alt="" /></span>buscar_tabla</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/ine.svg" alt="" /></span>datos_tabla</span
+          >
+        </div>
+        <div class="tarjeta">
+          <div class="fila">
+            <span class="titulo">IPC, variación anual</span>
+            <span class="suave">Octubre de 2026</span>
+          </div>
+          <p class="cifra">4,9 %</p>
+          <div class="barras">
+            <i style="height: 65%"></i><i style="height: 65%"></i><i style="height: 73%"></i
+            ><i style="height: 88%"></i><i style="height: 100%"></i><i style="height: 100%"></i>
+          </div>
+          <div class="meses">
+            <span>may</span><span>jun</span><span>jul</span><span>ago</span><span>sep</span
+            ><span>oct</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="eustat">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Cuál es la última tasa de inflación en Gipuzkoa?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/eustat.png" alt="" /></span>buscar_tabla</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/eustat.png" alt="" /></span>datos_tabla</span
+          >
+        </div>
+        <div class="tarjeta">
+          <div class="fila">
+            <span class="titulo">IPC de Gipuzkoa, variación anual</span>
+            <span class="suave">Octubre de 2026</span>
+          </div>
+          <p class="cifra">4,0 %</p>
+          <div class="barras">
+            <i style="height: 58%"></i><i style="height: 65%"></i><i style="height: 74%"></i
+            ><i style="height: 91%"></i><i style="height: 100%"></i><i style="height: 93%"></i>
+          </div>
+          <div class="meses">
+            <span>may</span><span>jun</span><span>jul</span><span>ago</span><span>sep</span
+            ><span>oct</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+  </body>
+</html>

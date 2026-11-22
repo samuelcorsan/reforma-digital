@@ -4,6 +4,7 @@ import { Source } from '../congreso/common';
 import { PollChart, type ChartParty } from './poll-chart';
 import { PollTable } from './poll-table';
 import { Cell, Grid, Label, ReportIntro, SectionHeading } from './report';
+import { electionPages } from '../../lib/elecciones/pages';
 
 const percent = (n: number) => `${decimal(n)}\u00a0%`;
 const round = (v: number | null) => (v === null ? null : Math.round(v * 10) / 10);
@@ -42,16 +43,13 @@ export async function Polls() {
 
   return (
     <>
-      <ReportIntro title="Las encuestas">
-        <p>
-          Todas las encuestas desde 2023 y su media día a día: cómo ha cambiado la intención de voto
-          camino del 29N.
-        </p>
+      <ReportIntro title={electionPages.encuestas.title}>
+        <p>Encuestas publicadas desde 2023 y media diaria de estimación de voto.</p>
       </ReportIntro>
       <section className="grid gap-6">
-        <SectionHeading title="La media de hoy">
-          De las {recent} encuestas de los últimos 45 días, la más reciente de cada empresa. Cambio
-          respecto a hace 30 días.
+        <SectionHeading title="Estimación de voto actual">
+          Media de la encuesta más reciente de cada empresa entre las {recent} de los últimos 45
+          días.
         </SectionHeading>
         <Grid>
           {today.slice(0, 6).map((p) => {
@@ -76,7 +74,7 @@ export async function Polls() {
                       {d === null
                         ? 'sin dato de hace 30 días'
                         : Math.abs(d) < 0.25
-                          ? '= en 30 días'
+                          ? 'sin variación en 30 días'
                           : `${d > 0 ? '+' : '−'}${decimal(Math.abs(d))} puntos en 30 días`}
                     </span>
                   </p>
@@ -106,17 +104,18 @@ export async function Polls() {
         </Grid>
         {first && second && latest && (
           <p className="m-0 max-w-[65ch] text-muted-foreground [&_b]:font-medium [&_b]:text-foreground">
-            <b>{first.nombre}</b> saca {decimal(first.now - second.now)} puntos a {second.nombre}.
-            La última encuesta es de <b>{latest.empresa}</b> para {latest.medio}, del{' '}
-            {longDate(latest.fin)}. {polls.encuestas.length} encuestas desde julio de 2023.
+            Diferencia entre <b>{first.nombre}</b> y {second.nombre}:{' '}
+            {decimal(first.now - second.now)} puntos. Última encuesta: <b>{latest.empresa}</b> para{' '}
+            {latest.medio}, del {longDate(latest.fin)}. {polls.encuestas.length} encuestas desde
+            julio de 2023.
           </p>
         )}
       </section>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="La media, día a día">
-          Cada línea es la media; la sombra, cuánto se separan las encuestas entre sí; cada punto,
-          una encuesta. Pasa por encima para ver un día.
+        <SectionHeading title="Evolución de la media diaria">
+          Línea: media diaria. Área sombreada: dispersión entre encuestas. Puntos: encuestas
+          individuales.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -147,12 +146,13 @@ export async function Polls() {
           }))}
         />
         <p className="m-0 max-w-[65ch] text-sm text-muted-foreground">
-          La media toma la última encuesta de cada empresa de los 45 días anteriores; cada una pesa
-          la mitad cada dos semanas y algo más cuanto mayor es su muestra. El CIS y los agregadores
-          no entran. Datos recopilados de Wikipedia hasta el {longDate(polls.actualizado)}. Desde el
-          24 de noviembre la ley prohíbe publicar encuestas.
+          La media usa la última encuesta de cada empresa en los 45 días anteriores. El peso de cada
+          encuesta se reduce a la mitad cada dos semanas y aumenta con el tamaño de la muestra. Se
+          excluyen el CIS y los agregadores. Datos recopilados de Wikipedia hasta el{' '}
+          {longDate(polls.actualizado)}. Desde el 24 de noviembre la LOREG prohíbe publicar
+          encuestas electorales.
         </p>
-        <Source url={polls.fuente}>Tabla de origen en Wikipedia</Source>
+        <Source url={polls.fuente}>Fuente: Wikipedia</Source>
       </section>
     </>
   );

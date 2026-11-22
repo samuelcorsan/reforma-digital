@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "treatConfigHintsAsErrors": true,
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/lib/flow.ts"],
+      "project": ["**/*.{js,mjs,cjs,jsx,ts,tsx,mts,cts}", "!.claude/**"]
+    },
+    "apps/extension": {
+      "entry": ["src/content.ts", "src/popup.tsx"]
+    },
+    "apps/web": {
+      "entry": ["scripts/*.{mjs,ts}"]
+    },
+    "sites/*": {
+      "entry": ["flow.ts"]
+    }
+  }
+}

@@ -159,7 +159,7 @@ export function Trend({
                     strokeLinejoin="round"
                   />
                   {hover !== null && s.values[hover] !== null && s.values[hover] !== undefined && (
-                    <circle cx={x(hover)} cy={y(s.values[hover]!)} r={3.5} fill="currentColor" />
+                    <circle cx={x(hover)} cy={y(s.values[hover])} r={3.5} fill="currentColor" />
                   )}
                 </g>
               ))}

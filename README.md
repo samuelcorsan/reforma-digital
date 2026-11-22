@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/samuelcorsan/reforma-digital/actions/workflows/check.yml"><img src="https://github.com/samuelcorsan/reforma-digital/actions/workflows/check.yml/badge.svg" alt="Comprobaciones y empaquetado"></a>
+  <a href="https://github.com/samuelcorsan/reforma-digital/actions/workflows/ci.yml"><img src="https://github.com/samuelcorsan/reforma-digital/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="sites"><img src="https://img.shields.io/badge/estado-experimental-ad182b?labelColor=141414" alt="Estado: experimental"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licencia-MIT-f1c232?labelColor=141414" alt="Licencia MIT"></a>
 </p>
@@ -48,7 +48,6 @@ Empezamos con herramientas que permiten poner la propuesta a prueba:
 
 - **Una extensión de Chrome.** Añade interfaces más claras a pantallas concretas de las sedes: buscadores, pasos y campos conectados a sus controles originales.
 - **El Congreso.** Qué se debate, cómo se vota y quién te representa, con datos electorales y enlaces a las fuentes oficiales.
-- **Una app de escritorio.** Un asistente que investiga un trámite en webs oficiales, lo explica con sus fuentes y, si la persona quiere, lo hace con ella en la sede electrónica.
 
 A partir de esas experiencias queremos construir un sistema de diseño público y abierto: componentes, criterios y ejemplos que los equipos de una sede puedan incorporar a su propio código. El objetivo a largo plazo es que las mejoras lleguen a las webs oficiales y que la extensión deje de hacer falta. Es el horizonte de la iniciativa; la integración actual sigue siendo experimental.
 
@@ -82,15 +81,14 @@ CAPTCHA, audio, contraseñas, certificados, firmas y archivos se mantienen como 
 
 ## En este repositorio
 
-| Directorio                           | Qué contiene                                                                             |
-| ------------------------------------ | ---------------------------------------------------------------------------------------- |
-| [`apps/web`](apps/web)               | Web pública, El Congreso y su API con Next.js.                                           |
-| [`apps/extension`](apps/extension)   | Extensión de Chrome Manifest V3 y popup.                                                 |
-| [`apps/desktop`](apps/desktop)       | App de escritorio con el asistente de trámites. Ver [su README](apps/desktop/README.md). |
-| [`apps/playground`](apps/playground) | Laboratorio local para trabajar con datos ficticios.                                     |
-| [`apps/ingestion`](apps/ingestion)   | Recolector en Python de los datos del Congreso para Postgres y Vercel Blob.              |
-| [`sites`](sites)                     | Adaptaciones por portal, con configuración, pantallas, fixtures y pruebas.               |
-| [`packages`](packages)               | Conexiones al DOM, componentes, diseño, runtime, agente, búsqueda, datos y evaluaciones. |
+| Directorio                           | Qué contiene                                                                     |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| [`apps/web`](apps/web)               | Web pública, El Congreso y su API con Next.js.                                   |
+| [`apps/extension`](apps/extension)   | Extensión de Chrome Manifest V3 y popup.                                         |
+| [`apps/playground`](apps/playground) | Laboratorio local para trabajar con datos ficticios.                             |
+| [`apps/ingestion`](apps/ingestion)   | Recolector en Python de los datos del Congreso para Postgres y Vercel Blob.      |
+| [`sites`](sites)                     | Adaptaciones por portal, con configuración, pantallas, fixtures y pruebas.       |
+| [`packages`](packages)               | Conexiones al DOM, componentes, diseño, runtime, búsqueda, datos y evaluaciones. |
 
 ```mermaid
 flowchart LR

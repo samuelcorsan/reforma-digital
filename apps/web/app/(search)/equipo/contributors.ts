@@ -31,10 +31,20 @@ export async function getContributors() {
     );
     if (!response.ok) return null;
     if (response.status === 204) return [];
-    return contributorsSchema
-      .parse(await response.json())
-      .filter(({ type, login }) => type === 'User' && !coreLogins.has(login.toLowerCase()));
-  } catch {
-    return null;
+    const parsed = contributorsSchema.safeParse(await response.json());
+    return parsed.success
+      ? parsed.data.filter(
+          ({ type, login }) => type === 'User' && !coreLogins.has(login.toLowerCase()),
+        )
+      : null;
+  } catch (error) {
+    // Sin conexión, GitHub tarda más de 5 s o no responde JSON: la página sale sin la lista.
+    if (
+      error instanceof TypeError ||
+      error instanceof SyntaxError ||
+      (error instanceof DOMException && error.name === 'TimeoutError')
+    )
+      return null;
+    throw error;
   }
 }

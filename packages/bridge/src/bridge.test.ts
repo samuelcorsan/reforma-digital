@@ -2,7 +2,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DomBridge, fieldByLabel, isBindableField } from './index';
 
 const bridges: DomBridge[] = [];
-const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+function el<T extends HTMLElement>(type: new () => T, id: string): T {
+  const found = document.getElementById(id);
+  if (!(found instanceof type)) throw new Error(`#${id} is not a ${type.name}`);
+  return found;
+}
 const bridge = (
   fields: ConstructorParameters<typeof DomBridge>[0],
   actions: ConstructorParameters<typeof DomBridge>[1] = {},
@@ -22,19 +26,19 @@ afterEach(() => {
 describe('DOM bridge behavior', () => {
   it('keeps input/change handlers, hidden tokens, form ownership and original submitter', () => {
     document.body.innerHTML = `<form id="form"><input id="name" name="name"><input type="hidden" name="csrf" value="original-token"><button id="submit" name="action" value="continue">Continue</button></form>`;
-    const input = el<HTMLInputElement>('name');
-    const form = el<HTMLFormElement>('form');
+    const input = el(HTMLInputElement, 'name');
+    const form = el(HTMLFormElement, 'form');
     const events: string[] = [];
     input.addEventListener('input', () => events.push('input'));
     input.addEventListener('change', () => events.push('change'));
     let payload: FormData | undefined;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      payload = new FormData(form, (e as SubmitEvent).submitter);
+      payload = new FormData(form, e.submitter);
     });
     const b = bridge(
       { name: { element: input, label: 'Name' } },
-      { continue: { element: el<HTMLButtonElement>('submit'), label: 'Continue' } },
+      { continue: { element: el(HTMLButtonElement, 'submit'), label: 'Continue' } },
     );
     b.setValue('name', 'Ada');
     b.activate('continue');
@@ -52,42 +56,42 @@ describe('DOM bridge behavior', () => {
       submit();
     });
     const b = bridge(
-      { name: { element: el<HTMLInputElement>('name'), label: 'Name' } },
-      { submit: { element: el<HTMLButtonElement>('submit'), label: 'Continue' } },
+      { name: { element: el(HTMLInputElement, 'name'), label: 'Name' } },
+      { submit: { element: el(HTMLButtonElement, 'submit'), label: 'Continue' } },
     );
     b.activate('submit');
     expect(submit).not.toHaveBeenCalled();
     b.setValue('name', 'Ada');
-    el('submit').addEventListener('click', (e) => e.preventDefault());
+    el(HTMLButtonElement, 'submit').addEventListener('click', (e) => e.preventDefault());
     b.activate('submit');
     expect(submit).not.toHaveBeenCalled();
   });
   it('detects property-only updates, constraints, options, disabled fieldsets and resets', async () => {
     vi.useFakeTimers();
     document.body.innerHTML = `<form id="f"><fieldset id="set"><input id="name" value="Initial"><select id="select"><option value="a">A</option></select><button id="action">Go</button></fieldset></form>`;
-    const input = el<HTMLInputElement>('name');
+    const input = el(HTMLInputElement, 'name');
     const b = bridge(
       {
         name: { element: input, label: 'Name' },
-        select: { element: el<HTMLSelectElement>('select'), label: 'Choice' },
+        select: { element: el(HTMLSelectElement, 'select'), label: 'Choice' },
       },
-      { action: { element: el<HTMLButtonElement>('action'), label: 'Go' } },
+      { action: { element: el(HTMLButtonElement, 'action'), label: 'Go' } },
     );
     const listener = vi.fn();
     b.subscribe(listener);
     input.value = 'Script value';
     await vi.advanceTimersByTimeAsync(160);
     expect(b.getField('name').value).toBe('Script value');
-    el<HTMLFieldSetElement>('set').disabled = true;
+    el(HTMLFieldSetElement, 'set').disabled = true;
     b.refresh();
     expect(b.getField('name').disabled).toBe(true);
     expect(b.setValue('name', 'No')).toBe(false);
     expect(b.activate('action')).toBe(false);
-    el<HTMLFieldSetElement>('set').disabled = false;
-    el<HTMLSelectElement>('select').add(new Option('B', 'b'));
+    el(HTMLFieldSetElement, 'set').disabled = false;
+    el(HTMLSelectElement, 'select').add(new Option('B', 'b'));
     b.refresh();
     expect(b.getField('select').options).toHaveLength(2);
-    el<HTMLFormElement>('f').reset();
+    el(HTMLFormElement, 'f').reset();
     await vi.advanceTimersByTimeAsync(160);
     expect(b.getField('name').value).toBe('Initial');
     expect(listener).toHaveBeenCalled();
@@ -95,20 +99,20 @@ describe('DOM bridge behavior', () => {
   it('keeps radio exclusivity and checkbox click cancellation', () => {
     document.body.innerHTML = `<form><input id="a" name="radio" type="radio" checked><input id="b" name="radio" type="radio"><input id="check" type="checkbox"></form>`;
     const b = bridge({
-      a: { element: el<HTMLInputElement>('a'), label: 'A' },
-      b: { element: el<HTMLInputElement>('b'), label: 'B' },
-      check: { element: el<HTMLInputElement>('check'), label: 'Check' },
+      a: { element: el(HTMLInputElement, 'a'), label: 'A' },
+      b: { element: el(HTMLInputElement, 'b'), label: 'B' },
+      check: { element: el(HTMLInputElement, 'check'), label: 'Check' },
     });
     b.setChecked('b', true);
     expect(b.getField('a').checked).toBe(false);
     expect(b.getField('b').checked).toBe(true);
-    el('check').addEventListener('click', (e) => e.preventDefault());
+    el(HTMLInputElement, 'check').addEventListener('click', (e) => e.preventDefault());
     expect(b.setChecked('check', true)).toBe(false);
     expect(b.getField('check').checked).toBe(false);
   });
   it('supports multiple selections and refuses disabled options', () => {
     document.body.innerHTML = `<select multiple id="s"><option value="a">A</option><option value="b">B</option><optgroup disabled><option value="c">C</option></optgroup></select>`;
-    const b = bridge({ s: { element: el<HTMLSelectElement>('s'), label: 'Select' } });
+    const b = bridge({ s: { element: el(HTMLSelectElement, 's'), label: 'Select' } });
     expect(b.setValue('s', ['a', 'b'])).toBe(true);
     expect(b.getField('s').values).toEqual(['a', 'b']);
     expect(b.setValue('s', ['c'])).toBe(false);
@@ -116,9 +120,9 @@ describe('DOM bridge behavior', () => {
   });
   it('selects only the first enabled option when values repeat', () => {
     document.body.innerHTML = `<select id="s"><option value="">-</option><option value="a" id="ok">A</option><option value="a" disabled>A</option></select>`;
-    const b = bridge({ s: { element: el<HTMLSelectElement>('s'), label: 'Select' } });
+    const b = bridge({ s: { element: el(HTMLSelectElement, 's'), label: 'Select' } });
     expect(b.setValue('s', 'a')).toBe(true);
-    expect(el<HTMLSelectElement>('s').selectedOptions[0]?.id).toBe('ok');
+    expect(el(HTMLSelectElement, 's').selectedOptions[0]?.id).toBe('ok');
   });
   it('does not bind secrets, hidden inputs, files or browser-controlled widgets', () => {
     for (const type of [
@@ -142,14 +146,14 @@ describe('DOM bridge behavior', () => {
     document.body.innerHTML = `<input id="name" name="old">`;
     const issue = vi.fn();
     const b = bridge(
-      { name: { element: el<HTMLInputElement>('name'), label: 'Name' } },
+      { name: { element: el(HTMLInputElement, 'name'), label: 'Name' } },
       {},
       { onIssue: issue },
     );
-    el<HTMLInputElement>('name').name = 'new';
+    el(HTMLInputElement, 'name').name = 'new';
     expect(b.setValue('name', 'Blocked')).toBe(false);
     expect(issue).toHaveBeenCalledWith('changed-control');
-    el('name').remove();
+    el(HTMLInputElement, 'name').remove();
     expect(b.setValue('name', 'Blocked')).toBe(false);
     expect(issue).toHaveBeenCalledWith('disconnected');
   });
@@ -157,23 +161,27 @@ describe('DOM bridge behavior', () => {
     document.body.innerHTML = `<form id="form" action="/official"><button id="go">Go</button></form>`;
     const issue = vi.fn();
     const submitted = vi.fn((event: Event) => event.preventDefault());
-    el('form').addEventListener('submit', submitted);
-    const b = bridge({}, { go: { element: el('go'), label: 'Go' } }, { onIssue: issue });
-    el('form').setAttribute('action', 'https://evil.example/');
+    el(HTMLFormElement, 'form').addEventListener('submit', submitted);
+    const b = bridge(
+      {},
+      { go: { element: el(HTMLButtonElement, 'go'), label: 'Go' } },
+      { onIssue: issue },
+    );
+    el(HTMLFormElement, 'form').setAttribute('action', 'https://evil.example/');
     expect(b.activate('go')).toBe(false);
     expect(issue).toHaveBeenCalledWith('changed-control');
     expect(submitted).not.toHaveBeenCalled();
   });
   it('uses exact unambiguous labels, without guessing field positions', () => {
     document.body.innerHTML = `<label for="doc">Número de Documento:</label><input id="doc"><input id="letter" aria-label="Letra">`;
-    expect(fieldByLabel(document, 'Numero de Documento')).toBe(el('doc'));
+    expect(fieldByLabel(document, 'Numero de Documento')).toBe(el(HTMLInputElement, 'doc'));
     expect(fieldByLabel(document, 'Número')).toBeNull();
     document.body.insertAdjacentHTML('beforeend', '<input aria-label="Letra">');
     expect(fieldByLabel(document, 'Letra')).toBeNull();
   });
   it('retains stable snapshots and releases data and observers on disposal', () => {
     document.body.innerHTML = '<input id="name">';
-    const b = bridge({ name: { element: el<HTMLInputElement>('name'), label: 'Name' } });
+    const b = bridge({ name: { element: el(HTMLInputElement, 'name'), label: 'Name' } });
     const first = b.getField('name');
     b.refresh();
     expect(b.getField('name')).toBe(first);

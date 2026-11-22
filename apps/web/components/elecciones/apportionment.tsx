@@ -44,22 +44,22 @@ export function Apportionment({
     {
       n: '1',
       value: thousands(fixed),
-      title: 'escaños, igual para todas',
-      text: `Cada provincia empieza con dos diputados, tenga la población que tenga; Ceuta y Melilla, con uno. Así se reparten ${thousands(fixed)} de los ${total}.`,
+      title: 'escaños fijos por provincia',
+      text: `Cada provincia tiene un mínimo inicial de dos diputados, con independencia de su población; Ceuta y Melilla, uno. Así se asignan ${thousands(fixed)} de los ${total}.`,
     },
     {
       n: '2',
       value: thousands(total - fixed),
-      title: 'escaños, según la población',
-      text: `Los ${thousands(total - fixed)} restantes se dan por habitantes: uno por cada ${thousands(quota)} personas del padrón de ${year}. Los que sobran al redondear van a las provincias que más se quedaron cerca de otro.`,
+      title: 'escaños por población',
+      text: `Los ${thousands(total - fixed)} restantes se asignan en proporción a la población: uno por cada ${thousands(quota)} habitantes del padrón de ${year}. Los sobrantes del redondeo van a las provincias con mayores restos.`,
     },
     {
       n: '3',
       value: `${ratio}×`,
-      title: 'pesa más un voto en la provincia más pequeña',
+      title: 'diferencia de habitantes por escaño entre provincias',
       text:
         light && heavy
-          ? `${name(light.c)} elige un diputado por cada ${thousands(light.n)} habitantes; ${name(heavy.c)}, uno por cada ${thousands(heavy.n)}. El mínimo de dos pesa mucho más donde vive menos gente.`
+          ? `${name(light.c)}: un diputado por cada ${thousands(light.n)} habitantes; ${name(heavy.c)}: uno por cada ${thousands(heavy.n)}. El mínimo de dos diputados tiene más efecto en las provincias menos pobladas.`
           : '',
     },
   ];
@@ -69,9 +69,6 @@ export function Apportionment({
       <ol className="m-0 grid list-none gap-6 p-0 md:grid-cols-3">
         {steps.map((s) => (
           <li key={s.n} className="grid content-start gap-2">
-            <span className="font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
-              Paso {s.n}
-            </span>
             <p className="m-0 grid gap-1">
               <b className="font-heading text-[40px] leading-none font-normal tabular-nums">
                 {s.value}
@@ -87,11 +84,11 @@ export function Apportionment({
           <p className="m-0 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <i className="block size-2.5 rounded-xs" style={{ background: minimumColor }} />
-              El mínimo por ley
+              Mínimo legal
             </span>
             <span className="inline-flex items-center gap-1.5">
               <i className="block size-2.5 rounded-xs" style={{ background: populationColor }} />
-              Por su población
+              Por población
             </span>
           </p>
           <span className="font-mono text-sm text-muted-foreground max-sm:hidden">

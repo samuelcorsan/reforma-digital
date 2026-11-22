@@ -44,11 +44,7 @@ export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) 
           itemToStringLabel={(province) => province.name}
           isItemEqualToValue={(a, b) => a.id === b.id}
         >
-          <ComboboxInput
-            aria-label="Provincia"
-            placeholder="Escribe o elige una provincia"
-            className="max-w-sm"
-          />
+          <ComboboxInput aria-label="Provincia" className="max-w-sm" />
           <ComboboxContent>
             <ComboboxEmpty>Ninguna provincia coincide.</ComboboxEmpty>
             <ComboboxList>
@@ -64,7 +60,7 @@ export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) 
           </ComboboxContent>
         </Combobox>
         <p className="m-0 text-sm text-muted-foreground">
-          Junto a cada una, los diputados que elige el 29N.
+          Junto a cada provincia, diputados que elige el 29N.
         </p>
       </div>
       {p && (
@@ -103,7 +99,7 @@ export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) 
           </div>
           {p.deputies.length > 0 && (
             <div className="grid gap-3 border-t border-border pt-6">
-              <Label>Sus {p.deputies.length} diputados en la XV legislatura</Label>
+              <Label>Diputados de la XV legislatura ({p.deputies.length})</Label>
               <div className="flex flex-wrap gap-1.5">
                 {p.deputies.slice(0, maxDeputies).map((d) => (
                   <Link
@@ -128,8 +124,8 @@ export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) 
           )}
           <Explore
             links={[
-              { href: p.deputiesHref, text: 'Qué hicieron sus diputados' },
-              { href: p.geographyHref, text: 'Su geografía' },
+              { href: p.deputiesHref, text: 'Actividad de sus diputados' },
+              { href: p.geographyHref, text: 'Datos geográficos' },
             ]}
           />
         </div>

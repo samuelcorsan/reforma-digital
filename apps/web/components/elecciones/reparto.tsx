@@ -92,7 +92,7 @@ export function Reparto({
         ))}
       </ul>
     ) : (
-      <p className="m-0 text-sm text-muted-foreground">Los mismos escaños en cada provincia.</p>
+      <p className="m-0 text-sm text-muted-foreground">Sin cambios en ninguna provincia.</p>
     );
   };
 
@@ -166,23 +166,24 @@ export function Reparto({
         <div className="grid content-start gap-5" aria-live="polite">
           <Label>
             {e.long}
-            {Object.values(e.prov).every((p) => !Object.keys(p.fam).length) && ' · aún sin votar'}
+            {Object.values(e.prov).every((p) => !Object.keys(p.fam).length) &&
+              ' · pendiente de votación'}
           </Label>
           {previous && (
             <div className="grid gap-2">
-              <h3 className="m-0 font-heading text-xl font-normal">Frente a {previous.short}</h3>
+              <h3 className="m-0 font-heading text-xl font-normal">Respecto a {previous.short}</h3>
               {changeList(previous)}
             </div>
           )}
           {k > 0 ? (
             <div className="grid gap-2">
-              <h3 className="m-0 font-heading text-xl font-normal">Frente a {first.short}</h3>
+              <h3 className="m-0 font-heading text-xl font-normal">Respecto a {first.short}</h3>
               {changeList(first)}
             </div>
           ) : (
             <p className="m-0 text-sm text-muted-foreground">
-              El reparto de las primeras elecciones. Elige otra para ver qué provincias ganaron o
-              perdieron escaños.
+              Reparto de las primeras elecciones generales. Elige otra elección para ver las
+              provincias que ganan o pierden escaños.
             </p>
           )}
         </div>

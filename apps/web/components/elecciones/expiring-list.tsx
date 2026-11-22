@@ -29,10 +29,10 @@ export type ExpiringLaw = {
 };
 
 const orders = {
-  dias: { label: 'Más tiempo en el Congreso', by: (l: ExpiringLaw) => l.days },
-  ampliaciones: { label: 'Más veces ampliado el plazo', by: (l: ExpiringLaw) => l.extensions },
-  etapa: { label: 'Las que llegaron más lejos', by: (l: ExpiringLaw) => l.stage * 1e4 + l.days },
-  recientes: { label: 'Las más recientes', by: (l: ExpiringLaw) => Date.parse(l.presented) },
+  dias: { label: 'Mayor tiempo de tramitación', by: (l: ExpiringLaw) => l.days },
+  ampliaciones: { label: 'Más ampliaciones del plazo', by: (l: ExpiringLaw) => l.extensions },
+  etapa: { label: 'Fase más avanzada', by: (l: ExpiringLaw) => l.stage * 1e4 + l.days },
+  recientes: { label: 'Más recientes', by: (l: ExpiringLaw) => Date.parse(l.presented) },
 };
 type Order = keyof typeof orders;
 const isOrder = (value: string): value is Order => value in orders;
@@ -111,8 +111,8 @@ export function ExpiringList({
           { value: '', label: 'Todos los autores' },
           ...presenters.map((p) => ({ value: p.id, label: p.name })),
         ])}
-        {select('Etapa', reached, setReached, [
-          { value: '', label: 'Todas las etapas' },
+        {select('Fase', reached, setReached, [
+          { value: '', label: 'Todas las fases' },
           ...stage.slice(0, 5).map((label, i) => ({ value: String(i), label })),
         ])}
         {select(
@@ -124,8 +124,8 @@ export function ExpiringList({
       </div>
       <p className="m-0 text-sm text-muted-foreground" aria-live="polite">
         {rows.length === laws.length
-          ? `Las ${laws.length} leyes.`
-          : `${rows.length} de ${laws.length} leyes.`}
+          ? `${laws.length} iniciativas.`
+          : `${rows.length} de ${laws.length} iniciativas.`}
       </p>
       <ol className="m-0 grid list-none p-0">
         {rows.slice(0, shown).map((l) => (
@@ -136,7 +136,7 @@ export function ExpiringList({
             <span
               className="flex gap-0.5"
               role="img"
-              aria-label={`Hasta dónde llegó: ${stage[l.stage] ?? ''}`}
+              aria-label={`Fase alcanzada: ${stage[l.stage] ?? ''}`}
             >
               {[0, 1, 2, 3, 4].map((k) => (
                 <i

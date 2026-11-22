@@ -19,7 +19,7 @@ beforeEach(() => {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (_url: string, init: RequestInit) => {
-      enviados.push(JSON.parse(String(init.body)));
+      enviados.push(await new Response(init.body).json());
       return new Response(null, { status: 200 });
     }),
   );
@@ -47,25 +47,16 @@ describe('api/eventos', () => {
     ]);
   });
 
-  it('pasa una acción de la app con sus datos cerrados', async () => {
-    const accion = {
-      evento: 'tramite_creado',
-      sesion,
-      version: '0.1.0',
-      plataforma: 'darwin',
-      proveedor: 'app',
-    };
-    expect((await enviar(accion)).status).toBe(204);
-    expect(enviados[0]?.properties).toMatchObject({
-      version: '0.1.0',
-      plataforma: 'darwin',
-      proveedor: 'app',
-    });
-  });
-
   it('rechaza eventos que no están en la lista, campos de más y rutas con query', async () => {
     for (const cuerpo of [
       { evento: 'identificar', sesion },
+      {
+        evento: 'tramite_creado',
+        sesion,
+        version: '0.1.0',
+        plataforma: 'darwin',
+        proveedor: 'app',
+      },
       { evento: '$pageview', sesion, ruta: '/congreso', texto: 'Mi DNI es 12345678Z' },
       { evento: '$pageview', sesion, ruta: '/buscar?q=12345678Z' },
       { evento: '$pageview', sesion: 'persona@example.com', ruta: '/' },

@@ -5,7 +5,7 @@ import { cn } from '@reforma-digital/design/lib/utils';
 import { Button } from '@reforma-digital/design/ui/button';
 import { thousands } from '../../lib/elecciones/format';
 import { useFirstSight } from './first-sight';
-import { Cell, Heading, Label, Stat } from './report';
+import { Cell, Heading, Stat } from './report';
 import { Tips } from './tips';
 import { useWidth } from './use-width';
 
@@ -159,13 +159,9 @@ export function CouldBe({
 
   return (
     <Cell>
-      <div className="grid gap-2">
-        <Label>El último escaño</Label>
-        <Heading title="El Congreso que pudo ser">
-          En cada provincia, el último escaño se decidió por unos pocos votos. ¿Y si todos los que
-          se decidieron por menos de una cifra hubieran caído del otro lado?
-        </Heading>
-      </div>
+      <Heading title="Simulación del último escaño">
+        Diferencia de votos con la que se asignó el último escaño de cada provincia.
+      </Heading>
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-center">
         <svg
           viewBox={hemicycle.box}
@@ -190,13 +186,13 @@ export function CouldBe({
           <div className="grid grid-cols-2 gap-4">
             <Stat
               value={flipped.length}
-              caption={`escaños se decidieron por menos de ${thousands(rounded(budget))} votos`}
+              caption={`escaños asignados por una diferencia inferior a ${thousands(rounded(budget))} votos`}
             />
             <Stat
               value={thousands(used)}
-              caption={`votos, sumándolos todos, bastaban para darles la vuelta${
+              caption={`votos en total bastaban para cambiar su asignación${
                 flipped.length
-                  ? `: el ${((used / voters) * 100).toLocaleString('es-ES', { maximumFractionDigits: used / voters < 0.01 ? 2 : 1 })} % de los que votaron`
+                  ? `: el ${((used / voters) * 100).toLocaleString('es-ES', { maximumFractionDigits: used / voters < 0.01 ? 2 : 1 })} % de los votantes`
                   : ''
               }`}
             />
@@ -230,9 +226,7 @@ export function CouldBe({
       </div>
       <div className="grid gap-3 border-t border-border pt-6">
         <p className="m-0 text-sm text-muted-foreground">
-          Cada punto es un escaño, colocado según los votos que le faltaron al segundo para
-          quitárselo al primero. <b className="font-medium text-foreground">Mueve la línea:</b> los
-          que quedan a su izquierda cambian de manos.
+          Los escaños a la izquierda de la línea pasan a la candidatura que quedó segunda.
         </p>
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <Button
@@ -246,7 +240,7 @@ export function CouldBe({
               go(maxLog, (7000 * (maxLog - start)) / (maxLog - 2), start);
             }}
           >
-            {playing ? 'Pausa' : 'Reproducir'}
+            {playing ? 'Pausar' : 'Reproducir'}
           </Button>
           <span className="text-muted-foreground">Por menos de</span>
           {[...presets, [maxLog, 'Todos'] as const].map(([v, text]) => (
@@ -314,7 +308,7 @@ export function CouldBe({
                     </text>
                   ))}
                 <text x={W - m.r} y={H - 2} textAnchor="end">
-                  votos que le faltaron al segundo →
+                  votos que faltaron a la segunda candidatura →
                 </text>
               </g>
               {last && (
@@ -396,13 +390,12 @@ export function CouldBe({
             stop();
             setLevel(Number(event.target.value));
           }}
-          aria-label="Votos que se reparten"
+          aria-label="Umbral de votos"
           aria-valuetext={`menos de ${thousands(rounded(budget))} votos: ${flipped.length} escaños cambian`}
           className="-my-3.5 h-11 w-full accent-foreground"
         />
       </div>
       <div className="grid gap-3 border-t border-border pt-6">
-        <Label>Quién se los lleva</Label>
         {flipped.length ? (
           <Flows
             seats={flipped}
@@ -414,8 +407,8 @@ export function CouldBe({
           />
         ) : (
           <p className="m-0 text-sm text-muted-foreground">
-            Con tan pocos votos no cambia ningún escaño: el más barato costaba{' '}
-            {thousands(seats[0]?.missing ?? 0)}.
+            Con este umbral no cambia ningún escaño. La menor diferencia fue de{' '}
+            {thousands(seats[0]?.missing ?? 0)} votos.
           </p>
         )}
       </div>
@@ -514,7 +507,7 @@ function Flows({
         role="button"
         tabIndex={0}
         aria-pressed={selected === g}
-        aria-label={`${group[g]?.name}: solo sus escaños`}
+        aria-label={`${group[g]?.name}: mostrar solo sus escaños`}
         className="cursor-pointer outline-none [&:focus-visible_rect]:stroke-ring [&:focus-visible_rect]:[stroke-width:3]"
         onClick={() => onSelect(selected === g ? null : g)}
         onKeyDown={(event) => {
@@ -525,7 +518,7 @@ function Flows({
         data-tip={group[g]?.name}
         data-tip-text={[
           lost.length ? `Pierde ${lost.length}: ${names(lost)}.` : '',
-          won.length ? `Se lleva ${won.length}: ${names(won)}.` : '',
+          won.length ? `Obtiene ${won.length}: ${names(won)}.` : '',
           'Pulsa para ver solo los suyos.',
         ]
           .filter(Boolean)
@@ -557,17 +550,17 @@ function Flows({
   return (
     <div ref={box} className="grid gap-3">
       <p
-        className="m-0 flex justify-between font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase"
+        className="m-0 flex justify-between text-xs font-medium text-muted-foreground"
         aria-hidden="true"
       >
-        <span>Los pierde</span>
-        <span>Se los lleva</span>
+        <span>Pierde</span>
+        <span>Obtiene</span>
       </p>
       <Tips>
         <svg
           viewBox={`0 0 ${W2} ${H2}`}
           role="img"
-          aria-label="De qué grupo a qué grupo pasan los escaños"
+          aria-label="Transferencia de escaños entre grupos"
           className="block h-auto w-full overflow-visible"
         >
           <defs>
@@ -620,9 +613,9 @@ function Flows({
             />
             {group[selected]?.name}
           </b>
-          : pierde {lose[selected] ?? 0}, se lleva {win[selected] ?? 0}
+          : pierde {lose[selected] ?? 0}, obtiene {win[selected] ?? 0}
           <Button variant="outline" size="sm" onClick={() => onSelect(null)}>
-            Ver todos
+            Mostrar todos
           </Button>
         </p>
       ) : (

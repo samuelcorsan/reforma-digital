@@ -1,0 +1,48 @@
+# Changes here need an owner's approval. The last matching line applies, so the risk sections
+# below override the area owners: they define what the CI enforces, what agents are told and
+# run, what the extension may do in official portals, and the database. Everything else
+# relies on CI.
+
+# Congreso and ingestion
+/apps/ingestion/ @jorgegarcelan
+/apps/web/app/(search)/congreso/ @jorgegarcelan
+/apps/web/app/api/congreso/ @jorgegarcelan
+/apps/web/app/mcp/congreso/ @jorgegarcelan
+/apps/web/components/congreso/ @jorgegarcelan
+/apps/web/lib/congreso/ @jorgegarcelan
+/apps/web/public/congreso/ @jorgegarcelan
+/apps/web/scripts/validate-congreso.ts @jorgegarcelan
+/docs/congreso.md @jorgegarcelan
+/tests/congreso*.test.ts @jorgegarcelan
+
+# Quality gates
+/.github/ @samuelcorsan
+/.github/workflows/congreso.yml @samuelcorsan @jorgegarcelan
+/oxlint.config.ts @samuelcorsan
+/knip.json @samuelcorsan
+/apps/ingestion/ruff.toml @samuelcorsan
+/package.json @samuelcorsan
+/pnpm-workspace.yaml @samuelcorsan
+/turbo.json @samuelcorsan
+tsconfig*.json @samuelcorsan
+/vitest.config.ts @samuelcorsan
+/playwright.config.ts @samuelcorsan
+/scripts/audit-bundle.mjs @samuelcorsan
+/scripts/check-workspaces.mjs @samuelcorsan
+
+# Agent rules, skills and hooks (hooks run on the machine of whoever opens the repo)
+/AGENTS.md @samuelcorsan
+/CLAUDE.md @samuelcorsan
+/.agents/ @samuelcorsan
+/.claude/ @samuelcorsan
+
+# Extension security boundary
+/apps/extension/ @samuelcorsan
+/packages/bridge/ @samuelcorsan
+/packages/runtime/ @samuelcorsan
+/scripts/build.mjs @samuelcorsan
+/SECURITY.md @samuelcorsan
+
+# Database schema and migrations
+/packages/db/ @samuelcorsan
+/packages/db/migrations/*congreso*.sql @samuelcorsan @jorgegarcelan

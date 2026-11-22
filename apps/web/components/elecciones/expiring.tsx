@@ -16,6 +16,7 @@ import { ExpiringList, type ExpiringLaw } from './expiring-list';
 import { Journeys, type Journey } from './journeys';
 import { Cell, Grid, Legend, ReportIntro, ReportSection, ReportStats, Heading } from './report';
 import { thousands } from '../../lib/elecciones/format';
+import { electionPages } from '../../lib/elecciones/pages';
 
 const frozenFrom = 10;
 
@@ -101,25 +102,28 @@ export async function Expiring() {
 
   return (
     <>
-      <ReportIntro title="Lo que caduca">
+      <ReportIntro title={electionPages.caducan.title}>
         <p>
-          Al disolverse las Cortes caducan todos los asuntos que el Congreso no había terminado. Las
-          leyes a medio tramitar tendrán que volver a presentarse en la próxima legislatura y
-          empezar de cero.
+          Con la disolución de las Cortes caducan todas las iniciativas cuya tramitación no había
+          concluido. Para continuar, deben presentarse de nuevo en la siguiente legislatura y su
+          tramitación empieza desde el principio.
         </p>
       </ReportIntro>
       <ReportStats
         items={[
-          [caducan.total, 'leyes caducan sin terminar su tramitación'],
-          [caducan.proyectos, 'proyectos del Gobierno'],
-          [caducan.proposiciones, 'proposiciones de grupos, Senado y comunidades'],
+          [caducan.total, 'iniciativas legislativas caducan sin completar su tramitación'],
+          [caducan.proyectos, 'proyectos de ley del Gobierno'],
+          [
+            caducan.proposiciones,
+            'proposiciones de ley de grupos parlamentarios, Senado y comunidades autónomas',
+          ],
           [
             laws.filter((l) => l.extensions >= frozenFrom).length,
             'con el plazo de enmiendas ampliado diez veces o más',
           ],
           [
             Math.round(laws.reduce((sum, l) => sum + l.days, 0) / laws.length),
-            'días de media en el Congreso',
+            'días de tramitación de media en el Congreso',
           ],
         ]}
       />
@@ -133,48 +137,40 @@ export async function Expiring() {
             intro={{
               path: (
                 <>
-                  <Heading title="El camino de cada ley">
-                    Cada punto es una ley: entra el día en que se presentó y avanza a medida que
-                    pasa cada etapa. Dale a reproducir o arrastra la fecha: el{' '}
-                    {date(journeys.disolucion)}, con la disolución, todo lo que seguía en trámite
-                    cae. Pasa por un punto para ver su viaje.
-                  </Heading>
+                  <Heading title="Tramitación de cada iniciativa" />
                   <Legend
                     small
                     items={origins.map(([, label, color]) => ({
                       label:
                         label === 'Grupos'
-                          ? 'Proposiciones de los grupos'
+                          ? 'Proposiciones de ley de grupos parlamentarios'
                           : label === 'CCAA'
-                            ? 'Proposiciones autonómicas'
+                            ? 'Proposiciones de ley de comunidades autónomas'
                             : label === 'Senado'
-                              ? 'Proposiciones del Senado'
-                              : 'Proyectos del Gobierno',
+                              ? 'Proposiciones de ley del Senado'
+                              : 'Proyectos de ley del Gobierno',
                       color,
                     }))}
                   />
                 </>
               ),
               flows: (
-                <Heading title="De dónde vinieron y dónde acabaron">
-                  Los {thousands(all.length)} proyectos y proposiciones de ley de toda la
-                  legislatura: quién los presentó, hasta dónde llegó cada uno y dónde se quedó el
-                  resto. Las firmadas por más de un grupo van juntas.
+                <Heading title="Origen y resultado de las iniciativas">
+                  Los {thousands(all.length)} proyectos y proposiciones de ley de la legislatura.
+                  Las presentadas por más de un grupo se muestran juntas.
                 </Heading>
               ),
             }}
           />
         </Cell>
         <Cell span={6}>
-          <Heading title="Las que estaban más cerca">
-            Ya las había aprobado el Pleno del Congreso. La barra marca hasta qué etapa llegaron.
+          <Heading title="Iniciativas en fase más avanzada">
+            Aprobadas por el Pleno del Congreso antes de la disolución.
           </Heading>
           <ol className="m-0 grid list-none gap-3 p-0">
             {closest.map((l) => (
               <li key={l.exp} className="grid gap-1.5 rounded-xl bg-muted/60 p-4">
-                <span className="font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
-                  {stage[l.stage]}
-                </span>
+                <span className="text-xs font-medium text-muted-foreground">{stage[l.stage]}</span>
                 <Link href={l.href} className="leading-snug hover:underline underline-offset-4">
                   {l.title}
                 </Link>
@@ -190,8 +186,8 @@ export async function Expiring() {
           </ol>
         </Cell>
         <Cell span={6}>
-          <Heading title="Las más congeladas">
-            Veces que se amplió su plazo de enmiendas: mientras se amplía, la ley no avanza.
+          <Heading title="Ampliaciones del plazo de enmiendas">
+            Mientras el plazo de enmiendas sigue abierto, la tramitación no avanza.
           </Heading>
           <ol className="m-0 grid list-none p-0">
             {frozen.map((l) => (
@@ -219,17 +215,15 @@ export async function Expiring() {
           </ol>
         </Cell>
         <Cell>
-          <Heading title={`Las ${caducan.total}, una a una`}>
-            Busca una ley o filtra por quién la presentó y hasta dónde llegó.
-          </Heading>
+          <Heading title={`Las ${caducan.total} iniciativas`} />
           <ExpiringList laws={rows} presenters={presenters} />
         </Cell>
       </Grid>
       {convalidar.length > 0 && (
-        <ReportSection title="Decretos pendientes de convalidar">
+        <ReportSection title="Decretos-leyes pendientes de convalidación">
           <p className="m-0 mb-6 max-w-[65ch] text-muted-foreground">
-            Publicados poco antes de la disolución y aún sin votar. Los convalidará o derogará la
-            Diputación Permanente, que sigue en funciones hasta que se constituyan las nuevas
+            Publicados poco antes de la disolución y pendientes de votación. Corresponde a la
+            Diputación Permanente convalidarlos o derogarlos hasta la constitución de las nuevas
             Cortes.
           </p>
           <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2">
@@ -239,7 +233,7 @@ export async function Expiring() {
                   render={<a href={d.pdf} target="_blank" rel="noopener noreferrer" />}
                   className="gap-3 p-6 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 max-sm:p-5"
                 >
-                  <span className="font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
+                  <span className="text-xs font-medium text-muted-foreground">
                     RDL {d.numero} · BOE {date(d.fecha)}
                   </span>
                   <span className="leading-snug">
@@ -248,10 +242,10 @@ export async function Expiring() {
                       .replace(/^./, (c) => c.toUpperCase())}
                   </span>
                   <span className="text-sm text-muted-foreground">
-                    Plazo para votarlo: hasta el {date(d.limite_aprox)}, aproximadamente.
+                    Plazo de convalidación: hasta el {date(d.limite_aprox)}, aproximadamente.
                   </span>
                   <span className="mt-auto flex items-center justify-end gap-2 pt-2 text-sm text-muted-foreground">
-                    Leer el texto oficial
+                    Consultar el texto oficial
                     <span className="text-foreground">
                       <Icon name="externo" size={16} />
                     </span>

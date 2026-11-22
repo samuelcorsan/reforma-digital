@@ -72,11 +72,7 @@ export function SeatsMap({
         <div className="grid max-w-72 gap-2">
           <Stat
             value="350"
-            caption={
-              hemicycle
-                ? 'escaños en el hemiciclo, cada uno en su sitio'
-                : 'escaños, repartidos entre 52 circunscripciones'
-            }
+            caption={hemicycle ? 'escaños en el hemiciclo' : 'escaños en 52 circunscripciones'}
           />
           <p className="m-0 text-sm text-muted-foreground">{note}</p>
         </div>

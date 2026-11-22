@@ -1,19 +1,13 @@
 import { readFile, readdir, mkdir, writeFile } from 'node:fs/promises';
 import { createHash, randomUUID } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { search } from '@reforma-digital/ai';
 import { defaultConfig, type SearchConfig } from '@reforma-digital/core';
 import { db, experiments } from '@reforma-digital/db';
 import { datasetSchema, type Dataset } from './schema';
-import {
-  retrievalMetrics,
-  deterministicAnswerMetrics,
-  aggregate,
-  type Metrics,
-  type CaseResult,
-} from './metrics';
+import { retrievalMetrics, deterministicAnswerMetrics, aggregate } from './metrics';
 import { judgeAnswer } from './judges';
 import { sources } from '@reforma-digital/government';
 export * from './schema';
@@ -51,17 +45,17 @@ export async function runExperiment(options: {
 }): Promise<Report> {
   const config = options.config ?? defaultConfig;
   const hash = (s: string) => createHash('sha256').update(s).digest('hex');
-  let gitCommit = 'uncommitted';
-  let dirty = true;
-  try {
-    gitCommit = execFileSync('git', ['rev-parse', 'HEAD'], {
+  // Sin git o fuera de un repositorio, el informe queda como «uncommitted» y con cambios.
+  const git = (args: string[]) => {
+    const run = spawnSync('git', args, {
       cwd: repoRoot,
+      encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
-    })
-      .toString()
-      .trim();
-    dirty = !!execFileSync('git', ['status', '--porcelain'], { cwd: repoRoot }).toString().trim();
-  } catch {}
+    });
+    return run.status === 0 ? run.stdout.trim() : undefined;
+  };
+  const gitCommit = git(['rev-parse', 'HEAD']) ?? 'uncommitted';
+  const dirty = gitCommit === 'uncommitted' || git(['status', '--porcelain']) !== '';
   const codeFiles: string[] = [];
   const collect = async (dir: string): Promise<void> => {
     for (const e of await readdir(dir, { withFileTypes: true })) {
@@ -232,10 +226,10 @@ export function regressionGate(r: Report, b?: Report, limits = thresholds): stri
     reasons.push('Wrong-jurisdiction supera el umbral');
   if (!r.metadata.retrievalOnly) {
     for (const k of ['faithfulness', 'citationPrecision'] as const) {
-      if (r.metrics[k] == null || r.metrics[k]! < limits[k])
+      if (r.metrics[k] == null || r.metrics[k] < limits[k])
         reasons.push(k + ' ausente o inferior al umbral');
     }
-    if (r.metadata.judges === false) reasons.push('Faltan evaluadores semánticos');
+    if (!r.metadata.judges) reasons.push('Faltan evaluadores semánticos');
   }
   if (b) {
     const comparison = compareReports(r, b);

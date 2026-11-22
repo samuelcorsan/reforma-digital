@@ -3,13 +3,13 @@ import { cn } from '@reforma-digital/design/lib/utils';
 import { buttonVariants } from '@reforma-digital/design/ui/button';
 import { getGeography } from '../../lib/congreso/data';
 import { formatDate, percent, thousands } from '../../lib/elecciones/format';
-import { electionsHref } from '../../lib/elecciones/pages';
+import { electionsHref, electionPages } from '../../lib/elecciones/pages';
 import { shortParty } from '../../lib/elecciones/parties';
 import { Icon } from '../brand/icon';
 import { electionData } from './election-data';
 import { Hemicycle, ProvinceSection } from './province-section';
 import { ProvinceTable } from './province-table';
-import { Cell, Grid, Label, Legend, ReportIntro, SectionHeading, Stat } from './report';
+import { Cell, Grid, Legend, ReportIntro, SectionHeading, Stat } from './report';
 import { River, type RiverElection } from './river';
 import { Tips } from './tips';
 import { Years } from './years';
@@ -19,8 +19,8 @@ const milestones: [string, string][] = [
   ['198210', 'Mayoría absoluta del PSOE'],
   ['199603', 'Primer Gobierno del PP'],
   ['201111', 'Mayoría absoluta del PP'],
-  ['201512', 'Fin del bipartidismo'],
-  ['201904', 'Entra Vox'],
+  ['201512', 'Entrada de Podemos y Ciudadanos'],
+  ['201904', 'Entrada de Vox'],
 ];
 
 // «Elecciones desde 1977»: la elección elegida (`?eleccion=AAAAMM`, la última si no hay) en su
@@ -32,7 +32,7 @@ export async function ElectionHistory({ election }: { election?: string }) {
     data;
   const yearHref = (x: (typeof E)[number]) => `${electionsHref('historico')}?eleccion=${x.id}`;
 
-  const { withSeats, largest, majority, legislature, president } = data;
+  const { withSeats, largest, majority, president } = data;
 
   // El río: cada familia, con el nombre de su candidatura más votada en cada elección.
   const river: RiverElection[] = E.map((x) => ({
@@ -61,10 +61,9 @@ export async function ElectionHistory({ election }: { election?: string }) {
 
   return (
     <>
-      <ReportIntro title="Elecciones desde 1977">
+      <ReportIntro title={electionPages.historico.title}>
         <p>
-          Las {E.length} generales y sus {codes.length} provincias: el hemiciclo de cada una, quién
-          ganó dónde y cómo ha cambiado cada circunscripción.
+          {E.length} elecciones generales en {codes.length} circunscripciones.
         </p>
       </ReportIntro>
       <Years
@@ -76,10 +75,6 @@ export async function ElectionHistory({ election }: { election?: string }) {
           <Hemicycle data={data} limit={8} caption={label(e)} />
         </Cell>
         <Cell span={5}>
-          <Label>
-            {formatDate(e.fecha, { day: 'numeric', month: 'long', year: 'numeric' })} ·{' '}
-            {legislature}
-          </Label>
           <div className="grid gap-1">
             <p className="m-0 text-sm text-muted-foreground">Presidencia</p>
             <p className="m-0 text-lg font-medium">{president}</p>
@@ -132,16 +127,15 @@ export async function ElectionHistory({ election }: { election?: string }) {
             href={electionsHref(e.id)}
             className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'justify-self-start')}
           >
-            La elección y su legislatura, en detalle <Icon name="derecha" size={16} />
+            Ficha de la elección <Icon name="derecha" size={16} />
           </Link>
         </Cell>
       </Grid>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Los 350 escaños, legislatura a legislatura">
-          Cada familia en su sitio, de 1977 a la disolución de {E.at(-1)?.hasta.slice(0, 4)}, con el
-          nombre de su candidatura más votada en cada elección. Pulsa una legislatura para verla en
-          toda la página.
+        <SectionHeading title="Composición del Congreso por legislatura">
+          De 1977 a la disolución de {E.at(-1)?.hasta.slice(0, 4)}, con el nombre de la candidatura
+          más votada de cada familia en cada elección.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -158,15 +152,13 @@ export async function ElectionHistory({ election }: { election?: string }) {
         </Grid>
       </section>
 
-      <ProvinceSection data={data} title="Provincia a provincia">
-        Las {codes.length} circunscripciones en {label(e)}. Pulsa una provincia para ver su
-        resultado.
+      <ProvinceSection data={data} title="Resultados por circunscripción">
+        Las {codes.length} circunscripciones en {label(e)}.
       </ProvinceSection>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Elección a elección">
-          Quién ganó cada provincia en las {E.length} generales. Pulsa un año para verlo arriba;
-          pulsa una provincia para abrir su ficha.
+        <SectionHeading title="Fuerza más votada por provincia">
+          Candidatura más votada en cada provincia en las {E.length} elecciones generales.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -203,7 +195,7 @@ export async function ElectionHistory({ election }: { election?: string }) {
                       <tr>
                         <th
                           colSpan={E.length + 1}
-                          className="pt-3 pb-1 text-left font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase"
+                          className="pt-3 pb-1 text-left text-xs font-medium text-muted-foreground"
                         >
                           {r.name}
                         </th>
@@ -234,7 +226,7 @@ export async function ElectionHistory({ election }: { election?: string }) {
                                   data-tip={w ? `${name(code)} · ${label(x)}` : undefined}
                                   data-tip-text={
                                     w && p
-                                      ? `Ganó ${w.name} con el ${percent(w.share)} de los votos; ${w.seats} de ${p.e} ${p.e === 1 ? 'escaño' : 'escaños'}.`
+                                      ? `Más votada: ${w.name}, con el ${percent(w.share)} de los votos; ${w.seats} de ${p.e} ${p.e === 1 ? 'escaño' : 'escaños'}.`
                                       : undefined
                                   }
                                   data-tip-color={w?.color}

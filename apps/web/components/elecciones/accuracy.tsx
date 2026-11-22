@@ -3,6 +3,7 @@ import { accuracySchema, projectionSchema } from '../../lib/congreso/schema';
 import { decimal, signed } from '../../lib/elecciones/format';
 import { AccuracyPicker, type AccuracyElection } from './accuracy-picker';
 import { Cell, Grid, ReportIntro, SectionHeading } from './report';
+import { electionPages } from '../../lib/elecciones/pages';
 
 // Rojo si la media se pasó; azul si se quedó corta; más intenso cuanto más, hasta 5 puntos.
 const heat = (d: number) =>
@@ -55,25 +56,25 @@ export async function Accuracy() {
 
   return (
     <>
-      <ReportIntro title="Cuánto acertaron">
+      <ReportIntro title={electionPages.acierto.title}>
         <p>
-          Las encuestas de las cinco últimas generales frente al resultado: quién falló, cuánto y
-          hacia dónde.
+          Error de las encuestas frente al resultado en las cinco últimas elecciones generales, por
+          encuestadora, magnitud y sentido.
         </p>
       </ReportIntro>
       <section className="grid gap-6">
-        <SectionHeading title="¿Aciertan las encuestas?">
-          En las cinco últimas generales, la media de las encuestas de las tres semanas anteriores
-          se equivocó, de media, en {decimal(average)} puntos por partido. Pero no siempre con los
-          mismos ni hacia el mismo lado.
+        <SectionHeading title="Error por elección">
+          Media de las encuestas de las tres semanas previas frente al resultado. Error medio en las
+          cinco últimas elecciones generales: {decimal(average)} puntos por partido. El error no
+          afecta siempre a los mismos partidos ni en el mismo sentido.
         </SectionHeading>
         <AccuracyPicker elections={elections} />
       </section>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Hacia dónde fallan">
-          Puntos de más (sobrestimado) o de menos (infravalorado) que la media de las encuestas le
-          dio a cada partido.
+        <SectionHeading title="Sentido del error por partido">
+          Diferencia entre la media de las encuestas y el resultado de cada partido, en puntos.
+          Positivo: sobrestimado. Negativo: infravalorado.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -125,18 +126,18 @@ export async function Accuracy() {
             </div>
             <p className="m-0 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <i className="block size-3 rounded-xs" style={{ background: heat(4) }} />
-              la media le dio más de lo que votó la gente
+              Sobrestimado
               <i className="ml-3 block size-3 rounded-xs" style={{ background: heat(-4) }} />
-              menos
+              Infravalorado
             </p>
           </Cell>
         </Grid>
       </section>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Las encuestadoras">
-          El error medio de la última encuesta de cada empresa (en puntos por partido), en las
-          generales en que publicó. Arriba, las que estuvieron en más elecciones y más acertaron.
+        <SectionHeading title="Error por encuestadora">
+          Error medio de la última encuesta de cada empresa, en puntos por partido, en las
+          elecciones generales en que publicó. Orden: número de elecciones y menor error.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -158,7 +159,7 @@ export async function Accuracy() {
                         <td className="py-2 font-medium">
                           {r.empresa}
                           {aggregators.has(r.empresa) && (
-                            <span className="ml-2 text-muted-foreground">(media)</span>
+                            <span className="ml-2 text-muted-foreground">(agregador)</span>
                           )}
                         </td>
                         <td className="py-2 text-right font-mono tabular-nums">{r.n}</td>
@@ -187,7 +188,7 @@ export async function Accuracy() {
               </table>
             </div>
             <p className="m-0 text-sm text-muted-foreground">
-              Verde, menos de 1,5 puntos; ámbar, menos de 2,5; rojo, más.
+              Verde: menos de 1,5 puntos. Ámbar: menos de 2,5. Rojo: 2,5 o más.
             </p>
           </Cell>
         </Grid>
@@ -195,9 +196,9 @@ export async function Accuracy() {
 
       {scenarios.length > 0 && (
         <section className="mt-16 grid gap-6">
-          <SectionHeading title="Si fallan como entonces">
-            La proyección de hoy, corrigiendo la media con el error que tuvo cada vez en el PP, el
-            PSOE, Vox y la izquierda de Sumar y Podemos.
+          <SectionHeading title="Proyección corregida con errores anteriores">
+            Proyección actual con la media corregida según el error de cada elección en PP, PSOE,
+            Vox y la izquierda (Sumar y Podemos).
           </SectionHeading>
           <Grid>
             <Cell>
@@ -215,7 +216,7 @@ export async function Accuracy() {
                   </thead>
                   <tbody>
                     <tr className="border-b border-border">
-                      <td className="py-2 font-medium">La proyección de hoy</td>
+                      <td className="py-2 font-medium">Proyección actual</td>
                       {columns.map(([c, get]) => (
                         <td key={c} className="py-2 text-right font-mono font-medium tabular-nums">
                           {get(base)}
@@ -224,7 +225,7 @@ export async function Accuracy() {
                     </tr>
                     {scenarios.map((s) => (
                       <tr key={s.name} className="border-b border-border last:border-0">
-                        <td className="py-2">Si fallan como en {s.name}</td>
+                        <td className="py-2">Con el error de {s.name}</td>
                         {columns.map(([c, get]) => {
                           const v = get(s.seats, s.ppvox);
                           const d = v - get(base);
@@ -252,9 +253,7 @@ export async function Accuracy() {
                 </table>
               </div>
               <p className="m-0 max-w-[65ch] text-sm text-muted-foreground">
-                Cada fila resta a la media de hoy lo que la media se equivocó en esa elección y
-                vuelve a repartir los escaños. Que una vez fallaran hacia un lado no quiere decir
-                que vuelvan a hacerlo.
+                Un error pasado no implica que se repita en el mismo sentido.
               </p>
             </Cell>
           </Grid>

@@ -89,7 +89,7 @@ def _items(nodo, departamento: str, epigrafe: str, salida: list) -> None:
             salida.append({"id": nodo["identificador"], "titulo": nodo["titulo"], "departamento": departamento,
                            "epigrafe": epigrafe})
             return
-        for k, v in nodo.items():
+        for v in nodo.values():
             if isinstance(v, (dict, list)):
                 _items(v, departamento, nodo.get("nombre", epigrafe) if "item" in nodo else epigrafe, salida)
 
@@ -296,7 +296,7 @@ def actualizar(desde: date | None = None, hasta: date | None = None, *, avisar=p
             list(ex.map(documento, pendientes))
 
     dias, candidatos, altos = 0, 0, 0
-    for d, items in por_dia.items():
+    for items in por_dia.values():
         dias += bool(items)
         for it in items:
             candidatos += 1

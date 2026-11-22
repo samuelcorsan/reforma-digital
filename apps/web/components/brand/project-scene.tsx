@@ -8,7 +8,7 @@ function Navegador({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={
-        'rc-navegador flex flex-col w-full overflow-hidden [border-radius:16px_16px_0_0] [background:var(--background)] [box-shadow:var(--shadow-overlay)]'
+        'rc-navegador flex flex-col w-full overflow-hidden [border-radius:16px_16px_0_0] [background:var(--background)] [box-shadow:var(--shadow-overlay)] text-foreground'
       }
     >
       <div
@@ -35,15 +35,10 @@ function Navegador({ children }: { children: React.ReactNode }) {
   );
 }
 
-// El texto del paso ya cuenta lo que muestra la escena.
+// El texto de su celda ya cuenta lo que muestra la escena. Ocupa el alto que le den y se recorta por abajo.
 export function ProjectScene() {
   return (
-    <div
-      className={
-        'rc-pieza absolute [inset:0] rc-sobre-sol flex items-center justify-center [padding:6cqi] rc-pieza-web [align-items:stretch] [padding:7cqi_7cqi_0]'
-      }
-      aria-hidden="true"
-    >
+    <div className="@container flex h-full items-stretch" aria-hidden="true">
       <Navegador>
         <div
           className={

@@ -1,7 +1,7 @@
 import { requireElements, textOf } from '@reforma-digital/bridge';
 
 /** Selectores del catálogo de servicios (www2 · ServiciosAsocCat), verificados el 2026-09-27. */
-export const CATALOGO = {
+const CATALOGO = {
   title: 'main#acc-main h1#js-nombre-canal',
   description: '#js-descripcion-canal',
   carousel: '#CarruselRelacionServicios',
@@ -10,7 +10,7 @@ export const CATALOGO = {
 const SERVICE = 'service-web-component';
 const REQUEST = 'button.btn-primary';
 
-export interface Service {
+interface Service {
   /** Código del servicio (id de la tarjeta oficial, p. ej. A296). */
   id: string;
   name: string;
@@ -72,8 +72,10 @@ function channelsOf(json: string | null): string[] {
     return Array.isArray(parsed)
       ? parsed.map((c) => (typeof c?.leyenda === 'string' ? c.leyenda.trim() : '')).filter(Boolean)
       : [];
-  } catch {
-    return [];
+  } catch (error) {
+    // Un atributo que no es JSON no aporta canales.
+    if (error instanceof SyntaxError) return [];
+    throw error;
   }
 }
 

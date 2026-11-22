@@ -1,7 +1,17 @@
 import { cn } from '@reforma-digital/design/lib/utils';
 import { buttonVariants } from '@reforma-digital/design/ui/button';
 
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@reforma-digital/design/ui/navigation-menu';
+
 import Link from 'next/link';
+import { endpoints } from '../../lib/developers/api';
 import { Icon } from './icon';
 import { Logo } from './logo';
 import { LogoLink } from './logo-link';
@@ -31,10 +41,17 @@ const logo =
 
 export function Header({ current }: { current?: string }) {
   const links = [
-    { href: '/escritorio', text: 'App', current: current === '/escritorio' },
     { href: '/congreso', text: 'El Congreso', current: current === '/congreso' },
     { href: '/elecciones', text: 'Elecciones', current: current === '/elecciones' },
-    { href: '/api', text: 'API', current: current === '/api' },
+    {
+      href: '/developers/api',
+      text: 'Desarrolladores',
+      current: current === '/developers',
+      children: [
+        { href: '/developers/api', text: 'API' },
+        { href: '/developers/mcp', text: 'MCP' },
+      ],
+    },
     { href: '/equipo', text: 'Equipo', current: current === '/equipo' },
   ];
 
@@ -44,23 +61,94 @@ export function Header({ current }: { current?: string }) {
         <Logo size={36} />
       </LogoLink>
       <nav aria-label="Navegación principal">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            aria-current={link.current ? 'page' : undefined}
-            data-slot="button"
-            data-variant="secondary"
-            className={pieza}
-          >
-            {link.text}
-          </Link>
-        ))}
+        {links.map((link) =>
+          link.children ? (
+            <Desarrolladores key={link.href} current={link.current} />
+          ) : (
+            <Link
+              key={link.href}
+              href={link.href}
+              aria-current={link.current ? 'page' : undefined}
+              data-slot="button"
+              data-variant="secondary"
+              className={pieza}
+            >
+              {link.text}
+            </Link>
+          ),
+        )}
         <Link href="/#participar" data-slot="button" data-variant="outline" className={participar}>
           Participar <Icon name="derecha" size={16} />
         </Link>
       </nav>
       <MobileMenu links={links} />
     </header>
+  );
+}
+
+// El menú «Desarrolladores»: la API y la biblioteca MCP, en dos columnas. Los endpoints salen de
+// lib/developers/api.ts; los servidores no se listan, que irán creciendo. Se abre al pasar o al pulsar.
+const columnas = [
+  {
+    titulo: 'API',
+    items: [
+      {
+        href: '/developers/api',
+        label: 'Introducción',
+        text: 'Los datos del Congreso en JSON, sin clave ni registro.',
+      },
+      ...endpoints.flatMap(({ id, menu }) =>
+        menu ? [{ href: `/developers/api#${id}`, ...menu }] : [],
+      ),
+    ],
+  },
+  {
+    titulo: 'MCP',
+    items: [
+      {
+        href: '/developers/mcp',
+        label: 'Biblioteca',
+        text: 'Conecta tu asistente a datos públicos de España.',
+      },
+    ],
+  },
+];
+
+function Desarrolladores({ current }: { current: boolean }) {
+  return (
+    <NavigationMenu align="end" className="max-w-none flex-none">
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger
+            className={cn(
+              pieza,
+              'gap-0.5 font-normal data-popup-open:bg-secondary/60 data-popup-open:shadow-[inset_0_0_0_40px_rgb(0_0_0/0.06)]',
+              current && 'shadow-[inset_0_0_0_40px_rgb(0_0_0/0.06)]',
+            )}
+          >
+            Desarrolladores
+          </NavigationMenuTrigger>
+          <NavigationMenuContent className="p-0">
+            <div className="grid w-[min(640px,calc(100vw-48px))] grid-cols-2 divide-x divide-border">
+              {columnas.map(({ titulo, items }) => (
+                <div key={titulo} className="grid content-start gap-1 p-3">
+                  <p className="px-3 pt-1 pb-2 text-sm text-muted-foreground">{titulo}</p>
+                  {items.map((item) => (
+                    <NavigationMenuLink
+                      key={item.href}
+                      render={<Link href={item.href} />}
+                      className="flex-col items-start gap-0 rounded-xl px-3 py-2"
+                    >
+                      <span className="text-[15px] font-medium">{item.label}</span>
+                      <span className="line-clamp-1 text-muted-foreground">{item.text}</span>
+                    </NavigationMenuLink>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 }

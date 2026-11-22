@@ -21,6 +21,14 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
   --color-brand: var(--brand);
   --color-brand-yellow: var(--brand-yellow);
   --container-content: 1200px;
@@ -54,6 +62,14 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
   --brand: #df1717;
   --text-secondary: #4d4d4d;
   --brand-dark: #a50e0e;
@@ -105,185 +121,6 @@
 }
 
 @theme static {
-  @keyframes in-issue-escribir {
-    0%,
-    2% {
-      clip-path: inset(0 100% 0 0);
-    }
-    10%,
-    100% {
-      clip-path: inset(0);
-    }
-  }
-  @keyframes in-issue-escribir-descripcion {
-    0%,
-    12% {
-      clip-path: inset(0 100% 0 0);
-    }
-    40%,
-    100% {
-      clip-path: inset(0);
-    }
-  }
-  @keyframes in-issue-cursor {
-    0%,
-    2% {
-      opacity: 0;
-      transform: translate(-28cqi, -240px);
-    }
-    6%,
-    15% {
-      opacity: 1;
-      transform: translate(-28cqi, -240px);
-    }
-    24%,
-    36% {
-      opacity: 1;
-      transform: translate(-24cqi, -120px);
-    }
-    44% {
-      opacity: 1;
-      transform: none;
-    }
-    48% {
-      opacity: 1;
-      transform: scale(0.94);
-    }
-    51% {
-      opacity: 1;
-      transform: none;
-    }
-    58%,
-    100% {
-      opacity: 0;
-      transform: none;
-    }
-  }
-  @keyframes in-issue-click {
-    0%,
-    46%,
-    51%,
-    100% {
-      transform: none;
-    }
-    48% {
-      transform: scale(0.96);
-    }
-  }
-  @keyframes in-issue-ocultar-texto {
-    0%,
-    46%,
-    92%,
-    100% {
-      opacity: 1;
-    }
-    50%,
-    86% {
-      opacity: 0;
-    }
-  }
-  @keyframes in-issue-check {
-    0%,
-    46%,
-    92%,
-    100% {
-      opacity: 0;
-      transform: scale(0.94);
-    }
-    50%,
-    86% {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  @keyframes in-issue-creada {
-    0%,
-    50%,
-    90%,
-    100% {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    55%,
-    82% {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  @keyframes chat-pulse {
-    50% {
-      scale: 1.18;
-    }
-  }
-  @keyframes chat-enter {
-    from {
-      opacity: 0;
-      transform: translateY(6px);
-      filter: blur(3px);
-    }
-  }
-  @keyframes chat-stage-change {
-    from {
-      opacity: 0;
-      transform: translateY(3px);
-      filter: blur(2px);
-    }
-  }
-  @keyframes chat-slide-forward {
-    from {
-      opacity: 0;
-      transform: translateX(16px);
-    }
-  }
-  @keyframes chat-slide-back {
-    from {
-      opacity: 0;
-      transform: translateX(-16px);
-    }
-  }
-  @keyframes chat-shimmer {
-    from {
-      background-position:
-        100% 0,
-        0 0;
-    }
-    to {
-      background-position:
-        0% 0,
-        0 0;
-    }
-  }
-  @keyframes sd-reveal {
-    from {
-      opacity: 0;
-      filter: blur(3px);
-    }
-  }
-  @keyframes chat-enter {
-    from {
-      opacity: 0;
-    }
-  }
-  @keyframes chat-stage-change {
-    from {
-      opacity: 0;
-    }
-  }
-  @keyframes chat-slide-forward {
-    from {
-      opacity: 0;
-    }
-  }
-  @keyframes chat-slide-back {
-    from {
-      opacity: 0;
-    }
-  }
-  @keyframes sd-reveal {
-    from {
-      opacity: 0;
-    }
-  }
   @keyframes sol-pagina-entra {
     from {
       opacity: 0;
@@ -309,6 +146,48 @@
   syntax: '<number>';
   inherits: true;
   initial-value: 0;
+}
+
+/* Mientras se espera una respuesta (el buscador de la biblioteca MCP): manchas de sol amarillas que
+   cruzan la píldora por dentro. */
+@keyframes comprobando-deriva {
+  to {
+    background-position: -150% 50%;
+  }
+}
+
+.comprobando {
+  isolation: isolate;
+}
+
+.comprobando::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      closest-side at 20% 55%,
+      color-mix(in srgb, var(--brand-yellow) 40%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      closest-side at 60% 45%,
+      color-mix(in srgb, var(--brand-yellow) 22%, transparent),
+      transparent
+    );
+  background-size: 60% 180%;
+  background-position: 0% 50%;
+  background-repeat: repeat-x;
+  animation: comprobando-deriva 2.4s linear infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comprobando::after {
+    animation: none;
+  }
 }
 
 :root,

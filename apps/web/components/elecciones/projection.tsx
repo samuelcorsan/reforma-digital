@@ -9,6 +9,7 @@ import { href } from '../congreso/common';
 import { Majority, ProjectionMap, SeatSeries, SeatSum } from './projection-parts';
 import { Cell, Grid, Label, Legend, ReportIntro, SectionHeading } from './report';
 import { Tips } from './tips';
+import { electionPages } from '../../lib/elecciones/pages';
 
 // La familia de cada partido de las encuestas, para sentarlo en el hemiciclo en su sitio.
 const families: Record<string, string> = {
@@ -56,24 +57,24 @@ export async function Projection() {
   const questions = [
     {
       value: chance(firstP),
-      title: `${name(firstId)}, primera fuerza`,
-      text: `En ${S.n.toLocaleString('es-ES')} simulaciones, la candidatura con más escaños.`,
+      title: `${name(firstId)}, candidatura con más escaños`,
+      text: `Probabilidad en ${S.n.toLocaleString('es-ES')} simulaciones.`,
     },
     right && {
       value: chance(right.p176),
       title: 'PP y Vox suman mayoría absoluta',
-      text: `${right.med} escaños (entre ${right.p05} y ${right.p95}); hacen falta 176.`,
+      text: `${right.med} escaños (entre ${right.p05} y ${right.p95}). Mayoría absoluta: 176.`,
     },
     {
       value: chance(alone?.[1] ?? 0),
-      title: 'Un partido solo, mayoría absoluta',
+      title: 'Mayoría absoluta de un solo partido',
       text: alone
-        ? `${name(alone[0])} llega a 176 sin nadie más.`
-        : 'Ningún partido llega a 176 sin nadie más.',
+        ? `${name(alone[0])} alcanza 176 escaños en solitario.`
+        : 'Ningún partido alcanza 176 escaños en solitario.',
     },
     again && {
       value: chance(again.p176),
-      title: 'Los socios de la investidura de 2023 repiten mayoría',
+      title: 'Mayoría de los socios de investidura de 2023',
       text: `PSOE, Frente Amplio, Podemos, ERC, Junts, Bildu, PNV, BNG y CC: ${again.med} escaños (entre ${again.p05} y ${again.p95}).`,
     },
   ].filter((q) => !!q);
@@ -125,16 +126,15 @@ export async function Projection() {
 
   return (
     <>
-      <ReportIntro title="La proyección">
+      <ReportIntro title={electionPages.proyeccion.title}>
         <p>
-          Los escaños que salen de la media de las encuestas, provincia a provincia, y lo probable
-          que es cada mayoría.
+          Escaños estimados a partir de la media de encuestas, por provincia, y probabilidad de cada
+          mayoría.
         </p>
       </ReportIntro>
       <section className="grid gap-6">
-        <SectionHeading title="Si las elecciones fueran hoy">
-          Los escaños que salen de la media de las encuestas del {date(projection.fecha)}, provincia
-          a provincia y con la ley D&apos;Hondt; y lo probable que es cada cosa, en{' '}
+        <SectionHeading title="Reparto estimado de escaños">
+          Media de encuestas del {date(projection.fecha)}, reparto por el método D&apos;Hondt y{' '}
           {S.n.toLocaleString('es-ES')} simulaciones.
         </SectionHeading>
         <Grid>
@@ -206,11 +206,7 @@ export async function Projection() {
       </section>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Escaños por partido">
-          La raya es lo más probable; la barra, el margen en 9 de cada 10 simulaciones; el rombo, lo
-          que sacó en 2023. La escala se estira en los números pequeños para que se vean también los
-          partidos con pocos escaños.
-        </SectionHeading>
+        <SectionHeading title="Escaños por partido">Escala de raíz cuadrada.</SectionHeading>
         <Grid>
           <Cell>
             <Tips>
@@ -222,7 +218,7 @@ export async function Projection() {
                       key={id}
                       tabIndex={0}
                       data-tip={name(id)}
-                      data-tip-text={`Lo más probable, ${p.med} escaños; entre ${p.p05} y ${p.p95} en 9 de cada 10 simulaciones.${b === null ? ' En 2023 no se presentó.' : ` En 2023 sacó ${b}.`}`}
+                      data-tip-text={`Valor más probable: ${p.med} escaños. Intervalo del 90 %: ${p.p05}–${p.p95}.${b === null ? ' En 2023 no se presentó.' : ` Resultado de 2023: ${b}.`}`}
                       data-tip-color={color(id)}
                       className={cn(
                         row,
@@ -295,15 +291,15 @@ export async function Projection() {
             <ul className="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-sm text-muted-foreground">
               <li className="inline-flex items-center gap-2">
                 <i className="block h-4 w-[3px] rounded-full bg-muted-foreground" />
-                Lo más probable
+                Valor más probable
               </li>
               <li className="inline-flex items-center gap-2">
                 <i className="block h-3 w-8 rounded-full bg-muted-foreground/35" />
-                En 9 de cada 10 simulaciones
+                Intervalo del 90 %
               </li>
               <li className="inline-flex items-center gap-2">
                 <i className="block size-2.5 rotate-45 border-2 border-foreground bg-background" />
-                Lo que sacó en 2023
+                Resultado de 2023
               </li>
             </ul>
           </Cell>
@@ -311,9 +307,8 @@ export async function Projection() {
       </section>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="¿Llegan a 176?">
-          Cuántas simulaciones acaban con cada número de escaños. A la derecha de la línea, mayoría
-          absoluta.
+        <SectionHeading title="Probabilidad de mayoría absoluta">
+          Distribución de escaños de cada bloque en las simulaciones.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -331,8 +326,8 @@ export async function Projection() {
       </section>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Semana a semana">
-          La proyección con la media de cada semana desde 2023 (sin simulaciones: lo más probable).
+        <SectionHeading title="Evolución semanal de la proyección">
+          Valor más probable con la media de cada semana desde 2023, sin simulaciones.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -350,9 +345,9 @@ export async function Projection() {
       </section>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Provincia a provincia">
-          Quién se llevaría más escaños en cada una. Con borde discontinuo, donde el último escaño
-          está a menos de medio punto. Pulsa una provincia.
+        <SectionHeading title="Proyección por provincia">
+          Color: candidatura con más escaños en cada provincia. Borde discontinuo: último escaño a
+          menos de medio punto.
         </SectionHeading>
         <Grid>
           <ProjectionMap
@@ -400,15 +395,15 @@ export async function Projection() {
       </section>
 
       <section className="mt-16 grid gap-6">
-        <SectionHeading title="Cómo se hace" />
+        <SectionHeading title="Metodología" />
         <Grid>
           <Cell>
             <ol className="m-0 grid list-none gap-4 p-0 md:grid-cols-2">
               {[
-                'La media de las encuestas de cada partido, la misma de «Las encuestas».',
-                'Se reparte por provincias con el voto de 2023: si un partido sube un 10 % en España, sube un 10 % en cada provincia (Podemos, con el perfil de Sumar).',
-                "En cada provincia, la ley D'Hondt con la barrera del 3 % y los escaños de 2026.",
-                `Se repite ${S.n.toLocaleString('es-ES')} veces moviendo un poco la media y cada provincia, para ver lo probable que es cada resultado.`,
+                'Media de encuestas de cada partido, la misma de «Encuestas electorales».',
+                'Reparto por provincias según el voto de 2023: si un partido sube un 10 % en España, sube un 10 % en cada provincia. Podemos usa el perfil de Sumar.',
+                "Asignación de escaños en cada circunscripción por el método D'Hondt, con la barrera del 3 % y los escaños de 2026.",
+                `${S.n.toLocaleString('es-ES')} repeticiones con pequeñas variaciones en la media y en cada provincia para estimar la probabilidad de cada resultado.`,
               ].map((text, i) => (
                 <li key={text} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-3">
                   <Label>{String(i + 1).padStart(2, '0')}</Label>
@@ -417,13 +412,13 @@ export async function Projection() {
               ))}
             </ol>
             <p className="m-0 max-w-[65ch] text-sm text-muted-foreground">
-              No es un pronóstico: es lo que saldría si se votara hoy como dicen las encuestas, con
-              su margen de error.{' '}
+              Resultado estimado si se votara hoy según las encuestas, con su margen de error. No es
+              un pronóstico.{' '}
               <Link
                 href={`${links.repo}/blob/main/apps/ingestion/escano/proyeccion.py`}
                 className="underline underline-offset-4"
               >
-                El código de la proyección
+                Código fuente de la proyección
               </Link>
               .
             </p>

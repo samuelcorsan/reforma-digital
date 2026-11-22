@@ -3,7 +3,6 @@ import {
   loadDataset,
   compareReports,
   regressionGate,
-  runExperiment,
   type Report,
 } from '../packages/evals/src/index';
 import { retrievalMetrics, aggregate } from '../packages/evals/src/metrics';

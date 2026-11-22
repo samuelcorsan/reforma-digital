@@ -21,7 +21,7 @@ import {
   type Bloc,
   type Summary,
 } from '../../lib/elecciones/geography';
-import { electionsHref } from '../../lib/elecciones/pages';
+import { electionsHref, electionPages } from '../../lib/elecciones/pages';
 import { href } from '../congreso/common';
 import { ReportIntro } from './report';
 import { Tips } from './tips';
@@ -169,7 +169,7 @@ export async function GeographyVote() {
                 <span className="flex flex-wrap items-baseline justify-between gap-x-3">
                   <b className="font-medium">{b.title}</b>
                   <span className="text-sm text-muted-foreground">
-                    {thousands(r.n)} municipios · {percent(r.pob / total, 0)} de la gente
+                    {thousands(r.n)} municipios · {percent(r.pob / total, 0)} de la población
                   </span>
                 </span>
                 <span className="text-sm text-muted-foreground">
@@ -184,9 +184,6 @@ export async function GeographyVote() {
         })}
       </ul>
       {partyLegend}
-      <p className="m-0 text-sm text-muted-foreground">
-        Pasa el cursor (o toca) un grupo para iluminar sus municipios.
-      </p>
     </div>
   );
   const [cG, , , , cRu] = summaries.ciudad;
@@ -199,7 +196,7 @@ export async function GeographyVote() {
   const spainList = spains((p) => region[p]).map((s) => ({ ...s, r: summarize(D.filter(s.test)) }));
   const spainText = (key: string, r: Summary) =>
     ({
-      laponia: `Los ${thousands(r.n)} municipios con menos de 8 habitantes por km², el umbral con el que la UE define las zonas muy escasamente pobladas, como la Laponia. Ocupan el ${percent(r.km2 / area, 0)} de España y tienen ${people(r.pob)}. Su corazón es la Serranía Celtibérica, entre Soria, Teruel, Cuenca y Guadalajara.`,
+      laponia: `Los ${thousands(r.n)} municipios con menos de 8 habitantes por km², el umbral con el que la UE define las zonas muy escasamente pobladas, como la Laponia. Ocupan el ${percent(r.km2 / area, 0)} de España y tienen ${people(r.pob)}. Su núcleo es la Serranía Celtibérica, entre Soria, Teruel, Cuenca y Guadalajara.`,
       castillas: `Castilla y León y Castilla-La Mancha: el ${percent(r.km2 / area, 0)} del territorio, el ${percent(r.pob / total, 0)} de la población y ${thousands(r.n)} municipios, más de la mitad de los de España.`,
       verde: `Galicia, Asturias, Cantabria y el País Vasco: la cornisa atlántica y cantábrica, con ${people(r.pob)}.`,
       medi: `Las provincias de la costa mediterránea, de Girona a Almería: ${people(r.pob)}, el ${percent(r.pob / total, 0)} de España, en el ${percent(r.km2 / area, 0)} de su territorio.`,
@@ -245,7 +242,7 @@ export async function GeographyVote() {
   const byAge = Object.entries(spans)
     .map(
       ([g, l]) =>
-        `${g === 'PP' ? 'el PP' : g === 'PSOE' ? 'el PSOE' : g} gana ${join(l.map(range))} años`,
+        `${g === 'PP' ? 'el PP' : g === 'PSOE' ? 'el PSOE' : g} es el partido más votado ${join(l.map(range))} años`,
     )
     .join('; ');
   const ageLabel = (e: string) => e.replace('75+', '75 y más');
@@ -279,22 +276,22 @@ export async function GeographyVote() {
   const steps: Step[] = [
     {
       id: 'engana',
-      short: 'El mapa engaña',
-      kicker: 'El mapa engaña',
-      title: 'El territorio no vota. La gente, sí.',
+      short: 'Municipios y población',
+      title: 'Peso de cada municipio según su población',
       body: (
         <>
           <p>
-            Cada punto es un municipio, pintado del color del partido más votado el 23J. Vistos
-            todos iguales, pesan lo mismo los <Num>{thousands(tiny)}</Num> pueblos de menos de cien
-            vecinos que {byPop[0]?.name}, con {millions(byPop[0]?.pob ?? 0)} de habitantes.
+            Cada punto es un municipio, con el color de la candidatura más votada el 23J. Con puntos
+            del mismo tamaño, los <Num>{thousands(tiny)}</Num> municipios de menos de cien
+            habitantes tienen el mismo peso visual que {byPop[0]?.name}, con{' '}
+            {millions(byPop[0]?.pob ?? 0)} de habitantes.
           </p>
           <p>
-            Pero la mitad de la población vive en solo <Num>{thousands(half)}</Num> municipios, el{' '}
-            {percent(half / N, 1)}. Si cada punto pesa lo que pesa su gente, el mapa cambia: unos
-            pocos círculos enormes en un mar de pueblos pequeños, y hay colores que casi
-            desaparecen. {winnerName(smallWinner)} ganó en {thousands(smallList.length)} municipios,
-            pero en ellos vive el {percent(popOf(smallList) / total, 1)} de la gente.
+            La mitad de la población reside en <Num>{thousands(half)}</Num> municipios, el{' '}
+            {percent(half / N, 1)} del total. Con el tamaño proporcional a la población, algunos
+            colores casi desaparecen. {winnerName(smallWinner)} fue la fuerza más votada en{' '}
+            {thousands(smallList.length)} municipios, que reúnen el{' '}
+            {percent(popOf(smallList) / total, 1)} de la población.
           </p>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Tamaño de los puntos">
             <Button variant="outline" size="sm" data-size="mun" className={pressed}>
@@ -309,17 +306,16 @@ export async function GeographyVote() {
     },
     {
       id: 'ciudad',
-      short: 'Ciudad y campo',
-      kicker: 'Eje 1 · Ciudad y campo',
-      title: 'Las ciudades y los pueblos',
+      short: 'Tamaño del municipio',
+      title: 'Voto según el tamaño del municipio',
       body: cG && cRu && (
         <>
           <p>
             Los <Num>{thousands(cG.n)}</Num> municipios de más de cien mil habitantes reúnen al{' '}
             {percent(cG.pob / total, 0)} de la población; los {thousands(cRu.n)} de menos de mil, al{' '}
-            {percent(cRu.pob / total, 1)}. El 23J el PP sacó el {sh(cRu, 'PP')} de los votos en la
-            España rural y el {sh(cG, 'PP')} en las grandes ciudades; Sumar, el {sh(cRu, 'IZQ')} y
-            el {sh(cG, 'IZQ')}.
+            {percent(cRu.pob / total, 1)}. El 23J, el PP obtuvo el {sh(cRu, 'PP')} de los votos en
+            los municipios de menos de mil habitantes y el {sh(cG, 'PP')} en los de cien mil o más;
+            Sumar, el {sh(cRu, 'IZQ')} y el {sh(cG, 'IZQ')}.
           </p>
           {groups('ciudad')}
         </>
@@ -327,14 +323,13 @@ export async function GeographyVote() {
     },
     {
       id: 'vacia',
-      short: 'La España vacía',
-      kicker: 'Eje 2 · La España vacía',
-      title: 'La España que se vacía',
+      short: 'Despoblación',
+      title: 'Voto según la evolución de la población',
       body: vVa && vCm && (
         <>
           <p>
             <Num>{thousands(vVa.n)}</Num> municipios han perdido más de una cuarta parte de sus
-            vecinos desde {M.anio0}. Ocupan el <Num>{percent(vVa.km2 / area, 0)}</Num> del
+            habitantes desde {M.anio0}. Ocupan el <Num>{percent(vVa.km2 / area, 0)}</Num> del
             territorio y hoy vive en ellos el {percent(vVa.pob / total, 1)} de la población. En el
             otro extremo, {thousands(vCm.n)} municipios han crecido más de un 25 %, sobre todo en la
             costa, en las islas y alrededor de las grandes ciudades.
@@ -345,19 +340,18 @@ export async function GeographyVote() {
     },
     {
       id: 'edad',
-      short: 'La edad',
-      kicker: 'Eje 3 · La edad',
-      title: 'Los pueblos que envejecen',
+      short: 'Envejecimiento',
+      title: 'Voto según el envejecimiento',
       body: eJ && eMe && (
         <>
           <p>
-            En <Num>{thousands(eMe.n)}</Num> municipios al menos uno de cada tres vecinos tiene 65
-            años o más, y en {thousands(halfOld)} ya son la mitad. El envejecimiento dibuja casi el
-            mismo mapa que la pérdida de población: donde se van los jóvenes, quedan los mayores.
+            En <Num>{thousands(eMe.n)}</Num> municipios, al menos un tercio de los habitantes tiene
+            65 años o más; en {thousands(halfOld)}, la mitad. La distribución del envejecimiento
+            coincide en gran parte con la de la despoblación.
           </p>
           <p>
-            Donde más mayores hay, el PP sacó el {sh(eMe, 'PP')} de los votos; en los municipios más
-            jóvenes, el {sh(eJ, 'PP')}.
+            En los municipios con más población mayor, el PP obtuvo el {sh(eMe, 'PP')} de los votos;
+            en los más jóvenes, el {sh(eJ, 'PP')}.
           </p>
           {groups('edad')}
         </>
@@ -365,18 +359,17 @@ export async function GeographyVote() {
     },
     {
       id: 'generaciones',
-      short: 'Cada edad',
-      kicker: 'Eje 3 · La edad',
-      title: 'Cómo vota cada edad',
+      short: 'Voto por edad',
+      title: 'Voto por grupo de edad',
       body: (
         <>
           <p>
-            El mapa enseña pueblos que envejecen, pero no cómo vota la gente según su edad. Eso lo
-            dice la encuesta postelectoral del CIS, con <Num>{thousands(nAll)}</Num> votantes
+            El mapa muestra el envejecimiento de los municipios, no el voto por edad. Ese dato
+            procede de la encuesta postelectoral del CIS, con <Num>{thousands(nAll)}</Num> votantes
             entrevistados después del 23J.
           </p>
           <p>
-            Entre los menores de 35, Vox y Sumar se llevaron juntos el{' '}
+            Entre los menores de 35, Vox y Sumar obtuvieron conjuntamente el{' '}
             <Num>{decimal(youngShare, 0)} %</Num> de los votos; entre los mayores de 75, el{' '}
             {decimal(oldShare, 0)} %. Por edades, {byAge}.
           </p>
@@ -390,7 +383,7 @@ export async function GeographyVote() {
                   data-tip-text={ageParties
                     .map(
                       ([k, t]) =>
-                        `${t} ${decimal(A[j]?.[k] ?? 0, 1)} % (dicen ${decimal(age.crudo[j]?.[k] ?? 0, 1)} %)`,
+                        `${t} ${decimal(A[j]?.[k] ?? 0, 1)} % (declarado ${decimal(age.crudo[j]?.[k] ?? 0, 1)} %)`,
                     )
                     .join(' · ')}
                   className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-3"
@@ -427,8 +420,8 @@ export async function GeographyVote() {
             ))}
           </p>
           <div className="grid gap-1.5 text-sm">
-            <p className="m-0 font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">
-              Dicen que no votaron
+            <p className="m-0 text-xs font-medium text-muted-foreground">
+              Declaran no haber votado
             </p>
             {age.edades.map((e, j) => (
               <p
@@ -451,11 +444,11 @@ export async function GeographyVote() {
             ))}
           </div>
           <p className="text-sm text-muted-foreground">
-            El recuerdo de voto del CIS se queda corto con el PP y Vox y largo con Sumar: cada
-            partido se ha escalado para que el total cuadre con el resultado del 23J, sin tocar la
-            diferencia entre edades. Al pasar por cada fila, lo que dijeron sin ajustar.{' '}
+            El recuerdo de voto del CIS infraestima al PP y a Vox y sobreestima a Sumar. Cada
+            partido se ha escalado para que el total coincida con el resultado del 23J, sin alterar
+            la diferencia entre edades. Al pasar por cada fila se muestran los datos sin ajustar.{' '}
             <Link href={age.url} className="underline underline-offset-4">
-              La tabla del CIS
+              Tabla del CIS
             </Link>
             .
           </p>
@@ -464,18 +457,19 @@ export async function GeographyVote() {
     },
     {
       id: 'dinero',
-      short: 'El dinero',
-      kicker: 'Eje 4 · El dinero',
-      title: 'La renta',
+      short: 'Renta',
+      title: 'Voto según la renta',
       body: dA && dB && (
         <>
           <p>
-            Ordenados por renta neta por persona (Atlas de renta del INE, {geography.fuentes.renta}
-            ), cada grupo reúne a una cuarta parte de la población. El cuarto con más renta vive en{' '}
-            <Num>{thousands(dA.n)}</Num> municipios; el de menos, en {thousands(dB.n)}.
+            Con los municipios ordenados por renta neta por persona (Atlas de renta del INE,{' '}
+            {geography.fuentes.renta}
+            ), cada grupo reúne una cuarta parte de la población. El cuartil de renta más alta
+            reside en <Num>{thousands(dA.n)}</Num> municipios; el de renta más baja, en{' '}
+            {thousands(dB.n)}.
           </p>
           <p>
-            En los municipios de renta alta el PP sacó el {sh(dA, 'PP')} y el PSOE el{' '}
+            En los municipios de renta alta, el PP obtuvo el {sh(dA, 'PP')} y el PSOE el{' '}
             {sh(dA, 'PSOE')}; en los de renta baja, el {sh(dB, 'PP')} y el {sh(dB, 'PSOE')}.
           </p>
           {groups('dinero')}
@@ -484,16 +478,15 @@ export async function GeographyVote() {
     },
     {
       id: 'espanas',
-      short: 'Las Españas',
-      kicker: 'Eje 5 · Las Españas',
-      title: 'Las Españas que no salen en el mapa autonómico',
+      short: 'Territorios',
+      title: 'Territorios que no coinciden con una comunidad autónoma',
       body: (
         <>
           <p>
-            Hay regiones que comparten paisaje, economía y forma de vivir sin coincidir con una
-            comunidad. Elige una para ver dónde está, cuánta gente vive en ella y cómo votó.
+            Regiones con características geográficas y económicas comunes que no coinciden con una
+            comunidad autónoma.
           </p>
-          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Elige una España">
+          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Territorio">
             {spainList.map((s) => (
               <Button
                 key={s.key}
@@ -552,9 +545,8 @@ export async function GeographyVote() {
     },
     {
       id: 'giro',
-      short: 'El giro',
-      kicker: 'Eje 6 · El giro',
-      title: 'Hacia dónde se movió el mapa',
+      short: 'Cambio entre elecciones',
+      title: 'Variación del voto entre 2019 y 2023',
       body: (
         <>
           <p>
@@ -564,55 +556,51 @@ export async function GeographyVote() {
             <Num>{percent(B23.left, 1)}</Num>.
           </p>
           <p>
-            El <Num>{percent(toRight / (withSwing.length || 1), 0)}</Num> de los municipios se movió
-            hacia la derecha. Cada flecha apunta a la derecha si ganó terreno el bloque de PP, Vox y
-            Cs, y a la izquierda si lo ganó el de PSOE y Sumar; cuanto más larga, mayor el giro, y
-            cuanto más gruesa, más votantes. Los partidos nacionalistas y regionalistas no cuentan
-            en ninguno de los dos bloques.
+            En el <Num>{percent(toRight / (withSwing.length || 1), 0)}</Num> de los municipios
+            aumentó el voto al bloque de PP, Vox y Cs. La longitud de cada flecha indica la magnitud
+            del cambio y el grosor, el número de votantes. Los partidos nacionalistas y
+            regionalistas no cuentan en ninguno de los dos bloques.
           </p>
         </>
       ),
     },
     {
       id: 'peso',
-      short: 'El peso del voto',
-      kicker: 'Eje 7 · El peso del voto',
-      title: 'Un voto, distinto peso',
+      short: 'Peso del voto',
+      title: 'Habitantes por escaño',
       body: light && heavy && (
         <>
           <p>
-            Los escaños no se reparten por municipios ni por territorio, sino por provincias. Cada
-            una tiene dos fijos y el resto va por población.
+            Los escaños se asignan por provincias: dos fijos en cada una y el resto según la
+            población.
           </p>
           <p>
-            Por eso en {provinceName(light.c)} un diputado representa a{' '}
-            <Num>{thousands(light.h)}</Num> habitantes, y en {provinceName(heavy.c)}, a{' '}
-            <Num>{thousands(heavy.h)}</Num>: un voto de {provinceName(light.c)} pesa{' '}
-            {decimal(heavy.h / light.h, 1)} veces más.
+            En {provinceName(light.c)}, cada diputado corresponde a <Num>{thousands(light.h)}</Num>{' '}
+            habitantes; en {provinceName(heavy.c)}, a <Num>{thousands(heavy.h)}</Num>. Un voto de{' '}
+            {provinceName(light.c)} tiene {decimal(heavy.h / light.h, 1)} veces más peso.
           </p>
         </>
       ),
     },
     {
       id: 'fichas',
-      short: 'Las fichas',
-      kicker: 'Y ahora, tu provincia',
-      title: 'Cada provincia, cada municipio',
+      short: 'Fichas',
+      title: 'Fichas por provincia',
       body: (
         <>
           <p>
-            Cada provincia tiene su historia electoral desde 1977, y cada comunidad y provincia, su
-            ficha geográfica.
+            Resultados de cada provincia desde 1977 y ficha geográfica de cada comunidad y
+            provincia.
           </p>
           <p className="grid gap-1">
             <Link
               href={`${electionsHref('historico')}#provincias`}
               className="underline underline-offset-4"
             >
-              Las 52 circunscripciones →
+              Resultados por circunscripción →
             </Link>
             <Link href={href('geografia')} className="underline underline-offset-4">
-              La geografía de España, sin votos →
+              Datos geográficos por provincia →
             </Link>
           </p>
         </>
@@ -622,11 +610,8 @@ export async function GeographyVote() {
 
   return (
     <>
-      <ReportIntro title="La geografía del voto">
-        <p>
-          Ciudad y campo, la España vacía, la edad, el dinero, las Españas, el giro y el peso del
-          voto: cómo vota cada España, municipio a municipio.
-        </p>
+      <ReportIntro title={electionPages.voto.title}>
+        <p>Comportamiento electoral por municipio.</p>
       </ReportIntro>
       <VoteStory
         count={N}

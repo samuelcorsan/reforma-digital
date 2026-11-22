@@ -13,7 +13,6 @@ const secciones = [
   ['La iniciativa', '/#iniciativa'],
   ['El Congreso', congressBase],
   ['Elecciones', electionsBase],
-  ['App de escritorio', '/escritorio'],
   ['Equipo', '/equipo'],
 ] as const;
 

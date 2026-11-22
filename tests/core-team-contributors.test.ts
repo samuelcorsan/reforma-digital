@@ -28,7 +28,7 @@ it('distingue una lista vacía de una respuesta fallida o inválida', async () =
       .mockResolvedValueOnce(
         Response.json([{ id: 'https://otro-host.example', login: 'perfil', type: 'User' }]),
       )
-      .mockRejectedValueOnce(new Error('Sin conexión')),
+      .mockRejectedValueOnce(new TypeError('fetch failed')),
   );
   expect(await getContributors()).toEqual([]);
   expect(await getContributors()).toBeNull();

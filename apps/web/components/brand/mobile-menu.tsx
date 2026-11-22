@@ -7,7 +7,13 @@ import { cn } from '@reforma-digital/design/lib/utils';
 import { Icon } from './icon';
 import { Logo } from './logo';
 
-type MenuLink = { href: string; text: string; current: boolean };
+type MenuLink = {
+  href: string;
+  text: string;
+  current: boolean;
+  /** Una sección con subpáginas (Desarrolladores): su nombre y debajo los enlaces. */
+  children?: { href: string; text: string }[];
+};
 
 export function MobileMenu({ links }: { links: readonly MenuLink[] }) {
   const [open, setOpen] = useState(false);
@@ -51,18 +57,35 @@ export function MobileMenu({ links }: { links: readonly MenuLink[] }) {
             aria-label="Menú"
             className="mx-[var(--page-gutter)] mt-8 grid border-t border-foreground/15"
           >
-            {links.map(({ href, text, current }) => (
-              <Link
-                key={href}
-                href={href}
-                aria-current={current ? 'page' : undefined}
-                onClick={close}
-                className="flex min-h-[76px] items-center justify-between border-b border-foreground/15 font-heading text-4xl leading-tight no-underline"
-              >
-                {text}
-                <Icon name="derecha" size={18} />
-              </Link>
-            ))}
+            {links.map(({ href, text, current, children }) =>
+              children ? (
+                <div key={href} className="border-b border-foreground/15 pt-5 pb-3">
+                  <p className="font-heading text-4xl leading-tight">{text}</p>
+                  {children.map((child) => (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      onClick={close}
+                      className="flex min-h-12 items-center justify-between pl-4 text-2xl no-underline"
+                    >
+                      {child.text}
+                      <Icon name="derecha" size={16} />
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-current={current ? 'page' : undefined}
+                  onClick={close}
+                  className="flex min-h-[76px] items-center justify-between border-b border-foreground/15 font-heading text-4xl leading-tight no-underline"
+                >
+                  {text}
+                  <Icon name="derecha" size={18} />
+                </Link>
+              ),
+            )}
           </nav>
           <Link
             href="/#participar"

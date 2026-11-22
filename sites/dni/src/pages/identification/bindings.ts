@@ -35,7 +35,7 @@ export function identificationBindings(document: Document): Record<string, Field
  * Help text the official page shows next to the input (e.g. «(Ej. AAA000000, solo para DNI
  * Electrónico)»), read from the label that wraps it, so the connected field repeats it verbatim.
  */
-export function officialHelp(element: HTMLInputElement): string {
+function officialHelp(element: HTMLInputElement): string {
   const note = element.closest('label')?.querySelector('.notas');
   return (note?.textContent ?? '')
     .replace(/\s+/g, ' ')

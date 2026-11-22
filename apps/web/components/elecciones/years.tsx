@@ -20,7 +20,7 @@ export function Years({
   const active = playing && !!next;
 
   useEffect(() => {
-    if (!active || !next) return;
+    if (!active) return;
     const timer = setTimeout(() => router.push(next.href, { scroll: false }), 2200);
     return () => clearTimeout(timer);
   }, [active, next, router]);

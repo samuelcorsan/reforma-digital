@@ -88,15 +88,14 @@ export function Relevos({
   return (
     <>
       <Cell span={7}>
-        <Heading title="Los escaños que cambiaron de manos">
-          Encendidos, los que tuvieron relevo. Pasa por uno para ver quién lo ocupó; púlsalo para ir
-          a la ficha de quien lo ocupa hoy.
+        <Heading title="Escaños que cambian de titular">
+          Resaltados, los escaños con al menos un relevo.
         </Heading>
         <Tips className="mx-auto w-full max-w-xl">
           <svg
             viewBox={box}
             role="img"
-            aria-label={`Hemiciclo: ${changed} escaños cambiaron de manos durante la legislatura`}
+            aria-label={`Hemiciclo: ${changed} escaños cambiaron de titular durante la legislatura`}
             className="block h-auto w-full"
           >
             {seats.map((s) => {
@@ -123,20 +122,20 @@ export function Relevos({
           </svg>
         </Tips>
         <p className="m-0 mt-auto text-sm text-muted-foreground">
-          {changed} escaños cambiaron de manos; algunos, más de una vez.
+          {changed} escaños cambiaron de titular, algunos más de una vez.
         </p>
       </Cell>
       <Cell span={5}>
-        <Heading title="Cuándo se fueron">
-          Salidas por mes. Pulsa uno para verlas en el hemiciclo y en la lista.
+        <Heading title="Bajas por mes">
+          Pulsa un mes para ver sus bajas en el hemiciclo y en la lista.
         </Heading>
         <div className="grid gap-1.5">
           <Tips>
-            <div role="group" aria-label="Salidas por mes" className="flex h-20 items-end gap-px">
+            <div role="group" aria-label="Bajas por mes" className="flex h-20 items-end gap-px">
               {span.map((m) => {
                 const gone = departures.filter((d) => d.date.startsWith(m));
                 const n = gone.length;
-                const label = `${months[Number(m.slice(5)) - 1]} ${m.slice(0, 4)}: ${n} ${n === 1 ? 'salida' : 'salidas'}`;
+                const label = `${months[Number(m.slice(5)) - 1]} ${m.slice(0, 4)}: ${n} ${n === 1 ? 'baja' : 'bajas'}`;
                 const names = gone.slice(0, 3).map((d) => d.out.name);
                 return (
                   <button
@@ -149,7 +148,7 @@ export function Relevos({
                     className="group flex h-full flex-1 items-end disabled:cursor-default"
                     {...(n && {
                       'data-tip': monthName.format(new Date(`${m}-01T00:00:00Z`)),
-                      'data-tip-text': `${n} ${n === 1 ? 'salida' : 'salidas'}: ${names.join(', ')}${n > names.length ? ` y ${n - names.length} más` : ''}`,
+                      'data-tip-text': `${n} ${n === 1 ? 'baja' : 'bajas'}: ${names.join(', ')}${n > names.length ? ` y ${n - names.length} más` : ''}`,
                       'data-tip-color': 'var(--brand)',
                     })}
                   >

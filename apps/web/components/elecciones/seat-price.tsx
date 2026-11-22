@@ -3,7 +3,7 @@ import { getHistory, getIndex, read } from '../../lib/congreso/data';
 import { historicalProvinceSchema, mapSchema } from '../../lib/congreso/schema';
 import { decimal, electionLabel, ramp, thousands } from '../../lib/elecciones/format';
 import { realHemicycle } from '../../lib/elecciones/hemicycle';
-import { electionsHref } from '../../lib/elecciones/pages';
+import { electionsHref, electionPages } from '../../lib/elecciones/pages';
 import { CouldBe, type LastSeat } from './could-be';
 import { Cell, Grid, Heading, ReportIntro, SectionHeading, Stat } from './report';
 import { Tips } from './tips';
@@ -92,11 +92,8 @@ export async function SeatPrice({ election }: { election?: string }) {
 
   return (
     <>
-      <ReportIntro title="El precio de un escaño">
-        <p>
-          Cuántos votos cuesta un diputado en cada provincia, a quién favorece la ley, el último
-          escaño de cada una y un simulador D&apos;Hondt con los votos reales.
-        </p>
+      <ReportIntro title={electionPages.escano.title}>
+        <p>Votos necesarios para obtener un diputado en cada provincia.</p>
       </ReportIntro>
       <Years
         current={e.id}
@@ -152,7 +149,7 @@ export async function SeatPrice({ election }: { election?: string }) {
                 <Cell span={3}>
                   <Stat
                     value={thousands(cheapest.valid / cheapest.seats)}
-                    caption={`votos por escaño en ${cheapest.name}, la más barata`}
+                    caption={`votos por escaño en ${cheapest.name}, el valor más bajo`}
                   />
                 </Cell>
               )}
@@ -160,20 +157,20 @@ export async function SeatPrice({ election }: { election?: string }) {
                 <Cell span={3}>
                   <Stat
                     value={thousands(dearest.valid / dearest.seats)}
-                    caption={`votos por escaño en ${dearest.name}, la más cara`}
+                    caption={`votos por escaño en ${dearest.name}, el valor más alto`}
                   />
                 </Cell>
               )}
               <Cell span={3}>
                 <Stat
                   value={`${decimal(lost / 1e6, 2)} M`}
-                  caption="votos fueron a candidaturas que no sacaron escaño en su provincia"
+                  caption="votos a candidaturas sin escaño en su circunscripción"
                 />
               </Cell>
               <Cell span={3}>
                 <Stat
                   value={lastSeats.filter((s) => s.missing < 1000).length}
-                  caption="últimos escaños decididos por menos de 1.000 votos"
+                  caption="últimos escaños asignados por menos de 1.000 votos de diferencia"
                 />
               </Cell>
             </>
@@ -269,10 +266,9 @@ function Favours({
 
   return (
     <Cell span={6}>
-      <Heading title="Votos y escaños: a quién favorece la ley">
-        Cada bola es un partido: sus votos en toda España y los escaños que sacó. La diagonal marca
-        lo que le tocaría con un reparto proporcional: por encima, la ley le da más escaños que su
-        parte de los votos; por debajo, menos.
+      <Heading title="Desviación respecto al reparto proporcional">
+        Por encima de la diagonal, la candidatura obtiene más escaños que su proporción de votos;
+        por debajo, menos.
       </Heading>
       {/* En pantallas estrechas se desplaza: así los rótulos no bajan de 12 px. */}
       <div className="overflow-x-auto">
@@ -352,16 +348,16 @@ function Favours({
       </div>
       <div className="grid gap-2 border-t border-border pt-4">
         <p className="m-0 text-sm text-muted-foreground">
-          Frente a un reparto proporcional, la ley mueve{' '}
-          <b className="font-medium text-foreground">{moved}</b> escaños. Cada cuadrado es uno.
+          Respecto a un reparto proporcional, el sistema desplaza{' '}
+          <b className="font-medium text-foreground">{moved}</b> escaños.
         </p>
         <p
-          className="m-0 grid grid-cols-[5.5rem_minmax(0,1fr)_minmax(0,1fr)_2.5rem] gap-2 font-mono text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase"
+          className="m-0 grid grid-cols-[5.5rem_minmax(0,1fr)_minmax(0,1fr)_2.5rem] gap-2 text-xs font-medium text-muted-foreground"
           aria-hidden="true"
         >
           <span />
-          <span className="text-right">Le quita</span>
-          <span>Le da</span>
+          <span className="text-right">Pierde</span>
+          <span>Gana</span>
         </p>
         <Tips>
           <ul className="m-0 grid list-none gap-1 p-0 text-sm">
@@ -370,7 +366,7 @@ function Favours({
                 key={short}
                 tabIndex={0}
                 data-tip={long}
-                data-tip-text={`Sacó ${seats} ${seats === 1 ? 'escaño' : 'escaños'}; con un reparto proporcional, ${decimal(proportional(votes))}. ${s > 0 ? `La ley le da ${s} de más` : `La ley le quita ${-s}`}.`}
+                data-tip-text={`Obtuvo ${seats} ${seats === 1 ? 'escaño' : 'escaños'}; con un reparto proporcional, ${decimal(proportional(votes))}. Diferencia: ${s > 0 ? `+${s}` : `−${-s}`}.`}
                 data-tip-color={familyColor(family)}
                 className="-mx-1.5 grid grid-cols-[5.5rem_minmax(0,1fr)_minmax(0,1fr)_2.5rem] items-center gap-2 rounded-md px-1.5 py-0.5 transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
               >
@@ -418,16 +414,13 @@ function Favours({
 function SeatPriceExample() {
   return (
     <>
-      <ReportIntro title="El precio de un escaño">
-        <p>
-          Cuántos votos cuesta un diputado en cada provincia, a quién favorece la ley, el último
-          escaño de cada una y un simulador D&apos;Hondt con los votos reales.
-        </p>
+      <ReportIntro title={electionPages.escano.title}>
+        <p>Votos necesarios para obtener un diputado en cada provincia.</p>
       </ReportIntro>
       <section className="grid gap-6">
-        <SectionHeading title="Cómo se reparte un escaño">
-          Los resultados de cada provincia no están disponibles ahora mismo. Mientras tanto, la
-          regla con una provincia de ejemplo: cambia los votos y mira cómo se reparten sus escaños.
+        <SectionHeading title="Asignación de escaños por el sistema D'Hondt">
+          Resultados por provincia no disponibles. Se muestra el sistema con una provincia de
+          ejemplo.
         </SectionHeading>
         <Grid>
           <ExampleSimulator

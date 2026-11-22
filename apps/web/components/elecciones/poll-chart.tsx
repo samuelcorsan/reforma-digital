@@ -21,7 +21,7 @@ type Range = 'all' | 'year' | 'quarter';
 const ranges: [Range, string, number][] = [
   ['all', 'Desde 2023', Infinity],
   ['year', 'Último año', 365],
-  ['quarter', '90 días', 90],
+  ['quarter', 'Últimos 90 días', 90],
 ];
 const isRange = (v: unknown): v is Range => ranges.some(([r]) => r === v);
 const month = new Intl.DateTimeFormat('es-ES', {
@@ -248,7 +248,7 @@ export function PollChart({
     <div className="grid gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Tabs value={range} onValueChange={(v) => isRange(v) && setRange(v)}>
-          <TabsList aria-label="Desde cuándo">
+          <TabsList aria-label="Periodo">
             {ranges.map(([r, text]) => (
               <TabsTrigger key={r} value={r} className="px-3">
                 {text}

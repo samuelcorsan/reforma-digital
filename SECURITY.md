@@ -26,11 +26,17 @@ Las pruebas automatizadas usan datos ficticios. El lint prohíbe en el código q
 
 La compatibilidad con validaciones personalizadas, restricciones del navegador, certificados, firmas, iframes y estados autenticados requiere pruebas del portal concreto. Los cambios programáticos no tienen idéntico comportamiento a la escritura física para todas las restricciones nativas o frameworks. Mantén el control original cuando no puedas demostrar equivalencia.
 
+## Firewall de la web
+
+La web (`apps/web`) está detrás del firewall de Vercel. Sus reglas viven en el proyecto de Vercel, no en este repositorio. No se copian aquí porque una copia deja de coincidir con la configuración real en cuanto alguien la cambia. Los umbrales y las condiciones exactas tampoco se publican.
+
+- **Límite por IP.** Lo tienen los endpoints públicos que cuestan dinero o cargan una fuente externa: la API y las búsquedas del Congreso, los servidores MCP (una sola regla para `/mcp/*`, así que un servidor nuevo queda cubierto), el buscador de la biblioteca MCP, que llama a un modelo de pago, y `/api/eventos`. El límite no está en el código, así que un endpoint así no muestra nada si no tiene regla.
+- **Sin desafío de bots.** La web es pública y la leen también agentes, clientes de la API y buscadores (las guías `.md` de `/developers`, la API del Congreso, `robots.txt`, `sitemap.xml`), así que Bot Protection está apagado y los bots de IA se registran, no se bloquean. Si vuelve un endpoint solo para navegadores, se protege con su propia regla y no con un desafío en todo el dominio. Una regla de bypass desactiva también las reglas que van detrás de ella, así que los límites van antes.
+- **Cambios.** Un endpoint público nuevo que llame a un servicio de pago o a una fuente externa necesita su regla antes de mergear. Las reglas se consultan y se cambian con la CLI de Vercel, con acceso al proyecto: `vercel firewall rules list`, `rules add` o `rules update`, `vercel firewall diff` y `vercel firewall publish`. Publicar exige `--confirm-name` y que lo apruebe una persona; un agente prepara el cambio, pero no lo publica por su cuenta.
+
 No incluyas sesiones, documentos personales, tokens reales o datos identificativos en issues, fixtures, logs ni capturas. Para un fallo de seguridad, utiliza el canal privado de reporte del repositorio cuando esté habilitado; evita publicar detalles que expongan datos de usuarios.
 
-La app de escritorio (`apps/desktop`) tiene su propio protocolo: qué datos guarda, qué llega al proveedor de IA, las capas que lo impiden, lo que queda fuera y qué comprobar antes de cambiarlo. Consulta [apps/desktop/security-protocol.md](apps/desktop/security-protocol.md).
-
-El registro de actividades de tratamiento y la evaluación de impacto del RGPD están en [docs/proteccion-de-datos.md](docs/proteccion-de-datos.md).
+El registro de actividades de tratamiento del RGPD está en [docs/proteccion-de-datos.md](docs/proteccion-de-datos.md).
 
 Referencias técnicas consultadas:
 

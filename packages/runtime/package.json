@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "@reforma-digital/design": "workspace:*",
-    "@reforma-digital/react": "workspace:*",
     "@reforma-digital/registry": "workspace:*"
   },
   "peerDependencies": {

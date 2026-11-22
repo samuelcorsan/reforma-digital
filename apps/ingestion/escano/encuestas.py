@@ -21,7 +21,7 @@ import math
 import re
 import shutil
 import sys
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone, UTC
 from pathlib import Path
 
 import requests
@@ -40,8 +40,8 @@ PARTIDOS = {
     "PP": ("PP", "PP", "#2C7BC4"),
     "PSOE": ("PSOE", "PSOE", "#D8342B"),
     "Vox": ("VOX", "Vox", "#5BA83A"),
-    "FA": ("SUMAR", "Frente Amplio", "#D9701A"),
-    "Sumar": ("SUMAR", "Frente Amplio", "#D9701A"),
+    "FA": ("SUMAR", "Frente Amplio", "#F0522D"),
+    "Sumar": ("SUMAR", "Frente Amplio", "#F0522D"),
     "Podemos": ("PODEMOS", "Podemos", "#7B4BA8"),
     "Se Acabó La Fiesta": ("SALF", "SALF", "#8A6D4E"),
     "ERC": ("ERC", "ERC", "#E0A410"),
@@ -261,7 +261,7 @@ def mercados() -> list[dict]:
                 h = json.loads(_bajar(HISTORIA.format(o["token"]))).get("history", [])
                 dias = {}
                 for x in h:
-                    dias[datetime.fromtimestamp(x["t"], timezone.utc).date().isoformat()] = round(float(x["p"]), 4)
+                    dias[datetime.fromtimestamp(x["t"], UTC).date().isoformat()] = round(float(x["p"]), 4)
                 o["hist"] = sorted(dias.items())
             except Exception:
                 o["hist"] = []

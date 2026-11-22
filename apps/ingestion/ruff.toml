@@ -1,0 +1,6 @@
+target-version = "py312"
+
+[lint]
+# Bugs and AI slop (swallowed exceptions, dead code, redundant constructs), not style.
+select = ["F", "E4", "E7", "E9", "B", "S110", "S112", "SIM", "UP", "PIE", "RUF100"]
+ignore = ["E702", "E731", "E741", "B905", "SIM905"]

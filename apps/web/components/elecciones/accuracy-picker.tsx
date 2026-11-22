@@ -63,15 +63,13 @@ export function AccuracyPicker({ elections }: { elections: AccuracyElection[] })
                 'aria-pressed:bg-foreground aria-pressed:text-background aria-pressed:ring-foreground',
               )}
             >
-              <span className="font-mono text-xs font-medium tracking-[0.08em] uppercase opacity-70">
-                {x.name}
-              </span>
+              <span className="text-xs font-medium opacity-70">{x.name}</span>
               <b className="font-heading text-3xl leading-none font-normal tabular-nums">
                 {decimal(x.error)} pt
               </b>
               {w && (
                 <span className="text-sm opacity-80">
-                  el mayor, {w.name} {signed(w.average - w.result)}
+                  Mayor error: {w.name} {signed(w.average - w.result)}
                 </span>
               )}
             </button>
@@ -86,8 +84,8 @@ export function AccuracyPicker({ elections }: { elections: AccuracyElection[] })
               : e.name
           }
         >
-          Cada fila, un partido: el círculo hueco es la media de las encuestas; el lleno, lo que
-          votó la gente; los puntos claros, la última encuesta de cada empresa.
+          Círculo hueco: media de las encuestas. Círculo lleno: resultado. Puntos claros: última
+          encuesta de cada empresa.
         </SectionHeading>
         <Grid>
           <Cell>
@@ -129,7 +127,7 @@ export function AccuracyPicker({ elections }: { elections: AccuracyElection[] })
                       <g
                         key={p.id}
                         data-tip={p.name}
-                        data-tip-text={`Media de las encuestas ${decimal(p.average)} %; votó ${decimal(p.result)} %: ${diff > 0 ? 'sobrestimado' : 'infravalorado'} en ${decimal(Math.abs(diff))} puntos.`}
+                        data-tip-text={`Media de las encuestas: ${decimal(p.average)} %. Resultado: ${decimal(p.result)} %. ${diff > 0 ? 'Sobrestimado' : 'Infravalorado'} en ${decimal(Math.abs(diff))} puntos.`}
                         data-tip-color={p.color}
                       >
                         <rect x={0} y={cy - row / 2} width={W} height={row} fill="transparent" />

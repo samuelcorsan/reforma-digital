@@ -63,7 +63,7 @@ export function PollTable({
   return (
     <>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <SectionHeading title="Todas las encuestas" />
+        <SectionHeading title="Listado de encuestas" />
         <Select
           value={firm}
           items={items}
@@ -89,7 +89,7 @@ export function PollTable({
           <TableHeader>
             <TableRow>
               <TableHead>Encuestadora</TableHead>
-              <TableHead>Campo</TableHead>
+              <TableHead>Trabajo de campo</TableHead>
               <TableHead className="text-right">Muestra</TableHead>
               {parties.map((p) => (
                 <TableHead key={p.id} className="text-right">
@@ -110,7 +110,7 @@ export function PollTable({
                     <span className="grid gap-0.5">
                       <span className="inline-flex flex-wrap items-center gap-2 font-medium">
                         {p.firm}
-                        {p.outside && <Badge variant="outline">fuera de la media</Badge>}
+                        {p.outside && <Badge variant="outline">Excluida de la media</Badge>}
                       </span>
                       <span className="text-muted-foreground">{p.outlet}</span>
                     </span>

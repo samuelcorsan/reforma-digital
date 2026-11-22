@@ -19,12 +19,12 @@ import {
   type Axis,
   type Municipality,
 } from '../../lib/elecciones/geography';
-import { Label, Legend } from './report';
+import { Legend } from './report';
 import { Icon } from '../brand/icon';
 import { load } from './load';
 import { useWidth } from './use-width';
 
-export type Step = { id: string; short: string; kicker: string; title: string; body: ReactNode };
+export type Step = { id: string; short: string; title: string; body: ReactNode };
 type GeoMap = z.infer<typeof mapSchema>;
 type Loaded = {
   dots: Municipality[];
@@ -214,11 +214,13 @@ export function VoteStory({
         ]}
       />
     ) : (
-      <Legend small items={[...winners, { label: '· más votado el 23J', color: 'transparent' }]} />
+      <Legend
+        small
+        items={[...winners, { label: '· candidatura más votada el 23J', color: 'transparent' }]}
+      />
     );
   const card = (s: Step) => (
     <>
-      <Label>{s.kicker}</Label>
       <h3 className="m-0 font-heading text-[28px] leading-tight font-normal">{s.title}</h3>
       <div className="grid gap-4 [&_p]:m-0">{s.body}</div>
     </>
@@ -238,12 +240,7 @@ export function VoteStory({
         setBucket(el.closest('[data-bucket]')?.getAttribute('data-bucket') ?? null);
       }}
     >
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <p className="m-0 max-w-[70ch] text-muted-foreground">
-          Un mapa de los {thousands(count)} municipios que se queda quieto mientras bajas. Pasa el
-          cursor por los gráficos para iluminar cada grupo, o pulsa Presentar para recorrerlo en
-          directo.
-        </p>
+      <div className="mb-6">
         <Button variant="sunset" onClick={() => setPresenting(true)}>
           Presentar
         </Button>
@@ -264,7 +261,7 @@ export function VoteStory({
           ))}
         </div>
         <div className="sticky top-20 z-10 order-1 grid h-fit min-w-0 gap-3 bg-background py-2 lg:top-24 lg:order-2">
-          <nav className="flex flex-wrap gap-1" aria-label="Ejes de la historia">
+          <nav className="flex flex-wrap gap-1" aria-label="Apartados">
             {steps.map((s, i) => (
               <Button
                 key={s.id}
@@ -285,7 +282,7 @@ export function VoteStory({
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Presentación de la geografía del voto"
+          aria-label="Presentación del voto según el territorio"
           className="fixed inset-0 z-50 grid gap-6 overflow-y-auto bg-background p-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:p-10"
         >
           <div className="grid content-start gap-4" aria-live="polite">
@@ -514,7 +511,7 @@ function DotMap({
           </p>
           {step === 'giro' && d.swing !== null && (
             <p className="m-0 text-muted-foreground">
-              Giro 2019→2023:{' '}
+              Variación 2019→2023:{' '}
               {Math.abs(d.swing).toLocaleString('es-ES', { maximumFractionDigits: 1 })} puntos hacia{' '}
               {d.swing > 0 ? 'PP, Vox y Cs' : 'PSOE y Sumar'}
             </p>

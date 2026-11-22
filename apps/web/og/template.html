@@ -184,6 +184,35 @@
         display: block;
       }
 
+      /* Escena de la biblioteca MCP: solo el titular y una línea, centrados sobre un rojo que se
+         vuelve amarillo abajo. Sin marca ni sol. */
+      [data-escena='mcp'] main {
+        background: linear-gradient(
+          to bottom,
+          var(--rojo) 0%,
+          var(--rojo) 38%,
+          var(--naranja) 76%,
+          var(--amarillo) 100%
+        );
+      }
+      [data-escena='mcp'] :is(header, .etiqueta, .sol, .resplandor, .halos, footer) {
+        display: none;
+      }
+      [data-escena='mcp'] .copia {
+        inset: 0 0 48px;
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      [data-escena='mcp'] h1 {
+        font-size: 112px;
+      }
+      [data-escena='mcp'] .texto {
+        font-size: 32px;
+      }
       /* Escena de portada: como el hero, centrada sobre el atardecer, con los proyectos debajo. */
       [data-escena='portada'] main {
         background:

@@ -3,16 +3,14 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuLinkItem,
   ContextMenuTrigger,
 } from '@reforma-digital/design/ui/context-menu';
 import Link from 'next/link';
 import { useState, type MouseEvent, type ReactNode } from 'react';
-import { Icon } from './icon';
 import { LogoMark, logoSvg } from './logo';
 
 // Plegado, el logotipo es un icono: un clic vuelve arriba en vez de cambiar de página. Con el
-// botón derecho (o pulsación larga) se copia la R en SVG o se va a la app de escritorio.
+// botón derecho (o pulsación larga) se copia la R en SVG.
 export function LogoLink({ className, children }: { className: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [copia, setCopia] = useState<'copiado' | 'error' | null>(null);
@@ -57,7 +55,7 @@ export function LogoLink({ className, children }: { className: string; children:
         {children}
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem closeOnClick={false} onClick={copiar}>
+        <ContextMenuItem closeOnClick={false} onClick={() => void copiar()}>
           <span className="flex w-4 justify-center">
             <LogoMark size={14} />
           </span>
@@ -67,10 +65,6 @@ export function LogoLink({ className, children }: { className: string; children:
               ? 'No se ha podido copiar'
               : 'Copiar el logo'}
         </ContextMenuItem>
-        <ContextMenuLinkItem render={<Link href="/escritorio" />}>
-          <Icon name="derecha" size={16} />
-          Visitar la app
-        </ContextMenuLinkItem>
       </ContextMenuContent>
     </ContextMenu>
   );
