@@ -5,6 +5,7 @@ import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
+import { POST as tib } from '../../app/mcp/tib/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -14,6 +15,7 @@ import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
+import tibEscena from './escenas/tib.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -129,6 +131,20 @@ const servidores: Servidor[] = [
       '¿Hay algún autobús directo de Barcelona a Valencia que llegue antes de las dos?',
     ],
   },
+  {
+    id: 'tib',
+    name: 'TIB',
+    category: 'transporte',
+    logo: { src: '/organismos/tib.png' },
+    escena: tibEscena,
+    summary:
+      'Líneas, paradas y horarios del transporte público de Mallorca (bus interurbano, tren y metro de TIB), del GTFS abierto del Consorci de Transports de Mallorca.',
+    examples: [
+      '¿A qué hora sale el próximo bus de Port de Sóller a Palma?',
+      '¿Qué paradas tiene la línea 204?',
+      '¿Qué trenes salen de Inca hacia Palma esta tarde?',
+    ],
+  },
 ];
 
 type Param = {
@@ -159,6 +175,7 @@ const handlers: Record<string, Entry['handler']> = {
   eustat,
   carburantes,
   alsa,
+  tib,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];
