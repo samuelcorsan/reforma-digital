@@ -28,6 +28,8 @@ const CATASTROS_FORALES = {
 type Foral = keyof typeof CATASTROS_FORALES;
 const SIN_FORALES =
   'Araba/Álava, Bizkaia, Gipuzkoa y Navarra no están en el Catastro del Estado: tienen catastro foral propio (Álava: https://web.araba.eus/es/hacienda/catastro; Bizkaia: https://www.bizkaia.eus/catastro; Gipuzkoa: https://www.gipuzkoa.eus/es/web/ogasuna/catastro; Navarra: https://catastro.navarra.es).';
+/** El número de portal con su letra, si la tiene («28B»). */
+const numero = (d: Dir | undefined) => `${d?.pnp ?? ''}${d?.plp ?? ''}`.trim();
 const foral = (codigo: Foral) =>
   new SourceError(`${CATASTROS_FORALES[codigo]} El Catastro del Estado no tiene sus inmuebles.`);
 
@@ -207,7 +209,7 @@ function inmuebles({ bico, lrcdnp, control }: Resultado, { pagina, limite }: Pag
         superficie_construida_m2: entero(u.debi.sfc),
         coeficiente_participacion: decimal(u.debi.cpt),
         año_construccion: entero(u.debi.ant),
-        direccion: dir && [dir.tv, dir.nv, `${dir.pnp ?? ''}${dir.plp ?? ''}`].join(' ').trim(),
+        direccion: dir && [dir.tv, dir.nv, numero(dir)].join(' ').trim(),
         ...situacion(lourb?.loint),
       };
     }),
@@ -503,9 +505,7 @@ export async function buscarDireccion(fetchImpl: Fetch, d: Direccion, pagina: Pa
   });
   const sitio = `${tv} ${nv} ${d.numero}, ${muni} (${prov})`;
   if (fallo?.cod === '43') {
-    const cerca = [
-      ...new Set(r.numerero?.nump.map(({ num }) => `${num.pnp}${num.plp ?? ''}`.trim())),
-    ];
+    const cerca = [...new Set(r.numerero?.nump.map(({ num }) => numero(num)))];
     throw new SourceError(
       `El número ${d.numero} no existe en ${tv} ${nv} (${muni}).${cerca.length ? ` Números que sí existen: ${cerca.join(', ')}.` : ''}`,
     );
@@ -517,25 +517,19 @@ export async function buscarDireccion(fetchImpl: Fetch, d: Direccion, pagina: Pa
     );
   if (fallo) throw new SourceError(motivo(fallo));
   // El Catastro aplica los filtros; si algún inmueble no los cumple, no se dan como filtrados.
-  const locs = r.bico
-    ? [r.bico.bi.dt.locs?.lous?.lourb.loint]
-    : (r.lrcdnp?.rcdnp ?? []).map((u) => u.dt.locs?.lous?.lourb.loint);
+  const lourbs = (r.bico ? [r.bico.bi.dt] : (r.lrcdnp?.rcdnp ?? []).map((u) => u.dt)).map(
+    (dt) => dt.locs?.lous?.lourb,
+  );
   const sinCeros = (s: string | undefined) => fold(s ?? '').replace(/^0+(?=.)/, '');
   const campo = { bloque: 'bq', escalera: 'es', planta: 'pt', puerta: 'pu' } as const;
   for (const f of filtros)
-    if (locs.some((l) => sinCeros(l?.[campo[f]]) !== sinCeros(d[f])))
+    if (lourbs.some((l) => sinCeros(l?.loint?.[campo[f]]) !== sinCeros(d[f])))
       throw new SourceError(
         `El Catastro devolvió en ${sitio} inmuebles que no son de ${f} ${d[f]}: no se dan como filtrados. Repite sin ese filtro.`,
       );
   // El Catastro da con el número sus duplicados (28 y 28B), y no deja pedir uno solo; con un solo
   // inmueble, puede ser solo el de la letra (1D al pedir el 1).
-  const dts = r.bico ? [r.bico.bi.dt] : (r.lrcdnp?.rcdnp ?? []).map((u) => u.dt);
-  const numeros = new Set(
-    dts.map((dt) => {
-      const dir = dt.locs?.lous?.lourb.dir;
-      return `${dir?.pnp ?? ''}${dir?.plp ?? ''}`.trim();
-    }),
-  );
+  const numeros = new Set(lourbs.map((l) => numero(l?.dir)));
   numeros.delete(String(d.numero));
   return {
     direccion: sitio,
