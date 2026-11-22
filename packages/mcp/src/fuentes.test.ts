@@ -69,6 +69,15 @@ describe('BOE', () => {
     });
   });
 
+  it('gives an empty list when the search finds nothing', async () => {
+    // Así responde la API real a `titulo:"norma foral"`.
+    const fetchImpl = fetchJson({ status: { code: '200', text: 'ok' }, data: '' });
+    expect(await buscarLegislacion(fetchImpl, 'norma foral', 1, 10)).toEqual({
+      pagina: 1,
+      resultados: [],
+    });
+  });
+
   it('reads the latest version of a block as plain text', () => {
     const xml = `<bloque><version fecha_vigencia="20230526"><p>Antiguo</p></version>
       <version fecha_vigencia="20261007"><p class="articulo">Artículo 3.</p><p>Más de 1.500 m&#178; &amp; <em>trasteros</em></p></version></bloque>`;
