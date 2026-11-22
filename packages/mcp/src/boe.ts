@@ -88,22 +88,25 @@ export async function buscarLegislacion(
     offset: String((pagina - 1) * limite),
     limit: String(limite),
   })}`;
+  // Sin resultados, la API responde `"data": ""` en vez de una lista vacía.
   const body = (await (await get(fetchImpl, url)).json()) as {
-    data?: {
-      identificador: string;
-      titulo: string;
-      rango: { texto: string };
-      ambito: { texto: string };
-      departamento: { texto: string };
-      fecha_disposicion: string;
-      vigencia_agotada: string;
-      estado_consolidacion: { texto: string };
-      url_html_consolidada: string;
-    }[];
+    data?:
+      | {
+          identificador: string;
+          titulo: string;
+          rango: { texto: string };
+          ambito: { texto: string };
+          departamento: { texto: string };
+          fecha_disposicion: string;
+          vigencia_agotada: string;
+          estado_consolidacion: { texto: string };
+          url_html_consolidada: string;
+        }[]
+      | '';
   };
   return {
     pagina,
-    resultados: (body.data ?? []).map((n) => ({
+    resultados: (body.data || []).map((n) => ({
       id: n.identificador,
       titulo: n.titulo,
       rango: n.rango.texto,
