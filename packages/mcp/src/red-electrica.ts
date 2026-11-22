@@ -110,13 +110,14 @@ async function ree(
 }
 
 const redondea = (n: number, decimales: number) => Number(n.toFixed(decimales));
-const media = (valores: number[]) => valores.reduce((a, b) => a + b, 0) / valores.length;
+const suma = (valores: number[]) => valores.reduce((a, b) => a + b, 0);
+const media = (valores: number[]) => suma(valores) / valores.length;
 
-/** Los valores de cada día. */
-function porDia(valores: Valor[]) {
+/** Los valores de cada día (o de cada mes, con `largo` 7). */
+function porDia(valores: Valor[], largo = 10) {
   const dias = new Map<string, Valor[]>();
   for (const v of valores) {
-    const dia = v.datetime.slice(0, 10);
+    const dia = v.datetime.slice(0, largo);
     const lista = dias.get(dia) ?? [];
     lista.push(v);
     dias.set(dia, lista);
@@ -237,12 +238,16 @@ function mercadoDelDia(dia: string, serie: Serie) {
   };
 }
 
+const finDeMes = (mes: string) => {
+  const [y, m] = mes.split('-').map(Number) as [number, number];
+  return new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
+};
+
 /** Los meses naturales que toca un rango, recortados al rango: la API da como mucho 31 días por hora. */
 function meses(desde: string, hasta: string) {
   const out: { desde: string; hasta: string }[] = [];
   for (let inicio = desde; inicio <= hasta;) {
-    const [y, m] = inicio.split('-').map(Number) as [number, number];
-    const finMes = new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
+    const finMes = finDeMes(inicio.slice(0, 7));
     const fin = finMes < hasta ? finMes : hasta;
     out.push({ desde: inicio, hasta: fin });
     inicio = masDias(fin, 1);
@@ -255,26 +260,11 @@ function juntar(trozos: Serie[][]) {
   const porId = new Map<string, Serie>();
   for (const s of trozos.flat()) {
     const antes = porId.get(s.id);
-    porId.set(
-      s.id,
-      antes
-        ? {
-            ...antes,
-            attributes: {
-              ...antes.attributes,
-              values: [...antes.attributes.values, ...s.attributes.values],
-            },
-          }
-        : s,
-    );
+    if (antes) antes.attributes.values.push(...s.attributes.values);
+    else porId.set(s.id, s);
   }
   return [...porId.values()];
 }
-
-const finDeMes = (mes: string) => {
-  const [y, m] = mes.split('-').map(Number) as [number, number];
-  return new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
-};
 
 function comprobarRango(
   desde: string,
@@ -335,17 +325,9 @@ export async function precioLuzPeriodo(
     comprobarDia(dia, pvpcDias.get(dia), 'PVPC', [1]);
     comprobarDia(dia, mercadoDias.get(dia), 'el mercado diario', [1, 4]);
   }
-  const clave = (v: Valor) => v.datetime.slice(0, agrupacion === 'dia' ? 10 : 7);
-  const grupos = new Map<string, { pvpc: number[]; mercado: number[] }>();
-  for (const [lista, campo] of [
-    [pvpc, 'pvpc'],
-    [mercado, 'mercado'],
-  ] as const)
-    for (const v of lista) {
-      const g = grupos.get(clave(v)) ?? { pvpc: [], mercado: [] };
-      g[campo].push(v.value);
-      grupos.set(clave(v), g);
-    }
+  const largo = agrupacion === 'dia' ? 10 : 7;
+  const mercadoGrupos = porDia(mercado, largo);
+  const valores = (vs: Valor[] | undefined) => (vs ?? []).map((v) => v.value);
   return {
     desde,
     hasta,
@@ -355,13 +337,17 @@ export async function precioLuzPeriodo(
       'Medias simples por hora: PVPC 2.0TD (término de energía, sin impuestos) y mercado diario (mayorista).',
     pvpc_media_eur_kwh: redondea(media(pvpc.map((v) => v.value)) / 1000, 5),
     mercado_media_eur_mwh: redondea(media(mercado.map((v) => v.value)), 2),
-    periodos: [...grupos].map(([k, g]) => ({
-      ...periodo(k, agrupacion, desde, hasta),
-      pvpc_media_eur_kwh: redondea(media(g.pvpc) / 1000, 5),
-      pvpc_min_eur_kwh: redondea(Math.min(...g.pvpc) / 1000, 5),
-      pvpc_max_eur_kwh: redondea(Math.max(...g.pvpc) / 1000, 5),
-      mercado_media_eur_mwh: redondea(media(g.mercado), 2),
-    })),
+    // Cada día ya se ha comprobado entero en las dos series: cada periodo tiene las dos.
+    periodos: [...porDia(pvpc, largo)].map(([k, vs]) => {
+      const g = valores(vs);
+      return {
+        ...periodo(k, agrupacion, desde, hasta),
+        pvpc_media_eur_kwh: redondea(media(g) / 1000, 5),
+        pvpc_min_eur_kwh: redondea(Math.min(...g) / 1000, 5),
+        pvpc_max_eur_kwh: redondea(Math.max(...g) / 1000, 5),
+        mercado_media_eur_mwh: redondea(media(valores(mercadoGrupos.get(k))), 2),
+      };
+    }),
   };
 }
 
@@ -393,7 +379,7 @@ export async function generacion(
   const clave = (v: Valor) => v.datetime.slice(0, agrupacion === 'dia' ? 10 : 7);
   const total = tecnologias.find((s) => s.attributes.type === 'total');
   const demandaSerie = demanda.find((s) => s.attributes.title === 'Demanda');
-  const esperados = agrupacion === 'dia' ? diasEntre(desde, hasta) : meses(desde, hasta).length;
+  const esperados = agrupacion === 'dia' ? diasEntre(desde, hasta) : todos.length;
   if (!total || total.attributes.values.length !== esperados)
     throw new SourceError(
       `REE ha devuelto la generación total de ${total?.attributes.values.length ?? 0} de los ${esperados} periodos pedidos: los datos están incompletos.`,
@@ -401,30 +387,27 @@ export async function generacion(
   if (!demandaSerie || demandaSerie.attributes.values.length !== esperados)
     throw new SourceError('REE ha devuelto la demanda incompleta para ese periodo.');
   const renovable = new Map<string, number>();
+  const sumaPorPeriodo = new Map<string, number>();
   const mix = tecnologias
     .filter((s) => s !== total)
     .map((s) => {
       let mwh = 0;
       for (const v of s.attributes.values) {
         mwh += v.value;
+        sumaPorPeriodo.set(clave(v), (sumaPorPeriodo.get(clave(v)) ?? 0) + v.value);
         if (s.attributes.type === 'Renovable')
           renovable.set(clave(v), (renovable.get(clave(v)) ?? 0) + v.value);
       }
       return { tecnologia: s.attributes.title, renovable: s.attributes.type === 'Renovable', mwh };
     });
   // Las tecnologías suman el total de REE; si no, falta alguna y el mix y el % renovable mentirían.
-  const sumaPorPeriodo = new Map<string, number>();
-  for (const s of tecnologias)
-    if (s !== total)
-      for (const v of s.attributes.values)
-        sumaPorPeriodo.set(clave(v), (sumaPorPeriodo.get(clave(v)) ?? 0) + v.value);
   for (const v of total.attributes.values)
     if (Math.abs((sumaPorPeriodo.get(clave(v)) ?? 0) - v.value) > Math.abs(v.value) * 0.001)
       throw new SourceError(
         `REE ha devuelto un desglose por tecnologías de ${clave(v)} que no suma su generación total: faltan datos y no se da el mix.`,
       );
-  const generado = total.attributes.values.reduce((a, v) => a + v.value, 0);
-  const renovableTotal = [...renovable.values()].reduce((a, b) => a + b, 0);
+  const generado = suma(total.attributes.values.map((v) => v.value));
+  const renovableTotal = suma([...renovable.values()]);
   const pct = (parte: number, todo: number) => redondea((parte / todo) * 100, 1);
   const demandaPorPeriodo = new Map(demandaSerie.attributes.values.map((v) => [clave(v), v.value]));
   const demandaDe = (k: string) => {
@@ -440,10 +423,7 @@ export async function generacion(
     unidad: 'MWh',
     generacion_mwh: redondea(generado, 1),
     renovable_pct: pct(renovableTotal, generado),
-    demanda_mwh: redondea(
-      demandaSerie.attributes.values.reduce((a, v) => a + v.value, 0),
-      1,
-    ),
+    demanda_mwh: redondea(suma(demandaSerie.attributes.values.map((v) => v.value)), 1),
     tecnologias: mix
       .sort((a, b) => b.mwh - a.mwh)
       .map((t) => ({ ...t, mwh: redondea(t.mwh, 1), pct: pct(t.mwh, generado) })),
