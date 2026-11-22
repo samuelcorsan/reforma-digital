@@ -124,6 +124,9 @@ importers:
       '@reforma-digital/renfe':
         specifier: workspace:*
         version: link:../../packages/renfe
+      '@reforma-digital/tib':
+        specifier: workspace:*
+        version: link:../../packages/tib
       '@tailwindcss/postcss':
         specifier: ^4.1.0
         version: 4.3.3
@@ -329,6 +332,18 @@ importers:
       react-dom:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
+
+  packages/tib:
+    dependencies:
+      '@modelcontextprotocol/server':
+        specifier: ^2.4.0
+        version: 2.4.0
+      fflate:
+        specifier: ^0.8.2
+        version: 0.8.3
+      zod:
+        specifier: ^4.1.0
+        version: 4.6.5
 
   sites/dni:
     dependencies:
@@ -3908,6 +3923,12 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  fflate@0.8.3:
+    resolution:
+      {
+        integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==,
+      }
 
   figures@6.1.0:
     resolution:
@@ -8477,6 +8498,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
       picomatch: 4.0.7
+
+  fflate@0.8.3: {}
 
   figures@6.1.0:
     dependencies:
