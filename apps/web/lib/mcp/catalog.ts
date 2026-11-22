@@ -5,6 +5,7 @@ import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
+import { POST as subvenciones } from '../../app/mcp/subvenciones/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -14,6 +15,7 @@ import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
+import subvencionesEscena from './escenas/subvenciones.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -129,6 +131,20 @@ const servidores: Servidor[] = [
       '¿Hay algún autobús directo de Barcelona a Valencia que llegue antes de las dos?',
     ],
   },
+  {
+    id: 'subvenciones',
+    name: 'Subvenciones públicas',
+    category: 'ayudas',
+    logo: { src: '/organismos/igae.png' },
+    escena: subvencionesEscena,
+    summary:
+      'Las convocatorias de subvenciones y ayudas de todas las administraciones, con su plazo de solicitud, y las concesiones a entidades.',
+    examples: [
+      '¿Qué ayudas para rehabilitar viviendas hay abiertas en Euskadi?',
+      '¿Qué subvenciones de eficiencia energética ha convocado el Estado este año?',
+      '¿Qué ayudas a la contratación puede pedir una pyme en Gipuzkoa?',
+    ],
+  },
 ];
 
 type Param = {
@@ -159,6 +175,7 @@ const handlers: Record<string, Entry['handler']> = {
   eustat,
   carburantes,
   alsa,
+  subvenciones,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];
