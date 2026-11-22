@@ -49,6 +49,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'renfe',
       'boe',
       'ine',
+      'eustat',
       'carburantes',
       'alsa',
       'ninguno',

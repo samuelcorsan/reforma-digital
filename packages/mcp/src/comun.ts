@@ -11,22 +11,44 @@ export const READ_ONLY_EXTERNAL = {
 } as const;
 
 /** Un fallo de la fuente que sí se puede contar al asistente (código y motivo). */
-export class SourceError extends Error {}
+export class SourceError extends Error {
+  constructor(
+    message: string,
+    readonly status?: number,
+  ) {
+    super(message);
+  }
+}
 
 export type Fetch = typeof fetch;
 
-/** GET con tiempo límite: la respuesta si es 2xx; si no, un SourceError con el código. */
-export async function get(fetchImpl: Fetch, url: string, accept = 'application/json') {
+/**
+ * GET con tiempo límite (o POST, si lleva un cuerpo JSON): la respuesta si es 2xx; si no, un
+ * SourceError con el código.
+ */
+export async function get(
+  fetchImpl: Fetch,
+  url: string,
+  accept = 'application/json',
+  body?: unknown,
+) {
   let response: Response;
   try {
     response = await fetchImpl(url, {
-      headers: { Accept: accept },
+      ...(body === undefined
+        ? { headers: { Accept: accept } }
+        : {
+            method: 'POST',
+            headers: { Accept: accept, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          }),
       signal: AbortSignal.timeout(20_000),
     });
   } catch {
     throw new SourceError('La fuente no responde. Prueba más tarde.');
   }
-  if (!response.ok) throw new SourceError(`La fuente respondió ${response.status}.`);
+  if (!response.ok)
+    throw new SourceError(`La fuente respondió ${response.status}.`, response.status);
   return response;
 }
 
@@ -65,3 +87,11 @@ export function server(
 /** Sin tildes ni mayúsculas, para buscar «Malaga» o «cadiz». */
 export const fold = (text: string) =>
   text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim();
+
+/** Las palabras de una búsqueda, para `matches`. */
+export const words = (q: string | undefined) =>
+  fold(q ?? '')
+    .split(/\s+/)
+    .filter(Boolean);
+/** Si el texto contiene todas las palabras, en cualquier orden. */
+export const matches = (text: string, q: string[]) => q.every((w) => fold(text).includes(w));

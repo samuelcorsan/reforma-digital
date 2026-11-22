@@ -2,10 +2,18 @@
 // BOE, Carburantes e INE sin red: respuestas con la forma de cada API (recortadas de las reales)
 // para lo que se puede romper al leerlas.
 import { describe, expect, it, vi } from 'vitest';
-import { buscarLegislacion, sumario, textoBloque } from './boe';
+import {
+  buscarLegislacion,
+  createBoeMcp,
+  indiceNorma,
+  sumario,
+  textoBloque,
+  verBloque,
+} from './boe';
 import { buscarMunicipio, gasolinerasBaratas } from './carburantes';
 import { run, SourceError } from './comun';
-import { buscarTabla, datosTabla } from './ine';
+import { buscarTabla as buscarTablaEustat, datosTabla as datosTablaEustat } from './eustat';
+import { avisoInterrumpida, buscarTabla, datosSerie, datosTabla } from './ine';
 
 const fetchJson = (body: unknown, status = 200) =>
   vi.fn<typeof fetch>(async () => Response.json(body, { status }));
@@ -67,6 +75,61 @@ describe('BOE', () => {
     expect(JSON.parse(url.searchParams.get('query') ?? '')).toEqual({
       query: { query_string: { query: 'titulo:ley AND titulo:\\(orgánica\\)' } },
     });
+  });
+
+  it('gives an empty list when the search finds nothing', async () => {
+    // Así responde la API real a `titulo:"norma foral"`.
+    const fetchImpl = fetchJson({ status: { code: '200', text: 'ok' }, data: '' });
+    expect(await buscarLegislacion(fetchImpl, 'norma foral', 1, 10)).toEqual({
+      pagina: 1,
+      resultados: [],
+    });
+  });
+
+  it('accepts the ids of consolidated regional norms, as search returns them', async () => {
+    const fetchImpl = fetchJson({
+      data: [{ titulo: 'Decreto Foral Legislativo 4/2008', url_html_consolidada: 'https://boe' }],
+    });
+    const response = await createBoeMcp(fetchImpl).fetch(
+      new Request('http://localhost/mcp', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json, text/event-stream',
+          'mcp-protocol-version': '2025-06-18',
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name: 'indice_norma', arguments: { id: 'BON-n-2008-90013' } },
+        }),
+      }),
+    );
+    expect(await response.text()).toContain('Decreto Foral Legislativo 4/2008');
+    expect(fetchImpl).toHaveBeenCalledWith(
+      expect.stringContaining('/id/BON-n-2008-90013/metadatos'),
+      expect.anything(),
+    );
+  });
+
+  it('tells a norm that is not consolidated from a block the norm does not have', async () => {
+    // La API responde igual, 404 con este XML, si falta la norma o si falta el bloque.
+    const missing = `<response><status><code>404</code><text>La información solicitada no existe</text></status><data/></response>`;
+    const api = (existing: string) =>
+      vi.fn<typeof fetch>(async (url) =>
+        (url instanceof Request ? url.url : url.toString()).includes(`/id/${existing}/metadatos`)
+          ? Response.json({ data: [{ titulo: 'Ley', url_html_consolidada: 'https://boe' }] })
+          : new Response(missing, { status: 404 }),
+      );
+    const noNorm = /BOE-A-2004-21950 no está en la legislación consolidada.*buscar_legislacion/;
+    await expect(verBloque(api('BOE-A-2015-11430'), 'BOE-A-2004-21950', 'a1')).rejects.toThrow(
+      noNorm,
+    );
+    await expect(indiceNorma(api('BOE-A-2015-11430'), 'BOE-A-2004-21950')).rejects.toThrow(noNorm);
+    await expect(verBloque(api('BOE-A-2015-11430'), 'BOE-A-2015-11430', 'a999')).rejects.toThrow(
+      'La norma BOE-A-2015-11430 no tiene el bloque a999. Consulta los ids de sus bloques con indice_norma.',
+    );
   });
 
   it('reads the latest version of a block as plain text', () => {
@@ -179,6 +242,102 @@ it('filters INE series without accents and names each period, newest first', asy
   ]);
 });
 
+it('warns when the publication of a series has moved on without it', () => {
+  const meta = {
+    Operacion: { Codigo: 'IPC' },
+    Publicacion: { Id: 8, Nombre: 'Índice de Precios de Consumo' },
+    Clasificacion: { Nombre: 'Base 2021 (IPC)' },
+  };
+  const ultimo = (Anyo: number, T3_Periodo: string) => ({
+    COD: 'S',
+    Nombre: 'Nacional. Índice general. Variación anual. ',
+    Data: [{ Fecha: `${Anyo}-01-01T00:00:00.000+01:00`, Anyo, T3_Periodo, Valor: 2.9 }],
+  });
+  const salio = (Fecha: string, Anyo: number, T3_Periodo: string) => ({
+    Fecha: `${Fecha}T09:00:00.000+01:00`,
+    Anyo,
+    T3_Periodo,
+  });
+  const calendario = [
+    salio('2026-01-30', 2026, 'M01'), // avance
+    salio('2026-02-13', 2026, 'M01'),
+    salio('2026-02-18', 2020, 'M06'), // republicación de un periodo antiguo
+    salio('2026-11-13', 2026, 'M10'),
+    salio('2099-12-15', 2099, 'M11'), // prevista, aún no ha salido
+    salio('2026-02-25', 2025, 'A'),
+    salio('2024-06-24', 2074, 'A'), // proyecciones: se apuntan con su año final
+    salio('2026-06-17', 2076, 'A'),
+  ];
+  expect(avisoInterrumpida(ultimo(2025, 'M12'), meta, calendario)).toBe(
+    'Esta serie (Base 2021 (IPC)) acaba en 2025M12, pero el INE ya ha publicado «Índice de Precios de Consumo» con 2 periodos posteriores, hasta 2026M10. Probablemente esté interrumpida (por ejemplo, por un cambio de base) y su último dato no sea el más reciente. Si hay una serie que la sustituye, búscala con buscar_tabla en la operación IPC.',
+  );
+  const { Clasificacion: _, ...sinClasificacion } = meta;
+  expect(avisoInterrumpida(ultimo(2025, 'M12'), sinClasificacion, calendario)).toMatch(
+    /^Esta serie acaba en 2025M12,/,
+  );
+  // Al día, o un solo periodo por detrás (como cuando ha salido el avance y aún no el dato): sin aviso.
+  expect(avisoInterrumpida(ultimo(2026, 'M10'), meta, calendario)).toBeUndefined();
+  expect(avisoInterrumpida(ultimo(2026, 'M09'), meta, calendario)).toBeUndefined();
+  // Un año se compara con los años publicados (2025, en 2026), no con los meses ni con el año final
+  // de unas proyecciones.
+  expect(avisoInterrumpida(ultimo(2025, 'A'), meta, calendario)).toBeUndefined();
+  // Los datos de un día, como los de la ECP, no se comparan.
+  expect(avisoInterrumpida(ultimo(2025, '1 de octubre de'), meta, calendario)).toBeUndefined();
+});
+
+it('gives the warning with the data of the series, and the data error for an unknown code', async () => {
+  const api = (datos: Response, meta = 200) =>
+    vi.fn<typeof fetch>(async (url) => {
+      const path = url instanceof Request ? url.url : url.toString();
+      if (path.includes('/DATOS_SERIE/')) return datos;
+      if (path.includes('/SERIE/'))
+        return Response.json(
+          {
+            Operacion: { Codigo: 'IPC' },
+            Publicacion: { Id: 8, Nombre: 'Índice de Precios de Consumo' },
+          },
+          { status: meta },
+        );
+      expect(path).toContain('/PUBLICACIONFECHA_PUBLICACION/8?');
+      return Response.json([
+        { Fecha: '2026-10-14T09:00:00.000+02:00', Anyo: 2026, T3_Periodo: 'M09' },
+        { Fecha: '2026-11-13T09:00:00.000+01:00', Anyo: 2026, T3_Periodo: 'M10' },
+      ]);
+    });
+  const viejo = () =>
+    Response.json({
+      COD: 'IPC251856',
+      Nombre: 'Nacional. Índice general. Variación anual. ',
+      Data: [{ Fecha: '2025-12-01T00:00:00.000+01:00', Anyo: 2025, T3_Periodo: 'M12', Valor: 2.9 }],
+    });
+  expect(await datosSerie(api(viejo()), 'IPC251856', 1)).toMatchObject({
+    aviso: expect.stringContaining('acaba en 2025M12'),
+    datos: [{ periodo: '2025M12', valor: 2.9 }],
+  });
+  // Si la comprobación falla, los datos salen con un aviso de que no se ha podido hacer.
+  expect(await datosSerie(api(viejo(), 503), 'IPC251856', 1)).toMatchObject({
+    aviso: expect.stringContaining('No se ha podido comprobar'),
+    datos: [{ periodo: '2025M12', valor: 2.9 }],
+  });
+  const calendarioVacio = vi.fn<typeof fetch>(async (url) => {
+    const path = url instanceof Request ? url.url : url.toString();
+    if (path.includes('/DATOS_SERIE/')) return viejo();
+    if (path.includes('/SERIE/'))
+      return Response.json({ Operacion: { Codigo: 'IPC' }, Publicacion: { Id: 8, Nombre: 'IPC' } });
+    return new Response('');
+  });
+  expect(await datosSerie(calendarioVacio, 'IPC251856', 1)).toMatchObject({
+    aviso: expect.stringContaining('No se ha podido comprobar'),
+  });
+  // El INE responde 500 a DATOS_SERIE y 200 sin cuerpo a SERIE.
+  const desconocida = vi.fn<typeof fetch>(async (url) =>
+    (url instanceof Request ? url.url : url.toString()).includes('/DATOS_SERIE/')
+      ? Response.json({}, { status: 500 })
+      : new Response(''),
+  );
+  await expect(datosSerie(desconocida, 'NOEXISTE1', 1)).rejects.toThrow('La fuente respondió 500.');
+});
+
 it('asks the INE for the tables of an operation once, and again after a failure', async () => {
   const fetchImpl = vi
     .fn<typeof fetch>()
@@ -192,6 +351,168 @@ it('asks the INE for the tables of an operation once, and again after a failure'
     tablas: [{ id: 1, periodicidad: 'Trimestral' }],
   });
   expect(fetchImpl).toHaveBeenCalledTimes(2);
+});
+
+describe('Eustat', () => {
+  const ipc = {
+    title: 'IPC por territorio histórico, índice y mes',
+    variables: [
+      {
+        code: 'territorio histórico',
+        text: 'territorio histórico',
+        values: ['00', '20'],
+        valueTexts: ['C.A. de Euskadi', 'Gipuzkoa'],
+      },
+      {
+        code: 'índice',
+        text: 'índice',
+        values: ['10', '30'],
+        valueTexts: ['Índice', 'Tasa de variación interanual'],
+      },
+      {
+        code: 'periodo',
+        text: 'periodo',
+        values: ['202609', '202610'],
+        valueTexts: ['2026-09', '2026-10'],
+        time: true,
+      },
+    ],
+  };
+
+  it('puts the most recently updated tables first and matches without accents', async () => {
+    const fetchImpl = fetchJson([
+      {
+        id: 'PX_viejo.px',
+        text: 'Índice de precios (IPC). Base 2016',
+        updated: '2021-02-16T11:15:00',
+      },
+      { id: 'PX_nuevo.px', text: 'Índice de precios (IPC)', updated: '2026-11-13T09:20:29' },
+      { id: 'PX_paro.px', text: 'Paro registrado', updated: '2026-11-20T09:00:00' },
+    ]);
+    expect(await buscarTablaEustat(fetchImpl, 'indice IPC')).toEqual({
+      total: 2,
+      tablas: [
+        { id: 'PX_nuevo.px', nombre: 'Índice de precios (IPC)', actualizada: '2026-11-13' },
+        {
+          id: 'PX_viejo.px',
+          nombre: 'Índice de precios (IPC). Base 2016',
+          actualizada: '2021-02-16',
+        },
+      ],
+    });
+  });
+
+  it('asks only for the filtered values and the last periods, newest first', async () => {
+    const fetchImpl = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json(ipc))
+      .mockResolvedValueOnce(
+        Response.json({
+          label: 'IPC',
+          id: ['ContentsCode', 'territorio histórico', 'índice', 'periodo'],
+          size: [1, 2, 1, 2],
+          value: [4.6, 4.8, 4.7, null],
+          role: { time: ['periodo'], metric: ['ContentsCode'] },
+          dimension: {
+            ContentsCode: { category: { index: { V: 0 }, label: { V: 'IPC' } } },
+            'territorio histórico': {
+              category: {
+                index: { '00': 0, '20': 1 },
+                label: { '00': 'C.A. de Euskadi', '20': 'Gipuzkoa' },
+              },
+            },
+            índice: {
+              category: { index: { '30': 0 }, label: { '30': 'Tasa de variación interanual' } },
+            },
+            periodo: {
+              category: {
+                index: { '202609': 0, '202610': 1 },
+                label: { '202609': '2026-09', '202610': '2026-10' },
+              },
+            },
+          },
+        }),
+      );
+    const result = await datosTablaEustat(fetchImpl, 'PX_ipc.px', 2, { Indice: 'INTERANUAL' });
+    const body = JSON.stringify({
+      query: [
+        { code: 'territorio histórico', selection: { filter: 'item', values: ['00', '20'] } },
+        { code: 'índice', selection: { filter: 'item', values: ['30'] } },
+        { code: 'periodo', selection: { filter: 'top', values: ['2'] } },
+      ],
+      response: { format: 'json-stat2' },
+    });
+    expect(fetchImpl).toHaveBeenLastCalledWith(
+      'https://www.eustat.eus/bankupx/api/v1/es/DB/PX_ipc.px',
+      expect.objectContaining({ method: 'POST', body }),
+    );
+    expect(result.series).toEqual([
+      {
+        nombre: 'C.A. de Euskadi · Tasa de variación interanual',
+        datos: [
+          { periodo: '2026-10', valor: 4.8 },
+          { periodo: '2026-09', valor: 4.6 },
+        ],
+      },
+      {
+        nombre: 'Gipuzkoa · Tasa de variación interanual',
+        datos: [
+          { periodo: '2026-10', valor: null },
+          { periodo: '2026-09', valor: 4.7 },
+        ],
+      },
+    ]);
+  });
+
+  it('takes only the value that matches the whole filter when there is one', async () => {
+    const procedencia = {
+      code: 'procedencia',
+      text: 'procedencia',
+      values: ['T', 'E', 'X'],
+      valueTexts: ['TOTAL', '-TOTAL ESTADO', '-TOTAL EXTRANJERO'],
+    };
+    const fetchImpl = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json({ title: 'Turismo', variables: [procedencia] }))
+      .mockResolvedValueOnce(
+        Response.json({ label: 'Turismo', id: [], size: [], value: [], role: {}, dimension: {} }),
+      );
+    await datosTablaEustat(fetchImpl, 'PX_turismo.px', 1, { procedencia: 'total' });
+    expect(fetchImpl).toHaveBeenLastCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        body: JSON.stringify({
+          query: [{ code: 'procedencia', selection: { filter: 'item', values: ['T'] } }],
+          response: { format: 'json-stat2' },
+        }),
+      }),
+    );
+  });
+
+  it('refuses unknown variables, empty or period filters and oversized queries before asking for data', async () => {
+    const meses = Array.from({ length: 300 }, (_, i) => String(i));
+    const largo = {
+      ...ipc,
+      variables: [
+        ...ipc.variables.slice(0, 2),
+        { code: 'periodo', text: 'periodo', values: meses, valueTexts: meses, time: true },
+      ],
+    };
+    const fetchImpl = vi.fn<typeof fetch>(async () => Response.json(largo));
+    await expect(
+      datosTablaEustat(fetchImpl, 'PX_ipc.px', 1, { municipio: 'Irun' }),
+    ).rejects.toThrow('La tabla no tiene la variable «municipio»');
+    await expect(
+      datosTablaEustat(fetchImpl, 'PX_ipc.px', 1, { índice: 'mensual' }),
+    ).rejects.toThrow('Ningún valor de «índice»');
+    // Un año pedido por filtro daría el último periodo como si fuera ese año.
+    await expect(datosTablaEustat(fetchImpl, 'PX_ipc.px', 1, { periodo: '2024' })).rejects.toThrow(
+      '«periodo» no se filtra',
+    );
+    // 2 territorios × 2 índices × 300 meses.
+    await expect(datosTablaEustat(fetchImpl, 'PX_ipc.px', 300)).rejects.toThrow('pide 1200 datos');
+    expect(fetchImpl).toHaveBeenCalledTimes(4);
+  });
 });
 
 it('only tells the assistant the reason of source errors', async () => {
