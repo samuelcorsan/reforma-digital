@@ -69,6 +69,15 @@ describe('BOE', () => {
     });
   });
 
+  it('gives an empty list when the search finds nothing', async () => {
+    // Así responde la API real a `titulo:"norma foral"`.
+    const fetchImpl = fetchJson({ status: { code: '200', text: 'ok' }, data: '' });
+    expect(await buscarLegislacion(fetchImpl, 'norma foral', 1, 10)).toEqual({
+      pagina: 1,
+      resultados: [],
+    });
+  });
+
   it('accepts the ids of consolidated regional norms, as search returns them', async () => {
     const fetchImpl = fetchJson({
       data: [{ titulo: 'Decreto Foral Legislativo 4/2008', url_html_consolidada: 'https://boe' }],

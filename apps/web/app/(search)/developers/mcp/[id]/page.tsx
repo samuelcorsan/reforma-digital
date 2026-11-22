@@ -152,12 +152,16 @@ function Connect({ server }: { server: McpServer }) {
     },
   ];
   const appButton = cn(buttonVariants({ variant: 'outline', size: 'xl' }), 'rounded-full');
+  const via = 'mb-4 font-medium';
 
+  // Dos vías separadas: la frase de «Conecta tu agente» apunta a la guía en Markdown, y quien la
+  // pegaba como conector en Claude.ai acababa con la URL de la guía en vez de la del servidor.
   return (
     <section aria-labelledby="conectar-titulo" className="mt-12">
       <h2 id="conectar-titulo" className="sr-only">
         Conectar
       </h2>
+      <h3 className={via}>Claude Code, Codex, Cursor o VS Code</h3>
       <div className="flex flex-wrap gap-2">
         <OnboardButton
           prompt={agentPrompt(
@@ -172,11 +176,15 @@ function Connect({ server }: { server: McpServer }) {
           Añadir a VS Code
         </a>
       </div>
-      <CodeBlock samples={[{ label: 'URL del servidor', lang: 'text', code: url }]} />
       <CodeBlock samples={samples} />
-      <p className="text-sm text-muted-foreground">
-        En Claude.ai o ChatGPT, añádelo como conector personalizado con la URL del servidor.
+
+      <h3 className={cn(via, 'mt-10')}>Claude.ai o ChatGPT</h3>
+      <p className="max-w-[65ch] text-muted-foreground">
+        Añádelo como conector personalizado, sin autenticación, con esta URL: en Claude.ai, desde
+        Ajustes → Conectores; en ChatGPT, con el modo desarrollador activado. La frase de «Conecta
+        tu agente» no sirve aquí.
       </p>
+      <CodeBlock samples={[{ label: 'URL del conector', lang: 'text', code: url }]} />
     </section>
   );
 }
