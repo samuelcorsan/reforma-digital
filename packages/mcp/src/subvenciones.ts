@@ -22,7 +22,7 @@ const MAX_URL = 2000;
 const INSTRUCTIONS = `Convocatorias de subvenciones y ayudas públicas de todas las administraciones de España (Estado, comunidades autónomas, entidades locales y otros organismos), tal como se registran en la Base de Datos Nacional de Subvenciones (BDNS), y las concesiones ya otorgadas.
 - buscar_convocatorias da las más recientes primero, 10 por página (20 con abiertas=true), con su plazo de solicitud; ver_convocatoria da el detalle de una (beneficiarios, regiones, presupuesto, bases reguladoras, extracto en el diario oficial y documentos).
 - El estado del plazo se calcula con las fechas que registra el órgano y la fecha de hoy en Madrid: «abierta», «indefinida» (sin fechas, la BDNS la marca de solicitud indefinida; puede llevar años así sin que nadie la cierre: mira la fecha de registro y compruébalo en las bases o la sede), «aun_no_abierta», «cerrada», «anulada» (el título empieza por «ANULADA»: la BDNS no la marca de otra forma y deja sus fechas) o «desconocido» (sin fechas, solo un texto como «desde el día siguiente a la publicación»). No supongas que una convocatoria «desconocido» está abierta: da el texto y remite a las bases o a la sede.
-- La BDNS no filtra por plazo: con abiertas=true se revisa cada convocatoria de la página pedida y se dejan las «abierta» y las «indefinida», así que la página siguiente puede tener más. Buena parte de las convocatorias registradas son instrumentales.
+- La BDNS no filtra por plazo: con abiertas=true se revisa cada convocatoria de la página pedida y se dejan las «abierta» y las «indefinida» que puede pedir cualquiera (no las instrumentales, que se cuentan en la nota), así que la página siguiente puede tener más. Buena parte de las convocatorias registradas son instrumentales.
 - solo_beneficiarios_nombrados marca una convocatoria instrumental (subvención nominativa, directa o de un convenio): solo puede pedirla la entidad que nombra. Sus fechas pueden ser el plazo que esa entidad tiene para presentar la solicitud o las de la actividad; dilo así y remite al decreto o al convenio, sin presentarla como abierta a cualquiera.
 - La región es la zona de impacto que registra el órgano e incluye las que tiene dentro (Euskadi incluye Gipuzkoa), pero no las de fuera: una convocatoria para toda España no sale al filtrar por Gipuzkoa. El órgano es quien convoca («eibar», «diputacion foral de bizkaia», «pais vasco», «ministerio de industria»).
 - No todas las administraciones registran todo en la BDNS; si falta una convocatoria, mira el boletín oficial del órgano (por ejemplo con el servidor del BOE).
@@ -438,7 +438,10 @@ export async function buscarConvocatorias(fetchImpl: Fetch, f: FiltrosConvocator
       enlace: `${WEB}/${c.numeroConvocatoria}`,
     });
   }
-  const abiertas = convocatorias.filter((c) => ['abierta', 'indefinida'].includes(c.plazo.estado));
+  const enPlazo = convocatorias.filter((c) => ['abierta', 'indefinida'].includes(c.plazo.estado));
+  // Las instrumentales en plazo no las puede pedir cualquiera: no se dan como abiertas, se cuentan.
+  const abiertas = enPlazo.filter((c) => !c.plazo.solo_beneficiarios_nombrados);
+  const nombradas = enPlazo.length - abiertas.length;
   const porEstado: Record<string, number> = {};
   for (const c of convocatorias) porEstado[c.plazo.estado] = (porEstado[c.plazo.estado] ?? 0) + 1;
   return {
@@ -452,7 +455,7 @@ export async function buscarConvocatorias(fetchImpl: Fetch, f: FiltrosConvocator
           abiertas: {
             revisadas: convocatorias.length,
             por_estado: porEstado,
-            nota: `Solo se ha revisado esta página (${convocatorias.length} de ${body.totalElements}): la BDNS no filtra por plazo. Pide la página ${numero + 1} para revisar más. Se han quitado las que no están abiertas, también las de plazo «desconocido».`,
+            nota: `Solo se ha revisado esta página (${convocatorias.length} de ${body.totalElements}): la BDNS no filtra por plazo. Pide la página ${numero + 1} para revisar más. Se han quitado las que no están abiertas, también las de plazo «desconocido»${nombradas ? `, y ${nombradas} en plazo que son solo para las entidades que nombran (instrumentales: búscalas sin abiertas)` : ''}.`,
           },
         }
       : {}),

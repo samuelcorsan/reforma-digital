@@ -292,12 +292,17 @@ describe('Subvenciones (BDNS)', () => {
       por_estado: { abierta: 2, cerrada: 1, desconocido: 1 },
     });
     expect(result.abiertas?.nota).toContain('página 3');
-    expect(
-      result.convocatorias.map((c) => [c.numero, c.plazo.solo_beneficiarios_nombrados]),
-    ).toEqual([
-      ['1', undefined],
-      ['4', true],
-    ]);
+    // La instrumental en plazo no se da como abierta a cualquiera: se cuenta en la nota.
+    expect(result.abiertas?.nota).toContain(
+      '1 en plazo que son solo para las entidades que nombran',
+    );
+    expect(result.convocatorias.map((c) => c.numero)).toEqual(['1']);
+    // Sin abiertas, sale con su estado y marcada.
+    const todas = await buscarConvocatorias(fetchImpl, { pagina: 2 });
+    expect(todas.convocatorias.find((c) => c.numero === '4')?.plazo).toMatchObject({
+      estado: 'abierta',
+      solo_beneficiarios_nombrados: true,
+    });
     vi.useRealTimers();
   });
 
