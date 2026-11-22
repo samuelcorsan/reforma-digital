@@ -116,7 +116,10 @@ type Bico = {
   lspr?: { cspr: string; dspr: { dcc?: string; ip?: string; ssp?: string } }[];
 };
 
-const numero = (s: string | undefined) => (s ? Number(s.replace(',', '.')) : undefined);
+// Las superficies y los años son enteros, y en las listas llevan punto de millar («3.230»); el
+// coeficiente de participación lleva coma decimal («5,499900»).
+const entero = (s: string | undefined) => (s ? Number(s.replaceAll('.', '')) : undefined);
+const decimal = (s: string | undefined) => (s ? Number(s.replace(',', '.')) : undefined);
 const rc20 = (rc: Rc) => rc.pc1 + rc.pc2 + (rc.car ?? '') + (rc.cc1 ?? '') + (rc.cc2 ?? '');
 const situacion = (l: Loint | undefined) => ({
   bloque: l?.bq,
@@ -136,20 +139,20 @@ function detalle({ bi, finca, lcons = [], lspr = [] }: Bico) {
     clase: CLASES[bi.idbi.cn] ?? bi.idbi.cn,
     direccion: bi.ldt,
     uso: bi.debi.luso,
-    superficie_construida_m2: numero(bi.debi.sfc),
-    coeficiente_participacion: numero(bi.debi.cpt),
-    año_construccion: numero(bi.debi.ant),
+    superficie_construida_m2: entero(bi.debi.sfc),
+    coeficiente_participacion: decimal(bi.debi.cpt),
+    año_construccion: entero(bi.debi.ant),
     ...situacion(bi.dt.locs?.lous?.lourb.loint),
     parcela: {
       referencia: bi.idbi.rc.pc1 + bi.idbi.rc.pc2,
       tipo: finca.ltp,
-      superficie_suelo_m2: numero(finca.dff?.ss),
+      superficie_suelo_m2: entero(finca.dff?.ss),
       mapa: finca.infgraf?.igraf,
     },
     construcciones: lcons.map((c) => ({
       uso: c.lcd,
       ...situacion(c.dt?.lourb?.loint),
-      superficie_m2: numero(c.dfcons.stl),
+      superficie_m2: entero(c.dfcons.stl),
       tipo: c.dvcons?.dtip,
     })),
     cultivos: lspr.length
@@ -157,7 +160,7 @@ function detalle({ bi, finca, lcons = [], lspr = [] }: Bico) {
           subparcela: s.cspr,
           cultivo: s.dspr.dcc,
           intensidad: s.dspr.ip,
-          superficie_m2: numero(s.dspr.ssp),
+          superficie_m2: entero(s.dspr.ssp),
         }))
       : undefined,
   };
@@ -189,9 +192,9 @@ function inmuebles({ bico, lrcdnp, control }: Resultado, { pagina, limite }: Pag
       return {
         referencia: rc20(u.rc),
         uso: u.debi.luso,
-        superficie_construida_m2: numero(u.debi.sfc),
-        coeficiente_participacion: numero(u.debi.cpt),
-        año_construccion: numero(u.debi.ant),
+        superficie_construida_m2: entero(u.debi.sfc),
+        coeficiente_participacion: decimal(u.debi.cpt),
+        año_construccion: entero(u.debi.ant),
         direccion: dir && [dir.tv, dir.nv, `${dir.pnp ?? ''}${dir.plp ?? ''}`].join(' ').trim(),
         ...situacion(lourb?.loint),
       };
@@ -237,7 +240,7 @@ export async function verInmueble(fetchImpl: Fetch, texto: string, pagina: Pagin
 
 // Palabras que no distinguen un nombre: artículos y preposiciones, que el Catastro a veces pone
 // detrás («PALMA LA») o quita.
-const VACIAS = new Set('de del la las el els los les l d i y a o'.split(' '));
+const VACIAS = new Set('de del la las el els los les l d i y a o en'.split(' '));
 const palabras = (texto: string) =>
   fold(texto)
     .split(/[^a-z0-9]+/)
@@ -259,18 +262,13 @@ function distancia(a: string, b: string) {
   return previa[b.length]!;
 }
 
-/** Los que tienen el mismo nombre que `texto`, o si no hay ninguno, los que contienen sus palabras. */
-function encaje<T>(texto: string, candidatos: T[], nombres: (c: T) => string[]) {
-  const buscado = clave(texto);
-  const exactos = candidatos.filter((c) => nombres(c).some((n) => clave(n) === buscado));
-  if (exactos.length) return exactos;
-  const w = palabras(texto);
-  return candidatos.filter((c) => nombres(c).some((n) => matches(palabras(n).join(' '), w)));
-}
+/** Los que tienen el mismo nombre que `texto`, sin tildes ni artículos. */
+const encaje = <T>(texto: string, candidatos: T[], nombres: (c: T) => string[]) =>
+  candidatos.filter((c) => nombres(c).some((n) => clave(n) === clave(texto)));
 
 /**
- * El candidato que es `texto`, sin tildes ni artículos: el único con el mismo nombre o, si no hay,
- * el único que contiene sus palabras. Si hay varios o ninguno, un error con los que podrían ser.
+ * El candidato que es `texto`, sin tildes ni artículos. Si hay varios o ninguno, un error con los que
+ * podrían ser: uno que solo contiene sus palabras («CIUDAD REAL» para «Real») no se toma por él.
  */
 function elegir<T>(
   texto: string,
@@ -278,6 +276,7 @@ function elegir<T>(
   candidatos: T[],
   nombres: (c: T) => string[],
   ver: (c: T) => string,
+  pista = '',
 ) {
   const buscado = clave(texto);
   const encajan = encaje(texto, candidatos, nombres);
@@ -286,20 +285,23 @@ function elegir<T>(
     throw new SourceError(
       `«${texto}» encaja con ${encajan.length} ${que}: ${encajan.slice(0, 30).map(ver).join('; ')}. Repite con uno de esos nombres, con el tipo de vía delante si dos se llaman igual.`,
     );
-  // Ninguno: los de nombre parecido (por una errata) o con alguna de sus palabras largas (por una
-  // palabra de más, como «Calle Mayor de Triana» para CL TRIANA).
-  const largas = palabras(texto).filter((w) => w.length > 3);
+  // Ninguno: los que contienen sus palabras, los de nombre parecido (por una errata) o con alguna de
+  // sus palabras largas (por una palabra de más, como «Calle Mayor de Triana» para CL TRIANA).
+  const w = palabras(texto);
+  const largas = w.filter((p) => p.length > 3);
   const parecidos = candidatos
     .map((c) => ({ c, d: Math.min(...nombres(c).map((n) => distancia(clave(n), buscado))) }))
     .filter(
       ({ c, d }) =>
         d <= Math.max(2, buscado.length / 4) ||
-        nombres(c).some((n) => palabras(n).some((w) => largas.includes(w))),
+        nombres(c).some(
+          (n) => matches(palabras(n).join(' '), w) || palabras(n).some((p) => largas.includes(p)),
+        ),
     )
     .sort((a, b) => a.d - b.d)
     .slice(0, 10);
   throw new SourceError(
-    `No hay ${que} «${texto}» en el Catastro.${parecidos.length ? ` Con nombre parecido: ${parecidos.map(({ c }) => ver(c)).join('; ')}.` : ''}`,
+    `Ningún nombre de ${que} es «${texto}».${parecidos.length ? ` ¿Es alguno de estos? ${parecidos.map(({ c }) => ver(c)).join('; ')}.` : ''} El Catastro puede tenerlo en otra lengua o con otro nombre.${pista}`,
   );
 }
 
@@ -360,6 +362,7 @@ async function provincia(fetchImpl: Fetch, texto: string) {
     todas,
     (p) => [p.np],
     (p) => p.np,
+    ` ${SIN_FORALES}`,
   ).np;
 }
 
@@ -501,7 +504,21 @@ export async function buscarDireccion(fetchImpl: Fetch, d: Direccion, pagina: Pa
       `En ${sitio} no hay inmuebles con ${filtros.map((f) => `${f} ${d[f]}`).join(', ')}. Repite sin ${filtros.length > 1 ? 'esos filtros' : 'ese filtro'} para ver los que hay.`,
     );
   if (fallo) throw new SourceError(motivo(fallo));
-  return { direccion: sitio, ...inmuebles(r, pagina) };
+  // El Catastro da con el número sus duplicados (28 y 28B), y no deja pedir uno solo.
+  const numeros = new Set(
+    r.lrcdnp?.rcdnp.map(({ dt }) => {
+      const dir = dt.locs?.lous?.lourb.dir;
+      return `${dir?.pnp ?? ''}${dir?.plp ?? ''}`.trim();
+    }),
+  );
+  numeros.delete(String(d.numero));
+  return {
+    direccion: sitio,
+    aviso: numeros.size
+      ? `La lista incluye también los números ${[...numeros].join(', ')}: mira la dirección de cada inmueble.`
+      : undefined,
+    ...inmuebles(r, pagina),
+  };
 }
 
 /** La provincia foral en la que cae un punto, con sus contornos simplificados (unos 500 m). */
@@ -548,12 +565,16 @@ export async function buscarCoordenadas(fetchImpl: Fetch, latitud: number, longi
   }));
   const [primera] = parcelas;
   const dentro = primera?.distancia_m === 0 ? primera : undefined;
+  // Junto al límite de un territorio foral, las cercanas pueden ser del otro lado.
+  const codigo = dentro ? undefined : provinciaForal(latitud, longitud);
   return {
     parcela: dentro ?? null,
     cercanas: parcelas.filter((p) => p !== dentro),
     nota: dentro
       ? 'Los inmuebles de la parcela, con ver_inmueble y su referencia.'
-      : 'El punto no cae dentro de ninguna parcela (suele ser la calle): estas son las que hay a menos de 25 m.',
+      : codigo
+        ? `El punto no cae en ninguna parcela del Catastro del Estado y está en un territorio foral (o muy cerca de su límite): las cercanas son las del otro lado. ${CATASTROS_FORALES[codigo]}`
+        : 'El punto no cae dentro de ninguna parcela (suele ser la calle): estas son las que hay a menos de 25 m.',
   };
 }
 
@@ -591,7 +612,7 @@ export function createCatastroMcp(fetchImpl: Fetch = fetch) {
       {
         title: 'Buscar por dirección',
         description:
-          'Los inmuebles de una dirección, con su referencia catastral, uso, superficie y planta y puerta. Provincia, municipio y vía se buscan sin tildes en el callejero del Catastro; si un nombre no encaja con uno solo, el error da los candidatos. Escalera, planta y puerta acotan a un piso. No incluye Araba/Álava, Bizkaia, Gipuzkoa ni Navarra.',
+          'Los inmuebles de una dirección, con su referencia catastral, uso, superficie y planta y puerta. Provincia, municipio y vía se buscan sin tildes en el callejero del Catastro; si un nombre no encaja con uno solo, el error da los candidatos. Escalera, planta y puerta acotan a un piso. El número trae también sus duplicados (18A, 18B…), que se distinguen por la dirección de cada inmueble. No incluye Araba/Álava, Bizkaia, Gipuzkoa ni Navarra.',
         inputSchema: z.object({
           provincia: filtro(60).describe(
             'Provincia, como «Madrid», «A Coruña» o «Alicante», o su código INE.',
