@@ -26,9 +26,15 @@ type Municipio = {
   provincia: string;
   claves: string[];
   clavesProvincia: string[];
-  anios: Map<number, Partial<Record<Tipo, Serie>>>;
+  /** Cada año con datos y dónde empieza su bloque en `Indice.valores`. */
+  anios: Map<number, number>;
 };
-type Copia = { municipios: Map<string, Municipio>; publicado: string | null; descargado: string };
+/**
+ * Del CSV solo se guarda un objeto por municipio; las cifras van todas en un Float64Array, en un
+ * bloque de BLOQUE huecos por municipio y año (NaN donde el CSV no trae el dato).
+ */
+type Indice = { municipios: Map<string, Municipio>; valores: Float64Array };
+type Copia = { indice: Indice; publicado: string | null; descargado: string };
 
 const CABECERA =
   'COD_PROVINCIA;PROVINCIA;COD_POSTAL;NOMBRE_MUNICIPIO;ELEMENTO;TIPO_VIVIENDA;TIPO_MEDIDA;AÑO;VALOR';
@@ -46,8 +52,12 @@ type Campos = [
   string,
   string,
 ];
-const MEDIDA = { MEDIANA: 'mediana', PERCENT25: 'percentil25', PERCENT75: 'percentil75' } as const;
+// Dentro de cada tipo: renta (mediana, P25, P75), superficie (mediana, P25, P75) y recuento.
+const ELEMENTO = { PRECIO: 0, SUPERFICIE: 3, VIVIENDA: 6 } as const;
+const MEDIDA = { MEDIANA: 0, PERCENT25: 1, PERCENT75: 2, RECUENTO: 0 } as const;
 const TIPO = { COLECTIVA: 'colectiva', UNIFAMILIAR: 'unifamiliar' } as const;
+const HUECO: Record<Tipo, number> = { colectiva: 0, unifamiliar: 7 };
+const BLOQUE = 14;
 
 /** «Hospitalet de Llobregat, L'» → «L'Hospitalet de Llobregat»; «Molar, El» → «El Molar». */
 const hablado = (nombre: string) =>
@@ -65,39 +75,122 @@ const claves = (nombre: string) => [
 const formato = (motivo: string) =>
   new SourceError(`El CSV del Ministerio ha cambiado de formato (${motivo}): no se puede leer.`);
 
-function leerCsv(texto: string) {
-  const [cabecera, ...filas] = texto.replace(/^﻿/, '').split(/\r?\n/).filter(Boolean);
-  if (cabecera !== CABECERA) throw formato('la cabecera no es la esperada');
+const cortada = () => new SourceError('La descarga del CSV se ha cortado. Prueba más tarde.');
+const sinCr = (linea: string) => (linea.endsWith('\r') ? linea.slice(0, -1) : linea);
+
+/**
+ * Copia que no comparte memoria con el trozo del que sale: V8 hace de un slice una vista del
+ * string original, y un nombre guardado en el índice retendría el trozo entero del CSV.
+ */
+const suelto = (s: string) => (' ' + s).slice(1);
+
+/** Las líneas del cuerpo según llegan, sin juntar nunca el CSV entero. */
+async function* lineas(body: ReadableStream<Uint8Array>) {
+  // Se lee en bytes para que la descarga espere al parseo y no se encole el fichero entero.
+  const reader = body.getReader();
+  // Con stream: true, TextDecoder quita el BOM y junta los caracteres partidos entre trozos.
+  const decoder = new TextDecoder();
+  let resto = '';
+  let terminada = false;
+  try {
+    for (;;) {
+      let trozo: ReadableStreamReadResult<Uint8Array>;
+      try {
+        trozo = await reader.read();
+      } catch {
+        terminada = true;
+        // Un corte a mitad de los 37 MB no es un SourceError, pero es la misma caída de la fuente.
+        throw cortada();
+      }
+      if (trozo.done) {
+        terminada = true;
+        break;
+      }
+      const texto = resto + decoder.decode(trozo.value, { stream: true });
+      let desde = 0;
+      for (let fin = texto.indexOf('\n'); fin !== -1; fin = texto.indexOf('\n', desde)) {
+        yield sinCr(texto.slice(desde, fin));
+        desde = fin + 1;
+      }
+      resto = texto.slice(desde);
+    }
+  } finally {
+    // Si el formato falla a mitad, se corta la descarga en vez de dejarla colgada.
+    if (!terminada) await reader.cancel();
+  }
+  yield sinCr(resto + decoder.decode());
+}
+
+async function leerCsv(body: ReadableStream<Uint8Array>): Promise<Indice> {
   const municipios = new Map<string, Municipio>();
-  for (const [i, linea] of filas.entries()) {
+  const provincias = new Map<string, string[]>();
+  let valores = new Float64Array(16_384 * BLOQUE).fill(Number.NaN);
+  let bloques = 0;
+  let n = 0;
+  for await (const linea of lineas(body)) {
+    if (!linea) continue;
+    if (++n === 1) {
+      if (linea !== CABECERA) throw formato('la cabecera no es la esperada');
+      continue;
+    }
     const m = FILA.exec(linea);
-    if (!m) throw formato(`línea ${i + 2}`);
+    if (!m) throw formato(`línea ${n}`);
     // FILA tiene 9 grupos obligatorios: si casa, están todos.
     const [codigoProvincia, provincia, codigo, nombre, elemento, tipo, medida, anio, valor] =
       m.slice(1) as Campos;
-    if ((elemento === 'VIVIENDA') !== (medida === 'RECUENTO')) throw formato(`línea ${i + 2}`);
+    if ((elemento === 'VIVIENDA') !== (medida === 'RECUENTO')) throw formato(`línea ${n}`);
     let municipio = municipios.get(codigo);
     if (!municipio) {
+      let clavesProvincia = provincias.get(provincia);
+      if (!clavesProvincia)
+        provincias.set(suelto(provincia), (clavesProvincia = claves(suelto(provincia))));
       municipio = {
-        codigo,
-        nombre,
-        codigoProvincia,
-        provincia,
-        claves: claves(nombre),
-        clavesProvincia: claves(provincia),
+        codigo: suelto(codigo),
+        nombre: suelto(nombre),
+        codigoProvincia: suelto(codigoProvincia),
+        provincia: suelto(provincia),
+        claves: claves(suelto(nombre)),
+        clavesProvincia,
         anios: new Map(),
       };
-      municipios.set(codigo, municipio);
+      municipios.set(municipio.codigo, municipio);
     }
-    let delAnio = municipio.anios.get(Number(anio));
-    if (!delAnio) municipio.anios.set(Number(anio), (delAnio = {}));
-    const serie = (delAnio[TIPO[tipo]] ??= {});
-    if (medida === 'RECUENTO') serie.viviendas = Number(valor);
-    else
-      (serie[elemento === 'PRECIO' ? 'renta' : 'superficie'] ??= {})[MEDIDA[medida]] =
-        Number(valor);
+    let bloque = municipio.anios.get(Number(anio));
+    if (bloque === undefined) {
+      bloque = bloques++ * BLOQUE;
+      if (bloque === valores.length) {
+        const mayor = new Float64Array(valores.length * 2).fill(Number.NaN);
+        mayor.set(valores);
+        valores = mayor;
+      }
+      municipio.anios.set(Number(anio), bloque);
+    }
+    valores[bloque + HUECO[TIPO[tipo]] + ELEMENTO[elemento] + MEDIDA[medida]] = Number(valor);
   }
-  return municipios;
+  if (n === 0) throw formato('la cabecera no es la esperada');
+  return { municipios, valores };
+}
+
+const dato = (x: number) => (Number.isNaN(x) ? undefined : x);
+const medidas = (mediana?: number, percentil25?: number, percentil75?: number) =>
+  mediana === undefined && percentil25 === undefined && percentil75 === undefined
+    ? undefined
+    : { mediana, percentil25, percentil75 };
+
+/** Las cifras de un municipio en un año y tipo, o nada si el CSV no trae ninguna. */
+function serie(indice: Indice, m: Municipio, anio: number, tipo: Tipo): Serie | undefined {
+  const bloque = m.anios.get(anio);
+  if (bloque === undefined) return undefined;
+  const desde = bloque + HUECO[tipo];
+  const [rm, r25, r75, sm, s25, s75, viviendas] = Array.from(
+    indice.valores.subarray(desde, desde + 7),
+    dato,
+  );
+  const renta = medidas(rm, r25, r75);
+  const superficie = medidas(sm, s25, s75);
+  return renta || superficie || viviendas !== undefined
+    ? { renta, superficie, viviendas }
+    : undefined;
 }
 
 /**
@@ -121,18 +214,10 @@ function fuente(fetchImpl: Fetch) {
         }
       : fetchImpl;
     try {
-      let response: Response;
-      let texto: string;
-      try {
-        response = await get(condicional, CSV, 'text/csv');
-        texto = await response.text();
-      } catch (error) {
-        // Un corte a mitad de los 37 MB no es un SourceError, pero es la misma caída de la fuente.
-        if (error instanceof SourceError) throw error;
-        throw new SourceError('La descarga del CSV se ha cortado. Prueba más tarde.');
-      }
+      const response = await get(condicional, CSV, 'text/csv');
+      if (!response.body) throw formato('la respuesta llega vacía');
       copia = {
-        municipios: leerCsv(texto),
+        indice: await leerCsv(response.body),
         publicado: response.headers.get('last-modified'),
         descargado: new Date().toISOString(),
       };
@@ -172,12 +257,11 @@ function cifras(s: Serie) {
   };
 }
 
-function porTipo(m: Municipio, anio: number, tipos: readonly Tipo[]) {
-  const delAnio = m.anios.get(anio);
+function porTipo(indice: Indice, m: Municipio, anio: number, tipos: readonly Tipo[]) {
   return Object.fromEntries(
     tipos.map((t) => {
-      const serie = delAnio?.[t];
-      return [t, serie ? cifras(serie) : `Sin datos de vivienda ${t} en ${anio}.`];
+      const s = serie(indice, m, anio, t);
+      return [t, s ? cifras(s) : `Sin datos de vivienda ${t} en ${anio}.`];
     }),
   );
 }
@@ -238,13 +322,8 @@ function buscarMunicipio(municipios: Map<string, Municipio>, nombre: string, pro
   };
 }
 
-function alquilerMunicipio(
-  municipios: Map<string, Municipio>,
-  codigo: string,
-  anio?: number,
-  tipo?: Tipo,
-) {
-  const m = municipio(municipios, codigo);
+function alquilerMunicipio(indice: Indice, codigo: string, anio?: number, tipo?: Tipo) {
+  const m = municipio(indice.municipios, codigo);
   const elegido = anio ?? Math.max(...m.anios.keys());
   if (!m.anios.has(elegido))
     throw new SourceError(`${m.nombre} no tiene datos de ${elegido}. Años con datos: ${rango(m)}.`);
@@ -253,19 +332,14 @@ function alquilerMunicipio(
     codigo: m.codigo,
     provincia: m.provincia,
     anio: elegido,
-    ...porTipo(m, elegido, tipo ? [tipo] : TIPOS),
+    ...porTipo(indice, m, elegido, tipo ? [tipo] : TIPOS),
   };
 }
 
-function compararMunicipios(
-  municipios: Map<string, Municipio>,
-  codigos: string[],
-  anio?: number,
-  tipo?: Tipo,
-) {
+function compararMunicipios(indice: Indice, codigos: string[], anio?: number, tipo?: Tipo) {
   if (new Set(codigos).size !== codigos.length)
     throw new SourceError('Hay un código repetido: indica municipios distintos.');
-  const lista = codigos.map((c) => municipio(municipios, c));
+  const lista = codigos.map((c) => municipio(indice.municipios, c));
   const comunes = [...new Set(lista.flatMap((m) => [...m.anios.keys()]))]
     .filter((a) => lista.every((m) => m.anios.has(a)))
     .sort((a, b) => a - b);
@@ -280,24 +354,24 @@ function compararMunicipios(
       municipio: m.nombre,
       codigo: m.codigo,
       provincia: m.provincia,
-      ...porTipo(m, elegido, tipo ? [tipo] : TIPOS),
+      ...porTipo(indice, m, elegido, tipo ? [tipo] : TIPOS),
     })),
   };
 }
 
 function rankingProvincia(
-  municipios: Map<string, Municipio>,
+  indice: Indice,
   provincia: string,
   tipo: Tipo,
   orden: 'renta' | 'eur_m2',
   limite: number,
   anio?: number,
 ) {
-  const { nombre, lista } = deProvincia(municipios, provincia);
+  const { nombre, lista } = deProvincia(indice.municipios, provincia);
   // Solo los municipios con el dato por el que se ordena: los que solo traen recuento no entran.
   const puestos = (a: number) =>
     lista.flatMap((m) => {
-      const s = m.anios.get(a)?.[tipo];
+      const s = serie(indice, m, a, tipo);
       if (!s) return [];
       const fila = { municipio: m.nombre, codigo: m.codigo, ...cifras(s) };
       const valor = orden === 'renta' ? fila.renta_eur_mes?.mediana : fila.eur_m2_derivado;
@@ -349,12 +423,12 @@ const tipoVivienda = z
 
 export function createSerpaviMcp(fetchImpl: Fetch = fetch) {
   const leer = fuente(fetchImpl);
-  const consulta = (f: (municipios: Map<string, Municipio>) => object) =>
+  const consulta = (f: (indice: Indice) => object) =>
     run(SOURCE, async () => {
       const { copia, aviso } = await leer();
       return {
         aviso,
-        ...f(copia.municipios),
+        ...f(copia.indice),
         csv_actualizado: copia.publicado ?? 'El Ministerio no indica la fecha.',
       };
     });
@@ -380,7 +454,7 @@ export function createSerpaviMcp(fetchImpl: Fetch = fetch) {
           annotations: READ_ONLY_EXTERNAL,
         },
         ({ nombre, provincia }) =>
-          consulta((municipios) => buscarMunicipio(municipios, nombre, provincia)),
+          consulta((indice) => buscarMunicipio(indice.municipios, nombre, provincia)),
       );
       s.registerTool(
         'alquiler_municipio',
@@ -392,7 +466,7 @@ export function createSerpaviMcp(fetchImpl: Fetch = fetch) {
           annotations: READ_ONLY_EXTERNAL,
         },
         ({ codigo, anio, tipo_vivienda }) =>
-          consulta((municipios) => alquilerMunicipio(municipios, codigo, anio, tipo_vivienda)),
+          consulta((indice) => alquilerMunicipio(indice, codigo, anio, tipo_vivienda)),
       );
       s.registerTool(
         'comparar_municipios',
@@ -411,9 +485,7 @@ export function createSerpaviMcp(fetchImpl: Fetch = fetch) {
           annotations: READ_ONLY_EXTERNAL,
         },
         ({ codigos, anio, tipo_vivienda }) =>
-          consulta((municipios) =>
-            compararMunicipios(municipios, codigos.split(','), anio, tipo_vivienda),
-          ),
+          consulta((indice) => compararMunicipios(indice, codigos.split(','), anio, tipo_vivienda)),
       );
       s.registerTool(
         'ranking_provincia',
@@ -435,8 +507,8 @@ export function createSerpaviMcp(fetchImpl: Fetch = fetch) {
           annotations: READ_ONLY_EXTERNAL,
         },
         ({ provincia, anio, tipo_vivienda, orden, limite }) =>
-          consulta((municipios) =>
-            rankingProvincia(municipios, provincia, tipo_vivienda, orden, limite, anio),
+          consulta((indice) =>
+            rankingProvincia(indice, provincia, tipo_vivienda, orden, limite, anio),
           ),
       );
     },

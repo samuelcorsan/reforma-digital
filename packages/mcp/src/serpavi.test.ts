@@ -168,6 +168,47 @@ describe('SERPAVI', () => {
     expect(r.datos()).toMatchObject({ colectiva: { renta_eur_mes: { mediana: 868.8 } } });
   });
 
+  it('reads the CSV as it arrives, whatever the pieces cut', async () => {
+    const bytes = new TextEncoder().encode(csv);
+    // La posición en bytes donde empieza `texto` en el fixture.
+    const en = (texto: string) => new TextEncoder().encode(csv.slice(0, csv.indexOf(texto))).length;
+    const cortes = [
+      1, // el BOM (3 bytes) partido en tres
+      2,
+      bytes.indexOf(13) + 1, // el \r de la cabecera en un trozo y su \n en el siguiente
+      en('Móstoles') + 2, // a mitad de la «ó», que son 2 bytes
+      en(';SUPERFICIE;UNIFAMILIAR;') + 5, // a mitad de una línea
+      en('RECUENTO;2023;291225') + 12, // la última línea, sin salto, en dos trozos
+    ].sort((a, b) => a - b);
+    const enTrozos = vi.fn<typeof fetch>(
+      async () =>
+        new Response(
+          new ReadableStream<Uint8Array>({
+            start(controller) {
+              for (const [i, hasta] of [...cortes, bytes.length].entries())
+                controller.enqueue(bytes.slice(cortes[i - 1] ?? 0, hasta));
+              controller.close();
+            },
+          }),
+          { headers: { 'last-modified': PUBLICADO } },
+        ),
+    );
+    const troceado = createSerpaviMcp(enTrozos);
+    const entero = createSerpaviMcp(fuente());
+    for (const [name, args] of [
+      ['alquiler_municipio', { codigo: '28079' }],
+      ['alquiler_municipio', { codigo: '28092' }],
+      ['buscar_municipio', { nombre: 'mostoles' }],
+      ['ranking_provincia', { provincia: 'Madrid' }],
+    ] as const)
+      expect((await llamar(troceado, name, args)).datos()).toEqual(
+        (await llamar(entero, name, args)).datos(),
+      );
+    expect(
+      (await llamar(troceado, 'alquiler_municipio', { codigo: '28079', anio: 2023 })).datos(),
+    ).toMatchObject({ colectiva: { viviendas: 291225 } });
+  });
+
   it('refuses a CSV whose format changed instead of reading it wrong', async () => {
     const cambiado = vi.fn<typeof fetch>(
       async () => new Response(csv.replace('TIPO_MEDIDA', 'MEDIDA')),
