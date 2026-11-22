@@ -219,7 +219,9 @@ export function buildIndex(files: Files, label: string): Index {
     ['route_id', 'route_type'],
     ['agency_id', 'route_short_name', 'route_long_name', 'route_desc'],
   )) {
-    const agencia = agencies.get(r.agency_id);
+    // Con una sola agencia, el GTFS permite dejar agency_id en blanco en routes.txt.
+    const only = agencies.size === 1 ? [...agencies.values()][0] : undefined;
+    const agencia = agencies.get(r.agency_id) ?? (r.agency_id === '' ? only : undefined);
     if (agencia === undefined) throw new SourceError(`Línea ${r.route_id} sin agencia en el GTFS.`);
     const type = Number(r.route_type);
     routesById.set(r.route_id, {

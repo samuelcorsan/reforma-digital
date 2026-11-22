@@ -77,6 +77,17 @@ describe('TIB', () => {
     ]);
   });
 
+  it('takes the only agency when a route leaves agency_id blank', () => {
+    const blank = files({
+      ...tib,
+      'routes.txt':
+        'route_id,agency_id,route_short_name,route_long_name,route_type\n3014,,204,Port de Sóller - Palma,3\nT1,,T1,Palma - Inca,2',
+    });
+    expect(findRoutes(buildIndex(blank, 'GTFS de TIB'), '204', 1).lineas[0]?.agencia).toBe(
+      'Grupo Ruiz',
+    );
+  });
+
   it('fails loudly when a required table or column is missing', () => {
     const broken = files(tib);
     broken.set('trips.txt', readCsv('route_id,trip_id\n3014,a\n'));
