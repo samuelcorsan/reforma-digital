@@ -37,22 +37,15 @@ const ESTADOS: Record<string, string> = {
   RES: 'Resuelta',
   ANUL: 'Anulada',
 };
-const estadoSchema = z.enum([
-  'anuncio_previo',
-  'en_plazo',
-  'pendiente_de_adjudicacion',
-  'adjudicada',
-  'resuelta',
-  'anulada',
-]);
-const ESTADO_FILTRO: Record<z.infer<typeof estadoSchema>, string> = {
+const ESTADO_FILTRO = {
   anuncio_previo: 'PRE',
   en_plazo: 'PUB',
   pendiente_de_adjudicacion: 'EV',
   adjudicada: 'ADJ',
   resuelta: 'RES',
   anulada: 'ANUL',
-};
+} as const;
+const estadoSchema = z.enum(Object.keys(ESTADO_FILTRO) as [keyof typeof ESTADO_FILTRO]);
 const TIPOS: Record<string, string> = {
   '1': 'Suministros',
   '2': 'Servicios',
@@ -375,15 +368,11 @@ async function pagina(fetchImpl: Fetch, url: string, fuente: Fuente): Promise<Pa
 
 /**
  * Las entradas de las `paginas` más recientes de un feed, sin repetir expediente: la primera que
- * aparece es la versión más reciente. Con `parar`, deja de leer en cuanto una entrada lo cumple.
+ * aparece es la versión más reciente. Con `id`, deja de leer en cuanto lo encuentra.
  */
-async function leer(
-  fetchImpl: Fetch,
-  fuente: Fuente,
-  paginas: number,
-  parar?: (l: { id: string }) => boolean,
-) {
+async function leer(fetchImpl: Fetch, fuente: Fuente, paginas: number, id?: string) {
   const vistas = new Set<string>();
+  const nueva = (x: { id: string }) => !vistas.has(x.id) && Boolean(vistas.add(x.id));
   const entradas: Licitacion[] = [];
   const borradas: Borrada[] = [];
   let url: string | undefined = FEEDS[fuente].url;
@@ -391,18 +380,10 @@ async function leer(
   while (url && leidas < paginas) {
     const p = await pagina(fetchImpl, url, fuente);
     leidas++;
-    for (const b of p.borradas)
-      if (!vistas.has(b.id)) {
-        vistas.add(b.id);
-        borradas.push(b);
-      }
-    for (const e of p.entradas)
-      if (!vistas.has(e.id)) {
-        vistas.add(e.id);
-        entradas.push(e);
-      }
+    borradas.push(...p.borradas.filter(nueva));
+    entradas.push(...p.entradas.filter(nueva));
     url = p.siguiente;
-    if (parar && [...entradas, ...borradas].some(parar)) break;
+    if (id && vistas.has(id)) break;
   }
   const fechas = entradas.map((e) => e.actualizada!).sort();
   return {
@@ -427,15 +408,7 @@ const resumen = (l: Licitacion) => ({
   adjudicatarios: [...new Set(l.resultados.flatMap((r) => r.adjudicatarios))],
 });
 
-type Filtros = {
-  texto?: string;
-  provincia?: string;
-  cpv?: string;
-  estado?: z.infer<typeof estadoSchema>;
-  fuente: Fuente | 'ambas';
-  paginas: number;
-  limite: number;
-};
+type Filtros = z.infer<typeof buscarSchema>;
 
 export async function buscarLicitaciones(fetchImpl: Fetch, f: Filtros) {
   // Los filtros se validan antes de descargar nada.
@@ -490,12 +463,7 @@ export async function buscarLicitaciones(fetchImpl: Fetch, f: Filtros) {
 }
 
 export async function verLicitacion(fetchImpl: Fetch, id: string, fuente: Fuente, paginas: number) {
-  const { entradas, borradas, revisado } = await leer(
-    fetchImpl,
-    fuente,
-    paginas,
-    (l) => l.id === id,
-  );
+  const { entradas, borradas, revisado } = await leer(fetchImpl, fuente, paginas, id);
   const found = entradas.find((l) => l.id === id);
   if (found) return found;
   const borrada = borradas.find((b) => b.id === id);
@@ -526,6 +494,30 @@ const paginasSchema = (def: number) =>
       `Cuántas páginas de cada feed leer, de la más reciente hacia atrás (unas 400 licitaciones y de 5 a 15 MB cada una; hasta ${MAX_PAGINAS}).`,
     );
 
+const buscarSchema = z.object({
+  texto: z
+    .string()
+    .max(100)
+    .optional()
+    .describe('Palabras del título, del órgano o del expediente, sin importar tildes ni orden.'),
+  provincia: z
+    .string()
+    .max(60)
+    .optional()
+    .describe(
+      'Provincia o comunidad del lugar de ejecución (Gipuzkoa, Bizkaia, Araba, Madrid…) o código NUTS (ES212).',
+    ),
+  cpv: z
+    .string()
+    .regex(/^\d{2,8}(-\d)?$/)
+    .optional()
+    .describe('Código CPV o su comienzo: 45421 encuentra 45421000, 45421100…'),
+  estado: estadoSchema.optional(),
+  fuente: z.enum(['ambas', 'placsp', 'agregadas']).default('ambas'),
+  paginas: paginasSchema(1),
+  limite: z.number().int().min(1).max(50).default(20).describe('Cuántas licitaciones devolver.'),
+});
+
 export function createContratacionMcp(fetchImpl: Fetch = fetch) {
   return server(
     { name: 'reforma-digital-contratacion', title: 'Licitaciones públicas' },
@@ -537,37 +529,7 @@ export function createContratacionMcp(fetchImpl: Fetch = fetch) {
           title: 'Buscar licitaciones',
           description:
             'Las licitaciones publicadas o actualizadas hace poco que cumplen todos los filtros, de la más reciente a la más antigua: expediente, título, órgano, estado, tipo, CPV, importe, lugar de ejecución, plazo de presentación, adjudicatarios y enlace. `revisado` dice qué periodo se leyó de cada fuente.',
-          inputSchema: z.object({
-            texto: z
-              .string()
-              .max(100)
-              .optional()
-              .describe(
-                'Palabras del título, del órgano o del expediente, sin importar tildes ni orden.',
-              ),
-            provincia: z
-              .string()
-              .max(60)
-              .optional()
-              .describe(
-                'Provincia o comunidad del lugar de ejecución (Gipuzkoa, Bizkaia, Araba, Madrid…) o código NUTS (ES212).',
-              ),
-            cpv: z
-              .string()
-              .regex(/^\d{2,8}(-\d)?$/)
-              .optional()
-              .describe('Código CPV o su comienzo: 45421 encuentra 45421000, 45421100…'),
-            estado: estadoSchema.optional(),
-            fuente: z.enum(['ambas', 'placsp', 'agregadas']).default('ambas'),
-            paginas: paginasSchema(1),
-            limite: z
-              .number()
-              .int()
-              .min(1)
-              .max(50)
-              .default(20)
-              .describe('Cuántas licitaciones devolver.'),
-          }),
+          inputSchema: buscarSchema,
           annotations: READ_ONLY_EXTERNAL,
         },
         (args) => run(SOURCE, () => buscarLicitaciones(fetchImpl, args)),
