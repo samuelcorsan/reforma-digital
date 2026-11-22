@@ -22,10 +22,11 @@ RE_FECHA = re.compile(r"(\d{1,2}) de (" + "|".join(MESES) + r") de (\d{4})")
 MAY = r"A-ZÀ-ÖØ-Þ"
 # El índice tiene erratas de formato
 RE_ENTRADA = re.compile(
-    rf"((?:[{MAY}][{MAY}'’-]*\s+)*[{MAY}][{MAY}'’-]*),\s*([^,()]+?),?\s*"
+    rf"((?:[{MAY}][{MAY}'’-]*\s+(?:(?:de|del|la|las|los|y|i)\s+)*)*[{MAY}][{MAY}'’-]*),\s*([^,()]+?),?\s*"
     r"\(((?:[^()]|\([^()]*\))+)\)(?:\s*\((?![Nn]úm)[^()]+\))?\s*"
     r"\([Nn]úm\.\s*expte\.\s*(005/\d+/\d+)\)"
-    r"\s*(?:([012])(?=[\s.]))?[\s.]*(?:([012])\s+)?(\d+)"
+    # Tras la página no hay puntos de relleno: si los hay, lo leído era un tipo que no se conoce.
+    r"\s*(?:([012])(?=[\s.]))?[\s.]*(?:([012])\s+)?(\d+)(?!\d|\s*\.\.)"
 )
 
 
@@ -37,7 +38,10 @@ def clave(nombre: str) -> str:
 
 
 def leer_indice(texto: str, numero: int) -> list[dict]:
-    """Declaraciones que anuncia el índice de un número de la Serie D, o [] si no trae ninguna."""
+    """Declaraciones que anuncia el índice de un número de la Serie D, o [] si no trae ninguna.
+
+    Si alguna entrada no se entiende, falla: una lista a medias se leería en la ficha como completa.
+    """
     texto = " ".join(texto.split())
     if "Declaración de bienes y rentas de los señores" not in texto or not (f := RE_FECHA.search(texto)):
         return []
@@ -52,7 +56,7 @@ def leer_indice(texto: str, numero: int) -> list[dict]:
                        "url": URL.format(leg=LEGISLATURA, n=numero) + f"#page={pagina}"})
     esperadas = len(re.findall(r"[Nn]úm\.\s*expte\.\s*005/", texto))
     if len(salida) != esperadas:
-        print(f"  Bienes: el BOCG D-{numero} anuncia {esperadas} declaraciones y se han leído {len(salida)}")
+        raise ValueError(f"El BOCG D-{numero} anuncia {esperadas} declaraciones de bienes y se han leído {len(salida)}")
     return salida
 
 

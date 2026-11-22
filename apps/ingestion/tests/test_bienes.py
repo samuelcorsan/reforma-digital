@@ -2,8 +2,12 @@
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from escano import bienes
+
+CABECERA = "Declaración de bienes y rentas de los señores Diputados 1 de enero de 2024 "
 
 INDICE = """
 BOLETÍN OFICIAL DE LAS CORTES GENERALES   Núm. 7   12 de marzo de 2024
@@ -31,6 +35,24 @@ def test_page_number_is_not_split_into_type():
     texto = "Declaración de bienes y rentas de los señores 1 de enero de 2024 LÓPEZ RUIZ, Marta (GP) (Núm. expte. 005/000005/0000) 12"
     [fila] = bienes.leer_indice(texto, 9)
     assert (fila["tipo"], fila["pagina"]) == ("inicial", 12)
+
+
+def test_lowercase_particles_stay_in_the_surname():
+    [fila] = bienes.leer_indice(CABECERA + "LÓPEZ de HARO, Ana (GS) (Núm. expte. 005/000006/0000) 0 .... 12", 9)
+    assert fila["nombre"] == "lopez de haro, ana"
+    [fila] = bienes.leer_indice(CABECERA + "y PÉREZ, Ana (GS) (Núm. expte. 005/000006/0000) 0 .... 12", 9)
+    assert fila["nombre"] == "perez, ana"
+
+
+@pytest.mark.parametrize("entrada", [
+    "RUIZ SANZ Eva (GS) (Núm. expte. 005/000007/0001) 1 .... 20",  # sin la coma del nombre
+    "RUIZ SANZ, Eva (GS) (Núm. expte. 005/000007/0003) 3 .... 20",  # tipo que no se conoce
+    "RUIZ SANZ, Eva (GS) (Núm. expte. 005/000007/0003) 13 .... 20",
+])
+def test_an_entry_that_cannot_be_read_fails_instead_of_being_dropped(entrada):
+    buena = "PÉREZ GÓMEZ, Ana (GS) (Núm. expte. 005/000001/0000) 0 .... 12 "
+    with pytest.raises(ValueError, match="anuncia 2 declaraciones de bienes y se han leído 1"):
+        bienes.leer_indice(CABECERA + buena + entrada, 9)
 
 
 def test_numbers_without_asset_declarations_are_ignored():
