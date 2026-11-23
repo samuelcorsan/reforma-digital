@@ -208,7 +208,7 @@ export async function instinctMarkdown() {
     }),
     '# Reforma Digital para Instinct',
     'Instinct no admite conectores MCP, así que esta página reúne las herramientas de los servidores MCP de Reforma Digital como URL que se leen con un GET. Reforma Digital es un proyecto cívico independiente, no un servicio del Gobierno. Los datos son públicos, de solo lectura y sin clave.',
-    'Cada URL lleva los parámetros en la query (`?parámetro=valor`, con el valor codificado) y responde en texto plano lo mismo que la herramienta, con la fuente al final. Si la herramienta da un error, responde 422 con el motivo; si no existe, 404.',
+    'Cada URL lleva los parámetros en la query (`?parámetro=valor`, con el valor codificado; los sí/no como `true` o `false`, y los objetos y las listas en JSON) y responde en texto plano lo mismo que la herramienta, con la fuente al final. Si la herramienta da un error, responde 422 con el motivo; si no existe, 404.',
     ...all.map((s) =>
       lines(
         `## ${s.name}`,

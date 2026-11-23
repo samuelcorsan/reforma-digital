@@ -136,8 +136,8 @@ type Param = {
   type: string;
   description?: string;
   required: boolean;
-  /** Para pasar a número lo que llega como texto en GET /mcp/<servidor>/<herramienta>. */
-  numeric: boolean;
+  /** El tipo JSON del esquema, para leer el texto de GET /mcp/<servidor>/<herramienta>. */
+  schemaType: string | undefined;
   default?: string;
 };
 export type Tool = {
@@ -173,7 +173,7 @@ export const serverIds = entries.map(({ id }) => id);
 async function rpc(
   handler: Entry['handler'],
   method: string,
-  params?: { name: string; arguments: Record<string, string | number> },
+  params?: { name: string; arguments: Record<string, JsonValue> },
 ) {
   const response = await handler(
     new Request('http://localhost/mcp', {
@@ -225,7 +225,7 @@ function params(schema: JsonSchema | undefined): Param[] {
         : (typeNames[prop.type ?? ''] ?? prop.type ?? '—'),
     description: prop.description,
     required: schema?.required?.includes(name) ?? false,
-    numeric: prop.type === 'integer' || prop.type === 'number',
+    schemaType: prop.type,
     default: prop.default === undefined ? undefined : JSON.stringify(prop.default),
   }));
 }
@@ -257,6 +257,24 @@ export function servers(): Promise<McpServer[]> {
   return loaded;
 }
 
+// Lo que no se puede leer con su tipo se pasa como texto, y el esquema de la herramienta lo
+// rechaza con el motivo.
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+function fromQuery(type: string | undefined, value: string): JsonValue {
+  if ((type === 'integer' || type === 'number') && Number.isFinite(Number(value)))
+    return Number(value);
+  if (type === 'boolean' && (value === 'true' || value === 'false')) return value === 'true';
+  if (type === 'object' || type === 'array') {
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      if (!(error instanceof SyntaxError)) throw error;
+    }
+  }
+  return value;
+}
+
 /**
  * Una herramienta por GET, con sus parámetros en la query. Existe por Instinct, que no admite
  * conectores MCP pero sí abre URLs: así puede usar las mismas herramientas sin configurar nada.
@@ -266,16 +284,13 @@ export async function callTool(id: string, name: string, query: URLSearchParams)
   const entry = entries.find((e) => e.id === id);
   const tool = (await servers()).find((s) => s.id === id)?.tools.find((t) => t.name === name);
   if (!entry || !tool) return undefined;
-  // La query solo trae texto: los parámetros numéricos del esquema se pasan como número, y uno
-  // vacío (`limite=`) se omite para que valga su valor por defecto.
-  const numeric = new Set(tool.params.filter((p) => p.numeric).map((p) => p.name));
+  // La query solo trae texto: se pasa al tipo del esquema, y uno vacío (`limite=`) se omite para
+  // que valga su valor por defecto.
+  const types = new Map(tool.params.map((p) => [p.name, p.schemaType]));
   const args = Object.fromEntries(
     [...query]
       .filter(([, value]) => value !== '')
-      .map(([key, value]) => [
-        key,
-        numeric.has(key) && Number.isFinite(Number(value)) ? Number(value) : value,
-      ]),
+      .map(([key, value]) => [key, fromQuery(types.get(key), value)]),
   );
   const result = (await rpc(entry.handler, 'tools/call', { name, arguments: args })) as {
     content: { type: string; text?: string }[];
