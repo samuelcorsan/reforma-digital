@@ -247,7 +247,7 @@ describe('Licitaciones', () => {
   });
 
   it('does not name awardees who are natural persons', async () => {
-    // Nombres y NIF inventados: un DNI, un NIE, uno que la PLACSP ya enmascara y una empresa.
+    // Nombres y NIF inventados: personas con DNI, NIE, enmascarado, NIE antiguo y con puntos; y empresas.
     const personas = feed(
       NEXT,
       entry(
@@ -259,7 +259,11 @@ describe('Licitaciones', () => {
         award('1', 'NOMBRE INVENTADO UNO', '00000000T') +
           award('2', 'NOMBRE INVENTADO DOS', 'Y0000000Z') +
           award('3', 'NOMBRE INVENTADO TRES', '***0000**') +
-          award('4', 'JARDINES DE PRUEBA, S.L.'),
+          award('4', 'NOMBRE INVENTADO CUATRO', 'X00000000T') +
+          award('5', 'NOMBRE INVENTADO CINCO', '0.000.000-T') +
+          award('6', 'JARDINES DE PRUEBA, S.L.') +
+          award('7', 'ASOCIACIÓN DE PRUEBA', 'G00000000') +
+          award('8', 'FUNDACIÓN DE PRUEBA', 'W0000000J'),
       ),
     );
     const result = await verLicitacion(
@@ -272,7 +276,11 @@ describe('Licitaciones', () => {
       ['Persona física'],
       ['Persona física'],
       ['Persona física'],
+      ['Persona física'],
+      ['Persona física'],
       ['JARDINES DE PRUEBA, S.L.'],
+      ['ASOCIACIÓN DE PRUEBA'],
+      ['FUNDACIÓN DE PRUEBA'],
     ]);
     expect(JSON.stringify(result)).not.toContain('INVENTADO');
   });

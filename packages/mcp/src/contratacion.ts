@@ -263,20 +263,19 @@ const presupuesto = (project: string | undefined) => {
 const cpvs = (project: string | undefined) =>
   all(project ?? '', 'cbc:ItemClassificationCode').map(decode);
 
-// El NIF de una persona (DNI, NIE o los de K, L y M) o el que la PLACSP ya enmascara con asteriscos.
-const NIF_PERSONA = /^(\d{8}|[KLMXYZ]\d{7})[A-Z]$|\*/;
+// El NIF de una persona (DNI, también sin el cero inicial; NIE, también el antiguo de 8 cifras; y los
+// de K, L y M), con o sin el prefijo ES, o el que la PLACSP ya enmascara con asteriscos.
+const NIF_PERSONA = /^(ES)?(\d{7,8}|[KLMXYZ]\d{7,8})[A-Z]$|\*/;
 
 /**
  * El nombre del adjudicatario, salvo si es una persona física: su nombre es un dato personal y la
  * búsqueda no lo necesita. El NIF no sale nunca.
  */
 function adjudicatario(party: string) {
-  const nif = text(one(party, 'cac:PartyIdentification'), 'cbc:ID')
-    ?.toUpperCase()
-    .replace(/[\s-]/g, '');
-  return nif && NIF_PERSONA.test(nif)
-    ? 'Persona física'
-    : text(one(party, 'cac:PartyName'), 'cbc:Name');
+  const persona = all(party, 'cac:PartyIdentification').some((id) =>
+    NIF_PERSONA.test((text(id, 'cbc:ID') ?? '').toUpperCase().replace(/[\s.-]/g, '')),
+  );
+  return persona ? 'Persona física' : text(one(party, 'cac:PartyName'), 'cbc:Name');
 }
 
 /** Una entrada del feed leída a lo que se le cuenta al asistente. */
