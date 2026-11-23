@@ -5,6 +5,7 @@ import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
+import { POST as redElectrica } from '../../app/mcp/red-electrica/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -14,6 +15,7 @@ import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
+import redElectricaEscena from './escenas/red-electrica.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -116,6 +118,20 @@ const servidores: Servidor[] = [
     ],
   },
   {
+    id: 'red-electrica',
+    name: 'Red Eléctrica',
+    category: 'consumo',
+    logo: { src: '/organismos/red-electrica.png' },
+    escena: redElectricaEscena,
+    summary:
+      'El precio de la luz (PVPC) de cada hora, sus medias por día o mes, y cómo se genera la electricidad: tecnologías, renovables y demanda.',
+    examples: [
+      '¿A qué hora es más barata la luz hoy?',
+      '¿Cuánto costó la luz de media cada mes de 2022?',
+      '¿Qué porcentaje de la electricidad fue renovable ayer?',
+    ],
+  },
+  {
     id: 'alsa',
     name: 'ALSA',
     category: 'transporte',
@@ -158,6 +174,7 @@ const handlers: Record<string, Entry['handler']> = {
   ine,
   eustat,
   carburantes,
+  'red-electrica': redElectrica,
   alsa,
 };
 const entries: Entry[] = servidores.map((s) => {
