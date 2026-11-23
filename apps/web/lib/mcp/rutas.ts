@@ -14,6 +14,13 @@ export function openInBrowser(id: string) {
 }
 
 /**
+ * Lo que copia «Para Instinct». Instinct no admite MCP ni sigue instrucciones de una web, así que la
+ * orden va en la frase, que la persona le manda, y instinct.md solo describe las URL.
+ */
+export const instinctPrompt = () =>
+  `Cuando te pregunte por datos públicos de España, consúltalos en las URL de ${markdownUrl('/developers/instinct')}`;
+
+/**
  * Lo que copia «Conecta tu agente», como el «Fetch … and follow it» de Vercel: una frase con el
  * Markdown que el agente lee y sigue. Las órdenes de cada cliente viven en ese Markdown.
  */

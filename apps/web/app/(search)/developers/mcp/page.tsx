@@ -8,9 +8,9 @@ import {
   type Order,
   type Summary,
 } from '../../../../components/mcp/biblioteca';
-import { OnboardButton } from '../../../../components/mcp/onboard';
+import { InstinctButton, OnboardButton } from '../../../../components/mcp/onboard';
 import { servers } from '../../../../lib/mcp/catalog';
-import { agentPrompt } from '../../../../lib/mcp/rutas';
+import { agentPrompt, instinctPrompt } from '../../../../lib/mcp/rutas';
 import { links } from '../../../../lib/site';
 import { breadcrumbs, pageMetadata, webPage } from '../../../../lib/seo';
 
@@ -62,7 +62,10 @@ export default async function Page({ searchParams }: Props) {
         <p className="mx-auto mt-6 max-w-[44ch] text-lg leading-relaxed text-balance text-muted-foreground">
           Servidores MCP para que tu asistente consulte por su cuenta datos públicos de España.
         </p>
-        <OnboardButton prompt={agentPrompt('/developers/mcp')} className="mt-8" />
+        <div className="mt-8 flex flex-wrap justify-center gap-2">
+          <OnboardButton prompt={agentPrompt('/developers/mcp')} />
+          <InstinctButton prompt={instinctPrompt()} />
+        </div>
       </Biblioteca>
       <Footer />
     </>
