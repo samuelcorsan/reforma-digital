@@ -195,6 +195,12 @@ describe('Licitaciones', () => {
       vi.setSystemTime(new Date('2026-12-10T12:00:00Z'));
       const cerrada = await buscarLicitaciones(feeds(), { ...base, estado: 'en_plazo' });
       expect(cerrada.total).toBe(0);
+      // Y sin filtro sale con el plazo vencido, no «en plazo». A las 00:30 de Madrid ya es otro día.
+      vi.setSystemTime(new Date('2026-12-09T23:30:00Z'));
+      const todas = await buscarLicitaciones(feeds(), base);
+      expect(todas.licitaciones.find((l) => l.id === '20977272')).toMatchObject({
+        estado: 'Plazo vencido',
+      });
     } finally {
       vi.useRealTimers();
     }

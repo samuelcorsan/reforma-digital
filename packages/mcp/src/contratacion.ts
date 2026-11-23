@@ -46,6 +46,8 @@ const ESTADO_FILTRO = {
   anulada: 'ANUL',
 } as const;
 const estadoSchema = z.enum(Object.keys(ESTADO_FILTRO) as [keyof typeof ESTADO_FILTRO]);
+// «En plazo» en la fuente sigue así unos días después de cerrar: con el plazo pasado, se dice.
+const hoyMadrid = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid' });
 const TIPOS: Record<string, string> = {
   '1': 'Suministros',
   '2': 'Servicios',
@@ -283,7 +285,10 @@ function licitacion(entry: string, fuente: Fuente) {
     expediente: text(entry, 'cbc:ContractFolderID'),
     titulo: text(entry, 'title'),
     organo: text(one(party, 'cac:PartyName'), 'cbc:Name'),
-    estado: estado && (ESTADOS[estado] ?? estado),
+    estado:
+      estado === 'PUB' && fecha && fecha < hoyMadrid.format(new Date())
+        ? 'Plazo vencido'
+        : estado && (ESTADOS[estado] ?? estado),
     tipo: tipo && (TIPOS[tipo] ?? tipo),
     procedimiento: procedimiento && (PROCEDIMIENTOS[procedimiento] ?? procedimiento),
     cpv: [...new Set([...cpvs(main), ...lotCpvs])],
@@ -418,8 +423,6 @@ export async function buscarLicitaciones(fetchImpl: Fetch, f: Filtros) {
   // toma tal cual: «45420» no es «4542».
   const sinControl = f.cpv?.replace(/-\d$/, '');
   const cpv = sinControl?.length === 8 ? sinControl.replace(/^(\d{2}\d*?)0+$/, '$1') : sinControl;
-  // «En plazo» en la fuente sigue así unos días después de cerrar: se mira también la fecha.
-  const hoy = new Date().toISOString().slice(0, 10);
   const w = words(f.texto);
   const estado = f.estado && ESTADOS[ESTADO_FILTRO[f.estado]];
   const fuentes: Fuente[] = f.fuente === 'ambas' ? ['placsp', 'agregadas'] : [f.fuente];
@@ -430,8 +433,6 @@ export async function buscarLicitaciones(fetchImpl: Fetch, f: Filtros) {
   const found = todas.filter((l) => {
     if (w.length && !matches([l.titulo, l.organo, l.expediente].join(' '), w)) return false;
     if (estado && l.estado !== estado) return false;
-    if (f.estado === 'en_plazo' && l.plazo_presentacion && l.plazo_presentacion.slice(0, 10) < hoy)
-      return false;
     if (cpv && !l.cpv.some((c) => c.startsWith(cpv))) return false;
     if (prefijo) {
       const codes = [l.lugar, ...l.lotes.map((x) => x.lugar)].flatMap((x) => x?.nuts ?? []);
