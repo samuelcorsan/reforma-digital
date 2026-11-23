@@ -142,3 +142,4 @@ export { createCarburantesMcp } from './carburantes';
 export { createCatastroMcp } from './catastro';
 export { createEustatMcp } from './eustat';
 export { createIneMcp } from './ine';
+export { createRedElectricaMcp } from './red-electrica';
