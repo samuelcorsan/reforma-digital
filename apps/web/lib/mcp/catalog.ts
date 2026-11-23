@@ -5,6 +5,7 @@ import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
+import { POST as barcelona } from '../../app/mcp/barcelona/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -14,6 +15,7 @@ import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
+import barcelonaEscena from './escenas/barcelona.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -101,6 +103,20 @@ const servidores: Servidor[] = [
     ],
   },
   {
+    id: 'barcelona',
+    name: 'Open Data BCN',
+    category: 'estadistica',
+    logo: { src: '/organismos/barcelona.svg' },
+    escena: barcelonaEscena,
+    summary:
+      'Los datos abiertos del Ajuntament de Barcelona por barrio y distrito: accidentes, calidad del aire, ruido, población, equipamientos y más.',
+    examples: [
+      '¿Cuántos accidentes de tráfico hubo en Gràcia en 2025?',
+      '¿Qué parte de los vecinos del Raval está expuesta a más de 65 dB de ruido del tráfico?',
+      '¿Qué bibliotecas hay en el distrito de Sant Andreu?',
+    ],
+  },
+  {
     id: 'carburantes',
     name: 'Precios de carburantes',
     category: 'consumo',
@@ -157,6 +173,7 @@ const handlers: Record<string, Entry['handler']> = {
   boe,
   ine,
   eustat,
+  barcelona,
   carburantes,
   alsa,
 };
