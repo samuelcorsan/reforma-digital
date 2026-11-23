@@ -6,6 +6,7 @@ import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
 import { POST as redElectrica } from '../../app/mcp/red-electrica/route';
+import { POST as catastro } from '../../app/mcp/catastro/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -16,6 +17,7 @@ import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
 import redElectricaEscena from './escenas/red-electrica.png';
+import catastroEscena from './escenas/catastro.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -103,6 +105,20 @@ const servidores: Servidor[] = [
     ],
   },
   {
+    id: 'catastro',
+    name: 'Catastro',
+    category: 'vivienda',
+    logo: { src: '/organismos/catastro.png' },
+    escena: catastroEscena,
+    summary:
+      'Los datos públicos de cada inmueble y parcela del Catastro: uso, superficie, año de construcción y pisos de un edificio, por referencia, dirección o coordenadas.',
+    examples: [
+      '¿Cuántos inmuebles tiene el edificio de la plaza de España 18 de Madrid y de qué año es?',
+      '¿De qué año es el edificio de la referencia catastral 9872023VH5797S?',
+      '¿Qué parcela hay en las coordenadas 40.4262, -3.7015?',
+    ],
+  },
+  {
     id: 'carburantes',
     name: 'Precios de carburantes',
     category: 'consumo',
@@ -173,6 +189,7 @@ const handlers: Record<string, Entry['handler']> = {
   boe,
   ine,
   eustat,
+  catastro,
   carburantes,
   'red-electrica': redElectrica,
   alsa,
