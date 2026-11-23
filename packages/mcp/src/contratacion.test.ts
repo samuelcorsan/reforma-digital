@@ -38,9 +38,9 @@ describe('Licitaciones', () => {
   const lot = (id: string, name: string, code: string) =>
     `<cac:ProcurementProjectLot><cbc:ID schemeName="ID_LOTE">${id}</cbc:ID><cac:ProcurementProject><cbc:Name>${name}&#xD;
 </cbc:Name>${budget('1000', '1210')}${cpv(code)}${nuts('ES212')}</cac:ProcurementProject></cac:ProcurementProjectLot>`;
-  const award = (lote: string, winner: string) =>
+  const award = (lote: string, winner: string, nif = 'B00000000') =>
     `<cac:TenderResult><cbc:ResultCode listURI="x">8</cbc:ResultCode><cbc:AwardDate>2026-11-06</cbc:AwardDate><cbc:ReceivedTenderQuantity>3</cbc:ReceivedTenderQuantity>
-    <cac:WinningParty><cac:PartyIdentification><cbc:ID schemeName="NIF">B00000000</cbc:ID></cac:PartyIdentification><cac:PartyName><cbc:Name>${winner}</cbc:Name></cac:PartyName></cac:WinningParty>
+    <cac:WinningParty><cac:PartyIdentification><cbc:ID schemeName="NIF">${nif}</cbc:ID></cac:PartyIdentification><cac:PartyName><cbc:Name>${winner}</cbc:Name></cac:PartyName></cac:WinningParty>
     <cac:AwardedTenderedProject><cbc:ProcurementProjectLotID>${lote}</cbc:ProcurementProjectLotID><cac:LegalMonetaryTotal><cbc:TaxExclusiveAmount currencyID="EUR">900</cbc:TaxExclusiveAmount><cbc:PayableAmount currencyID="EUR">1089</cbc:PayableAmount></cac:LegalMonetaryTotal></cac:AwardedTenderedProject></cac:TenderResult>`;
 
   const page1 = feed(
@@ -244,6 +244,37 @@ describe('Licitaciones', () => {
       importe: { sin_iva: 900, con_iva: 1089 },
     });
     expect(JSON.stringify(result)).not.toContain('B00000000');
+  });
+
+  it('does not name awardees who are natural persons', async () => {
+    // Nombres y NIF inventados: un DNI, un NIE, uno que la PLACSP ya enmascara y una empresa.
+    const personas = feed(
+      NEXT,
+      entry(
+        '20000001',
+        '2026-11-21T09:00:00.000+01:00',
+        'Mantenimiento de jardines',
+        'ADJ',
+        budget('1000', '1210'),
+        award('1', 'NOMBRE INVENTADO UNO', '00000000T') +
+          award('2', 'NOMBRE INVENTADO DOS', 'Y0000000Z') +
+          award('3', 'NOMBRE INVENTADO TRES', '***0000**') +
+          award('4', 'JARDINES DE PRUEBA, S.L.'),
+      ),
+    );
+    const result = await verLicitacion(
+      vi.fn<typeof fetch>(async () => new Response(personas)),
+      '20000001',
+      'agregadas',
+      1,
+    );
+    expect(result.resultados.map((r) => r.adjudicatarios)).toEqual([
+      ['Persona física'],
+      ['Persona física'],
+      ['Persona física'],
+      ['JARDINES DE PRUEBA, S.L.'],
+    ]);
+    expect(JSON.stringify(result)).not.toContain('INVENTADO');
   });
 
   it('stops reading at the tender, and says how far it read when it is not there', async () => {

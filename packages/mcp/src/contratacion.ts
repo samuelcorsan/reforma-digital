@@ -263,6 +263,22 @@ const presupuesto = (project: string | undefined) => {
 const cpvs = (project: string | undefined) =>
   all(project ?? '', 'cbc:ItemClassificationCode').map(decode);
 
+// El NIF de una persona (DNI, NIE o los de K, L y M) o el que la PLACSP ya enmascara con asteriscos.
+const NIF_PERSONA = /^(\d{8}|[KLMXYZ]\d{7})[A-Z]$|\*/;
+
+/**
+ * El nombre del adjudicatario, salvo si es una persona física: su nombre es un dato personal y la
+ * búsqueda no lo necesita. El NIF no sale nunca.
+ */
+function adjudicatario(party: string) {
+  const nif = text(one(party, 'cac:PartyIdentification'), 'cbc:ID')
+    ?.toUpperCase()
+    .replace(/[\s-]/g, '');
+  return nif && NIF_PERSONA.test(nif)
+    ? 'Persona física'
+    : text(one(party, 'cac:PartyName'), 'cbc:Name');
+}
+
 /** Una entrada del feed leída a lo que se le cuenta al asistente. */
 function licitacion(entry: string, fuente: Fuente) {
   const lotes = all(entry, 'cac:ProcurementProjectLot');
@@ -315,10 +331,7 @@ function licitacion(entry: string, fuente: Fuente) {
         resultado: resultado && (RESULTADOS[resultado] ?? resultado),
         fecha: text(r, 'cbc:AwardDate'),
         ofertas_recibidas: amount(r, 'cbc:ReceivedTenderQuantity'),
-        // Solo el nombre: el NIF de un autónomo es un dato personal y no hace falta para la búsqueda.
-        adjudicatarios: all(r, 'cac:WinningParty').map((w) =>
-          text(one(w, 'cac:PartyName'), 'cbc:Name'),
-        ),
+        adjudicatarios: all(r, 'cac:WinningParty').map(adjudicatario),
         importe: {
           sin_iva: amount(total, 'cbc:TaxExclusiveAmount'),
           con_iva: amount(total, 'cbc:PayableAmount'),
@@ -482,6 +495,7 @@ Hay dos fuentes: «placsp», lo que se publica en la propia Plataforma (Administ
 La fuente no tiene buscador: buscar_licitaciones lee las páginas más recientes de cada feed (las licitaciones publicadas o que han cambiado hace poco: un día laborable puede llenar varias páginas) y filtra. Di siempre hasta qué fecha llegó («revisado»): una licitación más antigua sin cambios después no sale, y no por eso no existe.
 La provincia es el lugar de ejecución (código NUTS), no la sede del órgano. Las licitaciones de ámbito más amplio (toda España, la comunidad entera) no salen al filtrar por provincia: «lugar_mas_amplio» dice cuántas había. El CPV filtra por prefijo: 4542 son las obras de carpintería, 45421 las de carpintería de madera y metal, 44221 las ventanas, puertas y elementos afines.
 Los importes van en euros: sin_iva es el presupuesto base de licitación sin impuestos, con_iva con ellos, y valor_estimado incluye prórrogas y modificaciones.
+Un adjudicatario «Persona física» es un autónomo o un particular: su nombre está en la PLACSP, pero aquí no se repite. No lo busques ni lo deduzcas.
 ${SOURCE}`;
 
 const paginasSchema = (def: number) =>
