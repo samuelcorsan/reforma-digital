@@ -54,6 +54,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'carburantes',
       'red-electrica',
       'alsa',
+      'contratacion',
       'ninguno',
     ]);
   });
