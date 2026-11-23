@@ -97,10 +97,13 @@ async function ree(
     response = await get(fetchImpl, url);
   } catch (error) {
     if (!(error instanceof SourceError)) throw error;
+    // REData responde 400 a lo que no tiene; otro código es un fallo suyo, no del periodo pedido.
     throw new SourceError(
-      error.status
-        ? `REE no da esos datos (respondió ${error.status}). Puede que aún no estén publicados o que el periodo sea demasiado largo; prueba un periodo más corto o más antiguo.`
-        : 'REE no ha respondido a tiempo. Con periodos largos tarda: prueba uno más corto.',
+      error.status === 400
+        ? 'REE no da esos datos (respondió 400). Puede que aún no estén publicados o que el periodo sea demasiado largo; prueba un periodo más corto o más antiguo.'
+        : error.status
+          ? `REE no está disponible ahora (respondió ${error.status}). Prueba más tarde.`
+          : 'REE no ha respondido: puede estar caída o tardar con periodos largos. Prueba más tarde o con un periodo más corto.',
     );
   }
   const body = (await response.json()) as Partial<Respuesta>;

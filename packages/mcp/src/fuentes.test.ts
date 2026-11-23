@@ -605,6 +605,16 @@ describe('Red Eléctrica', () => {
     }
   });
 
+  it('tells a REE outage apart from data it does not have', async () => {
+    const con = (status: number) => vi.fn<typeof fetch>(async () => Response.json({}, { status }));
+    await expect(precioLuz(con(400), '2026-11-21', 'peninsular')).rejects.toThrow(
+      'Puede que aún no estén publicados',
+    );
+    await expect(precioLuz(con(503), '2026-11-21', 'peninsular')).rejects.toThrow(
+      'REE no está disponible ahora (respondió 503)',
+    );
+  });
+
   it('rejects an incomplete day, a missing PVPC and systems without prices', async () => {
     const fetchImpl = vi.fn<typeof fetch>(async () =>
       respuesta(
