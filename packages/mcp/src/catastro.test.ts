@@ -168,6 +168,20 @@ describe('Catastro', () => {
     ).rejects.toThrow('incompleta');
   });
 
+  it('suggests asking floor by floor only when the Catastro does not answer', async () => {
+    const pagina = { pagina: 1, limite: 50 };
+    const sinRespuesta = vi.fn<typeof fetch>(async () => {
+      throw new DOMException('The operation was aborted due to timeout', 'TimeoutError');
+    });
+    await expect(verInmueble(sinRespuesta, '0555705VK4705F', pagina)).rejects.toThrow(
+      'pídelos planta a planta',
+    );
+    const html = vi.fn<typeof fetch>(async () => new Response('<html>Error</html>'));
+    const error = await verInmueble(html, '0555705VK4705F', pagina).catch((e: unknown) => e);
+    expect(error).toMatchObject({ message: expect.stringContaining('no es JSON') });
+    expect(error).not.toMatchObject({ message: expect.stringContaining('planta a planta') });
+  });
+
   it('sends foral territories to their own cadastre instead of an empty answer', async () => {
     const fetchImpl = catastro({});
     const pagina = { pagina: 1, limite: 50 };

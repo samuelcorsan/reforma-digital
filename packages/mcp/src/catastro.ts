@@ -57,9 +57,17 @@ type Resultado = {
   coordenadas_distancias?: { coordd: { lpcd?: Cercana[] }[] };
 };
 
+/** El Catastro no ha respondido (tiempo agotado o sin conexión), frente a una respuesta que no vale. */
+class SinRespuesta extends SourceError {}
+
 async function ovc(fetchImpl: Fetch, path: string, params: Record<string, string>) {
   const url = `${OVC}/${path}?${new URLSearchParams(params)}`;
-  const body = await (await get(fetchImpl, url)).json().catch(() => {
+  const response = await get(fetchImpl, url).catch((error: unknown) => {
+    if (error instanceof SourceError && error.status === undefined)
+      throw new SinRespuesta(error.message);
+    throw error;
+  });
+  const body = await response.json().catch(() => {
     throw new SourceError('El Catastro devolvió una respuesta que no es JSON. Prueba más tarde.');
   });
   const [r] = Object.values(body as Record<string, Resultado | undefined>);
@@ -220,7 +228,7 @@ function inmuebles({ bico, lrcdnp, control }: Resultado, { pagina, limite }: Pag
 // El Catastro tarda unos 45 ms por inmueble en listar una parcela o un portal: con más de unos 400
 // se pasa del tiempo límite. Los de una sola planta llegan enseguida.
 function siTarda(error: unknown, donde = ''): never {
-  if (error instanceof SourceError && error.status === undefined)
+  if (error instanceof SinRespuesta)
     throw new SourceError(
       `${error.message} Si es un edificio con cientos de inmuebles, el Catastro tarda demasiado en listarlos todos: pídelos planta a planta con buscar_direccion${donde}.`,
     );
@@ -233,8 +241,7 @@ export async function verInmueble(fetchImpl: Fetch, texto: string, pagina: Pagin
     RefCat: rc,
   }).catch(async (error: unknown) => {
     // Solo una parcela entera puede tardar tanto; su dirección ayuda a pedirla por plantas.
-    if (rc.length !== 14 || !(error instanceof SourceError) || error.status !== undefined)
-      throw error;
+    if (rc.length !== 14 || !(error instanceof SinRespuesta)) throw error;
     const sitio = await ovc(fetchImpl, 'COVCCoordenadas.svc/json/Consulta_CPMRC', {
       SRS: 'EPSG:4326',
       RefCat: rc,
