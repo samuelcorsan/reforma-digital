@@ -291,7 +291,12 @@ async function Data({
         }
       >
         Snapshot generado el {date(index.meta.generado)}. Los distintos conjuntos pueden tener
-        fechas de actualización diferentes. <Link href={href('metodo')}>Método y fuentes</Link>.
+        fechas de actualización diferentes. <Link href={href('metodo')}>Método y fuentes</Link>. Las
+        fotos de los diputados son del{' '}
+        <a href="https://www.congreso.es/" target="_blank" rel="noopener noreferrer">
+          Congreso de los Diputados
+        </a>
+        .
       </p>
     </>
   );
