@@ -4,6 +4,36 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@modelcontextprotocol/server':
+      specifier: 2.4.0
+      version: 2.4.0
+    '@tailwindcss/postcss':
+      specifier: 4.3.3
+      version: 4.3.3
+    '@types/react':
+      specifier: 19.2.18
+      version: 19.2.18
+    '@types/react-dom':
+      specifier: 19.2.7
+      version: 19.2.7
+    ai:
+      specifier: 7.0.137
+      version: 7.0.137
+    react:
+      specifier: 19.2.8
+      version: 19.2.8
+    react-dom:
+      specifier: 19.2.8
+      version: 19.2.8
+    tailwindcss:
+      specifier: 4.3.3
+      version: 4.3.3
+    zod:
+      specifier: 4.6.5
+      version: 4.6.5
+
 importers:
   .:
     dependencies:
@@ -11,10 +41,10 @@ importers:
         specifier: workspace:*
         version: link:packages/design
       react:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8
       react-dom:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8(react@19.2.8)
     devDependencies:
       '@playwright/test':
@@ -27,10 +57,10 @@ importers:
         specifier: 26.5.0
         version: 26.5.0
       '@types/react':
-        specifier: 19.2.18
+        specifier: 'catalog:'
         version: 19.2.18
       '@types/react-dom':
-        specifier: 19.2.7
+        specifier: 'catalog:'
         version: 19.2.7(@types/react@19.2.18)
       '@vitejs/plugin-react':
         specifier: 6.1.1
@@ -87,7 +117,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/runtime
       tailwindcss:
-        specifier: 4.3.3
+        specifier: 'catalog:'
         version: 4.3.3
 
   apps/ingestion: {}
@@ -128,13 +158,13 @@ importers:
         specifier: workspace:*
         version: link:../../packages/renfe
       '@tailwindcss/postcss':
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.3.3
       '@vercel/analytics':
         specifier: 2.0.1
         version: 2.0.1(next@16.3.8(@playwright/test@1.63.0)(@types/node@26.5.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       ai:
-        specifier: ^7.0.137
+        specifier: 'catalog:'
         version: 7.0.137(zod@4.6.5)
       dotenv:
         specifier: ^17.2.3
@@ -146,24 +176,24 @@ importers:
         specifier: ^1.1.8
         version: 1.1.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8
       react-dom:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8(react@19.2.8)
       shiki:
         specifier: 4.5.0
         version: 4.5.0
       zod:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.6.5
     devDependencies:
       '@types/react':
-        specifier: ^19.2.0
-        version: 19.3.0
+        specifier: 'catalog:'
+        version: 19.2.18
       '@types/react-dom':
-        specifier: ^19.2.0
-        version: 19.3.0(@types/react@19.3.0)
+        specifier: 'catalog:'
+        version: 19.2.7(@types/react@19.2.18)
 
   packages/ai:
     dependencies:
@@ -180,10 +210,10 @@ importers:
         specifier: workspace:*
         version: link:../retrieval
       ai:
-        specifier: ^7.0.124
-        version: 7.0.124(zod@4.6.5)
+        specifier: 'catalog:'
+        version: 7.0.137(zod@4.6.5)
       zod:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.6.5
 
   packages/alsa:
@@ -195,7 +225,7 @@ importers:
         specifier: workspace:*
         version: link:../renfe
       zod:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.6.5
 
   packages/bridge: {}
@@ -203,7 +233,7 @@ importers:
   packages/core:
     dependencies:
       zod:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.6.5
 
   packages/db:
@@ -218,7 +248,7 @@ importers:
         specifier: 1.8.0
         version: 1.8.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@tailwindcss/postcss':
-        specifier: 4.3.3
+        specifier: 'catalog:'
         version: 4.3.3
       class-variance-authority:
         specifier: 0.7.1
@@ -230,23 +260,23 @@ importers:
         specifier: 0.468.0
         version: 0.468.0(react@19.2.8)
       react:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8
       shadcn:
         specifier: 4.21.3
         version: 4.21.3
       tailwindcss:
-        specifier: 4.3.3
+        specifier: 'catalog:'
         version: 4.3.3
       tw-animate-css:
         specifier: 1.4.0
         version: 1.4.0
     devDependencies:
       '@types/react':
-        specifier: 19.2.18
+        specifier: 'catalog:'
         version: 19.2.18
       '@types/react-dom':
-        specifier: 19.2.7
+        specifier: 'catalog:'
         version: 19.2.7(@types/react@19.2.18)
 
   packages/evals:
@@ -264,7 +294,7 @@ importers:
         specifier: workspace:*
         version: link:../government
       zod:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.6.5
 
   packages/government:
@@ -276,10 +306,10 @@ importers:
   packages/mcp:
     dependencies:
       '@modelcontextprotocol/server':
-        specifier: ^2.4.0
+        specifier: 'catalog:'
         version: 2.4.0
       zod:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.6.5
 
   packages/react:
@@ -291,10 +321,10 @@ importers:
         specifier: workspace:*
         version: link:../design
       react:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8
       react-dom:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8(react@19.2.8)
 
   packages/registry:
@@ -306,10 +336,10 @@ importers:
   packages/renfe:
     dependencies:
       '@modelcontextprotocol/server':
-        specifier: ^2.4.0
+        specifier: 'catalog:'
         version: 2.4.0
       zod:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.6.5
 
   packages/retrieval:
@@ -330,10 +360,10 @@ importers:
         specifier: workspace:*
         version: link:../registry
       react:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8
       react-dom:
-        specifier: 19.2.8
+        specifier: 'catalog:'
         version: 19.2.8(react@19.2.8)
 
   sites/dni:
@@ -406,15 +436,6 @@ importers:
         version: link:../../packages/runtime
 
 packages:
-  '@ai-sdk/gateway@4.0.102':
-    resolution:
-      {
-        integrity: sha512-kAVldt8D2AVSs7BjBZTRWHcFF71lPH8ouS6/QVlFCnKcUsShjXMdRwW6es5BfxyGewHbXfSirSc8j6efKSkIdA==,
-      }
-    engines: { node: '>=22' }
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
   '@ai-sdk/gateway@4.0.110':
     resolution:
       {
@@ -2639,24 +2660,10 @@ packages:
     peerDependencies:
       '@types/react': ^19.2.0
 
-  '@types/react-dom@19.3.0':
-    resolution:
-      {
-        integrity: sha512-ZI7bU42mZXXKHn/qNLEw2IrbiINU7X5+vfgdixBHkCNpYWXjKgfQ/P+uyGb5CjOLB9UcnTeg3rylQtV2hym44Q==,
-      }
-    peerDependencies:
-      '@types/react': ^19.3.0
-
   '@types/react@19.2.18':
     resolution:
       {
         integrity: sha512-AnzbBERsrLKtk2XSfTbYRLjQPdy116Sty4q+T+Bp3IC4l6jNBvreVPAHmpq9qhXQM7CXZPjLVmGMw9sy+hxQ3w==,
-      }
-
-  '@types/react@19.3.0':
-    resolution:
-      {
-        integrity: sha512-N0rFCuH9YoxG9/m61l9MfpJKfmLOVU0em7ipIz6TRgSSkvReLB9vL85GB+yr8Bs5leqpvg96JSwF4ZS1s4viQg==,
       }
 
   '@types/unist@3.0.3':
@@ -2955,15 +2962,6 @@ packages:
       }
     engines: { node: '>=0.4.0' }
     hasBin: true
-
-  ai@7.0.124:
-    resolution:
-      {
-        integrity: sha512-FdzSxCXE+tlkD9texj2EO8QvJvCHoqWjdOTM3EWL6CBDtJXMe0/aYul9e31Q+P7zABmRAXrc3+XFSrmawqQOcA==,
-      }
-    engines: { node: '>=22' }
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
 
   ai@7.0.137:
     resolution:
@@ -6146,13 +6144,6 @@ packages:
       }
 
 snapshots:
-  '@ai-sdk/gateway@4.0.102(zod@4.6.5)':
-    dependencies:
-      '@ai-sdk/provider': 4.0.21
-      '@ai-sdk/provider-utils': 5.0.53(zod@4.6.5)
-      '@vercel/oidc': 3.2.0
-      zod: 4.6.5
-
   '@ai-sdk/gateway@4.0.110(zod@4.6.5)':
     dependencies:
       '@ai-sdk/provider': 4.0.26
@@ -7279,15 +7270,7 @@ snapshots:
     dependencies:
       '@types/react': 19.2.18
 
-  '@types/react-dom@19.3.0(@types/react@19.3.0)':
-    dependencies:
-      '@types/react': 19.3.0
-
   '@types/react@19.2.18':
-    dependencies:
-      csstype: 3.2.3
-
-  '@types/react@19.3.0':
     dependencies:
       csstype: 3.2.3
 
@@ -7388,13 +7371,6 @@ snapshots:
       negotiator: 1.1.0
 
   acorn@8.18.0: {}
-
-  ai@7.0.124(zod@4.6.5):
-    dependencies:
-      '@ai-sdk/gateway': 4.0.102(zod@4.6.5)
-      '@ai-sdk/provider': 4.0.21
-      '@ai-sdk/provider-utils': 5.0.53(zod@4.6.5)
-      zod: 4.6.5
 
   ai@7.0.137(zod@4.6.5):
     dependencies:

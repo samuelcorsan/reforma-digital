@@ -2,6 +2,17 @@ packages:
   - apps/*
   - packages/*
   - sites/*
+# Versiones que comparten varios paquetes: se declaran con "catalog:" y se cambian solo aquí.
+catalog:
+  '@modelcontextprotocol/server': 2.4.0
+  '@tailwindcss/postcss': 4.3.3
+  '@types/react': 19.2.18
+  '@types/react-dom': 19.2.7
+  ai: 7.0.137
+  react: 19.2.8
+  react-dom: 19.2.8
+  tailwindcss: 4.3.3
+  zod: 4.6.5
 allowBuilds:
   esbuild: true
   sharp: true
