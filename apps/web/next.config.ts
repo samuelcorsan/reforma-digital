@@ -1,6 +1,10 @@
 import { fileURLToPath } from 'node:url';
-import { config as loadEnv } from 'dotenv';
-loadEnv({ path: fileURLToPath(new URL('../../.env', import.meta.url)), quiet: true });
+try {
+  process.loadEnvFile(fileURLToPath(new URL('../../.env', import.meta.url)));
+} catch (error) {
+  // Sin .env en la raíz (en Vercel, por ejemplo) las variables ya vienen del entorno.
+  if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) throw error;
+}
 import type { NextConfig } from 'next';
 const config: NextConfig = {
   transpilePackages: ['@reforma-digital/design', '@reforma-digital/db'],

@@ -17,9 +17,9 @@ import { CodeBlock, type Sample } from '../../../../../components/code-block';
 import { JsonLd } from '../../../../../components/json-ld';
 import { ServerLogo } from '../../../../../components/mcp/logo';
 import { Texto } from '../../../../../components/developers/texto';
-import { OnboardButton } from '../../../../../components/mcp/onboard';
+import { InstinctButton, OnboardButton } from '../../../../../components/mcp/onboard';
 import { serverIds, servers, type McpServer, type Tool } from '../../../../../lib/mcp/catalog';
-import { agentPrompt, endpoint, fichaPath } from '../../../../../lib/mcp/rutas';
+import { agentPrompt, endpoint, fichaPath, instinctPrompt } from '../../../../../lib/mcp/rutas';
 import { pageMetadata, webPage } from '../../../../../lib/seo';
 
 type Props = { params: Promise<{ id: string }> };
@@ -161,7 +161,7 @@ function Connect({ server }: { server: McpServer }) {
       <h2 id="conectar-titulo" className="sr-only">
         Conectar
       </h2>
-      <h3 className={via}>Claude Code, Codex, Cursor o VS Code</h3>
+      <h3 className={via}>Claude Code, Codex, Cursor, VS Code o Instinct</h3>
       <div className="flex flex-wrap gap-2">
         <OnboardButton
           prompt={agentPrompt(
@@ -169,6 +169,7 @@ function Connect({ server }: { server: McpServer }) {
             `el servidor MCP «${server.name}» de Reforma Digital`,
           )}
         />
+        <InstinctButton prompt={instinctPrompt()} />
         <a href={cursor} className={appButton}>
           Añadir a Cursor
         </a>

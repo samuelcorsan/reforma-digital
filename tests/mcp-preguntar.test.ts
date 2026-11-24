@@ -50,8 +50,11 @@ describe('preguntar a la biblioteca MCP', () => {
       'boe',
       'ine',
       'eustat',
+      'catastro',
       'carburantes',
+      'red-electrica',
       'alsa',
+      'contratacion',
       'presupuestos',
       'ninguno',
     ]);

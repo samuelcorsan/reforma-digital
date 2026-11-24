@@ -11,7 +11,7 @@
     "datos:presupuestos": "node scripts/presupuestos.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/server": "^2.4.0",
-    "zod": "^4.1.0"
+    "@modelcontextprotocol/server": "catalog:",
+    "zod": "catalog:"
   }
 }
