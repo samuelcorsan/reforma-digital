@@ -3,12 +3,18 @@
 import * as React from 'react';
 import { cn } from '../lib/utils';
 
-function Table({ className, ...props }: React.ComponentProps<'table'>) {
+// `interactive={false}`: una tabla que solo se lee, sin resalte al pasar por las filas.
+function Table({
+  className,
+  interactive = true,
+  ...props
+}: React.ComponentProps<'table'> & { interactive?: boolean }) {
   return (
     <div data-slot="table-container" className="relative w-full overflow-x-auto">
       <table
         data-slot="table"
-        className={cn('w-full caption-bottom text-sm', className)}
+        data-interactive={interactive}
+        className={cn('group/table w-full caption-bottom text-sm', className)}
         {...props}
       />
     </div>
@@ -44,7 +50,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
     <tr
       data-slot="table-row"
       className={cn(
-        'border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted',
+        'border-b transition-colors hover:bg-muted/50 group-data-[interactive=false]/table:hover:bg-transparent has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted',
         className,
       )}
       {...props}

@@ -126,8 +126,14 @@ export default defineConfig({
           { pattern: '^Collapsible', allow: restyleAny },
           // A grid of options with no surface of its own.
           { pattern: '^RadioGroup$', allow: [...restyleAllow, 'spacing'] },
+          // Cells hold content: each table sets its density, its type and a muted tone, and may
+          // drop the rules between rows.
+          {
+            pattern: '^Table',
+            allow: [...restyleAllow, 'spacing', 'typography', 'text-muted-foreground', 'border-0'],
+          },
           // Not migrated yet. Empty this list one family per PR; never add to it.
-          { pattern: '^(Card|Table|Tabs|NavigationMenu|Sidebar)', allow: restyleAny },
+          { pattern: '^(Card|NavigationMenu|Sidebar)', allow: restyleAny },
         ],
       },
     ],
@@ -144,9 +150,13 @@ export default defineConfig({
       rules: { 'shadcn/no-unknown-classes': 'off', 'shadcn/no-restyle': 'off' },
     },
     {
-      // One-off brand surfaces, each a single use: the full-screen menu on the sun gradient and
-      // the pill that asks the MCP library. A variant would have one consumer.
-      files: ['apps/web/components/brand/mobile-menu.tsx', 'apps/web/components/mcp/preguntar.tsx'],
+      // One-off surfaces, each a single use: the full-screen menu on the sun gradient, the pill
+      // that asks the MCP library and the code samples on ink. A variant would have one consumer.
+      files: [
+        'apps/web/components/brand/mobile-menu.tsx',
+        'apps/web/components/mcp/preguntar.tsx',
+        'apps/web/components/code-block.tsx',
+      ],
       rules: { 'shadcn/no-restyle': 'off' },
     },
     {

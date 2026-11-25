@@ -100,12 +100,7 @@ export function CompareBoard({
     >
       <TabsList aria-label={side === 0 ? 'Primer candidato' : 'Segundo candidato'}>
         {present.map(({ candidate: c }) => (
-          <TabsTrigger
-            key={c.slug}
-            value={c.slug}
-            className="px-3"
-            disabled={pair[side === 0 ? 1 : 0] === c.slug}
-          >
+          <TabsTrigger key={c.slug} value={c.slug} disabled={pair[side === 0 ? 1 : 0] === c.slug}>
             {surname(c)}
           </TabsTrigger>
         ))}
@@ -245,7 +240,7 @@ export function CompareBoard({
               <Tabs value={topic} onValueChange={(value) => setTopic(String(value))}>
                 <TabsList aria-label="Tema">
                   {['Todos', ...topics].map((t) => (
-                    <TabsTrigger key={t} value={t} className="px-3">
+                    <TabsTrigger key={t} value={t}>
                       {t}
                     </TabsTrigger>
                   ))}
@@ -367,10 +362,8 @@ export function CompareBoard({
             onValueChange={(value) => setMode(value === 'duelo' ? 'duelo' : 'todos')}
           >
             <TabsList aria-label="Comparar">
-              <TabsTrigger value="todos" className="px-3">
-                Todos
-              </TabsTrigger>
-              <TabsTrigger value="duelo" className="px-3" disabled={present.length < 2}>
+              <TabsTrigger value="todos">Todos</TabsTrigger>
+              <TabsTrigger value="duelo" disabled={present.length < 2}>
                 Dos candidatos
               </TabsTrigger>
             </TabsList>
@@ -387,7 +380,7 @@ export function CompareBoard({
           <Tabs value={group} onValueChange={(value) => setGroup(String(value))}>
             <TabsList aria-label="Grupo de indicadores">
               {['Todo', ...groups].map((g) => (
-                <TabsTrigger key={g} value={g} className="px-3">
+                <TabsTrigger key={g} value={g}>
                   {g}
                 </TabsTrigger>
               ))}

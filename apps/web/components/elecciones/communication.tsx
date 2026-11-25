@@ -157,9 +157,9 @@ function DataTable({ block, id }: { block: Extract<Block, { tipo: 'tabla' }>; id
   const tinted = counts(block.filas);
   const top = Math.max(1, ...block.filas.flatMap((row) => row.slice(1).map((c) => count(c) ?? 0)));
   return (
-    <Table className="text-base">
+    <Table interactive={false} className="text-base">
       <TableHeader>
-        <TableRow className="hover:bg-transparent">
+        <TableRow>
           {block.cabecera.map((head, j) => (
             <TableHead
               key={j}
@@ -175,7 +175,7 @@ function DataTable({ block, id }: { block: Extract<Block, { tipo: 'tabla' }>; id
       </TableHeader>
       <TableBody>
         {block.filas.map((row, j) => (
-          <TableRow key={j} className={cn('hover:bg-transparent', tinted && 'border-0')}>
+          <TableRow key={j} className={cn(tinted && 'border-0')}>
             {row.map((cell, k) => {
               const n = tinted && k > 0 ? (count(cell) ?? 0) : null;
               return n === null ? (
@@ -574,9 +574,9 @@ function SideBySide({ current }: { current: Communication }) {
         />
       </Cell>
       <Cell label="Voz tras una pregunta dura frente al resto">
-        <Table className="text-base">
+        <Table interactive={false} className="text-base">
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
+            <TableRow>
               <TableHead className="h-auto py-2 pl-0 text-sm font-normal text-muted-foreground">
                 Candidato
               </TableHead>
@@ -595,7 +595,7 @@ function SideBySide({ current }: { current: Communication }) {
           </TableHeader>
           <TableBody>
             {all.map(({ c, candidate }) => (
-              <TableRow key={c.id} className="hover:bg-transparent">
+              <TableRow key={c.id}>
                 <TableHead scope="row" className="h-auto py-2.5 pl-0 font-normal">
                   <span className="flex items-center gap-2">
                     <Dot color={candidate.color} />

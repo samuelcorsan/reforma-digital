@@ -250,7 +250,7 @@ export function PollChart({
         <Tabs value={range} onValueChange={(v) => isRange(v) && setRange(v)}>
           <TabsList aria-label="Periodo">
             {ranges.map(([r, text]) => (
-              <TabsTrigger key={r} value={r} className="px-3">
+              <TabsTrigger key={r} value={r}>
                 {text}
               </TabsTrigger>
             ))}

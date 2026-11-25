@@ -791,78 +791,73 @@ export function InterviewPlayer({
         </div>
       </div>
 
-      <Tabs
-        defaultValue="transcripcion"
-        className="col-span-12 gap-4 rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-5 lg:p-8 max-sm:p-5"
-      >
-        <TabsList aria-label="Qué ver">
-          <TabsTrigger value="transcripcion" className="px-3">
-            Transcripción
-          </TabsTrigger>
-          <TabsTrigger value="momentos" className="px-3">
-            Momentos ({marks.length})
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="transcripcion" className="grid gap-3">
-          <Input
-            type="search"
-            aria-label="Buscar en la transcripción"
-            placeholder="Buscar en la transcripción: vivienda, Puente…"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-          {found && (
-            <p aria-live="polite" className="m-0 text-sm text-muted-foreground">
-              {found.length
-                ? `${found.length} ${found.length === 1 ? 'resultado' : 'resultados'}`
-                : 'Sin resultados en la transcripción'}
-            </p>
-          )}
-          <ol className="relative m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
-            {found
-              ? found.map((s) => (
-                  <li key={s.inicio}>
-                    <button
-                      type="button"
-                      onClick={() => seek(s.inicio)}
-                      className="grid w-full gap-1.5 rounded-lg p-3 text-left transition-colors hover:bg-background/60 motion-reduce:transition-none"
-                    >
-                      <span className="flex items-center gap-2 text-sm">
-                        <span className={cn(s.hablante === 'candidato' && 'font-medium')}>
-                          {speakers[s.hablante]}
+      <div className="col-span-12 rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-5 lg:p-8 max-sm:p-5">
+        <Tabs defaultValue="transcripcion" className="gap-4">
+          <TabsList aria-label="Qué ver">
+            <TabsTrigger value="transcripcion">Transcripción</TabsTrigger>
+            <TabsTrigger value="momentos">Momentos ({marks.length})</TabsTrigger>
+          </TabsList>
+          <TabsContent value="transcripcion" className="grid gap-3">
+            <Input
+              type="search"
+              aria-label="Buscar en la transcripción"
+              placeholder="Buscar en la transcripción: vivienda, Puente…"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            {found && (
+              <p aria-live="polite" className="m-0 text-sm text-muted-foreground">
+                {found.length
+                  ? `${found.length} ${found.length === 1 ? 'resultado' : 'resultados'}`
+                  : 'Sin resultados en la transcripción'}
+              </p>
+            )}
+            <ol className="relative m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
+              {found
+                ? found.map((s) => (
+                    <li key={s.inicio}>
+                      <button
+                        type="button"
+                        onClick={() => seek(s.inicio)}
+                        className="grid w-full gap-1.5 rounded-lg p-3 text-left transition-colors hover:bg-background/60 motion-reduce:transition-none"
+                      >
+                        <span className="flex items-center gap-2 text-sm">
+                          <span className={cn(s.hablante === 'candidato' && 'font-medium')}>
+                            {speakers[s.hablante]}
+                          </span>
+                          <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                            {minute(s.inicio)}
+                          </span>
                         </span>
-                        <span className="font-mono text-xs text-muted-foreground tabular-nums">
-                          {minute(s.inicio)}
-                        </span>
-                      </span>
-                      <span className="leading-relaxed">{marked(s.texto)}</span>
-                    </button>
-                  </li>
-                ))
-              : transcript}
-          </ol>
-        </TabsContent>
-        <TabsContent value="momentos">
-          <ol className="m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
-            {marks.map((m) => (
-              <li key={m.id}>
-                <button
-                  type="button"
-                  onClick={() => pick(m)}
-                  className="grid w-full gap-1 rounded-lg p-3 text-left transition-colors hover:bg-background motion-reduce:transition-none"
-                >
-                  <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-                    <MarkIcon kind={m.kind} color={m.color} className="size-6" />
-                    {minute(m.second)} · {m.label}
-                  </span>
-                  <span>{m.text}</span>
-                  {m.detail && <span className="text-sm text-muted-foreground">{m.detail}</span>}
-                </button>
-              </li>
-            ))}
-          </ol>
-        </TabsContent>
-      </Tabs>
+                        <span className="leading-relaxed">{marked(s.texto)}</span>
+                      </button>
+                    </li>
+                  ))
+                : transcript}
+            </ol>
+          </TabsContent>
+          <TabsContent value="momentos">
+            <ol className="m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
+              {marks.map((m) => (
+                <li key={m.id}>
+                  <button
+                    type="button"
+                    onClick={() => pick(m)}
+                    className="grid w-full gap-1 rounded-lg p-3 text-left transition-colors hover:bg-background motion-reduce:transition-none"
+                  >
+                    <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                      <MarkIcon kind={m.kind} color={m.color} className="size-6" />
+                      {minute(m.second)} · {m.label}
+                    </span>
+                    <span>{m.text}</span>
+                    {m.detail && <span className="text-sm text-muted-foreground">{m.detail}</span>}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </TabsContent>
+        </Tabs>
+      </div>
 
       <div className="col-span-12 grid gap-4 rounded-xl p-6 ring-1 ring-foreground/10 lg:p-8 max-sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -882,7 +877,7 @@ export function InterviewPlayer({
           >
             <TabsList aria-label="Zoom">
               {zooms.map(([value, name]) => (
-                <TabsTrigger key={name} value={String(value)} className="px-3">
+                <TabsTrigger key={name} value={String(value)}>
                   {name}
                 </TabsTrigger>
               ))}
