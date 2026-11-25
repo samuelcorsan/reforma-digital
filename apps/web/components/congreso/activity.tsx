@@ -72,7 +72,7 @@ export function Interventions({
             <article
               data-part="cg-card"
               className={
-                '[overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:[font-size:28px] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
               }
             />
           }
@@ -80,14 +80,12 @@ export function Interventions({
           <CardContent>
             <span
               data-part="t-etiqueta"
-              className={
-                '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
-              }
+              className={'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase'}
             >
               {iv.g} · {iv.tono}
             </span>
             <h3>{iv.orador}</h3>
-            <p className={'[color:var(--muted-foreground)] text-sm'}>{iv.item}</p>
+            <p className={'text-muted-foreground text-sm'}>{iv.item}</p>
             <AI>
               <p>{iv.frase || iv.resumen || 'El resumen está en la ficha de la sesión.'}</p>
             </AI>
@@ -133,7 +131,7 @@ function Laws({ laws, legislature }: { laws: LawCard[]; legislature: string }) {
             <article
               data-part="cg-card"
               className={
-                '[overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:[font-size:28px] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
               }
             />
           }
@@ -141,9 +139,7 @@ function Laws({ laws, legislature }: { laws: LawCard[]; legislature: string }) {
           <CardContent>
             <span
               data-part="t-etiqueta"
-              className={
-                '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
-              }
+              className={'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase'}
             >
               {law.tipo} · {law.estado}
             </span>
@@ -209,7 +205,7 @@ export async function Activity({
                 <article
                   data-part="cg-card"
                   className={
-                    '[overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:[font-size:28px] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                    '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                   }
                 />
               }
@@ -218,7 +214,7 @@ export async function Activity({
                 <span
                   data-part="t-etiqueta"
                   className={
-                    '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
+                    'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase'
                   }
                 >
                   {question.estado} · {date(question.presentada)}
@@ -257,7 +253,7 @@ export async function Activity({
         <Section title="Tramitación">
           <ol
             className={
-              'list-none p-0 [&_li]:[padding:0_0_24px_24px] [&_li]:[border-left:2px_solid_var(--border)] [&_h3]:[margin:8px_0] [&_h3]:text-lg'
+              'list-none p-0 [&_li]:pt-0 [&_li]:pr-0 [&_li]:pb-6 [&_li]:pl-6 [&_li]:border-l-2 [&_li]:border-l-border [&_h3]:[margin:8px_0] [&_h3]:text-lg'
             }
           >
             {law.fases.map(([organ, phase, from, to], i) => (
@@ -351,7 +347,7 @@ export async function Activity({
                   <article
                     data-part="cg-card"
                     className={
-                      '[overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:[font-size:28px] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                      '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                     }
                   />
                 }
@@ -384,7 +380,7 @@ export async function Activity({
                   href={href(`tema/${topic.id}`)}
                   data-part="cg-card"
                   className={
-                    '[overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:[font-size:28px] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                    '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                   }
                 />
               }
@@ -446,7 +442,7 @@ export async function Activity({
         <Section title="El voto de cada diputado">
           <div
             className={
-              'overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:[border-bottom:1px_solid_var(--border)] [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:[border-bottom:1px_solid_var(--border)] [&_td]:[vertical-align:top] [&_th]:text-sm'
+              'overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:border-b [&_th]:border-b-border [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:border-b [&_td]:border-b-border [&_td]:[vertical-align:top] [&_th]:text-sm'
             }
           >
             <Table>
@@ -502,7 +498,7 @@ export async function Activity({
         <Section title="Orden del día">
           <ol
             className={
-              'list-none p-0 [&_li]:[padding:0_0_24px_24px] [&_li]:[border-left:2px_solid_var(--border)] [&_h3]:[margin:8px_0] [&_h3]:text-lg'
+              'list-none p-0 [&_li]:pt-0 [&_li]:pr-0 [&_li]:pb-6 [&_li]:pl-6 [&_li]:border-l-2 [&_li]:border-l-border [&_h3]:[margin:8px_0] [&_h3]:text-lg'
             }
           >
             {session.puntos.map((p, i) => (
@@ -527,7 +523,7 @@ export async function Activity({
             {raw.intervenciones.map((iv, i) => (
               <Collapsible
                 className={
-                  '[padding:16px_0] [border-bottom:1px_solid_var(--border)] [&_summary]:cursor-pointer [&_summary]:font-medium [&_p]:[max-width:80ch] [&_p]:[white-space:pre-line]'
+                  'py-4 px-0 border-b border-b-border [&_summary]:cursor-pointer [&_summary]:font-medium [&_p]:[max-width:80ch] [&_p]:[white-space:pre-line]'
                 }
                 key={i}
               >

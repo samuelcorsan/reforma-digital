@@ -919,7 +919,7 @@ export function InterviewPlayer({
             >
               <span
                 aria-hidden="true"
-                className="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-[2px] bg-muted"
+                className="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-xs bg-muted"
               >
                 {topics.map((t, i) => (
                   <i
@@ -1040,14 +1040,14 @@ export function InterviewPlayer({
                     }}
                   >
                     <i
-                      className="absolute bottom-0 left-0 w-full rounded-t-[2px]"
+                      className="absolute bottom-0 left-0 w-full rounded-t-xs"
                       style={{
                         height: (m.candidate / 60) * 27,
                         background: `color-mix(in oklab, ${color} 55%, var(--background))`,
                       }}
                     />
                     <i
-                      className="absolute top-0 left-0 w-full rounded-b-[2px] bg-muted-foreground/25"
+                      className="absolute top-0 left-0 w-full rounded-b-xs bg-muted-foreground/25"
                       style={{ height: (m.interviewer / 60) * 27 }}
                     />
                   </span>
@@ -1063,7 +1063,7 @@ export function InterviewPlayer({
                 <span
                   key={`${t.tema}-${t.inicio}-${i}`}
                   title={t.tema}
-                  className="absolute top-1/2 h-2.5 -translate-y-1/2 rounded-[2px]"
+                  className="absolute top-1/2 h-2.5 -translate-y-1/2 rounded-xs"
                   style={{
                     left: `calc(${share(t.inicio) * 100}% + 1px)`,
                     width: `calc(${(share(t.fin) - share(t.inicio)) * 100}% - 2px)`,

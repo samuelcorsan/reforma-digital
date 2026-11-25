@@ -221,7 +221,7 @@ export function VoteStory({
     );
   const card = (s: Step) => (
     <>
-      <h3 className="m-0 font-heading text-[28px] leading-tight font-normal">{s.title}</h3>
+      <h3 className="m-0 font-heading text-28 leading-tight font-normal">{s.title}</h3>
       <div className="grid gap-4 [&_p]:m-0">{s.body}</div>
     </>
   );
@@ -246,7 +246,7 @@ export function VoteStory({
         </Button>
       </div>
       <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-        <div className="order-2 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-[40vh] pb-[30vh] lg:order-1">
+        <div className="order-2 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-40vh pb-30vh lg:order-1">
           {steps.map((s, i) => (
             <section key={s.id} data-step={i} className="scroll-mt-28">
               <Card

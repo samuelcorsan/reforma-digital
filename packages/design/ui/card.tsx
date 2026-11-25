@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useRender } from '@base-ui/react/use-render';
 import { mergeProps } from '@base-ui/react/merge-props';
-import { cn } from 'cn';
+import { cn } from '../lib/utils';
 
 function Card({
   className,

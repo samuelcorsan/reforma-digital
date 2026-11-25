@@ -122,7 +122,7 @@ function Rich({ text, id }: { text: string; id: string }) {
           key={match.index}
           href={videoHref(id, Number(minutes) * 60 + Number(seconds))}
           aria-label={`Ver en el vídeo, minuto ${whole}`}
-          className="font-mono text-[0.92em] tabular-nums underline decoration-dotted underline-offset-4"
+          className="font-mono text-em-92 tabular-nums underline decoration-dotted underline-offset-4"
         >
           {whole}
         </a>,
@@ -320,7 +320,7 @@ function Prose({ blocks, id }: { blocks: Block[]; id: string }) {
         'heading' in piece ? (
           <h3
             key={i}
-            className="m-0 pt-6 font-heading text-[28px] leading-tight font-normal [column-span:all]"
+            className="m-0 pt-6 font-heading text-28 leading-tight font-normal [column-span:all]"
           >
             {piece.heading}
           </h3>
@@ -372,7 +372,7 @@ function QuestionSquares({ analysis: c }: { analysis: Communication }) {
                     key={i}
                     aria-hidden="true"
                     title={`${minute(q.segundo)} · ${replyNames[q.respuesta]} · ${q.texto}`}
-                    className={cn('block size-3.5 rounded-[3px]', replyStyles[q.respuesta])}
+                    className={cn('block size-3.5 rounded-3', replyStyles[q.respuesta])}
                   />
                 ))}
                 <span className="sr-only">
@@ -394,10 +394,7 @@ function QuestionSquares({ analysis: c }: { analysis: Communication }) {
           const n = c.preguntas.filter((q) => q.respuesta === reply).length;
           return n ? (
             <li key={reply} className="flex items-center gap-1.5">
-              <i
-                aria-hidden="true"
-                className={cn('block size-3 rounded-[3px]', replyStyles[reply])}
-              />
+              <i aria-hidden="true" className={cn('block size-3 rounded-3', replyStyles[reply])} />
               {replyNames[reply]}
             </li>
           ) : null;
@@ -429,7 +426,7 @@ function Visual({
       <Grid>
         <Cell span={5}>
           <p className="m-0 grid gap-2">
-            <b className="font-heading text-[56px] leading-none font-normal tabular-nums">
+            <b className="font-heading text-56 leading-none font-normal tabular-nums">
               {decimal(guest.parte)} %
             </b>
             <span className="text-muted-foreground">
@@ -793,7 +790,7 @@ export function CommunicationReport({
                   .filter(Boolean)
                   .join(' · ')}
               </p>
-              <h1 className="m-0 font-heading text-4xl leading-[1.05] font-normal lg:text-[56px]">
+              <h1 className="m-0 font-heading text-4xl leading-1.05 font-normal lg:text-56">
                 Análisis de comunicación
               </h1>
               <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -839,7 +836,7 @@ export function CommunicationReport({
           >
             <Icon name="izquierda" size={14} /> Análisis de comunicación · {name}
           </Link>
-          <h1 className="m-0 font-heading text-4xl leading-[1.08] font-normal lg:text-[52px]">
+          <h1 className="m-0 font-heading text-4xl leading-1.08 font-normal lg:text-52">
             {commViews[view]}
           </h1>
         </header>
@@ -1038,7 +1035,7 @@ export function CommunicationReport({
           <h2
             id="detalle"
             data-section-title
-            className="m-0 mb-6 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]"
+            className="m-0 mb-6 scroll-mt-40 font-heading text-32 leading-tight font-normal lg:text-36"
           >
             Ver en detalle
           </h2>
@@ -1049,7 +1046,7 @@ export function CommunicationReport({
                 <li key={v}>
                   <Link
                     href={commHref(a.id, v)}
-                    className="group flex h-full min-h-28 flex-col gap-2 rounded-[20px] p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
+                    className="group flex h-full min-h-28 flex-col gap-2 rounded-20 p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
                   >
                     <span className="flex items-center justify-between gap-3 text-lg font-medium">
                       {commViews[v]}

@@ -278,7 +278,7 @@ function Path({
               <text
                 x={6}
                 y={yFall + 8}
-                className="fill-brand font-mono font-medium tracking-[0.06em]"
+                className="fill-brand font-mono font-medium tracking-eyebrow"
                 style={{ fontSize: 12 * k }}
               >
                 Caducan con la disolución
@@ -584,7 +584,7 @@ function Flows({
                     y={0}
                     width={SW + 4}
                     height={SH}
-                    className="origin-left transition-transform duration-[2200ms] ease-in-out motion-reduce:transition-none"
+                    className="origin-left transition-transform duration-2200 ease-in-out motion-reduce:transition-none"
                     style={{ transform: drawn ? 'scaleX(1)' : 'scaleX(0)' }}
                   />
                 </clipPath>
@@ -595,7 +595,7 @@ function Flows({
                     y={0}
                     width={SW + 4}
                     height={SH}
-                    className="origin-left motion-safe:animate-[flows-sweep_1.7s_ease-in-out]"
+                    className="origin-left motion-safe:animate-flows-sweep"
                   />
                 </clipPath>
               </defs>

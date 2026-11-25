@@ -80,13 +80,10 @@ function Landing({ bindings, restore }: { bindings: LandingBindings; restore: ()
             'Leer la información oficial del trámite y elegir si continúas con Cl@ve o sin Cl@ve.',
             'Introducir tus datos y consultar disponibilidad, solo en la web oficial.',
           ].map((text, i) => (
-            <li
-              key={text}
-              className="flex gap-3 rounded-control border border-line p-3 text-[15px]"
-            >
+            <li key={text} className="flex gap-3 rounded-control border border-line p-3 text-15">
               <span
                 aria-hidden="true"
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[13px] font-bold text-brand-700"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-50 text-13 font-bold text-brand-700"
               >
                 {i + 1}
               </span>
@@ -99,14 +96,14 @@ function Landing({ bindings, restore }: { bindings: LandingBindings; restore: ()
       {bindings.whoRequests.length > 0 && (
         <div>
           <SectionTitle>Quién debe pedir la cita</SectionTitle>
-          <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1'}>
+          <p className={'text-sm leading-normal text-ink-muted mt-1'}>
             Resumen de las «Instrucciones del procedimiento» de la página oficial.
           </p>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {bindings.whoRequests.map((item) => (
               <li
                 key={item.title + item.text}
-                className="rounded-control border border-line p-3 text-[15px]"
+                className="rounded-control border border-line p-3 text-15"
               >
                 {item.title && <p className="font-semibold">{item.title}</p>}
                 <p className="text-ink-muted">{item.text}</p>
@@ -119,7 +116,7 @@ function Landing({ bindings, restore }: { bindings: LandingBindings; restore: ()
       {bindings.responsible.length > 0 && (
         <div>
           <SectionTitle>Quién atiende la cita</SectionTitle>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-[15px]">
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-15">
             {bindings.responsible.map((r) => (
               <li key={r}>{r}</li>
             ))}

@@ -235,7 +235,7 @@ export async function Accuracy() {
                               <span
                                 className={
                                   d > 0
-                                    ? 'text-[#2E7D5B]'
+                                    ? 'text-sube'
                                     : d < 0
                                       ? 'text-brand'
                                       : 'text-muted-foreground'

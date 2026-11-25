@@ -246,7 +246,7 @@ export function InterviewsHome() {
         <div className="col-span-12 flex flex-col items-center gap-10 pt-4 pb-12 text-center lg:pt-8 lg:pb-16">
           <div className="grid justify-items-center gap-4">
             {status && <Badge>{status}</Badge>}
-            <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
+            <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-1.08 font-normal lg:text-56">
               {electionPages.entrevistas.title}
             </h1>
             <p className="m-0 max-w-[52ch] text-lg leading-relaxed text-muted-foreground">
@@ -816,7 +816,7 @@ function ReportSections({
                           {list.map((q) => (
                             <i
                               key={q.key}
-                              className="block size-3 rounded-[3px]"
+                              className="block size-3 rounded-3"
                               style={{ background: q.mark.color }}
                             />
                           ))}
@@ -1110,7 +1110,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
         <Grid className="grid-flow-dense">
           {c && (
             <Cell span={6} label="Conclusiones" className={tile}>
-              <p className="m-0 max-w-[48ch] font-heading text-2xl leading-snug lg:text-[28px]">
+              <p className="m-0 max-w-[48ch] font-heading text-2xl leading-snug lg:text-28">
                 {c.titular}
               </p>
             </Cell>
@@ -1262,7 +1262,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
         <h2
           id="detalle"
           data-section-title
-          className="m-0 mb-6 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]"
+          className="m-0 mb-6 scroll-mt-40 font-heading text-32 leading-tight font-normal lg:text-36"
         >
           Ver en detalle
         </h2>
@@ -1271,7 +1271,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
             <li key={view}>
               <Link
                 href={reportHref(a.id, view)}
-                className="group flex h-full min-h-28 flex-col gap-2 rounded-[20px] p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
+                className="group flex h-full min-h-28 flex-col gap-2 rounded-20 p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
               >
                 <span className="flex items-center justify-between gap-3 text-lg font-medium">
                   {viewName(a, view)}
@@ -1287,7 +1287,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
             <li>
               <Link
                 href={interviewsHref(`${a.id}/${communicationPath}`)}
-                className="group flex h-full min-h-28 flex-col gap-2 rounded-[20px] p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
+                className="group flex h-full min-h-28 flex-col gap-2 rounded-20 p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
               >
                 <span className="flex items-center justify-between gap-3 text-lg font-medium">
                   Análisis de comunicación
@@ -1409,7 +1409,7 @@ export function InterviewReport({
                   .filter(Boolean)
                   .join(' · ')}
               </p>
-              <h1 className="m-0 font-heading text-4xl leading-[1.05] font-normal lg:text-[56px]">
+              <h1 className="m-0 font-heading text-4xl leading-1.05 font-normal lg:text-56">
                 {candidate && <span className="text-muted-foreground">Entrevista a </span>}
                 {interviewName(a)}
               </h1>
@@ -1453,7 +1453,7 @@ export function InterviewReport({
           >
             <Icon name="izquierda" size={14} /> Entrevista a {interviewName(a)}
           </Link>
-          <h1 className="m-0 font-heading text-4xl leading-[1.08] font-normal lg:text-[52px]">
+          <h1 className="m-0 font-heading text-4xl leading-1.08 font-normal lg:text-52">
             {viewName(a, view)}
           </h1>
         </header>
@@ -1609,7 +1609,7 @@ export function VerificationPage({
           ) : (
             <p className="m-0 font-medium">{interviewName(a)}</p>
           )}
-          <blockquote className="m-0 font-heading text-[32px] leading-[1.15] lg:text-[44px]">
+          <blockquote className="m-0 font-heading text-32 leading-1.15 lg:text-44">
             «{r.cita}»
           </blockquote>
           <p className="m-0 max-w-[65ch] text-lg leading-relaxed text-muted-foreground">

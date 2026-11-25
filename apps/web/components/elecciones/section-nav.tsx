@@ -41,10 +41,10 @@ export type LocalNav = {
 
 type Section = { key: string; label: string; el: HTMLElement };
 
-const item = 'h-10 gap-3 px-3 text-[15px] [&_svg]:size-[18px]';
+const item = 'h-10 gap-3 px-3 text-15 [&_svg]:size-[18px]';
 // Las secciones de la página y las partes del análisis: más pequeñas, y la actual marcada.
 const link =
-  'flex min-h-8 w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] leading-snug text-muted-foreground no-underline transition-colors hover:bg-sidebar-accent hover:text-foreground motion-reduce:transition-none';
+  'flex min-h-8 w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-13 leading-snug text-muted-foreground no-underline transition-colors hover:bg-sidebar-accent hover:text-foreground motion-reduce:transition-none';
 const active = 'bg-sidebar-accent font-medium text-foreground';
 
 // Los títulos de sección de la página (`data-section-title`). No se les pone `id`, para no tocar el
@@ -172,9 +172,9 @@ export function SectionNav({ current, local }: { current?: ElectionPage; local?:
           {local.back.label}
         </Link>
         <div className="mb-3 grid gap-0.5 px-3">
-          <span className="text-[15px] font-medium">{local.title}</span>
+          <span className="text-15 font-medium">{local.title}</span>
           {local.subtitle && (
-            <span className="text-[13px] leading-snug text-muted-foreground">{local.subtitle}</span>
+            <span className="text-13 leading-snug text-muted-foreground">{local.subtitle}</span>
           )}
         </div>
         <SidebarMenu className="gap-0.5">

@@ -63,30 +63,20 @@ function Popup() {
   return (
     <main
       className={
-        'w-[340px] bg-background [font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] space-y-3 p-4 text-[14px]'
+        'w-[340px] bg-background font-(family-name:--bg-font) text-base text-ink space-y-3 p-4 text-14 leading-1.6'
       }
     >
       <header>
-        <h1
-          className={
-            '[font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] leading-tight'
-          }
-        >
-          Reforma Digital
-        </h1>
+        <h1 className={'text-17 leading-1.4 font-semibold text-ink'}>Reforma Digital</h1>
         <p
-          className={
-            'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
-          }
+          className={'text-xs leading-1.4 font-semibold tracking-eyebrow uppercase text-ink-subtle'}
         >
           Interfaz comunitaria · sitio oficial
         </p>
       </header>
       <section className="rounded-control bg-surface-muted p-3" aria-live="polite">
         <h2
-          className={
-            'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
-          }
+          className={'text-xs leading-1.4 font-semibold tracking-eyebrow uppercase text-ink-subtle'}
         >
           Esta pestaña
         </h2>
@@ -97,11 +87,7 @@ function Popup() {
               ? stateText[status.state]
               : 'No hay una integración disponible en esta pestaña.'}
         </p>
-        {status ? (
-          <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
-            {status.name}
-          </p>
-        ) : null}
+        {status ? <p className={'text-sm leading-normal text-ink-muted'}>{status.name}</p> : null}
       </section>
       {status ? (
         <div className="space-y-2">
@@ -128,7 +114,7 @@ function Popup() {
         <section>
           <h2
             className={
-              'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
+              'text-xs leading-1.4 font-semibold tracking-eyebrow uppercase text-ink-subtle'
             }
           >
             Portales incluidos
@@ -138,7 +124,7 @@ function Popup() {
               <li key={site.id}>
                 <a
                   className={
-                    'relative after:absolute after:inset-x-0 after:-inset-y-3.5 [color:rgb(var(--bg-brand-600))] [text-decoration-line:underline] [text-decoration-thickness:1px] [text-underline-offset:3px] [text-decoration-color:rgb(var(--bg-brand-600)_/_0.4)] font-medium cursor-pointer [&:hover]:[color:rgb(var(--bg-brand-700))] [&:hover]:[text-decoration-color:currentColor] [&:hover]:[text-decoration-thickness:2px] [&:focus-visible]:[outline:3px_solid_rgb(var(--bg-brand-600))] [&:focus-visible]:[outline-offset:2px] [&:focus-visible]:[border-radius:2px]'
+                    'relative after:absolute after:inset-x-0 after:-inset-y-3.5 text-brand-600 underline decoration-1 underline-offset-3 decoration-brand-600/40 font-medium cursor-pointer [&:hover]:text-brand-700 [&:hover]:decoration-current [&:hover]:decoration-2 [&:focus-visible]:outline-3 [&:focus-visible]:outline-brand-600 [&:focus-visible]:outline-offset-2 [&:focus-visible]:rounded-xs'
                   }
                   href={site.homepage}
                   target="_blank"
@@ -146,9 +132,7 @@ function Popup() {
                 >
                   {site.name} ↗
                 </a>
-                <span
-                  className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] block'}
-                >
+                <span className={'text-sm leading-normal text-ink-muted block'}>
                   {site.status === 'verified' ? 'Verificado' : 'Experimental'}
                 </span>
               </li>
@@ -160,17 +144,13 @@ function Popup() {
         <p
           role="alert"
           className={
-            '[padding:14px_16px] [border-radius:var(--bg-radius-control)] [border:1px_solid] [border-left-width:4px] [font-size:15px] [line-height:1.55] [background-color:rgb(var(--bg-danger-bg))] [border-color:rgb(var(--bg-danger-line))] [color:rgb(var(--bg-danger-fg))]'
+            'py-3.5 px-4 rounded-control border border-current text-15 leading-1.55 bg-danger-bg text-danger-fg'
           }
         >
           {error}
         </p>
       ) : null}
-      <footer
-        className={
-          'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] border-t border-line pt-3'
-        }
-      >
+      <footer className={'text-sm leading-normal text-ink-muted border-t border-line pt-3'}>
         Adaptaciones comunitarias. No es un servicio oficial. Sin servidores propios ni telemetría.
       </footer>
     </main>

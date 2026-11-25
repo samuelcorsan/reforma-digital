@@ -190,7 +190,7 @@ export async function Projection() {
                   className="grid grid-cols-[8.5rem_minmax(0,1fr)] items-center gap-x-4 gap-y-1"
                 >
                   {/* El título, a la altura de la cifra; la explicación, debajo. */}
-                  <b className="font-heading text-[40px] leading-none font-normal whitespace-nowrap tabular-nums">
+                  <b className="font-heading text-40 leading-none font-normal whitespace-nowrap tabular-nums">
                     {q.value}
                   </b>
                   <span className="font-medium">{q.title}</span>

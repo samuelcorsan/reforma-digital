@@ -198,7 +198,7 @@ function MonthBars({
         {columns.map((column, i) => (
           <span
             key={i}
-            className="flex flex-1 flex-col-reverse overflow-hidden rounded-t-[2px]"
+            className="flex flex-1 flex-col-reverse overflow-hidden rounded-t-xs"
             style={{ height: `${((totals[i] ?? 0) / top) * 100}%` }}
           >
             {column.map((s) => (
@@ -473,7 +473,7 @@ export async function ElectionsHome() {
     <>
       <div className="flex flex-col items-center gap-8 pt-4 pb-12 text-center lg:pt-8 lg:pb-16">
         <div className="grid justify-items-center gap-4">
-          <h1 className="m-0 max-w-[20ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
+          <h1 className="m-0 max-w-[20ch] font-heading text-4xl leading-1.08 font-normal lg:text-56">
             {current.title}
           </h1>
           <p className="m-0 max-w-[58ch] text-lg leading-relaxed text-muted-foreground">

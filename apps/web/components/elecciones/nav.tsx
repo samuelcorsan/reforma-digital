@@ -50,7 +50,7 @@ export function ElectionsFrame({
       </Sidebar>
       <div className="min-w-0">
         <Collapsible className="mb-8 rounded-xl ring-1 ring-border min-[1100px]:hidden">
-          <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-3 px-4 text-left text-[15px] font-medium">
+          <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-3 px-4 text-left text-15 font-medium">
             <span className="flex items-center gap-3">
               <Icon name={group?.icon ?? 'casa'} size={18} />
               {local ? (

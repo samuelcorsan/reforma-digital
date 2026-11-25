@@ -66,7 +66,7 @@ export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) 
       {p && (
         <div className="grid gap-8 border-t border-border pt-8">
           <div className="grid gap-2" aria-live="polite">
-            <h3 className="m-0 font-heading text-[32px] leading-tight font-normal">
+            <h3 className="m-0 font-heading text-32 leading-tight font-normal">
               {p.name} elige {p.seats} {p.seats === 1 ? 'diputado' : 'diputados'}
             </h3>
             <p className="m-0 text-base text-muted-foreground">{p.note}</p>

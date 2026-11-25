@@ -45,7 +45,7 @@ const instinct: Cliente[] = [
   },
 ];
 const retrasos = ['delay-0', 'delay-[60ms]', 'delay-[120ms]'];
-const muelle = '[transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]';
+const muelle = 'ease-muelle';
 
 /** Copia el prompt para que un agente con terminal o ficheros (Claude Code, Cursor, Codex…) se configure solo. */
 export function OnboardButton({
@@ -84,7 +84,7 @@ export function OnboardButton({
       title={title}
       className={cn(
         // Mismo alto que los botones `xl` (36 px a la vista, 44 px de zona de clic).
-        'group relative inline-flex h-9 items-center gap-2.5 rounded-full border border-border bg-background pr-3.5 pl-1 text-[15px] font-medium transition-[background-color,scale] duration-150 after:absolute after:inset-x-0 after:-inset-y-1 hover:bg-muted active:scale-[0.97] motion-reduce:transition-none',
+        'group relative inline-flex h-9 items-center gap-2.5 rounded-full border border-border bg-background pr-3.5 pl-1 text-15 font-medium transition-[background-color,scale] duration-150 after:absolute after:inset-x-0 after:-inset-y-1 hover:bg-muted active:scale-[0.97] motion-reduce:transition-none',
         'outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-foreground',
         className,
       )}

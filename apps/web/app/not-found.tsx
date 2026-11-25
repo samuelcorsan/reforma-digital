@@ -10,7 +10,7 @@ export default function NotFound() {
       <p
         data-part="t-etiqueta"
         className={
-          '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase block mb-4 [color:var(--text-secondary)]'
+          'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase block mb-4 text-(--text-secondary)'
         }
       >
         Página no encontrada
@@ -18,7 +18,7 @@ export default function NotFound() {
       <h1>Por aquí no era.</h1>
       <p
         data-part="info-entradilla"
-        className={'[max-width:65ch] mb-10 [color:var(--text-secondary)] text-lg [line-height:1.6]'}
+        className={'[max-width:65ch] mb-10 text-(--text-secondary) text-lg leading-1.6'}
       >
         No encontramos esta página. Vuelve a la portada para conocer los proyectos.
       </p>

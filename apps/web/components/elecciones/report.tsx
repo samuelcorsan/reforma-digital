@@ -55,7 +55,7 @@ export function Cell({
 export function Stat({ value, caption }: { value: ReactNode; caption: ReactNode }) {
   return (
     <p className="m-0 grid gap-2">
-      <b className="font-heading text-[40px] leading-none font-normal tabular-nums lg:text-5xl">
+      <b className="font-heading text-40 leading-none font-normal tabular-nums lg:text-5xl">
         {value}
       </b>
       <span className="max-w-[32ch] text-base leading-snug text-muted-foreground">{caption}</span>
@@ -215,7 +215,7 @@ export function Heading({ title, children }: { title: string; children?: ReactNo
     <div className="grid gap-2">
       <h2
         data-section-title
-        className="m-0 scroll-mt-40 font-heading text-[28px] leading-tight font-normal"
+        className="m-0 scroll-mt-40 font-heading text-28 leading-tight font-normal"
       >
         {title}
       </h2>
@@ -231,7 +231,7 @@ export function SectionHeading({ title, children }: { title: string; children?: 
     <div className="grid gap-2">
       <h2
         data-section-title
-        className="m-0 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]"
+        className="m-0 scroll-mt-40 font-heading text-32 leading-tight font-normal lg:text-36"
       >
         {title}
       </h2>
@@ -257,7 +257,7 @@ export function Chapter({
         <h2
           id={`${id}-titulo`}
           data-section-title
-          className="m-0 scroll-mt-40 font-heading text-[32px] leading-[1.1] font-normal lg:text-[44px]"
+          className="m-0 scroll-mt-40 font-heading text-32 leading-1.1 font-normal lg:text-44"
         >
           {title}
         </h2>
@@ -274,9 +274,7 @@ export function Chapter({
 export function ReportIntro({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <header className="mb-10 grid items-end gap-x-12 gap-y-4 md:grid-cols-2">
-      <h1 className="m-0 font-heading text-4xl leading-[1.1] font-normal lg:text-[52px]">
-        {title}
-      </h1>
+      <h1 className="m-0 font-heading text-4xl leading-1.1 font-normal lg:text-52">{title}</h1>
       {children && (
         <div className="max-w-[52ch] text-lg leading-relaxed text-muted-foreground [&_p]:m-0">
           {children}
@@ -295,7 +293,7 @@ export function ReportStats({ items }: { items: [number | string, string][] }) {
           className="flex-col-reverse justify-end gap-2 bg-muted p-6 ring-0 max-sm:p-5"
         >
           <dt className="text-base leading-snug text-(--text-secondary)">{label}</dt>
-          <dd className="m-0 font-heading text-[40px] leading-none tabular-nums">
+          <dd className="m-0 font-heading text-40 leading-none tabular-nums">
             {typeof value === 'number'
               ? String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
               : value}
@@ -327,7 +325,7 @@ export function ReportSection({
         <h2
           data-section-title
           className={cn(
-            'm-0 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]',
+            'm-0 scroll-mt-40 font-heading text-32 leading-tight font-normal lg:text-36',
             quiet && 'sr-only',
           )}
         >

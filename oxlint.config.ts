@@ -60,6 +60,18 @@ export default defineConfig({
     'eslint/no-useless-catch': 'error',
     'eslint/max-lines': ['error', { max: 800, skipBlankLines: true, skipComments: true }],
     'eslint-js/no-restricted-syntax': ['error', ...slopSelectors],
+    'eslint/no-restricted-imports': [
+      'error',
+      {
+        paths: [
+          {
+            name: 'cn',
+            message:
+              'Import cn from @reforma-digital/design/lib/utils: the bare one takes text-28 for a color.',
+          },
+        ],
+      },
+    ],
     'unicorn/no-useless-fallback-in-spread': 'error',
     'typescript/no-explicit-any': 'error',
     'typescript/ban-ts-comment': 'error',
@@ -89,8 +101,15 @@ export default defineConfig({
     'anti-slop/no-unknown-type-aliases': 'error',
     'shadcn/no-raw-colors': 'error',
     'shadcn/no-unknown-classes': 'error',
+    // `transition`: a list of properties to animate is not a design value.
+    'shadcn/no-arbitrary-values': ['error', { allow: ['layout', 'transition'] }],
   },
   overrides: [
+    {
+      // Vendored shadcn primitives keep upstream's values.
+      files: ['packages/design/ui/**'],
+      rules: { 'shadcn/no-arbitrary-values': 'off' },
+    },
     {
       // The lab form imitates an official portal, whose class names are not Tailwind's.
       files: ['apps/playground/src/main.tsx'],
