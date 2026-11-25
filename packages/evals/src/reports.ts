@@ -81,3 +81,9 @@ export async function listReports(): Promise<Report[]> {
   const rows = await connection()`SELECT report FROM experiments ORDER BY created_at DESC LIMIT 30`;
   return rows.map((r) => r.report as Report);
 }
+export async function saveReport(report: Report) {
+  const sql = connection();
+  // 3802 es jsonb: equivale a sql.json, cuyo tipo JSONValue no acepta Report.
+  await sql`INSERT INTO experiments (id, report) VALUES (${report.id}, ${sql.typed(report, 3802)})
+    ON CONFLICT (id) DO UPDATE SET report = EXCLUDED.report`;
+}

@@ -5,6 +5,9 @@ import { POST as carburantes } from '../../app/mcp/carburantes/route';
 import { POST as ine } from '../../app/mcp/ine/route';
 import { POST as alsa } from '../../app/mcp/alsa/route';
 import { POST as eustat } from '../../app/mcp/eustat/route';
+import { POST as redElectrica } from '../../app/mcp/red-electrica/route';
+import { POST as catastro } from '../../app/mcp/catastro/route';
+import { POST as contratacion } from '../../app/mcp/contratacion/route';
 import { POST as subvenciones } from '../../app/mcp/subvenciones/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
@@ -15,6 +18,9 @@ import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
 import eustatEscena from './escenas/eustat.png';
+import redElectricaEscena from './escenas/red-electrica.png';
+import catastroEscena from './escenas/catastro.png';
+import contratacionEscena from './escenas/contratacion.png';
 import subvencionesEscena from './escenas/subvenciones.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
@@ -103,6 +109,20 @@ const servidores: Servidor[] = [
     ],
   },
   {
+    id: 'catastro',
+    name: 'Catastro',
+    category: 'vivienda',
+    logo: { src: '/organismos/catastro.png' },
+    escena: catastroEscena,
+    summary:
+      'Los datos públicos de cada inmueble y parcela del Catastro: uso, superficie, año de construcción y pisos de un edificio, por referencia, dirección o coordenadas.',
+    examples: [
+      '¿Cuántos inmuebles tiene el edificio de la plaza de España 18 de Madrid y de qué año es?',
+      '¿De qué año es el edificio de la referencia catastral 9872023VH5797S?',
+      '¿Qué parcela hay en las coordenadas 40.4262, -3.7015?',
+    ],
+  },
+  {
     id: 'carburantes',
     name: 'Precios de carburantes',
     category: 'consumo',
@@ -118,6 +138,20 @@ const servidores: Servidor[] = [
     ],
   },
   {
+    id: 'red-electrica',
+    name: 'Red Eléctrica',
+    category: 'consumo',
+    logo: { src: '/organismos/red-electrica.png' },
+    escena: redElectricaEscena,
+    summary:
+      'El precio de la luz (PVPC) de cada hora, sus medias por día o mes, y cómo se genera la electricidad: tecnologías, renovables y demanda.',
+    examples: [
+      '¿A qué hora es más barata la luz hoy?',
+      '¿Cuánto costó la luz de media cada mes de 2022?',
+      '¿Qué porcentaje de la electricidad fue renovable ayer?',
+    ],
+  },
+  {
     id: 'alsa',
     name: 'ALSA',
     category: 'transporte',
@@ -129,6 +163,21 @@ const servidores: Servidor[] = [
       '¿Qué autobuses hay el viernes de Granada a Madrid y cuánto cuestan?',
       '¿Cuánto cuesta ir y volver de Oviedo a León con dos niños?',
       '¿Hay algún autobús directo de Barcelona a Valencia que llegue antes de las dos?',
+    ],
+  },
+  {
+    id: 'contratacion',
+    name: 'Licitaciones públicas',
+    category: 'contratacion',
+    // El símbolo de la marca de la Plataforma de Contratación del Sector Público.
+    logo: { src: '/organismos/placsp.svg' },
+    escena: contratacionEscena,
+    summary:
+      'Las licitaciones publicadas o actualizadas hace poco en la Plataforma de Contratación del Sector Público y en las plataformas autonómicas: importes, plazos, lotes y adjudicatarios.',
+    examples: [
+      '¿Qué obras de carpintería han salido a licitación estos días en el País Vasco?',
+      '¿Qué licitaciones de Gipuzkoa siguen en plazo?',
+      '¿Qué obras se han adjudicado estos días en Bizkaia, a quién y por cuánto?',
     ],
   },
   {
@@ -152,8 +201,8 @@ type Param = {
   type: string;
   description?: string;
   required: boolean;
-  /** Para pasar a número lo que llega como texto en GET /mcp/<servidor>/<herramienta>. */
-  numeric: boolean;
+  /** El tipo JSON del esquema, para leer el texto de GET /mcp/<servidor>/<herramienta>. */
+  schemaType: string | undefined;
   default?: string;
 };
 export type Tool = {
@@ -173,8 +222,11 @@ const handlers: Record<string, Entry['handler']> = {
   boe,
   ine,
   eustat,
+  catastro,
   carburantes,
+  'red-electrica': redElectrica,
   alsa,
+  contratacion,
   subvenciones,
 };
 const entries: Entry[] = servidores.map((s) => {
@@ -190,7 +242,7 @@ export const serverIds = entries.map(({ id }) => id);
 async function rpc(
   handler: Entry['handler'],
   method: string,
-  params?: { name: string; arguments: Record<string, string | number> },
+  params?: { name: string; arguments: Record<string, JsonValue> },
 ) {
   const response = await handler(
     new Request('http://localhost/mcp', {
@@ -242,7 +294,7 @@ function params(schema: JsonSchema | undefined): Param[] {
         : (typeNames[prop.type ?? ''] ?? prop.type ?? '—'),
     description: prop.description,
     required: schema?.required?.includes(name) ?? false,
-    numeric: prop.type === 'integer' || prop.type === 'number',
+    schemaType: prop.type,
     default: prop.default === undefined ? undefined : JSON.stringify(prop.default),
   }));
 }
@@ -274,6 +326,24 @@ export function servers(): Promise<McpServer[]> {
   return loaded;
 }
 
+// Lo que no se puede leer con su tipo se pasa como texto, y el esquema de la herramienta lo
+// rechaza con el motivo.
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+function fromQuery(type: string | undefined, value: string): JsonValue {
+  if ((type === 'integer' || type === 'number') && Number.isFinite(Number(value)))
+    return Number(value);
+  if (type === 'boolean' && (value === 'true' || value === 'false')) return value === 'true';
+  if (type === 'object' || type === 'array') {
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      if (!(error instanceof SyntaxError)) throw error;
+    }
+  }
+  return value;
+}
+
 /**
  * Una herramienta por GET, con sus parámetros en la query. Existe por Instinct, que no admite
  * conectores MCP pero sí abre URLs: así puede usar las mismas herramientas sin configurar nada.
@@ -283,16 +353,13 @@ export async function callTool(id: string, name: string, query: URLSearchParams)
   const entry = entries.find((e) => e.id === id);
   const tool = (await servers()).find((s) => s.id === id)?.tools.find((t) => t.name === name);
   if (!entry || !tool) return undefined;
-  // La query solo trae texto: los parámetros numéricos del esquema se pasan como número, y uno
-  // vacío (`limite=`) se omite para que valga su valor por defecto.
-  const numeric = new Set(tool.params.filter((p) => p.numeric).map((p) => p.name));
+  // La query solo trae texto: se pasa al tipo del esquema, y uno vacío (`limite=`) se omite para
+  // que valga su valor por defecto.
+  const types = new Map(tool.params.map((p) => [p.name, p.schemaType]));
   const args = Object.fromEntries(
     [...query]
       .filter(([, value]) => value !== '')
-      .map(([key, value]) => [
-        key,
-        numeric.has(key) && Number.isFinite(Number(value)) ? Number(value) : value,
-      ]),
+      .map(([key, value]) => [key, fromQuery(types.get(key), value)]),
   );
   const result = (await rpc(entry.handler, 'tools/call', { name, arguments: args })) as {
     content: { type: string; text?: string }[];

@@ -5,5 +5,7 @@ export const categories = {
   estadistica: { name: 'Estadística' },
   consumo: { name: 'Consumo' },
   ayudas: { name: 'Ayudas públicas' },
+  vivienda: { name: 'Vivienda' },
+  contratacion: { name: 'Contratación pública' },
 } satisfies Record<string, { name: string }>;
 export type Category = keyof typeof categories;

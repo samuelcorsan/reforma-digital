@@ -1,8 +1,9 @@
 /** Operator command. Never called by the experiment runner or by an LLM. */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import { db, experiments, closeDb } from '@reforma-digital/db';
+import { closeDb } from '@reforma-digital/db';
 import { loadDataset, regressionGate, repoRoot, type Report } from './index';
+import { saveReport } from './reports';
 const args = process.argv.slice(2);
 const value = (name: string) => args[args.indexOf(name) + 1];
 try {
@@ -33,10 +34,7 @@ try {
   report.approvedBy = reviewer;
   const file = path.join(repoRoot, 'packages/evals/baselines/baseline.json');
   await mkdir(path.dirname(file), { recursive: true });
-  await db()
-    .insert(experiments)
-    .values({ id: report.id, report })
-    .onConflictDoUpdate({ target: experiments.id, set: { report } });
+  await saveReport(report);
   await writeFile(file, JSON.stringify(report, null, 2) + '\n');
   console.log(`Baseline aprobado por ${reviewer}: ${report.id}`);
 } catch (error) {
