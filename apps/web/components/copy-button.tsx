@@ -20,9 +20,9 @@ export function CopyButton({ label, code }: { label: string; code: string }) {
 
   return (
     <Button
-      variant="ghost"
+      variant="inverse"
       size="icon"
-      className="m-2 shrink-0 text-background/70 hover:bg-background/15 hover:text-background"
+      className="m-2 shrink-0"
       onClick={() => void copy()}
       aria-label={copied ? 'Copiado' : `Copiar ${label}`}
     >

@@ -149,7 +149,7 @@ export function PromptComposer() {
           <Button
             type="submit"
             size="icon"
-            className="rounded-full"
+            shape="pill"
             disabled={vacio}
             aria-label="Copiar el mensaje para tu agente"
           >

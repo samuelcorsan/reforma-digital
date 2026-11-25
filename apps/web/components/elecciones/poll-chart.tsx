@@ -261,10 +261,9 @@ export function PollChart({
             <Button
               key={p.id}
               size="sm"
-              variant={on.has(p.id) ? 'outline' : 'ghost'}
+              variant={on.has(p.id) ? 'outline' : 'quiet'}
               aria-pressed={on.has(p.id)}
               onClick={() => toggle(p.id)}
-              className={on.has(p.id) ? '' : 'text-muted-foreground'}
             >
               <i
                 className="block size-2 rounded-full bg-(--bg)"
