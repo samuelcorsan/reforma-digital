@@ -791,7 +791,7 @@ export function InterviewPlayer({
         </div>
       </div>
 
-      <div className="col-span-12 rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-5 lg:p-8 max-sm:p-5">
+      <div className="col-span-12 grid rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-5 lg:p-8 max-sm:p-5">
         <Tabs defaultValue="transcripcion" className="gap-4">
           <TabsList aria-label="Qué ver">
             <TabsTrigger value="transcripcion">Transcripción</TabsTrigger>
