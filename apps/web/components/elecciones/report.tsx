@@ -8,15 +8,8 @@ import { Icon } from '../brand/icon';
 // Piezas del informe visual de /elecciones: tarjetas separadas, cifras con su explicación y
 // barras con su etiqueta. Escala de DESIGN.md §8.1.
 
-const spans = {
-  3: 'md:col-span-3',
-  4: 'md:col-span-4',
-  5: 'md:col-span-5',
-  6: 'md:col-span-6',
-  7: 'md:col-span-7',
-  8: 'md:col-span-8',
-  12: 'md:col-span-12',
-};
+// Columnas que ocupa una tarjeta desde `md`; por debajo, las doce.
+type Span = 3 | 4 | 5 | 6 | 7 | 8 | 12;
 
 // El título corto de una tarjeta o de un bloque, en minúsculas como el resto del texto.
 export function Label({ children }: { children: ReactNode }) {
@@ -33,7 +26,7 @@ export function Cell({
   className,
   children,
 }: {
-  span?: keyof typeof spans;
+  span?: Span;
   label?: ReactNode;
   className?: string;
   children: ReactNode;
@@ -41,10 +34,10 @@ export function Cell({
   return (
     <Card
       className={cn(
-        'col-span-12 min-w-0 gap-6 p-6 text-base lg:p-8 max-sm:p-5',
-        spans[span],
+        'col-span-12 min-w-0 gap-6 p-6 text-base md:col-span-(--span) lg:p-8 max-sm:p-5',
         className,
       )}
+      style={{ '--span': span }}
     >
       {label && <Label>{label}</Label>}
       {children}
@@ -178,16 +171,14 @@ export function PageCard({
   title: string;
   text: string;
   cta: string;
-  span?: keyof typeof spans;
+  span?: Span;
   children?: ReactNode;
 }) {
   return (
     <Card
       render={<Link href={href} />}
-      className={cn(
-        'col-span-12 row-span-4 grid min-w-0 grid-rows-subgrid gap-4 p-6 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 lg:p-8 max-sm:p-5',
-        spans[span],
-      )}
+      className="col-span-12 row-span-4 grid min-w-0 grid-rows-subgrid gap-4 p-6 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 md:col-span-(--span) lg:p-8 max-sm:p-5"
+      style={{ '--span': span }}
     >
       <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{title}</h3>
       <p className="m-0 max-w-[48ch] leading-snug text-muted-foreground">{text}</p>

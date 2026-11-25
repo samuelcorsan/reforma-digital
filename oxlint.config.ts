@@ -115,6 +115,7 @@ export default defineConfig({
     // `transition`: a list of properties to animate is not a design value.
     'shadcn/no-arbitrary-values': ['error', { allow: ['layout', 'transition'] }],
     'shadcn/no-inline-styles': 'error',
+    'shadcn/require-static-classes': 'error',
     // Uses compose primitives: where they go, the gap between their children and numeric type.
     // Colours, radii and sizes belong to the primitive's variants (DESIGN.md §8.5).
     'shadcn/no-restyle': [
@@ -133,7 +134,13 @@ export default defineConfig({
             allow: [...restyleAllow, 'spacing', 'typography', 'text-muted-foreground', 'border-0'],
           },
           // Not migrated yet. Empty this list one family per PR; never add to it.
-          { pattern: '^(Card|NavigationMenu|Sidebar)', allow: restyleAny },
+          // The sidebar is a frame: each use sets its density and type, and may drop its
+          // surface and the rule beside a submenu.
+          {
+            pattern: '^Sidebar',
+            allow: [...restyleAllow, 'spacing', 'typography', 'bg-transparent', 'border-0'],
+          },
+          { pattern: '^Card', allow: restyleAny },
         ],
       },
     ],
@@ -142,7 +149,11 @@ export default defineConfig({
     {
       // Vendored shadcn primitives keep upstream's values.
       files: ['packages/design/ui/**'],
-      rules: { 'shadcn/no-arbitrary-values': 'off', 'shadcn/no-restyle': 'off' },
+      rules: {
+        'shadcn/no-arbitrary-values': 'off',
+        'shadcn/no-restyle': 'off',
+        'shadcn/require-static-classes': 'off',
+      },
     },
     {
       // The lab form imitates an official portal, whose class names are not Tailwind's.
@@ -158,6 +169,12 @@ export default defineConfig({
         'apps/web/components/code-block.tsx',
       ],
       rules: { 'shadcn/no-restyle': 'off' },
+    },
+    {
+      // The header's glass pills: links and the menu trigger share one string built on
+      // buttonVariants(), which the linter cannot read across files.
+      files: ['apps/web/components/brand/header.tsx'],
+      rules: { 'shadcn/no-restyle': 'off', 'shadcn/require-static-classes': 'off' },
     },
     {
       // Existing debt: these files predate the limit. Split them before adding to them; never add to this list.
