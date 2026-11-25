@@ -24,7 +24,7 @@ import { SectionHeading } from './report';
 type Poll = {
   firm: string;
   outlet: string;
-  start: string;
+  start: string | null;
   end: string;
   sample: number | null;
   // El CIS y los agregadores no entran en la media.
@@ -35,7 +35,8 @@ type Poll = {
 
 const all = 'todas';
 const short = new Intl.DateTimeFormat('es-ES', { timeZone: 'UTC', day: 'numeric', month: 'short' });
-const field = (start: string, end: string) => {
+const field = (start: string | null, end: string) => {
+  if (start === null) return `?–${shortDate(end)}`;
   const a = new Date(`${start}T00:00:00Z`);
   return start === end ? shortDate(end) : `${short.format(a)}–${shortDate(end)}`;
 };
