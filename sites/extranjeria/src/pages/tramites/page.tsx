@@ -141,7 +141,7 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
         <label
           htmlFor={officeId}
           className={
-            'bg-h2 [font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))] mb-1 block'
+            '[font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))] mb-1 block'
           }
         >
           Oficina
@@ -149,7 +149,7 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
         {bindings.officeHint && (
           <p
             id={officeHintId}
-            className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mb-3'}
+            className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mb-3'}
           >
             Según la web oficial: {bindings.officeHint}
           </p>
@@ -182,7 +182,7 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
             ))}
           </SelectContent>
         </Select>
-        <p className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-2'}>
+        <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-2'}>
           Al cambiar de oficina, la web oficial recarga la página y puede mostrar trámites
           distintos.
         </p>
@@ -191,12 +191,12 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
       <fieldset className="space-y-3">
         <legend
           className={
-            'bg-h2 [font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'
+            '[font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'
           }
         >
           Trámite <span className="font-normal text-ink-subtle">({total} disponibles)</span>
         </legend>
-        <p className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
+        <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
           Agrupados por el organismo que los atiende, igual que en la web oficial.
         </p>
         <SearchField
@@ -222,7 +222,7 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
               <div key={g.select.id} role="group" aria-label={g.label}>
                 <h4
                   className={
-                    'bg-eyebrow text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))] mb-2'
+                    'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))] mb-2'
                   }
                 >
                   {g.label} · {options.length}
@@ -235,9 +235,7 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
                   ))}
                   {options.length === 0 && (
                     <li
-                      className={
-                        'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] px-1'
-                      }
+                      className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] px-1'}
                     >
                       {query
                         ? 'Ningún trámite de este grupo coincide con la búsqueda.'

@@ -7,9 +7,8 @@ export default function ErrorPage({ reset }: { reset: () => void }) {
     <InfoPage narrow>
       <h1>No hemos podido cargar esta página.</h1>
       <p
-        className={
-          'info-entradilla [max-width:65ch] mb-10 [color:var(--text-secondary)] text-lg [line-height:1.6]'
-        }
+        data-part="info-entradilla"
+        className={'[max-width:65ch] mb-10 [color:var(--text-secondary)] text-lg [line-height:1.6]'}
       >
         Inténtalo de nuevo en un momento.
       </p>

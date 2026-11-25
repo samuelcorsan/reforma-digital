@@ -105,7 +105,7 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
           <label
             htmlFor={categoryId}
             className={
-              'bg-label block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
+              'block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
             }
           >
             Categoría
@@ -135,7 +135,7 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
           <label
             htmlFor={channelId}
             className={
-              'bg-label block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
+              'block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
             }
           >
             Canal
@@ -165,7 +165,7 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
 
       <p
         className={
-          'bg-eyebrow text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
+          'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
         }
         aria-live="polite"
       >
@@ -176,33 +176,25 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
           <li key={s.id} className="rounded-control border border-line p-4">
             <p
               className={
-                'bg-eyebrow text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
+                'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
               }
             >
               {s.category}
             </p>
             <h3
               className={
-                'bg-h3 [font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] mt-1'
+                '[font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] mt-1'
               }
             >
               {s.name}
             </h3>
             {s.description && (
-              <p
-                className={
-                  'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1'
-                }
-              >
+              <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1'}>
                 {s.description}
               </p>
             )}
             {s.note && (
-              <p
-                className={
-                  'bg-small text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1'
-                }
-              >
+              <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1'}>
                 {s.note}
               </p>
             )}
@@ -233,7 +225,7 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
           </li>
         ))}
         {results.length === 0 && (
-          <li className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
+          <li className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
             Ningún servicio coincide con la búsqueda.
           </li>
         )}

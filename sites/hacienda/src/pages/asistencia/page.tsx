@@ -92,7 +92,7 @@ function Asistencia({ bindings, restore }: { bindings: AsistenciaBindings; resto
             >
               <p
                 className={
-                  'bg-h3 [font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))]'
+                  '[font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))]'
                 }
               >
                 {option.label}
@@ -100,7 +100,7 @@ function Asistencia({ bindings, restore }: { bindings: AsistenciaBindings; resto
               {option.access && (
                 <p
                   className={
-                    'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1 flex-1'
+                    'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1 flex-1'
                   }
                 >
                   {ACCESS[option.access]}

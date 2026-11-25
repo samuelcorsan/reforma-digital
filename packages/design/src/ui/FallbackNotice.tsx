@@ -18,12 +18,12 @@ export function FallbackNotice({
     <Card
       role="status"
       className={
-        'bg-card [background-color:rgb(var(--bg-surface))] border-0 [border-radius:var(--bg-radius-card)] [box-shadow:var(--bg-shadow-card)] bg-text [font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] fixed bottom-3 left-3 right-3 z-[2147483646] max-w-sm p-4 text-[14px] shadow-raised sm:right-auto'
+        'bg-card [background-color:rgb(var(--bg-surface))] border-0 [border-radius:var(--bg-radius-card)] [box-shadow:var(--bg-shadow-card)] [font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] fixed bottom-3 left-3 right-3 z-[2147483646] max-w-sm p-4 text-[14px] shadow-raised sm:right-auto'
       }
     >
       <p
         className={
-          'bg-eyebrow text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
+          'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
         }
       >
         Reforma Digital · web original
@@ -32,9 +32,7 @@ export function FallbackNotice({
         La mejora «{adapterName}» no es compatible con esta versión de la página, así que se muestra
         la web oficial sin cambios.
       </p>
-      <Collapsible
-        className={'bg-small text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-2'}
-      >
+      <Collapsible className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-2'}>
         <CollapsibleTrigger className="cursor-pointer">Detalle técnico</CollapsibleTrigger>
         <CollapsibleContent>
           <p className="mt-1 break-words">{reason}</p>

@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-background font-sans text-base leading-[1.55] text-foreground antialiased [font-synthesis:none] [:where(&)_h1]:font-heading [:where(&)_h1]:font-normal [:where(&)_h2]:font-heading [:where(&)_h2]:font-normal [&_:is(h1,h2,h3,h4,dt)]:text-balance [&_:is(p,li,dd,figcaption,small)]:text-pretty selection:bg-brand-yellow selection:text-foreground [&_main:focus]:outline-none [&_.cg-voto-si]:[background:#237647] [&_.cg-voto-si]:[fill:#237647] [&_.cg-voto-no]:[background:var(--brand)] [&_.cg-voto-no]:[fill:var(--brand)] [&_.cg-voto-abst]:[background:var(--brand-yellow)] [&_.cg-voto-abst]:[fill:var(--brand-yellow)] [&_.cg-voto-ausente]:[background:var(--disabled)] [&_.cg-voto-ausente]:[fill:var(--disabled)]">
         <a
           className={
-            'sol-salto fixed top-2 left-2 [z-index:100] inline-flex items-center min-h-11 [padding:0_16px] [border-radius:12px] [background:var(--foreground)] [color:var(--background)] [font-size:15px] font-medium no-underline [transform:translateY(calc(-100%_-_16px))] [&:focus-visible]:[transform:none]'
+            'fixed top-2 left-2 [z-index:100] inline-flex items-center min-h-11 [padding:0_16px] [border-radius:12px] [background:var(--foreground)] [color:var(--background)] [font-size:15px] font-medium no-underline [transform:translateY(calc(-100%_-_16px))] [&:focus-visible]:[transform:none]'
           }
           href="#main"
         >

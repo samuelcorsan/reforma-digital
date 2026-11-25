@@ -30,7 +30,7 @@ function Demo() {
         >
           <input type="hidden" name="csrf" value="local-fixture-only" />
           <div className="form-grid">
-            <div className="wide-field">
+            <div className="">
               <label className="native-label" htmlFor="dni">
                 Número de Documento:
               </label>

@@ -44,6 +44,7 @@ export default defineConfig({
     ...antiSlop.jsPlugins,
     // Oxlint has no native `no-restricted-syntax`; the ESLint compatibility plugin provides it.
     { name: 'eslint-js', specifier: 'oxlint-plugin-eslint' },
+    '@shadcn/lint',
   ],
   rules: {
     'eslint/no-debugger': 'error',
@@ -86,8 +87,15 @@ export default defineConfig({
     'anti-slop/no-reflect-get': 'error',
     'anti-slop/no-unknown-returns': 'error',
     'anti-slop/no-unknown-type-aliases': 'error',
+    'shadcn/no-raw-colors': 'error',
+    'shadcn/no-unknown-classes': 'error',
   },
   overrides: [
+    {
+      // The lab form imitates an official portal, whose class names are not Tailwind's.
+      files: ['apps/playground/src/main.tsx'],
+      rules: { 'shadcn/no-unknown-classes': 'off' },
+    },
     {
       // Existing debt: these files predate the limit. Split them before adding to them; never add to this list.
       files: [

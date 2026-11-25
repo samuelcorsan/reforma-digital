@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
+    "@shadcn/lint": "0.2.5",
     "@types/chrome": "0.2.9",
     "@types/node": "26.5.0",
     "@types/react": "catalog:",
