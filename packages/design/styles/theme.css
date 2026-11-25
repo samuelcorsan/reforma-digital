@@ -151,11 +151,6 @@
   --disabled: #e4e4e4;
   --disabled-foreground: #767676;
   --page-gutter: clamp(20px, 3vw, 24px);
-  /* El margen lateral de una banda a sangre cuyo contenido se alinea con el ancho máximo. */
-  --page-gutter-wide: max(
-    var(--page-gutter),
-    calc((100% - var(--container-content)) / 2 + var(--page-gutter))
-  );
   --ease-brand: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
   --brand-gradient:
@@ -235,6 +230,21 @@
   @media (prefers-reduced-motion: reduce) {
     animation-timing-function: steps(1, end);
   }
+}
+
+/* El margen lateral de una banda a sangre cuyo contenido se alinea con el ancho máximo. Es una
+   utilidad y no una variable de :root para que `--container-content` se lea en el elemento:
+   /congreso y /elecciones lo ensanchan en la cabecera. */
+@utility px-gutter-wide {
+  padding-inline: max(
+    var(--page-gutter),
+    calc((100% - var(--container-content)) / 2 + var(--page-gutter))
+  );
+}
+
+/* `--bg-shadow-card` vale `none`, que no cabe en la lista de sombras que compone Tailwind. */
+@utility shadow-card {
+  box-shadow: var(--bg-shadow-card);
 }
 
 /* Lo que Tailwind no trae o no admite como token. */
@@ -380,6 +390,5 @@
   --color-success-fg: rgb(var(--bg-success-fg));
   --radius-control: var(--bg-radius-control);
   --radius-card: var(--bg-radius-card);
-  --shadow-card: var(--bg-shadow-card);
   --shadow-raised: var(--bg-shadow-raised);
 }

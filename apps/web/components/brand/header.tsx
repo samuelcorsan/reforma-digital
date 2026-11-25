@@ -58,7 +58,7 @@ export function Header({ current }: { current?: string }) {
   return (
     <header
       data-part="in-nav"
-      className="pointer-events-none sticky top-0 z-40 flex items-center gap-4 min-h-20 py-4 px-(--page-gutter-wide) [&_>_*]:pointer-events-auto [&_nav]:flex [&_nav]:items-center [&_nav]:gap-1 [@media(max-width:_800px)]:[&_nav]:hidden cabecera-pliegue"
+      className="pointer-events-none sticky top-0 z-40 flex items-center gap-4 min-h-20 py-4 px-gutter-wide [&_>_*]:pointer-events-auto [&_nav]:flex [&_nav]:items-center [&_nav]:gap-1 [@media(max-width:_800px)]:[&_nav]:hidden cabecera-pliegue"
     >
       <LogoLink className={logo}>
         <Logo size={36} />

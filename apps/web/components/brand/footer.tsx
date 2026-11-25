@@ -21,7 +21,7 @@ export function Footer() {
     <footer className={'max-w-none p-2 border-t-0'} aria-labelledby="pie-titulo">
       <div
         className={
-          'flex flex-col gap-10 pt-fluid-48-112 px-(--page-gutter-wide) pb-10 rounded-28 bg-(image:--footer-gradient) text-foreground [@media(max-width:_720px)]:gap-8'
+          'flex flex-col gap-10 pt-fluid-48-112 px-gutter-wide pb-10 rounded-28 bg-(image:--footer-gradient) text-foreground [@media(max-width:_720px)]:gap-8'
         }
       >
         <h2 id="pie-titulo" className={'m-0 [max-width:20ch] text-fluid-32-56 leading-none'}>

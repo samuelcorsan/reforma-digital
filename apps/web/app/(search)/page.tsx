@@ -233,7 +233,7 @@ export default function HomePage() {
           {/* Una fila con scroll horizontal nativo; la siguiente tarjeta asoma. Hasta 1280 px llega a
               los bordes de la ventana. Desde ahí se corta en el ancho de la retícula: la fila mide
               48 px más por cada lado y en ese margen las tarjetas se funden. */}
-          <ul className="m-0 flex snap-x snap-mandatory list-none gap-6 overflow-x-auto pt-0 px-(--page-gutter-wide) pb-4 [scroll-padding-inline:max(var(--page-gutter),_calc((100%_-_var(--container-content))_/_2_+_var(--page-gutter)))] xl:mx-auto xl:max-w-[calc(var(--container-content)+48px)] xl:scroll-px-12 xl:px-12 xl:[mask-image:linear-gradient(to_right,transparent,black_48px,black_calc(100%_-_48px),transparent)]">
+          <ul className="m-0 flex snap-x snap-mandatory list-none gap-6 overflow-x-auto pt-0 px-gutter-wide pb-4 [scroll-padding-inline:max(var(--page-gutter),_calc((100%_-_var(--container-content))_/_2_+_var(--page-gutter)))] xl:mx-auto xl:max-w-[calc(var(--container-content)+48px)] xl:scroll-px-12 xl:px-12 xl:[mask-image:linear-gradient(to_right,transparent,black_48px,black_calc(100%_-_48px),transparent)]">
             <Proyecto
               titulo="El Congreso"
               texto="Consulta qué se debate, cómo se vota y quién te representa, con enlaces a las fuentes oficiales."
