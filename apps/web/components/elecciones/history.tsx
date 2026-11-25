@@ -97,12 +97,12 @@ export async function ElectionHistory({ election }: { election?: string }) {
                 <span className="font-medium break-words">{shortParty(s)}</span>
                 <span className="relative h-3 rounded-xs bg-muted">
                   <i
-                    className="absolute inset-y-0 left-0 block rounded-xs"
-                    style={{ width: `${(n / 350) * 100}%`, background: color(f) }}
+                    className="absolute inset-y-0 left-0 block rounded-xs w-(--w) bg-(--bg)"
+                    style={{ '--w': `${(n / 350) * 100}%`, '--bg': color(f) }}
                   />
                   <i
-                    className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground"
-                    style={{ left: `${(176 / 350) * 100}%` }}
+                    className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground left-(--left)"
+                    style={{ '--left': `${(176 / 350) * 100}%` }}
                   />
                 </span>
                 <b className="text-right font-mono font-medium tabular-nums">{n}</b>
@@ -115,8 +115,8 @@ export async function ElectionHistory({ election }: { election?: string }) {
               <span />
               <span className="relative h-5">
                 <span
-                  className="absolute -translate-x-1/2 font-mono text-sm whitespace-nowrap text-muted-foreground"
-                  style={{ left: `${(176 / 350) * 100}%` }}
+                  className="absolute -translate-x-1/2 font-mono text-sm whitespace-nowrap text-muted-foreground left-(--left)"
+                  style={{ '--left': `${(176 / 350) * 100}%` }}
                 >
                   176 · mayoría absoluta
                 </span>
@@ -221,8 +221,9 @@ export async function ElectionHistory({ election }: { election?: string }) {
                                   className={cn(
                                     'h-5 min-w-6 rounded-xs p-0',
                                     j === k && 'outline-1 outline-foreground',
+                                    'bg-(--bg)',
                                   )}
-                                  style={{ background: w?.color ?? 'transparent' }}
+                                  style={{ '--bg': w?.color ?? 'transparent' }}
                                   data-tip={w ? `${name(code)} · ${label(x)}` : undefined}
                                   data-tip-text={
                                     w && p

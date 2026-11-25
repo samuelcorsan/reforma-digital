@@ -126,9 +126,9 @@ export function YourVote({
         <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
           {mode === 'price' ? thousands(low) : percent(low)}
           <span
-            className="block h-2.5 w-32 rounded-full"
+            className="block h-2.5 w-32 rounded-full bg-(image:--bg)"
             style={{
-              background: `linear-gradient(90deg, ${ramp(mode, 0)}, ${ramp(mode, 1)})`,
+              '--bg': `linear-gradient(90deg, ${ramp(mode, 0)}, ${ramp(mode, 1)})`,
             }}
           />
           {mode === 'price' ? `${thousands(high)} votos` : percent(high)}
@@ -238,8 +238,9 @@ function Balance({
                 className={cn(
                   'pointer-events-none',
                   b.p.code === selected ? 'fill-foreground font-medium' : 'fill-muted-foreground',
+                  'text-(length:--size)',
                 )}
-                style={{ fontSize: 12 * k }}
+                style={{ '--size': `${12 * k}px` }}
               >
                 {b.p.name}
               </text>

@@ -83,11 +83,14 @@ export function Apportionment({
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <p className="m-0 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
-              <i className="block size-2.5 rounded-xs" style={{ background: minimumColor }} />
+              <i className="block size-2.5 rounded-xs bg-(--bg)" style={{ '--bg': minimumColor }} />
               Mínimo legal
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <i className="block size-2.5 rounded-xs" style={{ background: populationColor }} />
+              <i
+                className="block size-2.5 rounded-xs bg-(--bg)"
+                style={{ '--bg': populationColor }}
+              />
               Por población
             </span>
           </p>
@@ -118,8 +121,8 @@ export function Apportionment({
                   {Array.from({ length: n }, (_, j) => (
                     <i
                       key={j}
-                      className="block size-2.5 rounded-xs"
-                      style={{ background: j < base ? minimumColor : populationColor }}
+                      className="block size-2.5 rounded-xs bg-(--bg)"
+                      style={{ '--bg': j < base ? minimumColor : populationColor }}
                     />
                   ))}
                 </span>

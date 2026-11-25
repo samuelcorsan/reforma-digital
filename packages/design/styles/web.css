@@ -4,6 +4,39 @@
 @source '../../../apps/web/**/*.{ts,tsx}';
 @source '../ui/**/*.{ts,tsx}';
 
+/* Colores fijos de los gráficos de /elecciones. Los de cada partido llegan con los datos. */
+:root {
+  --dato-ley: #2e7d5b;
+  --dato-decreto-ley: #7152a8;
+  --dato-tema-1: #8f8a83;
+  --dato-tema-2: #b3aea6;
+  --dato-tema-3: #a29c94;
+  --dato-tema-4: #c9c5be;
+  --dato-tema-5: #7d7871;
+  --dato-tema-6: #d3cfc8;
+}
+
+/* Un color de los datos (`--tinte`) rebajado hacia el fondo, y su texto legible encima. */
+@utility fondo-tinte-* {
+  background-color: color-mix(
+    in oklab,
+    var(--tinte) calc(--value(integer) * 1%),
+    var(--background)
+  );
+}
+@utility texto-tinte {
+  color: color-mix(in oklab, var(--tinte) 78%, black);
+}
+/* Celda de una tabla de intensidad: `--calor` es el porcentaje de tinta. */
+@utility fondo-calor {
+  background-color: color-mix(in oklab, var(--foreground) var(--calor), var(--muted));
+}
+
+/* `delay-(--retraso)` retrasaría también las transiciones del elemento. */
+@utility animacion-retraso {
+  animation-delay: var(--retraso);
+}
+
 /* Piezas de la web con dibujo propio, que no caben en un token. */
 @utility sol-disco {
   background: url('/congreso/sol-disco.png') 50% 100% / 100% 100% no-repeat;

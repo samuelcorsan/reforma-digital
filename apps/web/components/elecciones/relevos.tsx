@@ -50,7 +50,10 @@ const months = [
 function Name({ person }: { person: Person }) {
   const content = (
     <>
-      <i className="mr-1.5 inline-block size-2 rounded-full" style={{ background: person.color }} />
+      <i
+        className="mr-1.5 inline-block size-2 rounded-full bg-(--bg)"
+        style={{ '--bg': person.color }}
+      />
       {person.name}
     </>
   );
@@ -110,8 +113,9 @@ export function Relevos({
                   className={cn(
                     'cursor-pointer transition-opacity duration-200 hover:stroke-foreground hover:[stroke-width:1.5]',
                     month && on && 'stroke-foreground [stroke-width:1.5]',
+                    'opacity-(--opacity)',
                   )}
-                  style={{ opacity: on ? 1 : 0.2 }}
+                  style={{ '--opacity': on ? 1 : 0.2 }}
                   data-tip={s.title}
                   data-tip-text={s.chain}
                   data-tip-color={s.color}
@@ -157,8 +161,9 @@ export function Relevos({
                         'block w-full rounded-t-xs bg-brand transition-opacity',
                         month && month !== m && 'opacity-30',
                         'group-enabled:group-hover:opacity-100 group-enabled:group-hover:outline-2 group-enabled:group-hover:outline-foreground',
+                        'h-(--h)',
                       )}
-                      style={{ height: `${(n / most) * 100}%` }}
+                      style={{ '--h': `${(n / most) * 100}%` }}
                     />
                   </button>
                 );
@@ -173,8 +178,8 @@ export function Relevos({
               m.endsWith('-01') ? (
                 <span
                   key={m}
-                  className="absolute border-l border-border pl-1"
-                  style={{ left: `${(i / span.length) * 100}%` }}
+                  className="absolute border-l border-border pl-1 left-(--left)"
+                  style={{ '--left': `${(i / span.length) * 100}%` }}
                 >
                   {m.slice(0, 4)}
                 </span>

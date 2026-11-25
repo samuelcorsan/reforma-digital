@@ -176,7 +176,10 @@ export async function Expiring() {
                 </Link>
                 <span className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
                   <span className="inline-flex items-center gap-1.5">
-                    <i className="block size-2 rounded-full" style={{ background: l.color }} />
+                    <i
+                      className="block size-2 rounded-full bg-(--bg)"
+                      style={{ '--bg': l.color }}
+                    />
                     {l.presenterName}
                   </span>
                   <span className="font-mono tabular-nums">{thousands(l.days)} días</span>
@@ -206,7 +209,10 @@ export async function Expiring() {
                     {l.title}
                   </Link>
                   <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <i className="block size-2 rounded-full" style={{ background: l.color }} />
+                    <i
+                      className="block size-2 rounded-full bg-(--bg)"
+                      style={{ '--bg': l.color }}
+                    />
                     {l.presenterName}
                   </span>
                 </span>

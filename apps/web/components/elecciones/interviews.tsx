@@ -129,8 +129,8 @@ export function Dot({ color }: { color: string }) {
   return (
     <i
       aria-hidden="true"
-      className="block size-2.5 shrink-0 rounded-full"
-      style={{ background: color }}
+      className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+      style={{ '--bg': color }}
     />
   );
 }
@@ -175,8 +175,8 @@ function ReviewBar({ review }: { review: Interview['review'] }) {
       className="block h-1.5 w-12 shrink-0 overflow-hidden rounded-full bg-muted"
     >
       <span
-        className="block h-full origin-left rounded-full bg-foreground"
-        style={{ transform: `scaleX(${review.total ? review.reviewed / review.total : 1})` }}
+        className="block h-full origin-left rounded-full bg-foreground transform-(--transform)"
+        style={{ '--transform': `scaleX(${review.total ? review.reviewed / review.total : 1})` }}
       />
     </span>
   );
@@ -374,8 +374,8 @@ function VerificationCard({
     <Cell className="gap-0 overflow-hidden p-0 lg:p-0 max-sm:p-0">
       {/* La calificación, en una franja con su color: se distingue de un vistazo en la lista. */}
       <p
-        className="m-0 flex flex-wrap items-center gap-x-3 gap-y-2 px-6 py-3.5 max-sm:px-5"
-        style={{ background: `color-mix(in oklab, ${color} 12%, var(--background))` }}
+        className="m-0 flex flex-wrap items-center gap-x-3 gap-y-2 px-6 py-3.5 max-sm:px-5 fondo-tinte-12"
+        style={{ '--tinte': color }}
       >
         <Verdict id={r.veredicto} />
         <Unreviewed estado={r.estado} />
@@ -403,8 +403,8 @@ function VerificationCard({
           </div>
         )}
         <blockquote
-          className="m-0 border-l-2 pl-4 font-heading text-xl leading-snug"
-          style={{ borderColor: color }}
+          className="m-0 border-l-2 pl-4 font-heading text-xl leading-snug border-(--border-color)"
+          style={{ '--border-color': color }}
         >
           «{r.cita}»
         </blockquote>
@@ -816,8 +816,8 @@ function ReportSections({
                           {list.map((q) => (
                             <i
                               key={q.key}
-                              className="block size-3 rounded-3"
-                              style={{ background: q.mark.color }}
+                              className="block size-3 rounded-3 bg-(--bg)"
+                              style={{ '--bg': q.mark.color }}
                             />
                           ))}
                         </span>
@@ -884,8 +884,8 @@ function Profile({ interview: a }: { interview: Interview }) {
           </div>
           <span aria-hidden="true" className="relative h-1.5 rounded-full bg-muted">
             <i
-              className="absolute inset-y-0 left-0 rounded-full bg-foreground"
-              style={{ width: `${Math.min(1, (value ?? 0) / scale) * 100}%` }}
+              className="absolute inset-y-0 left-0 rounded-full bg-foreground w-(--w)"
+              style={{ '--w': `${Math.min(1, (value ?? 0) / scale) * 100}%` }}
             />
           </span>
         </div>
@@ -1077,7 +1077,11 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
     <>
       <span aria-hidden="true" className="flex h-2.5 gap-0.5 overflow-hidden rounded-full">
         {parts.map((p) => (
-          <i key={p.key} className="block h-full" style={{ flex: p.n, background: p.color }} />
+          <i
+            key={p.key}
+            className="block h-full flex-(--flex) bg-(--bg)"
+            style={{ '--flex': p.n, '--bg': p.color }}
+          />
         ))}
       </span>
       <ul className="m-0 flex list-none flex-wrap gap-x-4 gap-y-1.5 p-0 text-sm">
@@ -1137,15 +1141,15 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
             )}
             <span aria-hidden="true" className="flex h-2.5 gap-0.5 overflow-hidden rounded-full">
               <i
-                className="block h-full"
+                className="block h-full flex-(--flex) bg-(--bg)"
                 style={{
-                  flex: speakingShare(a, 'candidato'),
-                  background: candidate?.color ?? 'var(--foreground)',
+                  '--flex': speakingShare(a, 'candidato'),
+                  '--bg': candidate?.color ?? 'var(--foreground)',
                 }}
               />
               <i
-                className="block h-full bg-muted-foreground/30"
-                style={{ flex: speakingShare(a, 'jordi') }}
+                className="block h-full bg-muted-foreground/30 flex-(--flex)"
+                style={{ '--flex': speakingShare(a, 'jordi') }}
               />
             </span>
           </Cell>
@@ -1185,8 +1189,8 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
                         </span>
                         <span aria-hidden="true" className="h-1.5 rounded-full bg-muted">
                           <i
-                            className="block h-full rounded-full bg-foreground"
-                            style={{ width: `${value * 10}%` }}
+                            className="block h-full rounded-full bg-foreground w-(--w)"
+                            style={{ '--w': `${value * 10}%` }}
                           />
                         </span>
                         <span className="text-right font-mono tabular-nums">{decimal(value)}</span>

@@ -144,7 +144,7 @@ export function Trend({
                 ),
               )
             : series.map((s) => (
-                <g key={s.name} style={{ color: s.color }}>
+                <g key={s.name} className="text-(--color)" style={{ '--color': s.color }}>
                   <path
                     d={s.values
                       .map((v, j) =>

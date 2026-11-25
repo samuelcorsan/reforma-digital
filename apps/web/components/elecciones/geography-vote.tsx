@@ -132,7 +132,11 @@ export async function GeographyVote() {
     >
       {blocs.map(([k]) =>
         r[k] ? (
-          <i key={k} className="block h-full" style={{ flex: r[k], background: blocColor(k) }} />
+          <i
+            key={k}
+            className="block h-full flex-(--flex) bg-(--bg)"
+            style={{ '--flex': r[k], '--bg': blocColor(k) }}
+          />
         ) : null,
       )}
     </span>
@@ -141,7 +145,7 @@ export async function GeographyVote() {
     <p className="m-0 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
       {blocs.map(([k, t]) => (
         <span key={k} className="inline-flex items-center gap-1.5">
-          <i className="block size-2.5 rounded-full" style={{ background: blocColor(k) }} />
+          <i className="block size-2.5 rounded-full bg-(--bg)" style={{ '--bg': blocColor(k) }} />
           {t}
         </span>
       ))}
@@ -162,8 +166,8 @@ export async function GeographyVote() {
               className="grid cursor-pointer grid-cols-[0.75rem_minmax(0,1fr)] gap-x-3 gap-y-1 rounded-lg p-2 transition-colors outline-none hover:bg-muted focus-visible:bg-muted data-[on]:bg-muted"
             >
               <i
-                className="mt-1.5 block size-3 rounded-xs"
-                style={{ background: tone(axis, b.tone) }}
+                className="mt-1.5 block size-3 rounded-xs bg-(--bg)"
+                style={{ '--bg': tone(axis, b.tone) }}
               />
               <span className="grid gap-1">
                 <span className="flex flex-wrap items-baseline justify-between gap-x-3">
@@ -395,11 +399,11 @@ export async function GeographyVote() {
                       return (
                         <i
                           key={k}
-                          className="flex items-center justify-center font-mono text-xs not-italic"
+                          className="flex items-center justify-center font-mono text-xs not-italic w-(--w) bg-(--bg) text-(--color)"
                           style={{
-                            width: `${v}%`,
-                            background: blocColor(k),
-                            color: ink(blocColor(k)),
+                            '--w': `${v}%`,
+                            '--bg': blocColor(k),
+                            '--color': ink(blocColor(k)),
                           }}
                         >
                           {v >= 9 ? Math.round(v) : ''}
@@ -414,7 +418,10 @@ export async function GeographyVote() {
           <p className="m-0 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
             {ageParties.map(([k, t]) => (
               <span key={k} className="inline-flex items-center gap-1.5">
-                <i className="block size-2.5 rounded-full" style={{ background: blocColor(k) }} />
+                <i
+                  className="block size-2.5 rounded-full bg-(--bg)"
+                  style={{ '--bg': blocColor(k) }}
+                />
                 {t}
               </span>
             ))}
@@ -431,9 +438,9 @@ export async function GeographyVote() {
                 <span className="font-mono text-muted-foreground">{ageLabel(e)}</span>
                 <span className="h-2 rounded-full bg-muted">
                   <i
-                    className="block h-full rounded-full bg-muted-foreground"
+                    className="block h-full rounded-full bg-muted-foreground w-(--w)"
                     style={{
-                      width: `${((age.no_voto[j] ?? 0) / Math.max(...age.no_voto)) * 100}%`,
+                      '--w': `${((age.no_voto[j] ?? 0) / Math.max(...age.no_voto)) * 100}%`,
                     }}
                   />
                 </span>

@@ -199,8 +199,8 @@ export async function Election({ id }: { id: string }) {
                     <TableCell title={full}>
                       <span className="inline-flex items-center gap-2 font-medium">
                         <i
-                          className="block size-2.5 shrink-0 rounded-full"
-                          style={{ background: color(f) }}
+                          className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+                          style={{ '--bg': color(f) }}
                         />
                         {siglas}
                       </span>
@@ -214,10 +214,10 @@ export async function Election({ id }: { id: string }) {
                     <TableCell>
                       <span className="block h-2.5 rounded-full bg-muted">
                         <i
-                          className="block h-full rounded-full"
+                          className="block h-full rounded-full w-(--w) bg-(--bg)"
                           style={{
-                            width: `${(v / e.validos / most) * 100}%`,
-                            background: color(f),
+                            '--w': `${(v / e.validos / most) * 100}%`,
+                            '--bg': color(f),
                           }}
                         />
                       </span>
@@ -270,16 +270,16 @@ export async function Election({ id }: { id: string }) {
                     <span className="flex justify-end">
                       {d < 0 && (
                         <i
-                          className="block h-3 rounded-l-3"
-                          style={{ width: `${(-d / biggest) * 100}%`, background: f.color }}
+                          className="block h-3 rounded-l-3 w-(--w) bg-(--bg)"
+                          style={{ '--w': `${(-d / biggest) * 100}%`, '--bg': f.color }}
                         />
                       )}
                     </span>
                     <span className="flex border-l border-border">
                       {d > 0 && (
                         <i
-                          className="block h-3 rounded-r-3"
-                          style={{ width: `${(d / biggest) * 100}%`, background: f.color }}
+                          className="block h-3 rounded-r-3 w-(--w) bg-(--bg)"
+                          style={{ '--w': `${(d / biggest) * 100}%`, '--bg': f.color }}
                         />
                       )}
                     </span>
@@ -319,20 +319,20 @@ export async function Election({ id }: { id: string }) {
                     <span className="relative h-4">
                       <i className="absolute inset-x-0 top-1/2 block h-px bg-border" />
                       <i
-                        className="absolute top-1/2 block h-0.5 -translate-y-1/2"
+                        className="absolute top-1/2 block h-0.5 -translate-y-1/2 left-(--left) w-(--w) bg-(--bg)"
                         style={{
-                          left: `${(from / top) * 100}%`,
-                          width: `${((to - from) / top) * 100}%`,
-                          background: p.color,
+                          '--left': `${(from / top) * 100}%`,
+                          '--w': `${((to - from) / top) * 100}%`,
+                          '--bg': p.color,
                         }}
                       />
                       <i
-                        className="absolute top-1/2 block size-3 -translate-1/2 rounded-full border-2 bg-card"
-                        style={{ left: `${(p.votes / top) * 100}%`, borderColor: p.color }}
+                        className="absolute top-1/2 block size-3 -translate-1/2 rounded-full border-2 bg-card left-(--left) border-(--border-color)"
+                        style={{ '--left': `${(p.votes / top) * 100}%`, '--border-color': p.color }}
                       />
                       <i
-                        className="absolute top-1/2 block size-3 -translate-1/2 rounded-full"
-                        style={{ left: `${(p.seats / top) * 100}%`, background: p.color }}
+                        className="absolute top-1/2 block size-3 -translate-1/2 rounded-full left-(--left) bg-(--bg)"
+                        style={{ '--left': `${(p.seats / top) * 100}%`, '--bg': p.color }}
                       />
                     </span>
                   </li>
@@ -349,8 +349,8 @@ export async function Election({ id }: { id: string }) {
               {Array.from({ length: Math.round(top * 10) + 1 }, (_, i) => i / 10).map((v) => (
                 <span
                   key={v}
-                  className="absolute -translate-x-1/2"
-                  style={{ left: `${(v / top) * 100}%` }}
+                  className="absolute -translate-x-1/2 left-(--left)"
+                  style={{ '--left': `${(v / top) * 100}%` }}
                 >
                   {Math.round(v * 100)} %
                 </span>

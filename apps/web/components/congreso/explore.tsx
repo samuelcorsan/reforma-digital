@@ -285,7 +285,8 @@ export async function Explore({
                   {t.serie.map((n, i) => (
                     <span
                       key={i}
-                      style={{ height: `${Math.max(2, (n / Math.max(1, ...t.serie)) * 100)}%` }}
+                      className="h-(--h)"
+                      style={{ '--h': `${Math.max(2, (n / Math.max(1, ...t.serie)) * 100)}%` }}
                     >
                       <span
                         className={

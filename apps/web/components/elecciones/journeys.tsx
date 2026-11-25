@@ -263,8 +263,8 @@ function Path({
             onMouseLeave={() => setCard(null)}
           >
             <g
-              className="transition-opacity duration-500"
-              style={{ opacity: fell ? 1 : 0 }}
+              className="transition-opacity duration-500 opacity-(--opacity)"
+              style={{ '--opacity': fell ? 1 : 0 }}
               aria-hidden="true"
             >
               <rect
@@ -278,8 +278,8 @@ function Path({
               <text
                 x={6}
                 y={yFall + 8}
-                className="fill-brand font-mono font-medium tracking-eyebrow"
-                style={{ fontSize: 12 * k }}
+                className="fill-brand font-mono font-medium tracking-eyebrow text-(length:--size)"
+                style={{ '--size': `${12 * k}px` }}
               >
                 Caducan con la disolución
               </text>
@@ -289,16 +289,16 @@ function Path({
                 <text
                   x={colX(c)}
                   y={14}
-                  className="fill-foreground font-mono font-medium"
-                  style={{ fontSize: 15 * k }}
+                  className="fill-foreground font-mono font-medium text-(length:--size)"
+                  style={{ '--size': `${15 * k}px` }}
                 >
                   {thousands(counts[c] ?? 0)}
                 </text>
                 <text
                   x={colX(c)}
                   y={30}
-                  className="fill-muted-foreground font-medium"
-                  style={{ fontSize: 12 * k }}
+                  className="fill-muted-foreground font-medium text-(length:--size)"
+                  style={{ '--size': `${12 * k}px` }}
                 >
                   {name}
                 </text>
@@ -313,10 +313,10 @@ function Path({
                   key={l.exp}
                   r={dot * 0.42}
                   fill={l.color}
-                  className="cursor-pointer transition-[transform,opacity] duration-500 ease-(--ease-brand) motion-reduce:transition-none"
+                  className="cursor-pointer transition-[transform,opacity] duration-500 ease-(--ease-brand) motion-reduce:transition-none transform-(--transform) opacity-(--opacity)"
                   style={{
-                    transform: `translate(${s.x}px, ${s.y}px)`,
-                    opacity: s.o * (dim ? 0.12 : 1),
+                    '--transform': `translate(${s.x}px, ${s.y}px)`,
+                    '--opacity': s.o * (dim ? 0.12 : 1),
                   }}
                   onMouseEnter={(event) => setCard({ law: l, x: event.clientX, y: event.clientY })}
                   onMouseLeave={() => setCard(null)}
@@ -367,8 +367,8 @@ function LawCard({ law, x, y }: { law: Journey; x: number; y: number }) {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed z-50 grid w-80 gap-2 rounded-xl bg-popover p-4 text-sm leading-snug text-popover-foreground shadow-md ring-1 ring-foreground/10"
-      style={{ left: Math.max(8, left), top: Math.max(8, top) }}
+      className="pointer-events-none fixed z-50 grid w-80 gap-2 rounded-xl bg-popover p-4 text-sm leading-snug text-popover-foreground shadow-md ring-1 ring-foreground/10 left-(--left) top-(--top)"
+      style={{ '--left': `${Math.max(8, left)}px`, '--top': `${Math.max(8, top)}px` }}
     >
       <p className="m-0 font-medium">{law.title}</p>
       <p className="m-0 text-sm text-muted-foreground">
@@ -584,8 +584,8 @@ function Flows({
                     y={0}
                     width={SW + 4}
                     height={SH}
-                    className="origin-left transition-transform duration-2200 ease-in-out motion-reduce:transition-none"
-                    style={{ transform: drawn ? 'scaleX(1)' : 'scaleX(0)' }}
+                    className="origin-left transition-transform duration-2200 ease-in-out motion-reduce:transition-none transform-(--transform)"
+                    style={{ '--transform': drawn ? 'scaleX(1)' : 'scaleX(0)' }}
                   />
                 </clipPath>
                 <clipPath id="flows-trail">
@@ -599,9 +599,6 @@ function Flows({
                   />
                 </clipPath>
               </defs>
-              <style>
-                {'@keyframes flows-sweep{from{transform:scaleX(0)}to{transform:scaleX(1)}}'}
-              </style>
               <g clipPath="url(#flows-reveal)">
                 {links.map((link) => (
                   <path
@@ -649,11 +646,10 @@ function Flows({
                     className={cn(
                       'cursor-pointer transition-opacity duration-500',
                       m === 0 && 'opacity-30',
+                      !drawn && 'opacity-0',
+                      'delay-(--delay)',
                     )}
-                    style={{
-                      opacity: drawn ? undefined : 0,
-                      transitionDelay: drawn ? `${(sx(n.col) / SW) * 2200}ms` : undefined,
-                    }}
+                    style={{ '--delay': drawn ? `${(sx(n.col) / SW) * 2200}ms` : undefined }}
                     onClick={() => pick(n)}
                     {...tip(n.label, n.n, '. Pulsa para verlas')}
                     data-tip-color={n.color}
@@ -661,11 +657,11 @@ function Flows({
                 );
               })}
               <g
-                className="pointer-events-none fill-foreground transition-opacity duration-500"
+                className="pointer-events-none fill-foreground transition-opacity duration-500 text-(length:--size) opacity-(--opacity) delay-(--delay)"
                 style={{
-                  fontSize: 12 * k,
-                  opacity: drawn ? 1 : 0,
-                  transitionDelay: drawn ? '1200ms' : undefined,
+                  '--size': `${12 * k}px`,
+                  '--opacity': drawn ? 1 : 0,
+                  '--delay': drawn ? '1200ms' : undefined,
                 }}
               >
                 {nodes

@@ -39,7 +39,7 @@ export function SeatSum({
               setOn((s) => (s.includes(p.id) ? s.filter((x) => x !== p.id) : [...s, p.id]))
             }
           >
-            <i className="block size-2 rounded-full" style={{ background: p.color }} />
+            <i className="block size-2 rounded-full bg-(--bg)" style={{ '--bg': p.color }} />
             {p.name} {p.seats}
           </Button>
         ))}
@@ -50,13 +50,13 @@ export function SeatSum({
           .map((p) => (
             <i
               key={p.id}
-              className="block h-full"
-              style={{ width: `${(p.seats / 350) * 100}%`, background: p.color }}
+              className="block h-full w-(--w) bg-(--bg)"
+              style={{ '--w': `${(p.seats / 350) * 100}%`, '--bg': p.color }}
             />
           ))}
         <i
-          className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground"
-          style={{ left: `${(176 / 350) * 100}%` }}
+          className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground left-(--left)"
+          style={{ '--left': `${(176 / 350) * 100}%` }}
         />
       </div>
       <p className="m-0" aria-live="polite">
@@ -377,8 +377,8 @@ export function ProjectionMap({
                   >
                     <span className="inline-flex items-center gap-2 font-medium">
                       <i
-                        className="block size-2.5 shrink-0 rounded-full"
-                        style={{ background: color(id) }}
+                        className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+                        style={{ '--bg': color(id) }}
                       />
                       {name(id)}
                     </span>
@@ -386,8 +386,8 @@ export function ProjectionMap({
                       {Array.from({ length: n }, (_, i) => (
                         <i
                           key={i}
-                          className="block size-3 rounded-xs"
-                          style={{ background: color(id) }}
+                          className="block size-3 rounded-xs bg-(--bg)"
+                          style={{ '--bg': color(id) }}
                         />
                       ))}
                       {!n && <span className="text-muted-foreground">sin escaño</span>}
@@ -436,13 +436,13 @@ export function ProjectionMap({
                       </span>
                       ·
                       <i
-                        className="block size-2 rounded-full"
-                        style={{ background: color(p.last?.gana ?? '') }}
+                        className="block size-2 rounded-full bg-(--bg)"
+                        style={{ '--bg': color(p.last?.gana ?? '') }}
                       />
                       {name(p.last?.gana ?? '')} →
                       <i
-                        className="block size-2 rounded-full"
-                        style={{ background: color(p.last?.segundo ?? '') }}
+                        className="block size-2 rounded-full bg-(--bg)"
+                        style={{ '--bg': color(p.last?.segundo ?? '') }}
                       />
                       {name(p.last?.segundo ?? '')}
                     </span>
