@@ -235,7 +235,7 @@ export function ProvinceMap({
       <>
         <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
           Margen estrecho
-          <span className="block h-2.5 w-28 rounded-full bg-linear-to-r/srgb from-muted to-foreground" />
+          <span className="block h-2.5 w-28 rounded-full bg-linear-to-r from-muted to-foreground" />
           amplio
         </p>
         {previous && (

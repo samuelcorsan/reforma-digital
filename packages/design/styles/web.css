@@ -32,8 +32,10 @@
   background-color: color-mix(in oklab, var(--foreground) var(--calor), var(--muted));
 }
 
-/* `delay-(--retraso)` retrasaría también las transiciones del elemento. */
+/* `delay-(--retraso)` retrasaría también las transiciones del elemento. La variable de Tailwind es
+   la que lee el atajo `animation` de `animate-in` y `animate-out`. */
 @utility animacion-retraso {
+  --tw-animation-delay: var(--retraso);
   animation-delay: var(--retraso);
 }
 
