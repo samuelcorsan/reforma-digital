@@ -133,13 +133,13 @@ export default defineConfig({
             pattern: '^Table',
             allow: [...restyleAllow, 'spacing', 'typography', 'text-muted-foreground', 'border-0'],
           },
-          // Not migrated yet. Empty this list one family per PR; never add to it.
           // The sidebar is a frame: each use sets its density and type, and may drop its
           // surface and the rule beside a submenu.
           {
             pattern: '^Sidebar',
             allow: [...restyleAllow, 'spacing', 'typography', 'bg-transparent', 'border-0'],
           },
+          // Not migrated yet. Empty this list one family per PR; never add to it.
           { pattern: '^Card', allow: restyleAny },
         ],
       },
@@ -171,8 +171,9 @@ export default defineConfig({
       rules: { 'shadcn/no-restyle': 'off' },
     },
     {
-      // The header's glass pills: links and the menu trigger share one string built on
-      // buttonVariants(), which the linter cannot read across files.
+      // The header, a one-off: its glass pills (links and the menu trigger) share one string
+      // built on buttonVariants(), which the linter cannot read across files, and its menu panel
+      // sets its own padding and radius.
       files: ['apps/web/components/brand/header.tsx'],
       rules: { 'shadcn/no-restyle': 'off', 'shadcn/require-static-classes': 'off' },
     },
