@@ -153,7 +153,7 @@ export type Incidencia = {
   carretera: string;
   /** El sentido del recorrido. No es el rumbo geográfico del feed. */
   sentido: Sentido | null;
-  pk: { desde: number | null; hasta: number | null } | null;
+  pk: { desde: number; hasta: number | null } | null;
   ubicacion: {
     inicio: Posicion | null;
     fin: Posicion | null;
@@ -236,12 +236,6 @@ function numero(valor: Valor | undefined): number | undefined {
 function atributo(nodo: Valor | undefined, nombre: string): string {
   const v = hijo(nodo, `@_${nombre}`);
   return typeof v === 'string' ? v : '';
-}
-
-/** El primer valor no vacío, como el firstNonEmpty del port original. */
-function primero(...valores: string[]): string {
-  for (const valor of valores) if (valor !== '') return valor;
-  return '';
 }
 
 /** Una fecha del feed, en ISO 8601 UTC. Vacía es null; ilegible es un cambio de feed. */
@@ -360,9 +354,8 @@ function convertir(
     id: `dgt:${atributo(registro, 'id')}`,
     situacion: situacionId,
     tipo: tipoDe(causa, elementoDetallado, valorDetallado),
-    subtipo: primero(valorDetallado, texto(hijo(causa, 'causeType'))),
-    severidad:
-      SEVERIDAD[primero(texto(hijo(registro, 'severity')), severidadGlobal)] ?? 'desconocida',
+    subtipo: valorDetallado || texto(hijo(causa, 'causeType')),
+    severidad: SEVERIDAD[texto(hijo(registro, 'severity')) || severidadGlobal] ?? 'desconocida',
     estado: estadoDe(inicio, fin, ahora),
     carretera: normalizarCarretera(texto(ruta(descripcion, 'roadInformation', 'roadName'))),
     sentido: sentidoDe(geom.sentido),
@@ -370,11 +363,8 @@ function convertir(
     ubicacion: {
       inicio: posicion(geom.desde),
       fin: posicion(geom.hasta),
-      provincia: primero(extension(geom.desde, 'province'), extension(geom.hasta, 'province')),
-      municipio: primero(
-        extension(geom.desde, 'municipality'),
-        extension(geom.hasta, 'municipality'),
-      ),
+      provincia: extension(geom.desde, 'province') || extension(geom.hasta, 'province'),
+      municipio: extension(geom.desde, 'municipality') || extension(geom.hasta, 'municipality'),
     },
     carriles_afectados: textoDe(ruta(descripcion, 'carriageway', 'lane', 'laneUsage')),
     inicio,
@@ -424,15 +414,18 @@ export async function leerFeed(fetchImpl: Fetch): Promise<{ feed: Feed; consulta
   return { feed: parsearSituaciones(cuerpo, Date.now()), consultado };
 }
 
+/** El feed se renueva cada 60 s: dentro de esa ventana la respuesta es la misma. */
+const TTL_MS = 60_000;
+
 /**
  * Una descarga por minuto y proceso: el feed se renueva cada 60 s, así que dentro de esa ventana
  * la respuesta es la misma y `desde_cache` lo dice.
  */
-export function descargaConCache(fetchImpl: Fetch, ttlMs = 60_000) {
+export function descargaConCache(fetchImpl: Fetch) {
   let ultimo: { at: number; feed: Feed; consultado: string } | undefined;
   return async () => {
     const ahora = Date.now();
-    if (ultimo !== undefined && ahora - ultimo.at < ttlMs)
+    if (ultimo !== undefined && ahora - ultimo.at < TTL_MS)
       return { feed: ultimo.feed, consultado: ultimo.consultado, desdeCache: true };
     const { feed, consultado } = await leerFeed(fetchImpl);
     ultimo = { at: ahora, feed, consultado };
@@ -487,12 +480,11 @@ function extremos(desde: number | null, hasta: number | null): [number | null, n
 
 /**
  * El rango de puntos kilométricos se compara por solape, no por contención: una incidencia que
- * ocupa del 95 al 105 entra en una consulta del 100 al 140. Un registro sin punto kilométrico,
- * o con los dos extremos vacíos, no afirma nada sobre su extensión y por tanto no coincide.
+ * ocupa del 95 al 105 entra en una consulta del 100 al 140. Un registro sin punto kilométrico no
+ * afirma nada sobre su extensión y por tanto no coincide.
  */
 function seSolapaPk(pk: Incidencia['pk'], desde: number | null, hasta: number | null): boolean {
   if (pk === null) return false;
-  if (pk.desde === null && pk.hasta === null) return false;
   const [lo, hi] = extremos(pk.desde, pk.hasta);
   const [rlo, rhi] = extremos(desde, hasta);
   if (rlo !== null && hi !== null && rlo > hi) return false;
@@ -533,7 +525,7 @@ export function buscar(incidencias: Incidencia[], filtro: Filtro, limite: number
   for (const incidencia of incidencias) {
     if (incidencia.estado !== 'activo') continue;
     if (carretera !== null && incidencia.carretera !== carretera) continue;
-    if (carretera !== null && pidePk && !seSolapaPk(incidencia.pk, desde, hasta)) continue;
+    if (pidePk && !seSolapaPk(incidencia.pk, desde, hasta)) continue;
     if (filtro.sentido !== undefined && !sentidoEncaja(incidencia.sentido, filtro.sentido))
       continue;
     if (

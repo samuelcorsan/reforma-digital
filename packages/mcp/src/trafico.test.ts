@@ -242,7 +242,7 @@ describe('Tráfico DGT', () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     try {
       vi.setSystemTime(new Date('2026-10-28T13:00:00Z'));
-      const descargar = descargaConCache(fetchImpl, 60_000);
+      const descargar = descargaConCache(fetchImpl);
       const primera = await descargar();
       expect(primera.desdeCache).toBe(false);
       expect(fetchImpl).toHaveBeenCalledTimes(1);
