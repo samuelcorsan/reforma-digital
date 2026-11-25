@@ -19,7 +19,7 @@ export function CommunityBadge({ host }: { host: string }) {
         <ShieldIcon />
         Interfaz comunitaria · sitio oficial
       </Badge>
-      <span className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
+      <span className={'text-sm leading-normal text-ink-muted'}>
         Estás en <strong className="font-semibold text-ink [overflow-wrap:anywhere]">{host}</strong>
         , la web oficial del trámite. Los datos y envíos los gestiona esa web.
       </span>
@@ -47,7 +47,7 @@ export function ProgressSteps({
     <nav aria-label="Progreso del trámite" className="mt-5">
       <p
         className={
-          'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))] mb-2'
+          'text-xs leading-1.4 font-semibold tracking-eyebrow uppercase text-ink-subtle mb-2'
         }
       >
         Paso {currentIndex + 1} de {steps.length}
@@ -77,19 +77,19 @@ export function ProgressSteps({
               key={step.id}
               aria-current={state === 'current' ? 'step' : undefined}
               className={cn(
-                'flex flex-col items-start gap-2 [padding:10px_12px] [border-radius:var(--bg-radius-control)] [font-size:13px] [line-height:1.4] [color:rgb(var(--bg-ink-muted))]',
+                'flex flex-col items-start gap-2 py-2.5 px-3 rounded-control text-13 leading-1.4 text-ink-muted',
                 state === 'current' &&
-                  '[background-color:rgb(var(--bg-brand-100))] [color:rgb(var(--bg-ink))] font-semibold [&_[data-part=bg-step-num]]:[background-color:rgb(var(--bg-brand-600))] [&_[data-part=bg-step-num]]:[color:rgb(var(--bg-ink-inverse))]',
+                  'bg-brand-100 text-ink font-semibold [&_[data-part=bg-step-num]]:bg-brand-600 [&_[data-part=bg-step-num]]:text-ink-inverse',
                 state === 'done' &&
-                  '[&_[data-part=bg-step-num]]:[background-color:rgb(var(--bg-success-bg))] [&_[data-part=bg-step-num]]:[color:rgb(var(--bg-success-fg))]',
-                state === 'todo' && '[color:rgb(var(--bg-ink-subtle))]',
+                  '[&_[data-part=bg-step-num]]:bg-success-bg [&_[data-part=bg-step-num]]:text-success-fg',
+                state === 'todo' && 'text-ink-subtle',
               )}
             >
               <span
                 aria-hidden="true"
                 data-part="bg-step-num"
                 className={
-                  'flex items-center justify-center w-6 h-6 shrink-0 [border-radius:999px] text-xs font-bold [background-color:rgb(var(--bg-surface-muted))] [color:rgb(var(--bg-ink-subtle))]'
+                  'flex items-center justify-center w-6 h-6 shrink-0 rounded-full text-xs font-bold bg-surface-muted text-ink-subtle'
                 }
               >
                 {state === 'done' ? '✓' : i + 1}
@@ -104,7 +104,7 @@ export function ProgressSteps({
                 </span>
                 {step.label}
                 {outIndex >= 0 && i >= outIndex && (
-                  <span className="block text-[12px] font-normal text-ink-subtle">
+                  <span className="block text-12 font-normal text-ink-subtle">
                     solo en la web oficial
                   </span>
                 )}
@@ -139,20 +139,12 @@ export function Panel({
       <h2
         id={titleId}
         className={
-          '[font-size:28px] [line-height:1.2] font-medium [color:rgb(var(--bg-ink))] [letter-spacing:-0.035em] [@media(max-width:_639px)]:text-2xl'
+          'text-28 leading-1.2 font-medium text-ink tracking-titular [@media(max-width:_639px)]:text-2xl'
         }
       >
         {title}
       </h2>
-      {lead && (
-        <div
-          className={
-            '[font-size:17px] [line-height:1.6] [color:rgb(var(--bg-ink-muted))] mt-2 max-w-[70ch]'
-          }
-        >
-          {lead}
-        </div>
-      )}
+      {lead && <div className={'text-17 leading-1.6 text-ink-muted mt-2 max-w-[70ch]'}>{lead}</div>}
       {progress}
       <div className="mt-6 space-y-6">{children}</div>
     </Card>
@@ -186,7 +178,7 @@ export function PrimaryAction({
         <span aria-hidden="true">→</span>
       </Button>
       {hint && (
-        <p id={hintId} className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
+        <p id={hintId} className={'text-sm leading-normal text-ink-muted'}>
           {hint}
         </p>
       )}
@@ -230,7 +222,7 @@ export function ExternalLink({ href, children }: { href: string; children: React
       target="_blank"
       rel="noopener noreferrer"
       className={
-        '[color:rgb(var(--bg-brand-600))] [text-decoration-line:underline] [text-decoration-thickness:1px] [text-underline-offset:3px] [text-decoration-color:rgb(var(--bg-brand-600)_/_0.4)] font-medium cursor-pointer [&:hover]:[color:rgb(var(--bg-brand-700))] [&:hover]:[text-decoration-color:currentColor] [&:hover]:[text-decoration-thickness:2px] [&:focus-visible]:[outline:3px_solid_rgb(var(--bg-brand-600))] [&:focus-visible]:[outline-offset:2px] [&:focus-visible]:[border-radius:2px]'
+        'text-brand-600 underline decoration-1 underline-offset-3 decoration-brand-600/40 font-medium cursor-pointer [&:hover]:text-brand-700 [&:hover]:decoration-current [&:hover]:decoration-2 [&:focus-visible]:outline-3 [&:focus-visible]:outline-brand-600 [&:focus-visible]:outline-offset-2 [&:focus-visible]:rounded-xs'
       }
     >
       {children}
@@ -272,10 +264,7 @@ export function Callout({
 
 export function SectionTitle({ children, id }: { children: ReactNode; id?: string }) {
   return (
-    <h3
-      id={id}
-      className={'[font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'}
-    >
+    <h3 id={id} className={'text-20 leading-1.3 font-650 text-ink'}>
       {children}
     </h3>
   );
@@ -299,9 +288,7 @@ export function SearchField({
     <div>
       <label
         htmlFor={id}
-        className={
-          'block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
-        }
+        className={'block text-15 leading-1.4 font-semibold text-ink [margin-bottom:6px]'}
       >
         {label}
       </label>
@@ -332,12 +319,12 @@ export function OfficialDivider({ children }: { children?: ReactNode }) {
   return (
     <div
       className={
-        '[font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] mb-2 flex items-center gap-3'
+        'font-(family-name:--bg-font) text-base leading-1.6 text-ink mb-2 flex items-center gap-3'
       }
     >
       <span
         className={
-          'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))] whitespace-nowrap'
+          'text-xs leading-1.4 font-semibold tracking-eyebrow uppercase text-ink-subtle whitespace-nowrap'
         }
       >
         Información oficial de esta página

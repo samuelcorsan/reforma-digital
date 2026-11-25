@@ -18,21 +18,17 @@ export function FallbackNotice({
     <Card
       role="status"
       className={
-        'bg-card [background-color:rgb(var(--bg-surface))] border-0 [border-radius:var(--bg-radius-card)] [box-shadow:var(--bg-shadow-card)] [font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] fixed bottom-3 left-3 right-3 z-[2147483646] max-w-sm p-4 text-[14px] shadow-raised sm:right-auto'
+        'bg-card bg-surface border-0 rounded-card shadow-card font-(family-name:--bg-font) text-base fixed bottom-3 left-3 right-3 z-[2147483646] max-w-sm p-4 text-14 leading-1.6 sm:right-auto'
       }
     >
-      <p
-        className={
-          'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
-        }
-      >
+      <p className={'text-xs leading-1.4 font-semibold tracking-eyebrow uppercase text-ink-subtle'}>
         Reforma Digital · web original
       </p>
       <p className="mt-1.5">
         La mejora «{adapterName}» no es compatible con esta versión de la página, así que se muestra
         la web oficial sin cambios.
       </p>
-      <Collapsible className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-2'}>
+      <Collapsible className={'text-sm leading-normal text-ink-muted mt-2'}>
         <CollapsibleTrigger className="cursor-pointer">Detalle técnico</CollapsibleTrigger>
         <CollapsibleContent>
           <p className="mt-1 break-words">{reason}</p>

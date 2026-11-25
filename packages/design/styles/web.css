@@ -3,3 +3,19 @@
 @import './theme.css';
 @source '../../../apps/web/**/*.{ts,tsx}';
 @source '../ui/**/*.{ts,tsx}';
+
+/* Piezas de la web con dibujo propio, que no caben en un token. */
+@utility sol-disco {
+  background: url('/congreso/sol-disco.png') 50% 100% / 100% 100% no-repeat;
+}
+@utility sol-horizonte {
+  background: url('/congreso/sol-horizonte.png') 50% 100% / calc(360 * var(--celda)) 100% no-repeat;
+}
+@utility bg-size-portada-movil {
+  background-size: 100% 560px;
+}
+@utility transition-pieza-puzle {
+  transition:
+    translate 520ms var(--ease-brand),
+    scale 480ms var(--ease-brand);
+}

@@ -13,7 +13,7 @@ async function Code({ label, lang, code }: Sample) {
   const { tokens } = await codeToTokens(code, { lang, theme: 'vitesse-dark' });
   return (
     <div className="flex items-start">
-      <pre className="min-w-0 flex-1 overflow-x-auto p-4 font-mono text-[13px] leading-relaxed">
+      <pre className="min-w-0 flex-1 overflow-x-auto p-4 font-mono text-13 leading-relaxed">
         <code>
           {tokens.map((line, i) => (
             <span key={i}>

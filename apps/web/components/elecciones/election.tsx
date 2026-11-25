@@ -270,7 +270,7 @@ export async function Election({ id }: { id: string }) {
                     <span className="flex justify-end">
                       {d < 0 && (
                         <i
-                          className="block h-3 rounded-l-[3px]"
+                          className="block h-3 rounded-l-3"
                           style={{ width: `${(-d / biggest) * 100}%`, background: f.color }}
                         />
                       )}
@@ -278,7 +278,7 @@ export async function Election({ id }: { id: string }) {
                     <span className="flex border-l border-border">
                       {d > 0 && (
                         <i
-                          className="block h-3 rounded-r-[3px]"
+                          className="block h-3 rounded-r-3"
                           style={{ width: `${(d / biggest) * 100}%`, background: f.color }}
                         />
                       )}
@@ -286,7 +286,7 @@ export async function Election({ id }: { id: string }) {
                     <span
                       className={cn(
                         'text-right font-mono tabular-nums',
-                        d > 0 ? 'text-[#2E7D5B]' : d < 0 ? 'text-brand' : 'text-muted-foreground',
+                        d > 0 ? 'text-sube' : d < 0 ? 'text-brand' : 'text-muted-foreground',
                       )}
                     >
                       {signed(d)}

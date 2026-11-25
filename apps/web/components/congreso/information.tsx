@@ -29,7 +29,7 @@ export function Information({ section, title }: { section: string; title: string
       {section === 'glosario' ? (
         <dl
           className={
-            '[&_div]:[padding:24px_0] [&_div]:[border-bottom:1px_solid_var(--border)] [&_dt]:[font-size:20px] [&_dt]:font-semibold [&_dd]:[margin:8px_0_0] [&_dd]:[max-width:70ch]'
+            '[&_div]:py-6 [&_div]:px-0 [&_div]:border-b [&_div]:border-b-border [&_dt]:text-20 [&_dt]:font-semibold [&_dd]:[margin:8px_0_0] [&_dd]:[max-width:70ch]'
           }
         >
           {terms.map(([term, definition]) => (
@@ -43,7 +43,7 @@ export function Information({ section, title }: { section: string; title: string
         <>
           <ol
             className={
-              'list-none p-0 [&_li]:[padding:0_0_24px_24px] [&_li]:[border-left:2px_solid_var(--border)] [&_h3]:[margin:8px_0] [&_h3]:text-lg'
+              'list-none p-0 [&_li]:pt-0 [&_li]:pr-0 [&_li]:pb-6 [&_li]:pl-6 [&_li]:border-l-2 [&_li]:border-l-border [&_h3]:[margin:8px_0] [&_h3]:text-lg'
             }
           >
             {[

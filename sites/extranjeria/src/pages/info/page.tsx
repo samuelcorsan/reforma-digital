@@ -97,29 +97,15 @@ function Info({ bindings, restore }: { bindings: InfoBindings; restore: () => vo
 
       <div>
         {/* Opciones oficiales equivalentes: ninguna se destaca (DESIGN.md §3 · Botón principal). */}
-        <h3
-          className={
-            '[font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'
-          }
-        >
+        <h3 className={'text-20 leading-1.3 font-650 text-ink'}>
           Elige cómo continuar en la web oficial
         </h3>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           {options.map((option) => (
             <div key={option.id} className="flex flex-col rounded-control border border-line p-4">
-              <p
-                className={
-                  '[font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))]'
-                }
-              >
-                {option.title}
-              </p>
+              <p className={'text-17 leading-1.4 font-semibold text-ink'}>{option.title}</p>
               {option.description && (
-                <p
-                  className={
-                    'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1 flex-1'
-                  }
-                >
+                <p className={'text-sm leading-normal text-ink-muted mt-1 flex-1'}>
                   {option.description}
                 </p>
               )}
@@ -138,7 +124,7 @@ function Info({ bindings, restore }: { bindings: InfoBindings; restore: () => vo
           ))}
         </div>
         {bindings.claveInfoLink && (
-          <p className="mt-3 text-[15px]">
+          <p className="mt-3 text-15">
             <ExternalLink href={bindings.claveInfoLink.href}>
               {bindings.claveInfoLink.text || 'Más información sobre Cl@ve'}
             </ExternalLink>

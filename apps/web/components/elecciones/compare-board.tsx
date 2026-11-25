@@ -44,9 +44,7 @@ const surname = (c: Candidate) => c.name.split(' ').at(-1) ?? c.name;
 function Heading({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="grid gap-2">
-      <h2 className="m-0 font-heading text-[32px] leading-tight font-normal lg:text-[40px]">
-        {title}
-      </h2>
+      <h2 className="m-0 font-heading text-32 leading-tight font-normal lg:text-40">{title}</h2>
       {children && <p className="m-0 max-w-[62ch] text-muted-foreground">{children}</p>}
     </div>
   );
@@ -182,7 +180,7 @@ export function CompareBoard({
                       y={ly}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      className="fill-muted-foreground text-[11px]"
+                      className="fill-muted-foreground text-11"
                     >
                       {axis.name}
                     </text>

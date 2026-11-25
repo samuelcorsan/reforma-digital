@@ -90,19 +90,9 @@ function Asistencia({ bindings, restore }: { bindings: AsistenciaBindings; resto
               key={option.label}
               className="flex flex-col rounded-control border border-line p-4"
             >
-              <p
-                className={
-                  '[font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))]'
-                }
-              >
-                {option.label}
-              </p>
+              <p className={'text-17 leading-1.4 font-semibold text-ink'}>{option.label}</p>
               {option.access && (
-                <p
-                  className={
-                    'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1 flex-1'
-                  }
-                >
+                <p className={'text-sm leading-normal text-ink-muted mt-1 flex-1'}>
                   {ACCESS[option.access]}
                 </p>
               )}
@@ -116,7 +106,7 @@ function Asistencia({ bindings, restore }: { bindings: AsistenciaBindings; resto
                 <span aria-hidden="true">→</span>
               </Button>
               {option.help && (
-                <p className="mt-2 text-[14px]">
+                <p className="mt-2 text-14">
                   <ExternalLink href={option.help.href}>Tutorial oficial</ExternalLink>
                 </p>
               )}
@@ -140,7 +130,7 @@ function Asistencia({ bindings, restore }: { bindings: AsistenciaBindings; resto
       {bindings.otherChannels.length > 0 && (
         <div>
           <SectionTitle>Otras vías según la web oficial</SectionTitle>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-[15px]">
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-15">
             {bindings.otherChannels.map((channel) => (
               <li key={channel}>{channel}</li>
             ))}

@@ -218,7 +218,7 @@ export function Simulator({
         <div className="grid gap-2">
           <h2
             id="simulador"
-            className="m-0 flex scroll-mt-28 flex-wrap items-center gap-x-3 gap-y-2 font-heading text-[28px] leading-tight font-normal"
+            className="m-0 flex scroll-mt-28 flex-wrap items-center gap-x-3 gap-y-2 font-heading text-28 leading-tight font-normal"
           >
             Reparto D&apos;Hondt en{' '}
             <ProvinceSelect provinces={provinces} value={province.code} onChange={onProvince} />
@@ -410,10 +410,7 @@ export function Simulator({
           <p className="m-0 flex min-h-6 flex-wrap gap-2 text-sm" aria-live="polite">
             {note && <span className="text-muted-foreground">{note}</span>}
             {changes.map(([name, d]) => (
-              <span
-                key={name}
-                className={cn('font-medium', d > 0 ? 'text-[#2E7D5B]' : 'text-brand')}
-              >
+              <span key={name} className={cn('font-medium', d > 0 ? 'text-sube' : 'text-brand')}>
                 {name} {d > 0 ? '+' : '−'}
                 {Math.abs(d)}
               </span>
@@ -460,7 +457,7 @@ export function Simulator({
                 <span className="text-right font-mono tabular-nums max-sm:text-left">
                   {thousands(v)}
                   {dv !== 0 && (
-                    <small className={cn('ml-1 text-sm', dv > 0 ? 'text-[#2E7D5B]' : 'text-brand')}>
+                    <small className={cn('ml-1 text-sm', dv > 0 ? 'text-sube' : 'text-brand')}>
                       {plus(dv)}
                     </small>
                   )}

@@ -113,7 +113,7 @@ export function Preguntar({
           maxLength={300}
           autoComplete="off"
           aria-describedby={nota ? 'pregunta-mcp-nota' : undefined}
-          className="text-[15px] [&::-webkit-search-cancel-button]:hidden"
+          className="text-15 [&::-webkit-search-cancel-button]:hidden"
         />
         <InputGroupAddon align="inline-end">
           {cargando ? (

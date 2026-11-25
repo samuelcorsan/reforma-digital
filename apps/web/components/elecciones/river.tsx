@@ -191,7 +191,7 @@ export function River({
               );
             })}
             <g
-              className="origin-left transition-transform duration-[1400ms] ease-out motion-reduce:transition-none"
+              className="origin-left transition-transform duration-1400 ease-out motion-reduce:transition-none"
               style={{ transform: drawn ? 'scaleX(1)' : 'scaleX(0)' }}
             >
               {E.map((e, j) =>

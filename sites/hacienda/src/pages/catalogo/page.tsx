@@ -104,9 +104,7 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
         <div>
           <label
             htmlFor={categoryId}
-            className={
-              'block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
-            }
+            className={'block text-15 leading-1.4 font-semibold text-ink [margin-bottom:6px]'}
           >
             Categoría
           </label>
@@ -134,9 +132,7 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
         <div>
           <label
             htmlFor={channelId}
-            className={
-              'block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
-            }
+            className={'block text-15 leading-1.4 font-semibold text-ink [margin-bottom:6px]'}
           >
             Canal
           </label>
@@ -164,9 +160,7 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
       </div>
 
       <p
-        className={
-          'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
-        }
+        className={'text-xs leading-1.4 font-semibold tracking-eyebrow uppercase text-ink-subtle'}
         aria-live="polite"
       >
         {results.length} {results.length === 1 ? 'servicio' : 'servicios'}
@@ -176,34 +170,22 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
           <li key={s.id} className="rounded-control border border-line p-4">
             <p
               className={
-                'text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))]'
+                'text-xs leading-1.4 font-semibold tracking-eyebrow uppercase text-ink-subtle'
               }
             >
               {s.category}
             </p>
-            <h3
-              className={
-                '[font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] mt-1'
-              }
-            >
-              {s.name}
-            </h3>
+            <h3 className={'text-17 leading-1.4 font-semibold text-ink mt-1'}>{s.name}</h3>
             {s.description && (
-              <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1'}>
-                {s.description}
-              </p>
+              <p className={'text-sm leading-normal text-ink-muted mt-1'}>{s.description}</p>
             )}
-            {s.note && (
-              <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1'}>
-                {s.note}
-              </p>
-            )}
+            {s.note && <p className={'text-sm leading-normal text-ink-muted mt-1'}>{s.note}</p>}
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
               <ul className="flex flex-wrap gap-1.5" aria-label="Canales">
                 {s.channels.map((c) => (
                   <li
                     key={c}
-                    className="rounded-full border border-line bg-surface-muted px-2.5 py-0.5 text-[13px] text-ink-muted"
+                    className="rounded-full border border-line bg-surface-muted px-2.5 py-0.5 text-13 text-ink-muted"
                   >
                     {c}
                   </li>
@@ -224,7 +206,7 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
           </li>
         ))}
         {results.length === 0 && (
-          <li className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
+          <li className={'text-sm leading-normal text-ink-muted'}>
             Ningún servicio coincide con la búsqueda.
           </li>
         )}

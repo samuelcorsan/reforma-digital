@@ -216,7 +216,7 @@ function Calendar({
             <dt className="text-sm leading-snug text-muted-foreground">{label}</dt>
             <dd
               className={cn(
-                'm-0 font-heading text-[40px] leading-none tabular-nums',
+                'm-0 font-heading text-40 leading-none tabular-nums',
                 alert && 'text-brand',
               )}
             >

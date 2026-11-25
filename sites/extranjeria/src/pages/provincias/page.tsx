@@ -91,12 +91,7 @@ function Provincias({ bindings, restore }: { bindings: ProvinciasBindings; resto
       }
     >
       <fieldset className="space-y-3">
-        <legend
-          id={legendId}
-          className={
-            '[font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'
-          }
-        >
+        <legend id={legendId} className={'text-20 leading-1.3 font-650 text-ink'}>
           Provincias disponibles{' '}
           <span className="font-normal text-ink-subtle">({provinces.length})</span>
         </legend>
@@ -123,9 +118,7 @@ function Provincias({ bindings, restore }: { bindings: ProvinciasBindings; resto
             </Choice>
           ))}
           {filtered.length === 0 && (
-            <p
-              className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] col-span-full'}
-            >
+            <p className={'text-sm leading-normal text-ink-muted col-span-full'}>
               Ninguna provincia coincide con «{query}».
             </p>
           )}

@@ -213,7 +213,7 @@ export function CouldBe({
                     <small
                       className={cn(
                         'text-right font-mono text-sm',
-                        d > 0 ? 'text-[#2E7D5B]' : 'text-brand',
+                        d > 0 ? 'text-sube' : 'text-brand',
                       )}
                     >
                       {d ? `${d > 0 ? '+' : '−'}${Math.abs(d)}` : ''}
@@ -539,7 +539,7 @@ function Flows({
           textAnchor={side === 'left' ? 'end' : 'start'}
           className={cn('fill-foreground text-sm', selected === g && 'font-semibold')}
         >
-          {side === 'right' && <tspan className="fill-[#2E7D5B]">+{c} </tspan>}
+          {side === 'right' && <tspan className="fill-sube">+{c} </tspan>}
           {group[g]?.name}
           {side === 'left' && <tspan className="fill-brand"> −{c}</tspan>}
         </text>

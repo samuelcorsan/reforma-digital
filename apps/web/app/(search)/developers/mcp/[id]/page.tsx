@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-const mono = 'font-mono text-[0.9em]';
+const mono = 'font-mono text-em-90';
 
 const focus =
   'outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-foreground';
@@ -215,9 +215,7 @@ export default async function Page({ params }: Props) {
           </nav>
           <div className="flex items-center gap-4">
             <ServerLogo logo={server.logo} size="lg" />
-            <h1 className="min-w-0 font-heading text-[clamp(30px,4vw,44px)] leading-[1.1]">
-              {server.name}
-            </h1>
+            <h1 className="min-w-0 font-heading text-fluid-30-44 leading-1.1">{server.name}</h1>
           </div>
           <p className="mt-5 max-w-[65ch] text-lg leading-relaxed text-muted-foreground">
             {server.summary}

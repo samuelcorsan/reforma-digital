@@ -55,8 +55,8 @@ function Shell({
     <section
       className={
         inline
-          ? 'bg-card [background-color:rgb(var(--bg-surface))] border-0 [border-radius:var(--bg-radius-card)] [box-shadow:var(--bg-shadow-card)] [font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] my-3'
-          : '[font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] border-b border-line bg-surface'
+          ? 'bg-card bg-surface border-0 rounded-card shadow-card font-(family-name:--bg-font) text-base leading-1.6 text-ink my-3'
+          : 'font-(family-name:--bg-font) text-base leading-1.6 text-ink border-b border-line bg-surface'
       }
       aria-label="Reforma Digital"
     >
@@ -78,22 +78,16 @@ function Shell({
         <div className="mx-auto max-w-content px-4 pb-4">
           <h1
             className={
-              '[font-size:28px] [line-height:1.2] font-medium [color:rgb(var(--bg-ink))] [letter-spacing:-0.035em] [@media(max-width:_639px)]:text-2xl'
+              'text-28 leading-1.2 font-medium text-ink tracking-titular [@media(max-width:_639px)]:text-2xl'
             }
           >
             {enhancement.title}
           </h1>
-          <p className={'[font-size:17px] [line-height:1.6] [color:rgb(var(--bg-ink-muted))] mt-1'}>
-            {enhancement.description}
-          </p>
+          <p className={'text-17 leading-1.6 text-ink-muted mt-1'}>{enhancement.description}</p>
         </div>
       )}
       {demo ? (
-        <p
-          className={
-            'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mx-auto max-w-content px-4 pb-3'
-          }
-        >
+        <p className={'text-sm leading-normal text-ink-muted mx-auto max-w-content px-4 pb-3'}>
           Prueba local con datos ficticios. No reserva citas.
         </p>
       ) : null}

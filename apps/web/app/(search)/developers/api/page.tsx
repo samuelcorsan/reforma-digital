@@ -83,7 +83,7 @@ const nav = [
   ],
 ] as const;
 
-const mono = 'font-mono text-[0.9em]';
+const mono = 'font-mono text-em-90';
 
 function Params({ params }: { params: Param[] }) {
   return (
@@ -157,9 +157,7 @@ export default function Api() {
         </nav>
         <main id="main" tabIndex={-1} className="min-w-0 max-w-[820px] pt-16 pb-20">
           <section id="introduccion" className="scroll-mt-24 pb-12">
-            <h1 className="mb-6 font-heading text-[clamp(36px,4.5vw,60px)] leading-[1.1]">
-              {title}
-            </h1>
+            <h1 className="mb-6 font-heading text-fluid-36-60 leading-1.1">{title}</h1>
             <p className="mb-8 max-w-[65ch] text-lg leading-relaxed text-muted-foreground">
               {intro}
             </p>

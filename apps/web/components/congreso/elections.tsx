@@ -54,7 +54,7 @@ export async function Geography({
         <Filters action={href('geografia/municipios')} query={query} />
         <div
           className={
-            'overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:[border-bottom:1px_solid_var(--border)] [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:[border-bottom:1px_solid_var(--border)] [&_td]:[vertical-align:top] [&_th]:text-sm'
+            'overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:border-b [&_th]:border-b-border [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:border-b [&_td]:border-b-border [&_td]:[vertical-align:top] [&_th]:text-sm'
           }
         >
           <Table>
@@ -147,7 +147,7 @@ export async function Geography({
               <article
                 data-part="cg-card"
                 className={
-                  '[overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:[font-size:28px] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                  '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                 }
               />
             }
@@ -169,7 +169,7 @@ export async function Geography({
           </Card>
         ))}
       </div>
-      <p className={'[color:var(--muted-foreground)] text-sm'}>
+      <p className={'text-muted-foreground text-sm'}>
         Años de referencia:{' '}
         {Object.entries(geography.fuentes)
           .map(([name, year]) => `${name}: ${year}`)

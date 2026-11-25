@@ -8,7 +8,7 @@ export default function ErrorPage({ reset }: { reset: () => void }) {
       <h1>No hemos podido cargar esta página.</h1>
       <p
         data-part="info-entradilla"
-        className={'[max-width:65ch] mb-10 [color:var(--text-secondary)] text-lg [line-height:1.6]'}
+        className={'[max-width:65ch] mb-10 text-(--text-secondary) text-lg leading-1.6'}
       >
         Inténtalo de nuevo en un momento.
       </p>

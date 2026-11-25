@@ -378,7 +378,7 @@ export function ProvinceMap({
                 <Label>
                   {year} · {chosen.seats} {chosen.seats === 1 ? 'escaño' : 'escaños'}
                 </Label>
-                <h3 className="m-0 font-heading text-[28px] leading-tight font-normal">
+                <h3 className="m-0 font-heading text-28 leading-tight font-normal">
                   {chosen.name}
                 </h3>
               </div>

@@ -79,19 +79,19 @@ export function PromptComposer() {
       <form
         onSubmit={(event) => void enviar(event)}
         data-copiado={estado === 'copiado' || undefined}
-        className="relative w-full overflow-hidden rounded-[20px] border border-border bg-background text-left transition-colors hover:border-foreground/25 has-focus-visible:border-foreground/50 data-copiado:border-transparent data-copiado:[background:var(--brand-gradient)]"
+        className="relative w-full overflow-hidden rounded-20 border border-border bg-background text-left transition-colors hover:border-foreground/25 has-focus-visible:border-foreground/50 data-copiado:border-transparent data-copiado:gradient-brand"
       >
         {estado === 'copiado' && (
           // Lo anuncia el aviso oculto de abajo. Deja pasar el clic al texto y se quita al escribir.
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-4 px-6 text-background [background:var(--brand-gradient)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-[0.98] motion-safe:duration-300"
+            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-4 px-6 text-background gradient-brand motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-98 motion-safe:duration-300"
           >
             <span className="grid size-12 shrink-0 place-items-center rounded-full bg-background text-brand motion-safe:animate-in motion-safe:zoom-in-50 motion-safe:delay-100 motion-safe:duration-300 motion-safe:fill-mode-both">
               <Icon name="hecho" size={24} />
             </span>
             <span className="grid gap-0.5 text-left">
-              <span className="font-heading text-[clamp(20px,2.4vw,26px)] leading-tight">
+              <span className="font-heading text-fluid-20-26 leading-tight">
                 ¡Copiado en tu portapapeles!
               </span>
               <span className="text-base text-background/85">
@@ -161,7 +161,7 @@ export function PromptComposer() {
       <a
         href={`${links.repo}/issues/new`}
         className={cn(
-          'flex min-h-11 w-fit items-center gap-2 underline underline-offset-[0.25em]',
+          'flex min-h-11 w-fit items-center gap-2 underline underline-offset-em-25',
           estado === 'copiado' && 'invisible',
         )}
       >
@@ -174,9 +174,9 @@ export function PromptComposer() {
 // Los tiempos de QuiverAI: entra en 720 ms desde 8 px más abajo y sale en 480 ms subiendo 6 px,
 // las dos con 5 px de desenfoque, y las palabras se escalonan a lo largo de 320 ms.
 const entra =
-  'motion-safe:animate-in fade-in-0 blur-in-[5px] slide-in-from-bottom-2 duration-720 fill-mode-both';
+  'motion-safe:animate-in fade-in-0 blur-in-5 slide-in-from-bottom-2 duration-720 fill-mode-both';
 const sale =
-  'motion-safe:animate-out fade-out-0 blur-out-[5px] slide-out-to-top-[6px] duration-480 fill-mode-both';
+  'motion-safe:animate-out fade-out-0 blur-out-5 slide-out-to-top-6px duration-480 fill-mode-both';
 
 function Ejemplo({ texto, sale: saliendo }: { texto: string; sale?: boolean }) {
   const palabras = texto.split(' ');
@@ -192,10 +192,7 @@ function Ejemplo({ texto, sale: saliendo }: { texto: string; sale?: boolean }) {
       {palabras.map((palabra, i) => (
         <span
           key={i}
-          className={cn(
-            'inline-block whitespace-pre ease-[cubic-bezier(.22,1,.36,1)]',
-            saliendo ? sale : entra,
-          )}
+          className={cn('inline-block whitespace-pre ease-out-quint', saliendo ? sale : entra)}
           style={{ animationDelay: `${Math.round(i * paso)}ms` }}
         >
           {i < palabras.length - 1 ? `${palabra} ` : palabra}

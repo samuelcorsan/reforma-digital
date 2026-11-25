@@ -116,9 +116,7 @@ export function LogoPuzle({ size }: { size: number }) {
       {estado.pos.map((c, ficha) => (
         <span
           key={ficha}
-          className={
-            'absolute top-0 left-0 [transition:translate_520ms_var(--ease-brand),scale_480ms_var(--ease-brand)] motion-reduce:transition-none'
-          }
+          className={'absolute top-0 left-0 transition-pieza-puzle motion-reduce:transition-none'}
           style={{
             width: modulo,
             height: modulo,

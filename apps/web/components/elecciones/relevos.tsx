@@ -154,7 +154,7 @@ export function Relevos({
                   >
                     <i
                       className={cn(
-                        'block w-full rounded-t-[2px] bg-brand transition-opacity',
+                        'block w-full rounded-t-xs bg-brand transition-opacity',
                         month && month !== m && 'opacity-30',
                         'group-enabled:group-hover:opacity-100 group-enabled:group-hover:outline-2 group-enabled:group-hover:outline-foreground',
                       )}

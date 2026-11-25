@@ -65,7 +65,7 @@ export async function People({
         <Section title="Quién ha ocupado el cargo">
           <ol
             className={
-              'list-none p-0 [&_li]:[padding:0_0_24px_24px] [&_li]:[border-left:2px_solid_var(--border)] [&_h3]:[margin:8px_0] [&_h3]:text-lg'
+              'list-none p-0 [&_li]:pt-0 [&_li]:pr-0 [&_li]:pb-6 [&_li]:pl-6 [&_li]:border-l-2 [&_li]:border-l-border [&_h3]:[margin:8px_0] [&_h3]:text-lg'
             }
           >
             {cargo.mandatos.map((m, i) => (
@@ -106,7 +106,7 @@ export async function People({
                 <Link
                   data-part="cg-card"
                   className={
-                    '[overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:[font-size:28px] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                    '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                   }
                   href={href(`cargo/${id}`)}
                 />
@@ -116,7 +116,7 @@ export async function People({
                 <span
                   data-part="t-etiqueta"
                   className={
-                    '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
+                    'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase'
                   }
                 >
                   {cargo.ministerio}
@@ -173,7 +173,7 @@ export async function People({
             <Section title="Comisiones">
               <ul
                 className={
-                  'list-none p-0 [&_:is(li,_article)]:flex [&_:is(li,_article)]:justify-between [&_:is(li,_article)]:gap-6 [&_:is(li,_article)]:[padding:16px_0] [&_:is(li,_article)]:[border-bottom:1px_solid_var(--border)] [&_span]:[color:var(--muted-foreground)]'
+                  'list-none p-0 [&_:is(li,_article)]:flex [&_:is(li,_article)]:justify-between [&_:is(li,_article)]:gap-6 [&_:is(li,_article)]:py-4 [&_:is(li,_article)]:px-0 [&_:is(li,_article)]:border-b [&_:is(li,_article)]:border-b-border [&_span]:text-muted-foreground'
                 }
               >
                 {extra.comisiones.map(([commission, role]) => (
@@ -190,7 +190,7 @@ export async function People({
                 {Object.entries(extra.intereses).map(([label, value]) => (
                   <Collapsible
                     className={
-                      '[padding:16px_0] [border-bottom:1px_solid_var(--border)] [&_summary]:cursor-pointer [&_summary]:font-medium [&_p]:[max-width:80ch] [&_p]:[white-space:pre-line]'
+                      'py-4 px-0 border-b border-b-border [&_summary]:cursor-pointer [&_summary]:font-medium [&_p]:[max-width:80ch] [&_p]:[white-space:pre-line]'
                     }
                     key={label}
                   >
@@ -222,7 +222,7 @@ export async function People({
         <Section title="Cómo votó">
           <div
             className={
-              'list-none p-0 [&_:is(li,_article)]:flex [&_:is(li,_article)]:justify-between [&_:is(li,_article)]:gap-6 [&_:is(li,_article)]:[padding:16px_0] [&_:is(li,_article)]:[border-bottom:1px_solid_var(--border)] [&_span]:[color:var(--muted-foreground)]'
+              'list-none p-0 [&_:is(li,_article)]:flex [&_:is(li,_article)]:justify-between [&_:is(li,_article)]:gap-6 [&_:is(li,_article)]:py-4 [&_:is(li,_article)]:px-0 [&_:is(li,_article)]:border-b [&_:is(li,_article)]:border-b-border [&_span]:text-muted-foreground'
             }
           >
             {ballots.rows.map((vote) => (
@@ -265,7 +265,7 @@ export async function People({
                   <article
                     data-part="cg-card"
                     className={
-                      '[overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:[font-size:28px] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                      '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                     }
                   />
                 }
@@ -273,7 +273,7 @@ export async function People({
                 <CardContent>
                   <span
                     className={
-                      '[&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:[border-radius:50%] flex items-center flex-wrap gap-3 text-sm'
+                      '[&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:rounded-full flex items-center flex-wrap gap-3 text-sm'
                     }
                   >
                     <i style={{ background: g.color }} />
@@ -297,7 +297,7 @@ export async function People({
                     <CollapsibleContent>
                       <ul
                         className={
-                          'list-none p-0 [&_:is(li,_article)]:flex [&_:is(li,_article)]:justify-between [&_:is(li,_article)]:gap-6 [&_:is(li,_article)]:[padding:16px_0] [&_:is(li,_article)]:[border-bottom:1px_solid_var(--border)] [&_span]:[color:var(--muted-foreground)]'
+                          'list-none p-0 [&_:is(li,_article)]:flex [&_:is(li,_article)]:justify-between [&_:is(li,_article)]:gap-6 [&_:is(li,_article)]:py-4 [&_:is(li,_article)]:px-0 [&_:is(li,_article)]:border-b [&_:is(li,_article)]:border-b-border [&_span]:text-muted-foreground'
                         }
                       >
                         {latest.rows.map((v) => (

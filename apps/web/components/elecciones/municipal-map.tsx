@@ -315,7 +315,7 @@ export function MunicipalMap({
                   />
                   {group.name}
                 </span>
-                <b className="font-heading text-[28px] leading-none font-normal tabular-nums">
+                <b className="font-heading text-28 leading-none font-normal tabular-nums">
                   {thousands(n)}
                 </b>
                 <span className="text-sm text-muted-foreground">
@@ -439,7 +439,7 @@ function Profile({
       <div className="flex items-start justify-between gap-3">
         <div className="grid gap-1">
           {province && <Label>{province}</Label>}
-          <h3 className="m-0 font-heading text-[28px] leading-tight font-normal">{name}</h3>
+          <h3 className="m-0 font-heading text-28 leading-tight font-normal">{name}</h3>
         </div>
         <Button variant="ghost" size="icon" aria-label="Cerrar la ficha" onClick={onClose}>
           <span className="rotate-45">

@@ -70,7 +70,7 @@ export function Apportionment({
         {steps.map((s) => (
           <li key={s.n} className="grid content-start gap-2">
             <p className="m-0 grid gap-1">
-              <b className="font-heading text-[40px] leading-none font-normal tabular-nums">
+              <b className="font-heading text-40 leading-none font-normal tabular-nums">
                 {s.value}
               </b>
               <span className="font-medium">{s.title}</span>

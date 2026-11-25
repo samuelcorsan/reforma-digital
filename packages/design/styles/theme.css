@@ -40,6 +40,74 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
+
+  /* Valores fuera de la escala de Tailwind que ya usaba la web. Llevan el valor en el nombre y,
+     a diferencia de `text-sm` y compañía, los tamaños no arrastran interlineado. */
+  --color-voto-si: #237647;
+  --color-sube: #2e7d5b;
+  --color-tinta-sol: #222222;
+  --text-10: 10px;
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-14: 14px;
+  --text-15: 15px;
+  --text-17: 17px;
+  --text-20: 20px;
+  --text-21: 21px;
+  --text-28: 28px;
+  --text-32: 32px;
+  --text-36: 36px;
+  --text-40: 40px;
+  --text-44: 44px;
+  --text-52: 52px;
+  --text-56: 56px;
+  --text-em-90: 0.9em;
+  --text-em-92: 0.92em;
+  --text-fluid-17-19: clamp(17px, 1.4vw, 19px);
+  --text-fluid-20-26: clamp(20px, 2.4vw, 26px);
+  --text-fluid-24-30: clamp(24px, 2.4vw, 30px);
+  --text-fluid-30-44: clamp(30px, 4vw, 44px);
+  --text-fluid-32-52: clamp(32px, 4vw, 52px);
+  --text-fluid-32-56: clamp(32px, 4vw, 56px);
+  --text-fluid-34-56: clamp(34px, 4.2vw, 56px);
+  --text-fluid-36-60: clamp(36px, 4.5vw, 60px);
+  --text-fluid-36-72: clamp(36px, 6vw, 72px);
+  --text-fluid-36-72-suave: clamp(36px, 5vw, 72px);
+  --text-fluid-40-72: clamp(40px, 6vw, 72px);
+  --leading-1_05: 1.05;
+  --leading-1_06: 1.06;
+  --leading-1_08: 1.08;
+  --leading-1_1: 1.1;
+  --leading-1_15: 1.15;
+  --leading-1_2: 1.2;
+  --leading-1_3: 1.3;
+  --leading-1_35: 1.35;
+  --leading-1_4: 1.4;
+  --leading-1_55: 1.55;
+  --leading-1_6: 1.6;
+  --leading-1_7: 1.7;
+  --tracking-titular: -0.035em;
+  --tracking-eyebrow: 0.06em;
+  --tracking-etiqueta: 0.08em;
+  --font-weight-650: 650;
+  --radius-3: 3px;
+  --radius-4: 4px;
+  --radius-12: 12px;
+  --radius-20: 20px;
+  --radius-28: 28px;
+  --spacing-30vh: 30vh;
+  --spacing-40vh: 40vh;
+  --spacing-em-50: 0.5em;
+  --spacing-fluid-24-56: clamp(24px, 4.5vw, 56px);
+  --spacing-fluid-32-64: clamp(32px, 5vw, 64px);
+  --spacing-fluid-48-112: clamp(48px, 8vw, 112px);
+  --translate-6px: 6px;
+  --ease-muelle: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-pagina-entra: sol-pagina-entra 200ms var(--ease-brand) both;
+  --animate-pagina-sale: sol-pagina-sale 160ms var(--ease-brand) both;
+  --animate-flows-sweep: flows-sweep 1.7s ease-in-out;
 }
 
 :root,
@@ -83,6 +151,11 @@
   --disabled: #e4e4e4;
   --disabled-foreground: #767676;
   --page-gutter: clamp(20px, 3vw, 24px);
+  /* El margen lateral de una banda a sangre cuyo contenido se alinea con el ancho máximo. */
+  --page-gutter-wide: max(
+    var(--page-gutter),
+    calc((100% - var(--container-content)) / 2 + var(--page-gutter))
+  );
   --ease-brand: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
   --brand-gradient:
@@ -102,6 +175,17 @@
       rgba(223, 23, 23, 0) 72%
     ),
     var(--brand);
+  /* El pie, el menú móvil y los retratos de /equipo: sol sobre amarillo o sobre tinta. */
+  --footer-gradient:
+    radial-gradient(80% 70% at 50% -12%, #ffe58f 0%, rgba(255, 229, 143, 0) 70%),
+    linear-gradient(180deg, #ffd34d 0%, var(--brand-yellow) 46%, var(--brand-orange) 100%);
+  --menu-gradient: radial-gradient(120% 70% at 100% 0%, #ffd34d 0%, rgba(255, 211, 77, 0) 60%);
+  --retrato-gradient-yellow: radial-gradient(
+    100% 90% at 0% 100%,
+    var(--brand-orange),
+    transparent 80%
+  );
+  --retrato-gradient-ink: radial-gradient(110% 85% at 50% 120%, var(--brand), transparent 85%);
   /* Hover de Button sunset: el sol sube desde debajo del borde y el texto queda sobre tinta y rojo. */
   --brand-sun: radial-gradient(
     ellipse 60% 65% at 50% 110%,
@@ -135,11 +219,45 @@
 }
 
 /* Cabecera de la web: pliega el logotipo al bajar (ver header.tsx). Fuera de @theme porque la
-   usan propiedades sueltas (`animation-name`) que Tailwind no reconoce como uso. */
+   usa `animation-name` suelto, que Tailwind no reconoce como uso. */
 @keyframes cabecera-pliegue {
   to {
     --pliegue: 1;
   }
+}
+
+@utility cabecera-pliegue {
+  animation-name: cabecera-pliegue;
+  animation-fill-mode: both;
+  animation-timing-function: linear;
+  animation-timeline: scroll();
+  animation-range: 0 40px;
+  @media (prefers-reduced-motion: reduce) {
+    animation-timing-function: steps(1, end);
+  }
+}
+
+/* Lo que Tailwind no trae o no admite como token. */
+@utility gradient-brand {
+  background: var(--brand-gradient);
+}
+@utility rounded-inherit {
+  border-radius: inherit;
+}
+@utility border-1.5 {
+  border-width: 1.5px;
+}
+@utility font-kerning-normal {
+  font-kerning: normal;
+}
+@utility font-synthesis-none {
+  font-synthesis: none;
+}
+@utility underline-offset-em-15 {
+  text-underline-offset: 0.15em;
+}
+@utility underline-offset-em-25 {
+  text-underline-offset: 0.25em;
 }
 
 @property --pliegue {

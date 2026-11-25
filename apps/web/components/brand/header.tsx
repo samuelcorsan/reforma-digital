@@ -23,7 +23,7 @@ import { MobileMenu } from './mobile-menu';
 const pieza = cn(
   buttonVariants({ variant: 'secondary' }),
   'relative h-8.5 border-0 px-3 bg-secondary/60 backdrop-blur-xl backdrop-saturate-150 hover:bg-secondary/60 hover:backdrop-blur-xl [@media(prefers-reduced-transparency:reduce)]:bg-secondary',
-  'shadow-[inset_0_0_0_40px_rgb(0_0_0/0)] hover:shadow-[inset_0_0_0_40px_rgb(0_0_0/0.06)] aria-[current=page]:shadow-[inset_0_0_0_40px_rgb(0_0_0/0.06)]',
+  'inset-ring-40 inset-ring-black/0 hover:inset-ring-40 hover:inset-ring-black/6 aria-[current=page]:inset-ring-40 aria-[current=page]:inset-ring-black/6',
   'transition-[box-shadow,scale] duration-150 ease-out active:scale-[0.96] active:not-aria-[haspopup]:translate-y-0 motion-reduce:transition-none',
   'focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-foreground',
   'before:absolute before:inset-x-0 before:-inset-y-[3px]',
@@ -37,7 +37,7 @@ const participar = cn(pieza, 'border border-border bg-background pr-2.5 hover:bg
 // van en una capa que solo cambia de opacidad. -my-1 evita que la cabecera crezca.
 // Sin `animation-timeline`, la animación dura 0 s y se queda en 1: la R en su icono.
 const logo =
-  'relative isolate mr-auto -my-1 -ml-[14.5px] flex h-14 items-center rounded-[14px] px-[14.5px] outline-none [translate:calc(14.5px*var(--pliegue))_calc(11px*var(--pliegue))] before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:border before:border-border before:bg-background before:[opacity:var(--pliegue)] focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-foreground [&_[data-part=marca]]:[gap:calc(0.5em*(1-var(--pliegue)))] [&_[data-part=marca-texto]]:[overflow-x:clip] [&_[data-part=marca-texto]]:[max-width:calc(6em*(1-var(--pliegue)))] [&_[data-part=marca-texto]]:[opacity:calc(1-var(--pliegue))]';
+  'relative isolate mr-auto -my-1 -ml-(--marca-x) flex h-14 items-center rounded-xl px-(--marca-x) outline-none [--marca-x:14.5px] [--despliegue:calc(1-var(--pliegue))] [--marca-hueco:calc(0.5em*var(--despliegue))] [translate:calc(var(--marca-x)*var(--pliegue))_calc(11px*var(--pliegue))] before:absolute before:inset-0 before:-z-1 before:rounded-inherit before:border before:border-border before:bg-background before:opacity-(--pliegue) focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-foreground [&_[data-part=marca]]:gap-(--marca-hueco) [&_[data-part=marca-texto]]:[overflow-x:clip] [&_[data-part=marca-texto]]:[max-width:calc(6em*(1-var(--pliegue)))] [&_[data-part=marca-texto]]:opacity-(--despliegue)';
 
 export function Header({ current }: { current?: string }) {
   const links = [
@@ -58,7 +58,7 @@ export function Header({ current }: { current?: string }) {
   return (
     <header
       data-part="in-nav"
-      className="pointer-events-none sticky top-0 z-40 flex items-center gap-4 min-h-20 [padding:16px_max(var(--page-gutter),_calc((100%_-_var(--container-content))_/_2_+_var(--page-gutter)))] [&_>_*]:pointer-events-auto [&_nav]:flex [&_nav]:items-center [&_nav]:gap-1 [@media(max-width:_800px)]:[&_nav]:hidden [animation-name:cabecera-pliegue] [animation-fill-mode:both] [animation-timing-function:linear] [animation-timeline:scroll()] [animation-range:0_40px] motion-reduce:[animation-timing-function:steps(1,end)]"
+      className="pointer-events-none sticky top-0 z-40 flex items-center gap-4 min-h-20 py-4 px-(--page-gutter-wide) [&_>_*]:pointer-events-auto [&_nav]:flex [&_nav]:items-center [&_nav]:gap-1 [@media(max-width:_800px)]:[&_nav]:hidden cabecera-pliegue"
     >
       <LogoLink className={logo}>
         <Logo size={36} />
@@ -125,8 +125,8 @@ function Desarrolladores({ current }: { current: boolean }) {
           <NavigationMenuTrigger
             className={cn(
               pieza,
-              'gap-0.5 font-normal data-popup-open:bg-secondary/60 data-popup-open:shadow-[inset_0_0_0_40px_rgb(0_0_0/0.06)]',
-              current && 'shadow-[inset_0_0_0_40px_rgb(0_0_0/0.06)]',
+              'gap-0.5 font-normal data-popup-open:bg-secondary/60 data-popup-open:inset-ring-40 data-popup-open:inset-ring-black/6',
+              current && 'inset-ring-40 inset-ring-black/6',
             )}
           >
             Desarrolladores
@@ -142,7 +142,7 @@ function Desarrolladores({ current }: { current: boolean }) {
                       render={<Link href={item.href} />}
                       className="flex-col items-start gap-0 rounded-xl px-3 py-2"
                     >
-                      <span className="text-[15px] font-medium">{item.label}</span>
+                      <span className="text-15 font-medium">{item.label}</span>
                       <span className="line-clamp-1 text-muted-foreground">{item.text}</span>
                     </NavigationMenuLink>
                   ))}

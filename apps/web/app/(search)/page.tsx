@@ -58,16 +58,16 @@ const graph = [
   },
 ];
 
-const titularSeccion = 'm-0 font-heading text-[clamp(32px,4vw,52px)] leading-[1.05] font-normal';
-const entradilla = 'm-0 text-[clamp(17px,1.4vw,19px)] leading-[1.6]';
-const enlaceTexto = 'flex min-h-11 w-fit items-center gap-2 underline underline-offset-[0.25em]';
+const titularSeccion = 'm-0 font-heading text-fluid-32-52 leading-1.05 font-normal';
+const entradilla = 'm-0 text-fluid-17-19 leading-1.6';
+const enlaceTexto = 'flex min-h-11 w-fit items-center gap-2 underline underline-offset-em-25';
 const aire = 'scroll-mt-20 pt-24 max-[480px]:pt-16';
 const contenedor = 'mx-auto max-w-(--container-content) px-(--page-gutter)';
 const seccion = `${aire} ${contenedor}`;
 // Fondos de la imagen de cada proyecto.
 const amarillo =
   'bg-[radial-gradient(100%_100%_at_100%_0%,color-mix(in_oklch,var(--brand-yellow),var(--background)_60%)_0%,transparent_70%),linear-gradient(150deg,var(--brand-yellow)_35%,color-mix(in_oklch,var(--brand-yellow),var(--brand-orange)_55%)_100%)]';
-const rojo = '[background:var(--brand-gradient)] text-background';
+const rojo = 'gradient-brand text-background';
 
 /**
  * La tarjeta de un proyecto: su imagen arriba, decorativa, y el texto debajo. Toda la tarjeta es
@@ -88,18 +88,18 @@ function Proyecto({
 }) {
   const Enlace = enlace.href.startsWith('/') ? Link : 'a';
   return (
-    <li className="relative flex w-[min(80vw,344px)] shrink-0 snap-start flex-col overflow-hidden rounded-[20px] border border-border">
+    <li className="relative flex w-[min(80vw,344px)] shrink-0 snap-start flex-col overflow-hidden rounded-20 border border-border">
       <div className={cn('aspect-4/3 overflow-hidden select-none', fondo)} aria-hidden="true">
         {children}
       </div>
       <div className="flex flex-1 flex-col items-start gap-2 p-6">
-        <h3 className="m-0 font-heading text-2xl leading-[1.15] font-normal">{titulo}</h3>
+        <h3 className="m-0 font-heading text-2xl leading-1.15 font-normal">{titulo}</h3>
         <p className="m-0 text-(--text-secondary)">{texto}</p>
         <Enlace
           href={enlace.href}
           className={cn(
             enlaceTexto,
-            'mt-auto outline-none after:absolute after:inset-0 after:rounded-[20px] focus-visible:after:shadow-[inset_0_0_0_4px_var(--background)] focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-foreground',
+            'mt-auto outline-none after:absolute after:inset-0 after:rounded-20 focus-visible:after:inset-ring-4 focus-visible:after:inset-ring-background focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-foreground',
           )}
         >
           {enlace.texto}
@@ -146,7 +146,7 @@ function Papeleta() {
               <span key={casilla} className="flex items-center gap-2">
                 <span
                   className={cn(
-                    'grid size-4 shrink-0 place-items-center rounded-[4px] border border-foreground/30',
+                    'grid size-4 shrink-0 place-items-center rounded-4 border border-foreground/30',
                     casilla === 2 && 'border-brand bg-brand text-background',
                   )}
                 >
@@ -165,7 +165,7 @@ function Papeleta() {
 /** La raíz de la API, resumida: los campos que faltan van como «…». */
 function Peticion() {
   return (
-    <pre className="m-0 h-full overflow-hidden rounded-t-2xl bg-foreground p-4 font-mono text-xs leading-[1.7] text-background">
+    <pre className="m-0 h-full overflow-hidden rounded-t-2xl bg-foreground p-4 font-mono text-xs leading-1.7 text-background">
       <span className="text-brand-yellow">GET</span> /api/congreso
       {`
 
@@ -194,13 +194,13 @@ export default function HomePage() {
         <section
           className={cn(
             rojo,
-            'relative m-2 flex min-h-152 flex-col items-center justify-center gap-6 rounded-[28px] px-(--page-gutter) pt-12 pb-31 text-center [--ring:var(--foreground)] max-[480px]:bg-size-[100%_560px] max-[480px]:bg-bottom max-[480px]:bg-no-repeat',
+            'relative m-2 flex min-h-152 flex-col items-center justify-center gap-6 rounded-28 px-(--page-gutter) pt-12 pb-31 text-center [--ring:var(--foreground)] max-[480px]:bg-size-portada-movil max-[480px]:bg-bottom max-[480px]:bg-no-repeat',
           )}
           aria-labelledby="in-titulo"
         >
           <h1
             id="in-titulo"
-            className="m-0 max-w-[18ch] font-heading text-[clamp(36px,6vw,72px)] leading-[1.06] font-normal"
+            className="m-0 max-w-[18ch] font-heading text-fluid-36-72 leading-1.06 font-normal"
           >
             Lo público, a la altura de las personas.
           </h1>
@@ -233,7 +233,7 @@ export default function HomePage() {
           {/* Una fila con scroll horizontal nativo; la siguiente tarjeta asoma. Hasta 1280 px llega a
               los bordes de la ventana. Desde ahí se corta en el ancho de la retícula: la fila mide
               48 px más por cada lado y en ese margen las tarjetas se funden. */}
-          <ul className="m-0 flex snap-x snap-mandatory list-none gap-6 overflow-x-auto [padding:0_max(var(--page-gutter),_calc((100%_-_var(--container-content))_/_2_+_var(--page-gutter)))_16px] [scroll-padding-inline:max(var(--page-gutter),_calc((100%_-_var(--container-content))_/_2_+_var(--page-gutter)))] xl:mx-auto xl:max-w-[calc(var(--container-content)+48px)] xl:scroll-px-12 xl:px-12 xl:[mask-image:linear-gradient(to_right,transparent,black_48px,black_calc(100%_-_48px),transparent)]">
+          <ul className="m-0 flex snap-x snap-mandatory list-none gap-6 overflow-x-auto pt-0 px-(--page-gutter-wide) pb-4 [scroll-padding-inline:max(var(--page-gutter),_calc((100%_-_var(--container-content))_/_2_+_var(--page-gutter)))] xl:mx-auto xl:max-w-[calc(var(--container-content)+48px)] xl:scroll-px-12 xl:px-12 xl:[mask-image:linear-gradient(to_right,transparent,black_48px,black_calc(100%_-_48px),transparent)]">
             <Proyecto
               titulo="El Congreso"
               texto="Consulta qué se debate, cómo se vota y quién te representa, con enlaces a las fuentes oficiales."

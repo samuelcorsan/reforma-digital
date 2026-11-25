@@ -95,7 +95,7 @@ export async function Markets() {
             return (
               <Cell key={m.tipo} span={4} className="content-start gap-3">
                 <p className="m-0 text-sm text-muted-foreground">{m.pregunta}</p>
-                <b className="font-heading text-[40px] leading-none font-normal tabular-nums">
+                <b className="font-heading text-40 leading-none font-normal tabular-nums">
                   {chance(o.p)}
                 </b>
                 <p className="m-0 font-medium">{headline[m.tipo](o.nombre)}</p>

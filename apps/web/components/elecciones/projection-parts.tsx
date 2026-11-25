@@ -352,7 +352,7 @@ export function ProjectionMap({
             <div className="flex items-start justify-between gap-3">
               <div className="grid gap-1">
                 <Label>{chosen.seats.reduce((t, [, n]) => t + n, 0)} escaños</Label>
-                <h3 className="m-0 font-heading text-[28px] leading-tight font-normal">
+                <h3 className="m-0 font-heading text-28 leading-tight font-normal">
                   {chosen.name}
                 </h3>
               </div>
