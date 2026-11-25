@@ -104,7 +104,7 @@ function Consulta({ bindings }: { bindings: ConsultaBindings }) {
           búsqueda la hace la web oficial.
         </Callout>
       )}
-      <p className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
+      <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
         Información del procedimiento:{' '}
         <ExternalLink href={FICHA}>ficha oficial en la Sede</ExternalLink>
       </p>

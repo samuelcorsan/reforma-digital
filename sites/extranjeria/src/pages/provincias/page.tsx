@@ -94,7 +94,7 @@ function Provincias({ bindings, restore }: { bindings: ProvinciasBindings; resto
         <legend
           id={legendId}
           className={
-            'bg-h2 [font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'
+            '[font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'
           }
         >
           Provincias disponibles{' '}
@@ -124,9 +124,7 @@ function Provincias({ bindings, restore }: { bindings: ProvinciasBindings; resto
           ))}
           {filtered.length === 0 && (
             <p
-              className={
-                'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] col-span-full'
-              }
+              className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] col-span-full'}
             >
               Ninguna provincia coincide con «{query}».
             </p>

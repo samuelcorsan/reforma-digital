@@ -99,7 +99,7 @@ function Info({ bindings, restore }: { bindings: InfoBindings; restore: () => vo
         {/* Opciones oficiales equivalentes: ninguna se destaca (DESIGN.md §3 · Botón principal). */}
         <h3
           className={
-            'bg-h2 [font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'
+            '[font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'
           }
         >
           Elige cómo continuar en la web oficial
@@ -109,7 +109,7 @@ function Info({ bindings, restore }: { bindings: InfoBindings; restore: () => vo
             <div key={option.id} className="flex flex-col rounded-control border border-line p-4">
               <p
                 className={
-                  'bg-h3 [font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))]'
+                  '[font-size:17px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))]'
                 }
               >
                 {option.title}
@@ -117,7 +117,7 @@ function Info({ bindings, restore }: { bindings: InfoBindings; restore: () => vo
               {option.description && (
                 <p
                   className={
-                    'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1 flex-1'
+                    'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1 flex-1'
                   }
                 >
                   {option.description}

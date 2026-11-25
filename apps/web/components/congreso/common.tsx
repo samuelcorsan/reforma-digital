@@ -44,21 +44,20 @@ export function Intro({
   return (
     <div
       className={
-        "cg-intro [margin:32px_0] [&_:is(h1,_h2)]:[font-size:clamp(34px,_4.2vw,_56px)] [&_:is(h1,_h2)]:[line-height:1.08] [&_:is(h1,_h2)]:[margin:12px_0] [&:has(>_h1)]:[--celda:4px] [&:has(>_h1)]:relative [&:has(>_h1)]:isolate [&:has(>_h1)]:overflow-hidden [&:has(>_h1)]:flex [&:has(>_h1)]:flex-col [&:has(>_h1)]:[justify-content:flex-end] [&:has(>_h1)]:min-h-75 [&:has(>_h1)]:[padding:clamp(32px,_5vw,_64px)_clamp(24px,_4.5vw,_56px)] [&:has(>_h1)]:[border-radius:28px] [&:has(>_h1)]:[box-shadow:inset_0_0_0_1px_var(--border)] [&:has(>_h1)_>_*]:[max-width:min(62ch,_52%)] [&:has(>_h1)::after]:[content:''] [&:has(>_h1)::after]:absolute [&:has(>_h1)::after]:[z-index:-1] [&:has(>_h1)::after]:[right:clamp(0px,_4%,_56px)] [&:has(>_h1)::after]:[bottom:0] [&:has(>_h1)::after]:[width:calc(120_*_var(--celda))] [&:has(>_h1)::after]:[height:calc(44_*_var(--celda))] [&:has(>_h1)::after]:[background:url('/congreso/sol-disco.png')_50%_100%_/_100%_100%_no-repeat] [&:has(>_h1)::after]:[image-rendering:pixelated] [&:has(>_h1)::after]:pointer-events-none [@container(max-width:_1090px)]:[&:has(>_h1)]:[--celda:3px] [@container(max-width:_820px)]:[&:has(>_h1)]:[min-height:0] [@container(max-width:_820px)]:[&:has(>_h1)]:[padding-bottom:calc(44_*_var(--celda)_+_16px)] [@container(max-width:_820px)]:[&:has(>_h1)_>_*]:max-w-none [@container(max-width:_820px)]:[&:has(>_h1)::after]:[right:calc(50%_-_60_*_var(--celda))]"
+        "[margin:32px_0] [&_:is(h1,_h2)]:[font-size:clamp(34px,_4.2vw,_56px)] [&_:is(h1,_h2)]:[line-height:1.08] [&_:is(h1,_h2)]:[margin:12px_0] [&:has(>_h1)]:[--celda:4px] [&:has(>_h1)]:relative [&:has(>_h1)]:isolate [&:has(>_h1)]:overflow-hidden [&:has(>_h1)]:flex [&:has(>_h1)]:flex-col [&:has(>_h1)]:[justify-content:flex-end] [&:has(>_h1)]:min-h-75 [&:has(>_h1)]:[padding:clamp(32px,_5vw,_64px)_clamp(24px,_4.5vw,_56px)] [&:has(>_h1)]:[border-radius:28px] [&:has(>_h1)]:[box-shadow:inset_0_0_0_1px_var(--border)] [&:has(>_h1)_>_*]:[max-width:min(62ch,_52%)] [&:has(>_h1)::after]:[content:''] [&:has(>_h1)::after]:absolute [&:has(>_h1)::after]:[z-index:-1] [&:has(>_h1)::after]:[right:clamp(0px,_4%,_56px)] [&:has(>_h1)::after]:[bottom:0] [&:has(>_h1)::after]:[width:calc(120_*_var(--celda))] [&:has(>_h1)::after]:[height:calc(44_*_var(--celda))] [&:has(>_h1)::after]:[background:url('/congreso/sol-disco.png')_50%_100%_/_100%_100%_no-repeat] [&:has(>_h1)::after]:[image-rendering:pixelated] [&:has(>_h1)::after]:pointer-events-none [@container(max-width:_1090px)]:[&:has(>_h1)]:[--celda:3px] [@container(max-width:_820px)]:[&:has(>_h1)]:[min-height:0] [@container(max-width:_820px)]:[&:has(>_h1)]:[padding-bottom:calc(44_*_var(--celda)_+_16px)] [@container(max-width:_820px)]:[&:has(>_h1)_>_*]:max-w-none [@container(max-width:_820px)]:[&:has(>_h1)::after]:[right:calc(50%_-_60_*_var(--celda))]"
       }
     >
       <span
+        data-part="t-etiqueta"
         className={
-          't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
+          '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
         }
       >
         {label}
       </span>
       <Heading>{title}</Heading>
       {children && (
-        <div className={'cg-lead [max-width:70ch] [color:var(--text-secondary)] text-lg'}>
-          {children}
-        </div>
+        <div className={'[max-width:70ch] [color:var(--text-secondary)] text-lg'}>{children}</div>
       )}
     </div>
   );
@@ -73,10 +72,10 @@ export function Section({
   action?: ReactNode;
 }) {
   return (
-    <section className={'cg-section [margin:48px_0]'}>
+    <section className={'[margin:48px_0]'}>
       <div
         className={
-          'cg-section-title flex [align-items:baseline] justify-between gap-4 mb-6 [&_h2]:[font-size:32px] [&_h2]:[line-height:1.1] [&_a]:text-sm [@media(max-width:_560px)]:flex-wrap'
+          'flex [align-items:baseline] justify-between gap-4 mb-6 [&_h2]:[font-size:32px] [&_h2]:[line-height:1.1] [&_a]:text-sm [@media(max-width:_560px)]:flex-wrap'
         }
       >
         <h2>{title}</h2>
@@ -89,8 +88,9 @@ export function Section({
 export function Stats({ items }: { items: [number | string, string][] }) {
   return (
     <dl
+      data-part="cg-stats"
       className={
-        'cg-stats flex flex-wrap gap-8 [padding:24px_0] [margin:0_0_24px] [border-block:1px_solid_var(--border)] [&_div]:flex [&_div]:[flex-direction:column-reverse] [&_div]:gap-2 [&_dt]:[color:var(--muted-foreground)] [&_dt]:text-sm [&_dd]:[font-family:var(--font-brand-heading)] [&_dd]:text-4xl [&_dd]:[line-height:1] [&_dd]:m-0 [@media(max-width:_560px)]:gap-6'
+        'flex flex-wrap gap-8 [padding:24px_0] [margin:0_0_24px] [border-block:1px_solid_var(--border)] [&_div]:flex [&_div]:[flex-direction:column-reverse] [&_div]:gap-2 [&_dt]:[color:var(--muted-foreground)] [&_dt]:text-sm [&_dd]:[font-family:var(--font-brand-heading)] [&_dd]:text-4xl [&_dd]:[line-height:1] [&_dd]:m-0 [@media(max-width:_560px)]:gap-6'
       }
     >
       {items.map(([value, label]) => (
@@ -108,7 +108,7 @@ export function Empty({
   children?: ReactNode;
 }) {
   return (
-    <Card className="bg-muted ring-0" render={<p className="cg-empty" role="status" />}>
+    <Card className="bg-muted ring-0" render={<p role="status" />}>
       {children}
     </Card>
   );
@@ -153,12 +153,13 @@ export function AI({
   return (
     <div
       className={
-        'cg-analysis [&_>_.t-etiqueta]:[font-size:10px] [&_>_.t-etiqueta]:[color:var(--muted-foreground)] [&_p]:mt-2 [&_p]:[color:var(--text-secondary)]'
+        '[&_>_[data-part=t-etiqueta]]:[font-size:10px] [&_>_[data-part=t-etiqueta]]:[color:var(--muted-foreground)] [&_p]:mt-2 [&_p]:[color:var(--text-secondary)]'
       }
     >
       <span
+        data-part="t-etiqueta"
         className={
-          't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
+          '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
         }
       >
         {label}
@@ -172,7 +173,7 @@ export function Votes({ votes }: { votes: VoteCard[] }) {
   return (
     <div
       className={
-        'cg-votes grid [grid-template-columns:repeat(2,_minmax(0,_1fr))] gap-5 [@media(max-width:_560px)]:[grid-template-columns:1fr]'
+        'grid [grid-template-columns:repeat(2,_minmax(0,_1fr))] gap-5 [@media(max-width:_560px)]:[grid-template-columns:1fr]'
       }
     >
       {votes.map((vote) => (
@@ -181,17 +182,13 @@ export function Votes({ votes }: { votes: VoteCard[] }) {
           render={
             <article
               className={
-                'cg-vote [&_h3]:[font-size:21px] [&_h3]:[line-height:1.3] [&_h3]:[margin:16px_0_24px]'
+                '[&_h3]:[font-size:21px] [&_h3]:[line-height:1.3] [&_h3]:[margin:16px_0_24px]'
               }
             />
           }
         >
           <CardContent>
-            <div
-              className={
-                'cg-vote-meta flex flex-wrap gap-3 [color:var(--muted-foreground)] text-sm'
-              }
-            >
+            <div className={'flex flex-wrap gap-3 [color:var(--muted-foreground)] text-sm'}>
               <time dateTime={vote.fecha}>{date(vote.fecha)}</time>
               <span>{vote.tipo}</span>
             </div>
@@ -216,12 +213,12 @@ export function VoteCount({ vote }: { vote: VoteCard }) {
   return (
     <div
       className={
-        'cg-vote-count [&_dl]:flex [&_dl]:gap-5 [&_dl]:flex-wrap [&_dl]:text-sm [&_dl]:[margin:12px_0_0] [&_dl_div]:flex [&_dl_div]:items-center [&_dl_div]:gap-2 [&_dt]:flex [&_dt]:items-center [&_dt]:[gap:6px] [&_dt]:[color:var(--text-secondary)] [&_dd]:font-semibold [&_dd]:[font-variant-numeric:tabular-nums] [&_dd]:m-0 [&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:[border-radius:50%]'
+        '[&_dl]:flex [&_dl]:gap-5 [&_dl]:flex-wrap [&_dl]:text-sm [&_dl]:[margin:12px_0_0] [&_dl_div]:flex [&_dl_div]:items-center [&_dl_div]:gap-2 [&_dt]:flex [&_dt]:items-center [&_dt]:[gap:6px] [&_dt]:[color:var(--text-secondary)] [&_dd]:font-semibold [&_dd]:[font-variant-numeric:tabular-nums] [&_dd]:m-0 [&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:[border-radius:50%]'
       }
     >
       <div
         className={
-          'cg-vote-bar flex [gap:2px] h-2 [border-radius:999px] overflow-hidden [background:var(--muted)]'
+          'flex [gap:2px] h-2 [border-radius:999px] overflow-hidden [background:var(--muted)]'
         }
         aria-hidden="true"
       >
@@ -255,7 +252,7 @@ export function Sessions({ sessions }: { sessions: SessionCard[] }) {
   return (
     <div
       className={
-        'cg-session-list [&_article]:grid [&_article]:[grid-template-columns:130px_minmax(0,_1fr)] [&_article]:gap-8 [&_article]:[padding:24px_0] [&_article]:[border-bottom:1px_solid_var(--border)] [&_h3]:text-2xl [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_time]:[color:var(--muted-foreground)] [&_time]:[font-family:var(--font-brand-mono)] [&_time]:text-sm [@media(max-width:_560px)]:[&_article]:[grid-template-columns:1fr] [@media(max-width:_560px)]:[&_article]:gap-2'
+        '[&_article]:grid [&_article]:[grid-template-columns:130px_minmax(0,_1fr)] [&_article]:gap-8 [&_article]:[padding:24px_0] [&_article]:[border-bottom:1px_solid_var(--border)] [&_h3]:text-2xl [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_time]:[color:var(--muted-foreground)] [&_time]:[font-family:var(--font-brand-mono)] [&_time]:text-sm [@media(max-width:_560px)]:[&_article]:[grid-template-columns:1fr] [@media(max-width:_560px)]:[&_article]:gap-2'
       }
     >
       {sessions.map((session) => (
@@ -263,8 +260,9 @@ export function Sessions({ sessions }: { sessions: SessionCard[] }) {
           <time dateTime={session.fecha}>{date(session.fecha)}</time>
           <div>
             <span
+              data-part="t-etiqueta"
               className={
-                't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
+                '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
               }
             >
               {session.organo}
@@ -303,7 +301,7 @@ export function Hemicycle({
     return ballots.length ? (
       <Card
         className="bg-muted ring-0"
-        render={<div className={'cg-hemicycle [&_svg]:w-full [&_svg]:[max-height:360px]'} />}
+        render={<div className={'[&_svg]:w-full [&_svg]:[max-height:360px]'} />}
       >
         <p>
           El voto de cada diputado. La posición de los puntos no representa su asiento histórico.
@@ -333,7 +331,7 @@ export function Hemicycle({
   return (
     <Card
       className="bg-muted ring-0"
-      render={<div className={'cg-hemicycle [&_svg]:w-full [&_svg]:[max-height:360px]'} />}
+      render={<div className={'[&_svg]:w-full [&_svg]:[max-height:360px]'} />}
     >
       <svg
         viewBox={`-8 -8 ${index.hemiciclo.ancho + 16} ${index.hemiciclo.alto + 16}`}
@@ -360,7 +358,7 @@ export function Hemicycle({
       </svg>
       <div
         className={
-          'cg-legend [&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:[border-radius:50%] flex items-center flex-wrap gap-3 text-sm justify-center mt-6 [&_span]:inline-flex [&_span]:[gap:6px] [&_span]:items-center'
+          '[&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:[border-radius:50%] flex items-center flex-wrap gap-3 text-sm justify-center mt-6 [&_span]:inline-flex [&_span]:[gap:6px] [&_span]:items-center'
         }
       >
         {Object.entries(index.grupos)
@@ -386,7 +384,7 @@ export function Deputies({
   return (
     <div
       className={
-        'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
+        'grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
       }
     >
       {deputies.map((deputy) => (
@@ -394,8 +392,9 @@ export function Deputies({
           key={deputy.nombre}
           render={
             <Link
+              data-part="cg-card"
               className={
-                'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch] cg-deputy block'
+                '[overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:[font-size:28px] [&_[data-part=cg-stats]_dt]:[max-width:14ch] block'
               }
               href={href(`diputado/${slug(deputy.nombre)}`)}
             />
@@ -404,7 +403,7 @@ export function Deputies({
           <CardContent>
             <span
               className={
-                'cg-avatar grid [place-items:center] w-14 h-14 [border:2px_solid] [border-radius:50%] [background:var(--muted)] [font-family:var(--font-brand-mono)]'
+                'grid [place-items:center] w-14 h-14 [border:2px_solid] [border-radius:50%] [background:var(--muted)] [font-family:var(--font-brand-mono)]'
               }
               style={{ borderColor: index.grupos[deputy.grupo]?.color }}
             >
@@ -418,7 +417,7 @@ export function Deputies({
             <p>{deputy.provincia}</p>
             <span
               className={
-                'cg-group [&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:[border-radius:50%] flex items-center flex-wrap gap-3 text-sm'
+                '[&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:[border-radius:50%] flex items-center flex-wrap gap-3 text-sm'
               }
             >
               <i style={{ background: index.grupos[deputy.grupo]?.color }} />
@@ -453,7 +452,7 @@ export function Filters({
   return (
     <form
       className={
-        'cg-filters flex items-end flex-wrap gap-4 [margin:24px_0] [&_label]:[flex:1] [&_label]:[min-width:180px] [&_label]:[max-width:400px] [&_label]:grid [&_label]:gap-2 [&_label]:text-sm'
+        'flex items-end flex-wrap gap-4 [margin:24px_0] [&_label]:[flex:1] [&_label]:[min-width:180px] [&_label]:[max-width:400px] [&_label]:grid [&_label]:gap-2 [&_label]:text-sm'
       }
       action={action}
     >
@@ -532,7 +531,7 @@ export function Pagination({
   return (
     pages > 1 && (
       <nav
-        className={'cg-pagination flex justify-center items-center gap-4 [margin:32px_0]'}
+        className={'flex justify-center items-center gap-4 [margin:32px_0]'}
         aria-label="Paginación"
       >
         {page > 1 && (

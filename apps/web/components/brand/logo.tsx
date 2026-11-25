@@ -18,13 +18,17 @@ export function LogoMark({ size = 28 }: { size?: number }) {
 }
 
 // Logo completo: la R y «Reforma / Digital» en dos líneas, separados por un módulo (1/4 de la R).
-// `size` es el alto de la R. El tamaño de letra solo fija las medidas en em de `.marca`. `mark`
+// `size` es el alto de la R. El tamaño de letra solo fija las medidas en em de `[data-part=marca]`. `mark`
 // sustituye a la R (en el pie, la R puzle).
 export function Logo({ size = 28, mark }: { size?: number; mark?: ReactNode }) {
   return (
-    <span className={'marca inline-flex items-center [gap:0.5em]'} style={{ fontSize: size / 2 }}>
+    <span
+      data-part="marca"
+      className={'inline-flex items-center [gap:0.5em]'}
+      style={{ fontSize: size / 2 }}
+    >
       {mark ?? <LogoMark size={size} />}
-      <span className={'marca-texto flex'}>
+      <span data-part="marca-texto" className={'flex'}>
         <Logotipo size={size} />
       </span>
     </span>

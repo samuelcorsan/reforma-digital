@@ -55,8 +55,8 @@ function Shell({
     <section
       className={
         inline
-          ? 'bg-card [background-color:rgb(var(--bg-surface))] border-0 [border-radius:var(--bg-radius-card)] [box-shadow:var(--bg-shadow-card)] bg-text [font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] my-3'
-          : 'bg-text [font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] border-b border-line bg-surface'
+          ? 'bg-card [background-color:rgb(var(--bg-surface))] border-0 [border-radius:var(--bg-radius-card)] [box-shadow:var(--bg-shadow-card)] [font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] my-3'
+          : '[font-family:var(--bg-font)] text-base [line-height:1.6] [color:rgb(var(--bg-ink))] border-b border-line bg-surface'
       }
       aria-label="Reforma Digital"
     >
@@ -78,16 +78,12 @@ function Shell({
         <div className="mx-auto max-w-content px-4 pb-4">
           <h1
             className={
-              'bg-h1 [font-size:28px] [line-height:1.2] font-medium [color:rgb(var(--bg-ink))] [letter-spacing:-0.035em] [@media(max-width:_639px)]:text-2xl'
+              '[font-size:28px] [line-height:1.2] font-medium [color:rgb(var(--bg-ink))] [letter-spacing:-0.035em] [@media(max-width:_639px)]:text-2xl'
             }
           >
             {enhancement.title}
           </h1>
-          <p
-            className={
-              'bg-lead [font-size:17px] [line-height:1.6] [color:rgb(var(--bg-ink-muted))] mt-1'
-            }
-          >
+          <p className={'[font-size:17px] [line-height:1.6] [color:rgb(var(--bg-ink-muted))] mt-1'}>
             {enhancement.description}
           </p>
         </div>
@@ -95,7 +91,7 @@ function Shell({
       {demo ? (
         <p
           className={
-            'bg-small text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mx-auto max-w-content px-4 pb-3'
+            'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mx-auto max-w-content px-4 pb-3'
           }
         >
           Prueba local con datos ficticios. No reserva citas.

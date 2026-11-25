@@ -55,15 +55,14 @@ export function CongressNav() {
   return (
     <>
       <nav
+        data-part="cg-nav"
         className={
-          'cg-nav [max-width:var(--container-content)] [margin:auto] [padding:16px_var(--page-gutter)] flex items-center gap-6 [border-top:1px_solid_var(--border)] flex-wrap [&_[data-slot=collapsible]]:relative [&_ul]:absolute [&_ul]:[z-index:10] [&_ul]:[top:100%] [&_ul]:[right:0] [&_ul]:[min-width:220px] [&_ul]:mt-3 [&_ul]:list-none [&_li_a]:w-full [&_li_a]:justify-start [@media(min-width:_1100px)]:hidden [@media(max-width:_800px)]:gap-3 [@media(max-width:_560px)]:[&_[data-slot=collapsible]:nth-last-child(-n_+_2)_ul]:[right:0] [@media(max-width:_560px)]:[&_[data-slot=collapsible]:first-of-type_ul]:[left:0] [@media(max-width:_560px)]:[&_[data-slot=collapsible]:first-of-type_ul]:[right:auto]'
+          '[max-width:var(--container-content)] [margin:auto] [padding:16px_var(--page-gutter)] flex items-center gap-6 [border-top:1px_solid_var(--border)] flex-wrap [&_[data-slot=collapsible]]:relative [&_ul]:absolute [&_ul]:[z-index:10] [&_ul]:[top:100%] [&_ul]:[right:0] [&_ul]:[min-width:220px] [&_ul]:mt-3 [&_ul]:list-none [&_li_a]:w-full [&_li_a]:justify-start [@media(min-width:_1100px)]:hidden [@media(max-width:_800px)]:gap-3 [@media(max-width:_560px)]:[&_[data-slot=collapsible]:nth-last-child(-n_+_2)_ul]:[right:0] [@media(max-width:_560px)]:[&_[data-slot=collapsible]:first-of-type_ul]:[left:0] [@media(max-width:_560px)]:[&_[data-slot=collapsible]:first-of-type_ul]:[right:auto]'
         }
         aria-label="Secciones del Congreso"
       >
         <Link
-          className={
-            'cg-brand text-lg font-semibold [margin-right:auto] [@media(max-width:_800px)]:w-full'
-          }
+          className={'text-lg font-semibold [margin-right:auto] [@media(max-width:_800px)]:w-full'}
           href={congressBase}
         >
           El Congreso
@@ -79,9 +78,7 @@ export function CongressNav() {
             <CollapsibleContent>
               <Card
                 render={<ul />}
-                className={
-                  'caja-flota [background:var(--background)] [box-shadow:var(--shadow-overlay)]'
-                }
+                className={'[background:var(--background)] [box-shadow:var(--shadow-overlay)]'}
               >
                 {links(section.pages)}
               </Card>
@@ -90,8 +87,9 @@ export function CongressNav() {
         ))}
       </nav>
       <nav
+        data-part="cg-lateral"
         className={
-          'cg-lateral [&_a]:w-full [&_a]:justify-start hidden [@media(min-width:_1100px)]:block [@media(min-width:_1100px)]:sticky [@media(min-width:_1100px)]:top-24 [@media(min-width:_1100px)]:[max-height:calc(100dvh_-_112px)] [@media(min-width:_1100px)]:overflow-y-auto [@media(min-width:_1100px)]:[&_ul]:m-0 [@media(min-width:_1100px)]:[&_ul]:p-0 [@media(min-width:_1100px)]:[&_ul]:list-none [@media(min-width:_1100px)]:[&_h2]:[margin:16px_0_4px] [@media(min-width:_1100px)]:[&_h2]:px-3 [@media(min-width:_1100px)]:[&_h2]:[font-size:11px] [@media(min-width:_1100px)]:[&_h2]:[color:var(--muted-foreground)]'
+          '[&_a]:w-full [&_a]:justify-start hidden [@media(min-width:_1100px)]:block [@media(min-width:_1100px)]:sticky [@media(min-width:_1100px)]:top-24 [@media(min-width:_1100px)]:[max-height:calc(100dvh_-_112px)] [@media(min-width:_1100px)]:overflow-y-auto [@media(min-width:_1100px)]:[&_ul]:m-0 [@media(min-width:_1100px)]:[&_ul]:p-0 [@media(min-width:_1100px)]:[&_ul]:list-none [@media(min-width:_1100px)]:[&_h2]:[margin:16px_0_4px] [@media(min-width:_1100px)]:[&_h2]:px-3 [@media(min-width:_1100px)]:[&_h2]:[font-size:11px] [@media(min-width:_1100px)]:[&_h2]:[color:var(--muted-foreground)]'
         }
         aria-label="Secciones del Congreso"
       >
@@ -99,8 +97,9 @@ export function CongressNav() {
           <div key={section.title}>
             {i > 0 && (
               <h2
+                data-part="t-etiqueta"
                 className={
-                  't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
+                  '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
                 }
               >
                 {section.title}

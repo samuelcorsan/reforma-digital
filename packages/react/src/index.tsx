@@ -72,7 +72,7 @@ export function BoundField({
         <label
           id={`${id}-label`}
           className={
-            'bg-label block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
+            'block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
           }
           htmlFor={id}
         >
@@ -176,7 +176,7 @@ export function BoundField({
       {spec.help ? (
         <p
           id={`${id}-help`}
-          className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1.5'}
+          className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1.5'}
         >
           {spec.help}
         </p>

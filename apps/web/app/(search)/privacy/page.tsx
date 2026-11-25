@@ -24,17 +24,17 @@ export default function Privacy() {
     <InfoPage narrow>
       <JsonLd graph={graph} />
       <span
+        data-part="t-etiqueta"
         className={
-          't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase info-etiqueta block mb-4 [color:var(--text-secondary)]'
+          '[font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase block mb-4 [color:var(--text-secondary)]'
         }
       >
         TUS DATOS, CON CUIDADO
       </span>
       <h1>Navega sin identificarte.</h1>
       <p
-        className={
-          'info-entradilla [max-width:65ch] mb-10 [color:var(--text-secondary)] text-lg [line-height:1.6]'
-        }
+        data-part="info-entradilla"
+        className={'[max-width:65ch] mb-10 [color:var(--text-secondary)] text-lg [line-height:1.6]'}
       >
         No necesitas una cuenta y no usamos cookies. Aquí explicamos qué datos tratan la web y la
         extensión, quién los recibe y cuánto tiempo se guardan.

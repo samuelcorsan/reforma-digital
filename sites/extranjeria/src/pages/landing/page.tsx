@@ -99,7 +99,7 @@ function Landing({ bindings, restore }: { bindings: LandingBindings; restore: ()
       {bindings.whoRequests.length > 0 && (
         <div>
           <SectionTitle>Quién debe pedir la cita</SectionTitle>
-          <p className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1'}>
+          <p className={'text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1'}>
             Resumen de las «Instrucciones del procedimiento» de la página oficial.
           </p>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
