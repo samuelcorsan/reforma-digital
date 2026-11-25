@@ -24,8 +24,8 @@ export function Logo({ size = 28, mark }: { size?: number; mark?: ReactNode }) {
   return (
     <span
       data-part="marca"
-      className={'inline-flex items-center gap-em-50'}
-      style={{ fontSize: size / 2 }}
+      className={'inline-flex items-center gap-em-50 text-(length:--size)'}
+      style={{ '--size': `${size / 2}px` }}
     >
       {mark ?? <LogoMark size={size} />}
       <span data-part="marca-texto" className={'flex'}>

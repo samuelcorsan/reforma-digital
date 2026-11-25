@@ -267,8 +267,8 @@ export function PollChart({
               className={on.has(p.id) ? '' : 'text-muted-foreground'}
             >
               <i
-                className="block size-2 rounded-full"
-                style={{ background: on.has(p.id) ? p.color : 'var(--muted-foreground)' }}
+                className="block size-2 rounded-full bg-(--bg)"
+                style={{ '--bg': on.has(p.id) ? p.color : 'var(--muted-foreground)' }}
               />
               {p.name}
             </Button>

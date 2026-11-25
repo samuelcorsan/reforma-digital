@@ -210,7 +210,11 @@ export function VoteCount({ vote }: { vote: VoteCard }) {
     >
       <div className={'flex gap-0.5 h-2 rounded-full overflow-hidden bg-muted'} aria-hidden="true">
         {values.map(([value, label, kind]) => (
-          <span key={label} className={`cg-voto-${kind}`} style={{ flex: value }} />
+          <span
+            key={label}
+            className={`cg-voto-${kind} flex-(--flex)`}
+            style={{ '--flex': value }}
+          />
         ))}
       </div>
       <dl>
@@ -350,7 +354,7 @@ export function Hemicycle({
           .filter(([, g]) => g.escanos)
           .map(([id, g]) => (
             <span key={id}>
-              <i style={{ background: g.color }} />
+              <i className="bg-(--bg)" style={{ '--bg': g.color }} />
               {id} <b>{g.escanos}</b>
             </span>
           ))}
@@ -388,9 +392,9 @@ export function Deputies({
           <CardContent>
             <span
               className={
-                'grid [place-items:center] w-14 h-14 border-2 border-current rounded-full bg-muted font-mono'
+                'grid [place-items:center] w-14 h-14 border-2 border-(--border-color) rounded-full bg-muted font-mono'
               }
-              style={{ borderColor: index.grupos[deputy.grupo]?.color }}
+              style={{ '--border-color': index.grupos[deputy.grupo]?.color }}
             >
               {deputyName(deputy.nombre)
                 .split(' ')
@@ -405,7 +409,7 @@ export function Deputies({
                 '[&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:rounded-full flex items-center flex-wrap gap-3 text-sm'
               }
             >
-              <i style={{ background: index.grupos[deputy.grupo]?.color }} />
+              <i className="bg-(--bg)" style={{ '--bg': index.grupos[deputy.grupo]?.color }} />
               {deputy.grupo}
               {deputy.baja ? ' · De baja' : ''}
             </span>

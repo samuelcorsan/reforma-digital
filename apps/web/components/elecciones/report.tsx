@@ -100,17 +100,17 @@ export function Bars({
           )}
           <span className="relative h-4 rounded-full bg-muted">
             <i
-              className="block h-full rounded-full"
+              className="block h-full rounded-full w-(--w) bg-(--bg)"
               style={{
-                width: `${(row.value / top) * 100}%`,
-                background: row.color ?? 'var(--foreground)',
+                '--w': `${(row.value / top) * 100}%`,
+                '--bg': row.color ?? 'var(--foreground)',
               }}
             />
             {mark !== undefined && (
               <i
                 aria-hidden="true"
-                className="absolute -inset-y-1 w-0.5 bg-foreground"
-                style={{ left: `${(mark / top) * 100}%` }}
+                className="absolute -inset-y-1 w-0.5 bg-foreground left-(--left)"
+                style={{ '--left': `${(mark / top) * 100}%` }}
               />
             )}
           </span>
@@ -137,7 +137,7 @@ export function Legend({
     >
       {items.map((item) => (
         <li key={item.label} className="inline-flex items-center gap-2">
-          <i className="block size-2.5 rounded-full" style={{ background: item.color }} />
+          <i className="block size-2.5 rounded-full bg-(--bg)" style={{ '--bg': item.color }} />
           {item.label}
         </li>
       ))}

@@ -154,8 +154,8 @@ export async function Markets() {
                       <span className="font-medium break-words">{r.name}</span>
                       <span className="h-3 rounded-xs bg-muted">
                         <i
-                          className="block h-full rounded-xs"
-                          style={{ width: `${r.p * 100}%`, background: r.color }}
+                          className="block h-full rounded-xs w-(--w) bg-(--bg)"
+                          style={{ '--w': `${r.p * 100}%`, '--bg': r.color }}
                         />
                       </span>
                       <b className="text-right font-mono font-medium tabular-nums">{chance(r.p)}</b>

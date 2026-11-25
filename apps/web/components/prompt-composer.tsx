@@ -192,8 +192,12 @@ function Ejemplo({ texto, sale: saliendo }: { texto: string; sale?: boolean }) {
       {palabras.map((palabra, i) => (
         <span
           key={i}
-          className={cn('inline-block whitespace-pre ease-out-quint', saliendo ? sale : entra)}
-          style={{ animationDelay: `${Math.round(i * paso)}ms` }}
+          className={cn(
+            'inline-block whitespace-pre ease-out-quint',
+            saliendo ? sale : entra,
+            'animacion-retraso',
+          )}
+          style={{ '--retraso': `${Math.round(i * paso)}ms` }}
         >
           {i < palabras.length - 1 ? `${palabra} ` : palabra}
         </span>

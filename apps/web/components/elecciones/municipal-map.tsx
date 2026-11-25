@@ -310,8 +310,8 @@ export function MunicipalMap({
               <li key={group.id} className="grid gap-1">
                 <span className="flex items-center gap-2 text-sm font-medium">
                   <i
-                    className="block size-2.5 shrink-0 rounded-full"
-                    style={{ background: group.color }}
+                    className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+                    style={{ '--bg': group.color }}
                   />
                   {group.name}
                 </span>
@@ -372,9 +372,9 @@ export function MunicipalMap({
               <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
                 {scale.change ? `−${points(Math.abs(scale.from))}` : percent(scale.from, 0)}
                 <span
-                  className="block h-2.5 w-32 rounded-full"
+                  className="block h-2.5 w-32 rounded-full bg-(image:--bg)"
                   style={{
-                    background: scale.change
+                    '--bg': scale.change
                       ? `linear-gradient(90deg, ${mix(down, 1)}, var(--muted), ${mix(scale.color, 1)})`
                       : `linear-gradient(90deg, ${mix(scale.color, 0)}, ${mix(scale.color, 1)})`,
                   }}
@@ -473,22 +473,22 @@ function Profile({
               <li key={g.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1">
                 <span className="flex items-center gap-2">
                   <i
-                    className="block size-2.5 shrink-0 rounded-full"
-                    style={{ background: g.color }}
+                    className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+                    style={{ '--bg': g.color }}
                   />
                   {g.name}
                 </span>
                 <span className="text-right font-mono tabular-nums">{percent(a, 1)}</span>
                 <span className="relative col-span-2 h-2 rounded-full bg-background">
                   <i
-                    className="block h-full rounded-full"
-                    style={{ width: `${(a / top) * 100}%`, background: g.color }}
+                    className="block h-full rounded-full w-(--w) bg-(--bg)"
+                    style={{ '--w': `${(a / top) * 100}%`, '--bg': g.color }}
                   />
                   {b !== null && (
                     <i
                       aria-hidden="true"
-                      className="absolute -inset-y-1 w-0.5 bg-foreground"
-                      style={{ left: `${(b / top) * 100}%` }}
+                      className="absolute -inset-y-1 w-0.5 bg-foreground left-(--left)"
+                      style={{ '--left': `${(b / top) * 100}%` }}
                     />
                   )}
                 </span>

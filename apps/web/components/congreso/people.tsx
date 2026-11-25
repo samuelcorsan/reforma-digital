@@ -276,7 +276,7 @@ export async function People({
                       '[&_i]:w-2 [&_i]:h-2 [&_i]:inline-block [&_i]:rounded-full flex items-center flex-wrap gap-3 text-sm'
                     }
                   >
-                    <i style={{ background: g.color }} />
+                    <i className="bg-(--bg)" style={{ '--bg': g.color }} />
                     {id}
                   </span>
                   <h2>{g.nombre}</h2>

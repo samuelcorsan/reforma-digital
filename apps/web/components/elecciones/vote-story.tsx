@@ -485,16 +485,16 @@ function DotMap({
         ref={canvas}
         role="img"
         aria-label="Mapa de los municipios de España"
-        className="block w-full text-border"
-        style={{ aspectRatio: `${map.ancho} / ${map.alto}` }}
+        className="block w-full text-border aspect-(--aspect)"
+        style={{ '--aspect': `${map.ancho} / ${map.alto}` }}
         onPointerMove={(event) => setTip(near(event.clientX, event.clientY))}
         onPointerLeave={() => setTip(null)}
       />
       {tip && d && (
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed z-50 w-max max-w-72 -translate-x-1/2 -translate-y-full rounded-xl bg-popover px-4 py-3 text-sm leading-snug text-popover-foreground shadow-md ring-1 ring-foreground/10"
-          style={{ left: tip.x, top: tip.y - 14 }}
+          className="pointer-events-none fixed z-50 w-max max-w-72 -translate-x-1/2 -translate-y-full rounded-xl bg-popover px-4 py-3 text-sm leading-snug text-popover-foreground shadow-md ring-1 ring-foreground/10 left-(--left) top-(--top)"
+          style={{ '--left': `${tip.x}px`, '--top': `${tip.y - 14}px` }}
         >
           <p className="m-0 font-medium">
             {d.name} · {data.map.provincias[d.code.slice(0, 2)]?.corto}

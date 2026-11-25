@@ -197,10 +197,9 @@ function DataTable({ block, id }: { block: Extract<Block, { tipo: 'tabla' }>; id
                       'grid min-h-11 place-items-center rounded-lg px-2 text-center font-mono text-sm tabular-nums',
                       n / top > 0.5 && 'text-background',
                       !n && 'text-muted-foreground',
+                      'fondo-calor',
                     )}
-                    style={{
-                      background: `color-mix(in oklab, var(--foreground) ${Math.round((n / top) * 88)}%, var(--muted))`,
-                    }}
+                    style={{ '--calor': `${Math.round((n / top) * 88)}%` }}
                   >
                     {cell}
                   </span>
@@ -435,8 +434,11 @@ function Visual({
             </span>
           </p>
           <span aria-hidden="true" className="flex h-4 overflow-hidden rounded-full">
-            <i className="block h-full" style={{ width: `${guest.parte}%`, background: color }} />
-            <i className="block h-full flex-1" style={{ background: grey }} />
+            <i
+              className="block h-full w-(--w) bg-(--bg)"
+              style={{ '--w': `${guest.parte}%`, '--bg': color }}
+            />
+            <i className="block h-full flex-1 bg-(--bg)" style={{ '--bg': grey }} />
           </span>
           <Legend
             small

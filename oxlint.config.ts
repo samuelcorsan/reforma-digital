@@ -103,6 +103,7 @@ export default defineConfig({
     'shadcn/no-unknown-classes': 'error',
     // `transition`: a list of properties to animate is not a design value.
     'shadcn/no-arbitrary-values': ['error', { allow: ['layout', 'transition'] }],
+    'shadcn/no-inline-styles': 'error',
   },
   overrides: [
     {

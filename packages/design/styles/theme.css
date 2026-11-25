@@ -211,6 +211,14 @@
       opacity: 0;
     }
   }
+  @keyframes flows-sweep {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
 }
 
 /* Cabecera de la web: pliega el logotipo al bajar (ver header.tsx). Fuera de @theme porque la

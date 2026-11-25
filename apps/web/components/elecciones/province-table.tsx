@@ -161,8 +161,8 @@ export function ProvinceTable({
                   <span className="inline-flex items-center gap-2">
                     <span className="h-1.5 w-16 rounded-full bg-muted">
                       <i
-                        className="block h-full rounded-full bg-muted-foreground"
-                        style={{ width: `${(r.turnout / most) * 100}%` }}
+                        className="block h-full rounded-full bg-muted-foreground w-(--w)"
+                        style={{ '--w': `${(r.turnout / most) * 100}%` }}
                       />
                     </span>
                     <span className="font-mono tabular-nums">{percent(r.turnout)}</span>
@@ -175,8 +175,8 @@ export function ProvinceTable({
                   {r.winner ? (
                     <span className="inline-flex items-center gap-2">
                       <i
-                        className="block size-2.5 rounded-full"
-                        style={{ background: r.winner.color }}
+                        className="block size-2.5 rounded-full bg-(--bg)"
+                        style={{ '--bg': r.winner.color }}
                       />
                       {r.winner.name}
                     </span>

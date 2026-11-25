@@ -248,7 +248,14 @@ const gap = 26;
 const half = 17;
 const at = (share: number) => `calc(${edge}px + (100% - ${2 * edge}px) * ${share})`;
 // Los temas, en una escala de grises; el que suena va en tinta.
-const greys = ['#8f8a83', '#b3aea6', '#a29c94', '#c9c5be', '#7d7871', '#d3cfc8'];
+const greys = [
+  'var(--dato-tema-1)',
+  'var(--dato-tema-2)',
+  'var(--dato-tema-3)',
+  'var(--dato-tema-4)',
+  'var(--dato-tema-5)',
+  'var(--dato-tema-6)',
+];
 
 // Las marcas que se pisarían bajan a otra fila de su carril, hasta tres; si no caben, se
 // solapan en la fila que antes queda libre (con zoom se ven por separado).
@@ -440,9 +447,9 @@ export function InterviewPlayer({
             <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
               <i
                 aria-hidden="true"
-                className="block size-2 rounded-full"
+                className="block size-2 rounded-full bg-(--bg)"
                 style={{
-                  background: s.hablante === 'candidato' ? color : 'var(--muted-foreground)',
+                  '--bg': s.hablante === 'candidato' ? color : 'var(--muted-foreground)',
                 }}
               />
               <span className={cn(s.hablante === 'candidato' && 'font-medium')}>
@@ -608,7 +615,7 @@ export function InterviewPlayer({
   const row = (label: ReactNode, height: number, content: ReactNode) => (
     <div className="grid grid-cols-[var(--label)_minmax(0,1fr)] items-center gap-3 py-3">
       <span className="text-sm leading-tight text-muted-foreground">{label}</span>
-      <div className="relative" style={{ height }}>
+      <div className="relative h-(--h)" style={{ '--h': `${height}px` }}>
         {/* Recortado a los mismos márgenes que los carriles de iconos. */}
         <div className="absolute inset-y-0 inset-x-3 overflow-hidden">{content}</div>
       </div>
@@ -740,9 +747,9 @@ export function InterviewPlayer({
               </span>
               <span aria-hidden="true" className="relative h-1 rounded-full bg-background">
                 <i
-                  className="absolute inset-y-0 left-0 rounded-full bg-foreground"
+                  className="absolute inset-y-0 left-0 rounded-full bg-foreground w-(--w)"
                   style={{
-                    width: `${Math.min(1, Math.max(0, (time - clip.from) / (clip.to - clip.from))) * 100}%`,
+                    '--w': `${Math.min(1, Math.max(0, (time - clip.from) / (clip.to - clip.from))) * 100}%`,
                   }}
                 />
               </span>
@@ -924,26 +931,26 @@ export function InterviewPlayer({
                 {topics.map((t, i) => (
                   <i
                     key={`${t.tema}-${t.inicio}-${i}`}
-                    className="absolute inset-y-0"
+                    className="absolute inset-y-0 left-(--left) w-(--w) bg-(--bg)"
                     style={{
-                      left: `${(t.inicio / duration) * 100}%`,
-                      width: `${((t.fin - t.inicio) / duration) * 100}%`,
-                      background: greys[topicNames.indexOf(t.tema) % greys.length],
+                      '--left': `${(t.inicio / duration) * 100}%`,
+                      '--w': `${((t.fin - t.inicio) / duration) * 100}%`,
+                      '--bg': greys[topicNames.indexOf(t.tema) % greys.length],
                     }}
                   />
                 ))}
               </span>
               <i
                 aria-hidden="true"
-                className="absolute inset-y-1 w-px bg-foreground"
-                style={{ left: `${(time / duration) * 100}%` }}
+                className="absolute inset-y-1 w-px bg-foreground left-(--left)"
+                style={{ '--left': `${(time / duration) * 100}%` }}
               />
               <span
                 aria-hidden="true"
-                className="absolute inset-y-0 rounded-md border border-foreground bg-foreground/5"
+                className="absolute inset-y-0 rounded-md border border-foreground bg-foreground/5 left-(--left) w-(--w)"
                 style={{
-                  left: `${(from / duration) * 100}%`,
-                  width: `${(span / duration) * 100}%`,
+                  '--left': `${(from / duration) * 100}%`,
+                  '--w': `${(span / duration) * 100}%`,
                 }}
               />
             </div>
@@ -1033,22 +1040,19 @@ export function InterviewPlayer({
                 .map((m) => (
                   <span
                     key={m.start}
-                    className="absolute top-1/2 h-0"
+                    className="absolute top-1/2 h-0 left-(--left) w-(--w)"
                     style={{
-                      left: `calc(${share(m.start) * 100}% + 1px)`,
-                      width: `calc(${(share(m.start + 60) - share(m.start)) * 100}% - 2px)`,
+                      '--left': `calc(${share(m.start) * 100}% + 1px)`,
+                      '--w': `calc(${(share(m.start + 60) - share(m.start)) * 100}% - 2px)`,
                     }}
                   >
                     <i
-                      className="absolute bottom-0 left-0 w-full rounded-t-xs"
-                      style={{
-                        height: (m.candidate / 60) * 27,
-                        background: `color-mix(in oklab, ${color} 55%, var(--background))`,
-                      }}
+                      className="absolute bottom-0 left-0 w-full rounded-t-xs h-(--h) fondo-tinte-55"
+                      style={{ '--h': `${(m.candidate / 60) * 27}px`, '--tinte': color }}
                     />
                     <i
-                      className="absolute top-0 left-0 w-full rounded-b-xs bg-muted-foreground/25"
-                      style={{ height: (m.interviewer / 60) * 27 }}
+                      className="absolute top-0 left-0 w-full rounded-b-xs bg-muted-foreground/25 h-(--h)"
+                      style={{ '--h': `${(m.interviewer / 60) * 27}px` }}
                     />
                   </span>
                 ))}
@@ -1063,11 +1067,11 @@ export function InterviewPlayer({
                 <span
                   key={`${t.tema}-${t.inicio}-${i}`}
                   title={t.tema}
-                  className="absolute top-1/2 h-2.5 -translate-y-1/2 rounded-xs"
+                  className="absolute top-1/2 h-2.5 -translate-y-1/2 rounded-xs left-(--left) w-(--w) bg-(--bg)"
                   style={{
-                    left: `calc(${share(t.inicio) * 100}% + 1px)`,
-                    width: `calc(${(share(t.fin) - share(t.inicio)) * 100}% - 2px)`,
-                    background:
+                    '--left': `calc(${share(t.inicio) * 100}% + 1px)`,
+                    '--w': `calc(${(share(t.fin) - share(t.inicio)) * 100}% - 2px)`,
+                    '--bg':
                       t.tema === topic
                         ? 'var(--foreground)'
                         : greys[topicNames.indexOf(t.tema) % greys.length],
@@ -1088,7 +1092,7 @@ export function InterviewPlayer({
               >
                 <span className="py-2 text-sm leading-tight text-muted-foreground">{name}</span>
                 {marks.some((m) => m.lane === id) ? (
-                  <div className="relative" style={{ height: lane.height }}>
+                  <div className="relative h-(--h)" style={{ '--h': `${lane.height}px` }}>
                     {lane.placed.map(({ mark: m, row: level }) => (
                       <button
                         key={m.id}
@@ -1107,8 +1111,11 @@ export function InterviewPlayer({
                           if (event.currentTarget !== document.activeElement) setTip(null);
                         }}
                         onBlur={() => setTip(null)}
-                        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-transform hover:z-10 hover:scale-125 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground aria-pressed:ring-offset-2 aria-pressed:ring-offset-background motion-reduce:transition-none"
-                        style={{ left: at(share(m.second)), top: half + level * gap }}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition-transform hover:z-10 hover:scale-125 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:z-10 aria-pressed:ring-2 aria-pressed:ring-foreground aria-pressed:ring-offset-2 aria-pressed:ring-offset-background motion-reduce:transition-none left-(--left) top-(--top)"
+                        style={{
+                          '--left': at(share(m.second)),
+                          '--top': `${half + level * gap}px`,
+                        }}
                       >
                         <MarkIcon
                           kind={m.kind}
@@ -1137,11 +1144,11 @@ export function InterviewPlayer({
             <div
               id={`${gradient}-ficha`}
               role="tooltip"
-              className="pointer-events-none absolute z-30 grid w-80 max-w-[calc(100%-1rem)] gap-1 rounded-xl bg-background p-3 text-sm shadow-(--shadow-overlay) ring-1 ring-foreground/10"
+              className="pointer-events-none absolute z-30 grid w-80 max-w-[calc(100%-1rem)] gap-1 rounded-xl bg-background p-3 text-sm shadow-(--shadow-overlay) ring-1 ring-foreground/10 left-(--left) top-(--top) transform-(--transform)"
               style={{
-                left: `clamp(10.5rem, ${tip.x}px, calc(100% - 10.5rem))`,
-                top: tip.top > 200 ? tip.top - 8 : tip.bottom + 8,
-                transform: `translate(-50%, ${tip.top > 200 ? '-100%' : '0'})`,
+                '--left': `clamp(10.5rem, ${tip.x}px, calc(100% - 10.5rem))`,
+                '--top': `${tip.top > 200 ? tip.top - 8 : tip.bottom + 8}px`,
+                '--transform': `translate(-50%, ${tip.top > 200 ? '-100%' : '0'})`,
               }}
             >
               <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
@@ -1163,16 +1170,16 @@ export function InterviewPlayer({
           >
             {visible(time) && (
               <i
-                className="absolute top-1 bottom-0 w-px -translate-x-1/2 bg-foreground"
-                style={{ left: at(share(time)) }}
+                className="absolute top-1 bottom-0 w-px -translate-x-1/2 bg-foreground left-(--left)"
+                style={{ '--left': at(share(time)) }}
               >
                 <b className="absolute top-0 left-1/2 size-2 -translate-x-1/2 rounded-full bg-foreground" />
               </i>
             )}
             {hover != null && (
               <i
-                className="absolute top-6 bottom-0 -translate-x-1/2 border-l border-dashed border-foreground/40"
-                style={{ left: at(share(hover)) }}
+                className="absolute top-6 bottom-0 -translate-x-1/2 border-l border-dashed border-foreground/40 left-(--left)"
+                style={{ '--left': at(share(hover)) }}
               >
                 <b className="absolute -top-6 left-1/2 -translate-x-1/2 rounded bg-foreground px-1.5 py-0.5 font-mono text-xs font-normal whitespace-nowrap text-background">
                   {minute(hover)}
@@ -1191,8 +1198,8 @@ export function InterviewPlayer({
             {ticks.map((second) => (
               <span
                 key={second}
-                className="absolute -translate-x-1/2"
-                style={{ left: at(share(second)) }}
+                className="absolute -translate-x-1/2 left-(--left)"
+                style={{ '--left': at(share(second)) }}
               >
                 {minute(second)}
               </span>
@@ -1246,8 +1253,8 @@ export function InterviewPlayer({
         {/* Lo que va de entrevista. Decorativa: el tiempo de al lado da la cifra. */}
         <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-muted">
           <i
-            className="block h-full bg-foreground"
-            style={{ width: `${duration ? Math.min(1, time / duration) * 100 : 0}%` }}
+            className="block h-full bg-foreground w-(--w)"
+            style={{ '--w': `${duration ? Math.min(1, time / duration) * 100 : 0}%` }}
           />
         </span>
         <div className="flex items-center gap-1 p-2 sm:gap-2">

@@ -95,8 +95,8 @@ export function SeatsMap({
           className="block h-auto w-full"
         >
           <g
-            className="fill-muted stroke-background transition-opacity duration-500"
-            style={{ opacity: hemicycle ? 0.12 : 1 }}
+            className="fill-muted stroke-background transition-opacity duration-500 opacity-(--opacity)"
+            style={{ '--opacity': hemicycle ? 0.12 : 1 }}
           >
             {provinces.map((p) => (
               <path key={p.id} d={p.d} strokeWidth={0.8}>
@@ -122,14 +122,12 @@ export function SeatsMap({
                   r={seatRadius}
                   fill={s.color}
                   strokeWidth={0.8}
-                  className="transition-transform duration-900 ease-(--ease-brand) motion-reduce:transition-none"
+                  className="transition-transform duration-900 ease-(--ease-brand) motion-reduce:transition-none origin-center transform-fill transform-(--transform) delay-(--delay)"
                   style={{
-                    transformBox: 'fill-box',
-                    transformOrigin: 'center',
-                    transform: hemicycle
+                    '--transform': hemicycle
                       ? `translate(${s.bx - s.ax}px, ${s.by - s.ay}px) scale(${scale})`
                       : 'none',
-                    transitionDelay: `${s.delay}ms`,
+                    '--delay': `${s.delay}ms`,
                   }}
                 />
               </a>

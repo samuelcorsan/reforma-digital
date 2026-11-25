@@ -19,7 +19,7 @@ async function Code({ label, lang, code }: Sample) {
             <span key={i}>
               {i > 0 && '\n'}
               {line.map((token, j) => (
-                <span key={j} style={{ color: token.color }}>
+                <span key={j} className="text-(--color)" style={{ '--color': token.color }}>
                   {token.content}
                 </span>
               ))}

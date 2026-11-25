@@ -171,8 +171,8 @@ function Years({ from, count }: { from: number; count: number }) {
       {Array.from({ length: last - first + 1 }, (_, i) => (
         <span
           key={first + i}
-          className="absolute border-l border-border pl-1"
-          style={{ left: `${(((first + i) * 12 - from) / count) * 100}%` }}
+          className="absolute border-l border-border pl-1 left-(--left)"
+          style={{ '--left': `${(((first + i) * 12 - from) / count) * 100}%` }}
         >
           {first + i}
         </span>
@@ -198,14 +198,14 @@ function MonthBars({
         {columns.map((column, i) => (
           <span
             key={i}
-            className="flex flex-1 flex-col-reverse overflow-hidden rounded-t-xs"
-            style={{ height: `${((totals[i] ?? 0) / top) * 100}%` }}
+            className="flex flex-1 flex-col-reverse overflow-hidden rounded-t-xs h-(--h)"
+            style={{ '--h': `${((totals[i] ?? 0) / top) * 100}%` }}
           >
             {column.map((s) => (
               <i
                 key={s.color}
-                className="block"
-                style={{ flexGrow: s.value, background: s.color }}
+                className="block grow-(--grow) bg-(--bg)"
+                style={{ '--grow': s.value, '--bg': s.color }}
               />
             ))}
           </span>
@@ -445,8 +445,9 @@ export async function ElectionsHome() {
                 className={cn(
                   'block rounded-t-sm',
                   e === lastAccuracy ? 'bg-brand' : 'bg-muted-foreground/30',
+                  'h-(--h)',
                 )}
-                style={{ height: `${(e.media_mae / worstAccuracy) * 56}px` }}
+                style={{ '--h': `${(e.media_mae / worstAccuracy) * 56}px` }}
               />
               <span className="text-center font-mono text-xs text-muted-foreground">
                 {e.fecha.slice(2, 4)}
@@ -662,8 +663,8 @@ export async function ElectionsHome() {
                       return seatsOf ? (
                         <i
                           key={f.id}
-                          className="block"
-                          style={{ height: `${(seatsOf / 350) * 100}%`, background: f.color }}
+                          className="block h-(--h) bg-(--bg)"
+                          style={{ '--h': `${(seatsOf / 350) * 100}%`, '--bg': f.color }}
                         />
                       ) : null;
                     })}
@@ -808,16 +809,16 @@ export async function ElectionsHome() {
                   {projected.map(([id, n]) => (
                     <i
                       key={id}
-                      className="block h-full border-r border-background last:border-r-0"
-                      style={{ width: `${(n / 350) * 100}%`, background: party[id]?.color }}
+                      className="block h-full border-r border-background last:border-r-0 w-(--w) bg-(--bg)"
+                      style={{ '--w': `${(n / 350) * 100}%`, '--bg': party[id]?.color }}
                       title={`${party[id]?.nombre ?? id}: ${n}`}
                     />
                   ))}
                 </div>
                 <span
                   aria-hidden="true"
-                  className="absolute -inset-y-1 w-0.5 bg-foreground"
-                  style={{ left: `${(majority / 350) * 100}%` }}
+                  className="absolute -inset-y-1 w-0.5 bg-foreground left-(--left)"
+                  style={{ '--left': `${(majority / 350) * 100}%` }}
                 />
               </div>
               <p className="m-0 -mt-3 text-sm text-muted-foreground">

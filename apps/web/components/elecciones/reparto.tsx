@@ -151,9 +151,12 @@ export function Reparto({
                     key={`${c}-${j}`}
                     r={seatRadius}
                     fill={colors[j] ?? '#8A8F98'}
-                    className="cursor-pointer stroke-background transition-[transform,opacity] duration-700 ease-(--ease-brand) motion-reduce:transition-none"
+                    className="cursor-pointer stroke-background transition-[transform,opacity] duration-700 ease-(--ease-brand) motion-reduce:transition-none transform-(--transform) opacity-(--opacity)"
                     strokeWidth={0.8}
-                    style={{ transform: `translate(${x}px, ${y}px)`, opacity: j < seats ? 1 : 0 }}
+                    style={{
+                      '--transform': `translate(${x}px, ${y}px)`,
+                      '--opacity': j < seats ? 1 : 0,
+                    }}
                     data-tip={name(c)}
                     data-tip-text={`${seats} escaños en ${e.short}${tip ? `: ${tip}` : ''}`}
                     onClick={() => router.push(provinces[c]?.href ?? '#')}

@@ -94,7 +94,10 @@ export function PollTable({
               {parties.map((p) => (
                 <TableHead key={p.id} className="text-right">
                   <span className="inline-flex items-center gap-1.5">
-                    <i className="block size-2 rounded-full" style={{ background: p.color }} />
+                    <i
+                      className="block size-2 rounded-full bg-(--bg)"
+                      style={{ '--bg': p.color }}
+                    />
                     {p.name}
                   </span>
                 </TableHead>

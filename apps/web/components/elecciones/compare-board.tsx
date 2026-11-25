@@ -224,8 +224,8 @@ export function CompareBoard({
                 <li key={c.slug} className="flex items-center gap-2">
                   <i
                     aria-hidden="true"
-                    className="block size-2.5 rounded-full"
-                    style={{ background: c.color }}
+                    className="block size-2.5 rounded-full bg-(--bg)"
+                    style={{ '--bg': c.color }}
                   />
                   {c.name}
                 </li>
@@ -439,10 +439,10 @@ export function CompareBoard({
                               />
                               <span className="relative h-3 rounded-full bg-muted" title={c.name}>
                                 <i
-                                  className="absolute inset-y-0 left-0 rounded-full"
+                                  className="absolute inset-y-0 left-0 rounded-full w-(--w) bg-(--bg)"
                                   style={{
-                                    width: `${Math.min(1, v.value / f.max) * 100}%`,
-                                    background: c.color,
+                                    '--w': `${Math.min(1, v.value / f.max) * 100}%`,
+                                    '--bg': c.color,
                                   }}
                                 />
                               </span>

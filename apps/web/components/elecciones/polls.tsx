@@ -61,7 +61,10 @@ export async function Polls() {
               <Cell key={p.id} span={4} className="gap-3">
                 <Label>
                   <span className="inline-flex items-center gap-2">
-                    <i className="block size-2.5 rounded-full" style={{ background: p.color }} />
+                    <i
+                      className="block size-2.5 rounded-full bg-(--bg)"
+                      style={{ '--bg': p.color }}
+                    />
                     {p.nombre}
                   </span>
                 </Label>

@@ -94,8 +94,8 @@ export function LogoPuzle({ size }: { size: number }) {
   return (
     <span
       aria-hidden="true"
-      className={'relative block shrink-0'}
-      style={{ width: modulo * 3, height: size }}
+      className={'relative block shrink-0 w-(--w) h-(--h)'}
+      style={{ '--w': `${modulo * 3}px`, '--h': `${size}px` }}
       onPointerEnter={(e) => {
         if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) {
           return;
@@ -116,13 +116,15 @@ export function LogoPuzle({ size }: { size: number }) {
       {estado.pos.map((c, ficha) => (
         <span
           key={ficha}
-          className={'absolute top-0 left-0 transition-pieza-puzle motion-reduce:transition-none'}
+          className={
+            'absolute top-0 left-0 transition-pieza-puzle motion-reduce:transition-none w-(--w) h-(--h) [translate:var(--translate)] scale-(--scale) bg-(--bg)'
+          }
           style={{
-            width: modulo,
-            height: modulo,
-            translate: `${(c % 3) * modulo}px ${Math.floor(c / 3) * modulo}px`,
-            scale: dentro || enMarcha ? 0.86 : 1,
-            background: ficha === 0 ? undefined : 'var(--logo-color, currentColor)',
+            '--w': `${modulo}px`,
+            '--h': `${modulo}px`,
+            '--translate': `${(c % 3) * modulo}px ${Math.floor(c / 3) * modulo}px`,
+            '--scale': dentro || enMarcha ? 0.86 : 1,
+            '--bg': ficha === 0 ? undefined : 'var(--logo-color, currentColor)',
           }}
         >
           {ficha === 0 && (

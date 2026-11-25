@@ -76,7 +76,10 @@ export async function Municipalities({ query, page }: { query: string; page: num
                 {shown.map((g) => (
                   <TableHead key={g.id} className="text-right">
                     <span className="inline-flex items-center gap-1.5">
-                      <i className="block size-2 rounded-full" style={{ background: g.color }} />
+                      <i
+                        className="block size-2 rounded-full bg-(--bg)"
+                        style={{ '--bg': g.color }}
+                      />
                       {g.name}
                     </span>
                   </TableHead>
