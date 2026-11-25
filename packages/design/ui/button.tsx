@@ -26,7 +26,9 @@ const buttonVariants = cva(
         // Un interruptor: apagado mientras no esté pulsado (`aria-pressed`).
         quiet: `${ghost} text-muted-foreground aria-pressed:bg-muted aria-pressed:text-foreground`,
         // `ghost` sobre un fondo en tinta, como el de un bloque de código.
-        inverse: `${ghost} text-background/70 hover:bg-background/15 hover:text-background`,
+        // Escrita entera: los hover de `ghost` chocarían con estos donde no pasa por `cn`.
+        inverse:
+          'text-background/70 hover:bg-background/15 hover:text-background aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50',
         destructive:
           'bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40',
         link: 'text-primary underline-offset-4 hover:underline',
