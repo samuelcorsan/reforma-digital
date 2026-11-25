@@ -108,7 +108,7 @@ export function Empty({
   children?: ReactNode;
 }) {
   return (
-    <Card className="bg-muted ring-0" render={<p className="" role="status" />}>
+    <Card className="bg-muted ring-0" render={<p role="status" />}>
       {children}
     </Card>
   );

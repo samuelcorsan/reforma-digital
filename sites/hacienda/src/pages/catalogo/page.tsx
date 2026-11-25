@@ -212,7 +212,6 @@ function Catalogo({ bindings, restore }: { bindings: CatalogoBindings; restore: 
               <Button
                 variant="outline"
                 type="button"
-                className={''}
                 aria-label={s.requestLabel}
                 onClick={() => {
                   if (!bridge.activate(s.id)) restore();

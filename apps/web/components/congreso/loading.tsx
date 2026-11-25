@@ -2,7 +2,7 @@ import { Card, CardContent } from '@reforma-digital/design/ui/card';
 
 export function DataLoading() {
   return (
-    <div role="status" className="">
+    <div role="status">
       <span
         className={
           'sr-only absolute [width:1px] [height:1px] p-0 [margin:-1px] overflow-hidden [clip:rect(0,_0,_0,_0)] whitespace-nowrap border-0'

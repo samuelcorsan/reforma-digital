@@ -152,5 +152,5 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
     );
   }
   const Componente: Svg = iconos[name];
-  return <Componente size={size} className="" aria-hidden />;
+  return <Componente size={size} aria-hidden />;
 }

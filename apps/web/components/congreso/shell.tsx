@@ -8,7 +8,7 @@ export function CongressShell({ children }: { children: ReactNode }) {
   return (
     <div
       className={
-        "[color:var(--foreground)] [&_:is([data-part=cg-nav],_[data-part=cg-lateral])_[aria-current='page']]:[background:var(--muted)] [--cg-ancho:calc(_var(--container-content)_+_264px_)] [@media(min-width:_1100px)]:[&_[data-part=in-nav]]:[--container-content:var(--cg-ancho)] [&_blockquote]:[margin:20px_0] [&_blockquote]:[font-family:var(--font-brand-heading)] [&_blockquote]:text-2xl [&_blockquote]:[line-height:1.35] [&_blockquote.cg-card]:m-0 [&_blockquote_footer]:mt-4 [&_blockquote_footer]:[font-family:var(--font-brand-text)] [&_blockquote_footer]:text-sm [&_blockquote_footer]:[color:var(--muted-foreground)]"
+        "[color:var(--foreground)] [&_:is([data-part=cg-nav],_[data-part=cg-lateral])_[aria-current='page']]:[background:var(--muted)] [--cg-ancho:calc(_var(--container-content)_+_264px_)] [@media(min-width:_1100px)]:[&_[data-part=in-nav]]:[--container-content:var(--cg-ancho)] [&_blockquote]:[margin:20px_0] [&_blockquote]:[font-family:var(--font-brand-heading)] [&_blockquote]:text-2xl [&_blockquote]:[line-height:1.35] [&_blockquote[data-part=cg-card]]:m-0 [&_blockquote_footer]:mt-4 [&_blockquote_footer]:[font-family:var(--font-brand-text)] [&_blockquote_footer]:text-sm [&_blockquote_footer]:[color:var(--muted-foreground)]"
       }
     >
       <Header current={congressBase} />
