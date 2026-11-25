@@ -265,6 +265,21 @@
         font-size: 12px;
         text-align: center;
       }
+      /* Red Eléctrica: el PVPC de un día hora a hora, con la hora más barata marcada. */
+      .barras.horas {
+        grid-template-columns: repeat(24, 1fr);
+        gap: 3px;
+      }
+      .barras.horas i:last-child {
+        background: var(--linea);
+      }
+      .barras.horas i.barata {
+        background: var(--tinta);
+      }
+      .meses.horas {
+        display: flex;
+        justify-content: space-between;
+      }
     </style>
   </head>
   <body>
@@ -684,6 +699,149 @@
           <div class="meses">
             <span>may</span><span>jun</span><span>jul</span><span>ago</span><span>sep</span
             ><span>oct</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+    <div class="ventana" data-escena="red-electrica">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿A qué hora es más barata la luz hoy?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/red-electrica.png" alt="" /></span
+            >precio_luz</span
+          >
+        </div>
+        <div class="tarjeta">
+          <div class="fila">
+            <span class="titulo">PVPC, la hora más barata</span>
+            <span class="suave">Domingo 22 de noviembre</span>
+          </div>
+          <p class="cifra">09:00 <span class="suave" style="font-size: 20px">0,070 €/kWh</span></p>
+          <div class="barras horas">
+            <i style="height: 43%"></i><i style="height: 33%"></i><i style="height: 25%"></i
+            ><i style="height: 25%"></i><i style="height: 25%"></i><i style="height: 24%"></i
+            ><i style="height: 24%"></i><i style="height: 24%"></i><i style="height: 26%"></i
+            ><i class="barata" style="height: 21%"></i><i style="height: 22%"></i
+            ><i style="height: 21%"></i><i style="height: 21%"></i><i style="height: 22%"></i
+            ><i style="height: 22%"></i><i style="height: 21%"></i><i style="height: 30%"></i
+            ><i style="height: 73%"></i><i style="height: 89%"></i><i style="height: 100%"></i
+            ><i style="height: 98%"></i><i style="height: 92%"></i><i style="height: 90%"></i
+            ><i style="height: 86%"></i>
+          </div>
+          <div class="meses horas">
+            <span>00</span><span>06</span><span>12</span><span>18</span><span>23</span>
+          </div>
+          <div class="fila">
+            <span class="suave">Media del día</span><span class="mono">0,148 €/kWh</span>
+          </div>
+          <div class="fila">
+            <span class="suave">Más cara, 19:00</span><span class="mono">0,336 €/kWh</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="catastro">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Cuántos metros construidos tiene el Bernabéu según el Catastro?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/catastro.png" alt="" /></span
+            >buscar_direccion</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Av. de Concha Espina, 1 · Madrid</span>
+            <span class="suave">Deportivo</span>
+          </div>
+          <div class="tren">
+            <span>Superficie construida</span>
+            <span></span>
+            <span class="mono">114.105 m²</span>
+          </div>
+          <div class="tren">
+            <span>Superficie de la parcela</span>
+            <span></span>
+            <span class="mono">43.688 m²</span>
+          </div>
+          <div class="tren">
+            <span>Año de construcción</span>
+            <span></span>
+            <span class="mono">1947</span>
+          </div>
+          <div class="tren">
+            <span>Referencia catastral</span>
+            <span></span>
+            <span class="mono">1784401VK4718D</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <!-- Licitaciones: tres expedientes reales con CPV de carpintería (45421), leídos el 22-11-2026. -->
+    <div class="ventana" data-escena="contratacion">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué obras de carpintería se han licitado estos días?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/placsp.svg" alt="" /></span
+            >buscar_licitaciones</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Carpintería · CPV 45421</span>
+            <span class="suave">19 – 21 nov.</span>
+          </div>
+          <div class="tren">
+            <span>CEIP Unamunzaga, ventanas<span class="etiqueta">Álava</span></span>
+            <span class="suave">Pendiente</span>
+            <span class="mono">135.799 €</span>
+          </div>
+          <div class="tren">
+            <span>Aljafería, escalera<span class="etiqueta">Zaragoza</span></span>
+            <span class="suave">Resuelta</span>
+            <span class="mono">200.409 €</span>
+          </div>
+          <div class="tren">
+            <span>CEIP Moreno Nieto, huecos<span class="etiqueta">Badajoz</span></span>
+            <span class="suave">Adjudicada</span>
+            <span class="mono">89.129 €</span>
           </div>
         </div>
       </div>

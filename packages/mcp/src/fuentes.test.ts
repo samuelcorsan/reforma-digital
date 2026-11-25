@@ -1,5 +1,5 @@
 // @vitest-environment node
-// BOE, Carburantes e INE sin red: respuestas con la forma de cada API (recortadas de las reales)
+// BOE, Carburantes, INE, Eustat y Red Eléctrica sin red: respuestas con la forma de cada API (recortadas de las reales)
 // para lo que se puede romper al leerlas.
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -10,11 +10,11 @@ import {
   textoBloque,
   verBloque,
 } from './boe';
-import { actosProvincia, buscarEmpresa, inscripciones, sumarioBorme } from './borme';
 import { buscarMunicipio, gasolinerasBaratas } from './carburantes';
 import { run, SourceError } from './comun';
 import { buscarTabla as buscarTablaEustat, datosTabla as datosTablaEustat } from './eustat';
 import { avisoInterrumpida, buscarTabla, datosSerie, datosTabla } from './ine';
+import { generacion, precioLuz, precioLuzPeriodo } from './red-electrica';
 
 const fetchJson = (body: unknown, status = 200) =>
   vi.fn<typeof fetch>(async () => Response.json(body, { status }));
@@ -516,271 +516,278 @@ describe('Eustat', () => {
   });
 });
 
-describe('BORME', () => {
-  // Con la forma de los documentos reales; las empresas y las personas son inventadas.
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<documento>
-  <metadatos><identificador>BORME-A-2026-223-20</identificador><titulo>GIPUZKOA</titulo></metadatos>
-  <texto>
-    <p class="articulo">500001 - TALLERES EJEMPLO &amp; HIJOS SL.</p>
-    <p class="parrafo">Constitución. Comienzo de operaciones: 6.10.26. Objeto social: Asesoría. Constitución y gestión de sociedades. Domicilio: C/ MAYOR 1 (DONOSTIA). Capital: 3.000,00 Euros. Nombramientos. Adm. Unico: PERSONA UNO.  Datos registrales. S 8 , H SS 1, I/A 1 (10.11.26).</p>
-    <p class="articulo">500002 - COMERCIAL PRUEBA SA.</p>
-    <p class="parrafo">Cierre provisional hoja registral Art.485 TRLC. Insuficiencia de masa activa. Situación concursal. Procedimiento concursal 1/2026. Auto de declaración de concurso.- Ceses/Dimisiones. Consejero: PERSONA DOS Datos registrales. S 8 , H SS 2, I/A 9 (9.11.26).</p>
-    <p class="articulo">500003 - NUEVA FORMA SL.</p>
-    <p class="parrafo">Acto que aún no se conoce. Extinción.  Datos registrales. S 8 , H SS 3, I/A 4 (9.11.26).</p>
-  </texto>
-</documento>`;
-
-  const item = (id: string, titulo: string) => ({
-    identificador: id,
-    titulo,
-    url_html: `https://www.boe.es/diario_borme/txt.php?id=${id}`,
-    url_xml: `https://www.boe.es/diario_borme/xml.php?id=${id}`,
-    url_pdf: { texto: `https://www.boe.es/borme/dias/2026/11/20/pdfs/${id}.pdf` },
+describe('Red Eléctrica', () => {
+  // PVPC real del 25 de octubre de 2026, el día de 25 horas: la 02:00 sale dos veces.
+  const pvpcDst = [
+    ['00:00+02:00', 261.99],
+    ['01:00+02:00', 233.96],
+    ['02:00+02:00', 226.3],
+    ['02:00+01:00', 212.01],
+    ...[
+      190.29, 177.63, 187.3, 213.09, 232.58, 118.97, 44.08, 42.76, 41.66, 41.38, 42.14, 42.86,
+      46.32, 54.49, 187.66, 309.45, 332.48, 346.83, 332.4, 325.84, 314.04,
+    ].map((v, i) => [`${String(i + 3).padStart(2, '0')}:00+01:00`, v] as const),
+  ] as const;
+  const at = (dia: string, hora: string) =>
+    `${dia}T${hora.slice(0, 5)}:00.000${hora.slice(5) || '+01:00'}`;
+  const serie = (
+    id: string,
+    title: string,
+    values: { value: number; datetime: string }[],
+    type = title,
+  ) => ({
+    id,
+    type: title,
+    attributes: { title, type, 'last-update': '2026-10-24T20:46:05.000+02:00', values },
   });
-  // Un solo documento llega como objeto y varios como lista, como en la API.
-  const dia = {
-    data: {
-      sumario: {
-        diario: [
-          {
-            numero: '223',
-            sumario_diario: {
-              identificador: 'BORME-S-2026-223',
-              url_pdf: {
-                texto: 'https://www.boe.es/borme/dias/2026/11/20/pdfs/BORME-S-2026-223.pdf',
-              },
-            },
-            seccion: [
-              {
-                codigo: 'A',
-                nombre: 'SECCIÓN PRIMERA. Empresarios. Actos inscritos',
-                item: [
-                  item('BORME-A-2026-223-01', 'ARABA/ÁLAVA'),
-                  item('BORME-A-2026-223-20', 'GIPUZKOA'),
-                ],
-              },
-              {
-                codigo: 'C',
-                nombre: 'SECCIÓN SEGUNDA. Anuncios y avisos legales',
-                apartado: {
-                  nombre: 'CONVOCATORIAS DE JUNTAS',
-                  item: item('BORME-C-2026-1', 'TALLERES EJEMPLO & HIJOS, S.L.'),
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  };
-  const ruta = (url: string | URL | Request) => (url instanceof Request ? url.url : url.toString());
-  /** El BORME del 2026-11-20 con el documento de Gipuzkoa; los demás días, 404. */
-  const borme = (status = 404) =>
-    vi.fn<typeof fetch>(async (url) =>
-      ruta(url).endsWith('/sumario/20261120')
-        ? Response.json(dia)
-        : ruta(url).includes('xml.php')
-          ? new Response(xml)
-          : new Response('', { status }),
-    );
+  const pvpc = (values: { value: number; datetime: string }[]) => serie('1001', 'PVPC', values);
+  const mercado = (values: { value: number; datetime: string }[]) =>
+    serie('600', 'Precio mercado spot', values);
+  const horas = (dia: string, n: number, value: (h: number) => number) =>
+    Array.from({ length: n }, (_, h) => ({
+      value: value(h),
+      datetime: at(dia, `${String(h).padStart(2, '0')}:00`),
+    }));
+  // El mercado en cuartos de hora, como desde octubre de 2025: cuatro valores por hora.
+  const cuartos = (dia: string, n: number, value: (h: number) => number) =>
+    Array.from({ length: n * 4 }, (_, q) => ({
+      value: value(Math.floor(q / 4)),
+      datetime: at(
+        dia,
+        `${String(Math.floor(q / 4)).padStart(2, '0')}:${String((q % 4) * 15).padStart(2, '0')}`,
+      ),
+    }));
+  const respuesta = (...included: unknown[]) => Response.json({ data: {}, included });
 
-  it('splits each entry into its acts, with the registry data apart', () => {
-    expect(inscripciones(xml)).toEqual([
-      {
-        numero: '500001',
-        empresa: 'TALLERES EJEMPLO & HIJOS SL',
-        actos: [
-          {
-            acto: 'Constitución',
-            detalle:
-              'Comienzo de operaciones: 6.10.26. Objeto social: Asesoría. Constitución y gestión de sociedades. Domicilio: C/ MAYOR 1 (DONOSTIA). Capital: 3.000,00 Euros',
-          },
-          { acto: 'Nombramientos', detalle: 'Adm. Unico: PERSONA UNO' },
-        ],
-        datos_registrales: 'S 8 , H SS 1, I/A 1 (10.11.26)',
-      },
-      {
-        numero: '500002',
-        empresa: 'COMERCIAL PRUEBA SA',
-        actos: [
-          {
-            // El acto con su nombre de la lista; la variante del boletín, en el detalle.
-            acto: 'Cierre provisional de la hoja registral',
-            detalle: 'Cierre provisional hoja registral Art.485 TRLC. Insuficiencia de masa activa',
-          },
-          {
-            acto: 'Situación concursal',
-            detalle: 'Procedimiento concursal 1/2026. Auto de declaración de concurso',
-          },
-          { acto: 'Ceses/Dimisiones', detalle: 'Consejero: PERSONA DOS' },
-        ],
-        datos_registrales: 'S 8 , H SS 2, I/A 9 (9.11.26)',
-      },
-      {
-        numero: '500003',
-        empresa: 'NUEVA FORMA SL',
-        // Un acto que no está en la lista no se pierde.
-        actos: [
-          { acto: 'Sin clasificar', detalle: 'Acto que aún no se conoce' },
-          { acto: 'Extinción' },
-        ],
-        datos_registrales: 'S 8 , H SS 3, I/A 4 (9.11.26)',
-      },
-    ]);
-  });
-
-  it('reads the acts that older bulletins write without accents', () => {
-    // Como en el BORME de 2009 a 2019.
-    const antiguo = `<documento><texto>
-    <p class="articulo">127044 - MONTAJES EJEMPLO SL.</p>
-    <p class="parrafo">Ampliacion del objeto social. Montaje de instalaciones eléctricas. Pérdida del caracter de unipersonalidad. Adaptación de sociedad.  Datos registrales. T 2100 , F 1, S 8, H SS 1, I/A 5 (2.03.09).</p>
-  </texto></documento>`;
-    expect(inscripciones(antiguo)[0]?.actos).toEqual([
-      { acto: 'Ampliación del objeto social', detalle: 'Montaje de instalaciones eléctricas' },
-      { acto: 'Pérdida del carácter de unipersonalidad' },
-      { acto: 'Adaptación', detalle: 'Adaptación de sociedad' },
-    ]);
-  });
-
-  it('lists the documents of the day and says when there is no BORME', async () => {
-    const fetchImpl = borme();
-    const result = await sumarioBorme(fetchImpl, '2026-11-20');
+  it('labels the 25 hours of the October change in local time, none lost or merged', async () => {
+    const valores = pvpcDst.map(([h, value]) => ({ value, datetime: at('2026-10-25', h) }));
+    const fetchImpl = vi.fn<typeof fetch>(async () => respuesta(pvpc(valores), mercado(valores)));
+    const dia = await precioLuz(fetchImpl, '2026-10-25', 'peninsular');
     expect(fetchImpl).toHaveBeenCalledWith(
-      'https://www.boe.es/datosabiertos/api/borme/sumario/20261120',
+      'https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real?start_date=2026-10-25T00:00&end_date=2026-10-25T23:59&time_trunc=hour',
       expect.anything(),
     );
-    expect(result.diarios[0]?.secciones.map((s) => s.documentos.map((d) => d.id))).toEqual([
-      ['BORME-A-2026-223-01', 'BORME-A-2026-223-20'],
-      ['BORME-C-2026-1'],
+    expect(dia.horas_del_dia).toBe(25);
+    expect(dia.pvpc?.horas.slice(2, 4)).toEqual([
+      { hora: '02:00', inicio: '2026-10-25T02:00:00+02:00', eur_kwh: 0.2263, eur_mwh: 226.3 },
+      { hora: '02:00', inicio: '2026-10-25T02:00:00+01:00', eur_kwh: 0.21201, eur_mwh: 212.01 },
     ]);
-    await expect(sumarioBorme(fetchImpl, '2026-11-21')).rejects.toThrow(
-      'No hay BORME del 2026-11-21',
-    );
-    // Antes de 2009 la API no tiene el BORME, aunque se publicara.
-    await expect(sumarioBorme(fetchImpl, '2008-01-02')).rejects.toThrow(
-      'Los datos abiertos del BORME empiezan en 2009-01-01',
-    );
-  });
-
-  it('gives the acts of a province by any of its names, filtered by type of act', async () => {
-    const result = await actosProvincia(borme(), '2026-11-20', 'Guipúzcoa', {
-      acto: 'concursal',
-      pagina: 1,
-      limite: 25,
+    expect(dia.mercado_diario?.horas).toHaveLength(25);
+    expect(dia.pvpc?.mas_baratas[0]).toEqual({
+      hora: '12:00',
+      inicio: '2026-10-25T12:00:00+01:00',
+      eur_kwh: 0.04138,
     });
-    expect(result).toMatchObject({ provincia: 'Gipuzkoa', id: 'BORME-A-2026-223-20', total: 1 });
-    expect(result.inscripciones.map((i) => i.empresa)).toEqual(['COMERCIAL PRUEBA SA']);
-    // El nombre de la lista encuentra el acto aunque el boletín escriba otra variante.
-    expect(
-      await actosProvincia(borme(), '2026-11-20', 'Gipuzkoa', {
-        acto: 'Cierre provisional de la hoja registral',
-        pagina: 1,
-        limite: 25,
-      }),
-    ).toMatchObject({ total: 1 });
-    // Un día con BORME pero sin documento de la provincia: cero, y dicho.
-    expect(
-      await actosProvincia(borme(), '2026-11-20', 'Soria', { pagina: 1, limite: 25 }),
-    ).toMatchObject({
-      total: 0,
-      nota: 'El BORME del 2026-11-20 no publica actos inscritos de Soria.',
-    });
+    expect(dia.pvpc?.mas_caras[0]?.eur_kwh).toBe(0.34683);
+    expect(dia.nota).toContain('25 horas');
   });
 
-  it('refuses unknown provinces and types of act before asking the BOE', async () => {
-    const fetchImpl = borme();
-    const filtros = { pagina: 1, limite: 25 };
-    await expect(actosProvincia(fetchImpl, '2026-11-20', 'Narnia', filtros)).rejects.toThrow(
-      '«Narnia» no es una provincia',
-    );
-    await expect(
-      actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', { ...filtros, acto: 'concurso' }),
-    ).rejects.toThrow('«concurso» no es un tipo de acto');
-    // «de» está en casi todos los actos: filtraría sin filtrar.
-    await expect(
-      actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', { ...filtros, acto: 'de' }),
-    ).rejects.toThrow('El tipo de acto necesita al menos una palabra de tres letras');
-    await expect(buscarEmpresa(fetchImpl, '. , .', 'Gipuzkoa', 3, '2026-11-20')).rejects.toThrow(
-      'El nombre de la empresa necesita al menos una palabra',
-    );
-    await expect(buscarEmpresa(fetchImpl, 'talleres', 'Gipuzkoa', 3, '2999-01-01')).rejects.toThrow(
-      'es una fecha futura',
-    );
-    // Un filtro dado pero en blanco no se ignora: la respuesta parecería filtrada.
-    await expect(
-      actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', { ...filtros, acto: '   ' }),
-    ).rejects.toThrow('El tipo de acto necesita al menos una palabra');
-    // Los días anteriores a 2009 saldrían como días sin BORME.
-    await expect(buscarEmpresa(fetchImpl, 'talleres', 'Gipuzkoa', 5, '2009-01-03')).rejects.toThrow(
-      'La API del BORME empieza el 2009-01-01',
-    );
-    expect(fetchImpl).not.toHaveBeenCalled();
+  it('says tomorrow’s PVPC is not out yet instead of giving today’s', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-22T13:30:00+01:00'));
+    try {
+      const fetchImpl = vi.fn<typeof fetch>(async () =>
+        respuesta(mercado(horas('2026-11-23', 96 / 4, () => 205.2))),
+      );
+      const manana = await precioLuz(fetchImpl, '2026-11-23', 'peninsular');
+      // REData guarda cada URL un día: la de mañana pedida antes de publicarse no puede servir luego.
+      expect(fetchImpl).toHaveBeenCalledWith(
+        expect.stringContaining('end_date=2026-11-23T23:51'),
+        expect.anything(),
+      );
+      expect(manana.pvpc).toBeUndefined();
+      expect(manana.nota).toContain('aún no está publicado');
+      await expect(precioLuz(fetchImpl, '2026-11-24', 'peninsular')).rejects.toThrow(
+        'No hay precios del 2026-11-24',
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
-  it('takes a type of act by its exact name before the ones that contain it', async () => {
-    const cancelaciones = xml.replace(
-      'Acto que aún no se conoce. Extinción.',
-      'Cancelaciones de oficio de nombramientos. Adm. Unico: PERSONA TRES.',
+  it('tells a REE outage apart from data it does not have', async () => {
+    const con = (status: number) => vi.fn<typeof fetch>(async () => Response.json({}, { status }));
+    await expect(precioLuz(con(400), '2026-11-21', 'peninsular')).rejects.toThrow(
+      'Puede que aún no estén publicados',
     );
-    const fetchImpl = vi.fn<typeof fetch>(async (url) =>
-      ruta(url).includes('xml.php') ? new Response(cancelaciones) : Response.json(dia),
+    await expect(precioLuz(con(503), '2026-11-21', 'peninsular')).rejects.toThrow(
+      'REE no está disponible ahora (respondió 503)',
     );
-    const filtros = { pagina: 1, limite: 25 };
-    const nombramientos = await actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', {
-      ...filtros,
-      acto: 'nombramientos',
-    });
-    expect(nombramientos.inscripciones.map((i) => i.numero)).toEqual(['500001']);
-    const canceladas = await actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', {
-      ...filtros,
-      acto: 'cancelaciones',
-    });
-    expect(canceladas.inscripciones.map((i) => i.numero)).toEqual(['500003']);
   });
 
-  it('refuses a summary without the section of registered acts instead of reporting none', async () => {
-    const sinA = structuredClone(dia);
-    const diario = sinA.data.sumario.diario[0]!;
-    diario.seccion = diario.seccion.filter((s) => s.codigo !== 'A');
-    const fetchImpl = vi.fn<typeof fetch>(async () => Response.json(sinA));
+  it('rejects an incomplete day, a missing PVPC and systems without prices', async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
+      respuesta(
+        pvpc(horas('2026-11-21', 23, () => 200)),
+        mercado(horas('2026-11-21', 24, () => 190)),
+      ),
+    );
+    await expect(precioLuz(fetchImpl, '2026-11-21', 'peninsular')).rejects.toThrow(
+      'REE ha publicado 23 valores de PVPC para el 2026-11-21, que tiene 24 horas',
+    );
+    const sinPvpc = vi.fn<typeof fetch>(async () =>
+      respuesta(mercado(horas('2026-11-21', 24, () => 190))),
+    );
+    await expect(precioLuz(sinPvpc, '2026-11-21', 'peninsular')).rejects.toThrow(
+      'no ha devuelto todos los precios',
+    );
+    // El mismo hueco antes de la tarifa 2.0TD no es un fallo: se dice que no hay PVPC.
+    const antiguo = vi.fn<typeof fetch>(async () =>
+      respuesta(mercado(horas('2014-01-15', 24, () => 50))),
+    );
+    expect((await precioLuz(antiguo, '2014-01-15', 'peninsular')).nota).toContain(
+      'no tiene el PVPC antes del 2021-06-01',
+    );
+    await expect(precioLuz(fetchImpl, '2026-11-21', 'canarias')).rejects.toThrow(
+      'solo publica el PVPC y el precio del mercado del sistema peninsular',
+    );
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    // 24 valores con la 02:00 repetida y sin la 03:00 no son un día entero.
+    const repetida = horas('2026-11-21', 24, () => 200);
+    repetida[3] = { ...repetida[3]!, datetime: repetida[2]!.datetime };
     await expect(
-      actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', { pagina: 1, limite: 25 }),
-    ).rejects.toThrow('El sumario del BORME no trae la sección de actos inscritos');
+      precioLuz(
+        vi.fn<typeof fetch>(async () =>
+          respuesta(pvpc(repetida), mercado(cuartos('2026-11-21', 24, () => 190))),
+        ),
+        '2026-11-21',
+        'peninsular',
+      ),
+    ).rejects.toThrow('el día está incompleto');
   });
 
-  it('refuses a document whose entries cannot be read instead of reporting no acts', async () => {
-    const fetchImpl = vi.fn<typeof fetch>(async (url) =>
-      ruta(url).includes('xml.php')
-        ? new Response('<documento><texto/></documento>')
-        : Response.json(dia),
-    );
-    await expect(
-      actosProvincia(fetchImpl, '2026-11-20', 'Gipuzkoa', { pagina: 1, limite: 25 }),
-    ).rejects.toThrow('No se han podido leer las inscripciones de BORME-A-2026-223-20');
+  it('averages a range by month, with the market per hour and partial months marked', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-22T13:30:00+01:00'));
+    try {
+      const fetchImpl = vi.fn<typeof fetch>(async (url) => {
+        const path = url instanceof Request ? url.url : url.toString();
+        const dia = /start_date=(\d{4}-\d{2}-\d{2})/.exec(path)![1]!;
+        // Octubre en cuartos de hora: el 30 a 100 €/MWh, el 31 a 200 en cuatro cuartos por hora.
+        if (dia === '2026-10-30')
+          return respuesta(
+            pvpc([...horas('2026-10-30', 24, () => 100), ...horas('2026-10-31', 24, () => 300)]),
+            mercado([
+              ...horas('2026-10-30', 24, () => 100),
+              ...cuartos('2026-10-31', 24, () => 200),
+            ]),
+          );
+        return respuesta(
+          pvpc(horas('2026-11-01', 24, () => 50)),
+          mercado(horas('2026-11-01', 24, () => 40)),
+        );
+      });
+      const r = await precioLuzPeriodo(fetchImpl, '2026-10-30', '2026-11-01', 'mes');
+      expect(fetchImpl).toHaveBeenCalledTimes(2);
+      expect(r.periodos).toEqual([
+        {
+          periodo: '2026-10',
+          parcial: 'solo del 2026-10-30 al 2026-10-31',
+          pvpc_media_eur_kwh: 0.2,
+          pvpc_min_eur_kwh: 0.1,
+          pvpc_max_eur_kwh: 0.3,
+          mercado_media_eur_mwh: 150,
+        },
+        {
+          periodo: '2026-11',
+          parcial: 'solo del 2026-11-01 al 2026-11-01',
+          pvpc_media_eur_kwh: 0.05,
+          pvpc_min_eur_kwh: 0.05,
+          pvpc_max_eur_kwh: 0.05,
+          mercado_media_eur_mwh: 40,
+        },
+      ]);
+      await expect(precioLuzPeriodo(fetchImpl, '2026-11-01', '2026-11-23', 'dia')).rejects.toThrow(
+        'El PVPC de mañana (2026-11-23) aún no está publicado',
+      );
+      await expect(precioLuzPeriodo(fetchImpl, '2021-05-01', '2021-06-30', 'dia')).rejects.toThrow(
+        'antes del 2021-06-01',
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
-  it('searches a company over the last days, telling which ones had no BORME', async () => {
-    const result = await buscarEmpresa(
-      borme(),
-      'talleres ejemplo s.l.',
-      'gipuzkoa',
-      3,
-      '2026-11-22',
-    );
-    expect(result).toMatchObject({
-      desde: '2026-11-20',
-      dias_con_borme: 1,
-      dias_sin_borme: ['2026-11-22', '2026-11-21'],
-      total_inscripciones: 1,
-      inscripciones: [{ fecha: '2026-11-20', numero: '500001', id: 'BORME-A-2026-223-20' }],
-      total_anuncios: 1,
-      anuncios: [{ id: 'BORME-C-2026-1', apartado: 'CONVOCATORIAS DE JUNTAS' }],
-    });
-    // Si falla un día, la búsqueda falla entera: sin ese día no se sabe si hubo actos.
-    await expect(
-      buscarEmpresa(borme(503), 'talleres ejemplo', 'gipuzkoa', 3, '2026-11-22'),
-    ).rejects.toThrow('La fuente respondió 503.');
+  it('gives the mix of the system asked for, its renewable share, and refuses today', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-22T13:30:00+01:00'));
+    try {
+      const dia = (value: number) => [{ value, datetime: '2026-11-21T00:00:00.000+01:00' }];
+      // Canarias el 21 de noviembre de 2026, recortado a tres tecnologías.
+      const fetchImpl = vi.fn<typeof fetch>(async (url) =>
+        (url instanceof Request ? url.url : url.toString()).includes('demanda')
+          ? respuesta(serie('10297', 'Demanda', dia(13849.21)))
+          : respuesta(
+              serie('1454', 'Ciclo combinado', dia(11821.24), 'No-Renovable'),
+              serie('10291', 'Eólica', dia(1152.64), 'Renovable'),
+              serie('1458', 'Solar fotovoltaica', dia(875.33), 'Renovable'),
+              serie('10296', 'Generación total', dia(13849.21), 'total'),
+            ),
+      );
+      const r = await generacion(fetchImpl, '2026-11-21', '2026-11-21', 'dia', 'canarias');
+      expect(fetchImpl).toHaveBeenCalledWith(
+        // Ayer aún puede cambiar: la URL cambia cada dos horas para no recibir la copia guardada.
+        'https://apidatos.ree.es/es/datos/generacion/estructura-generacion?start_date=2026-11-21T00:00&end_date=2026-11-21T23:51&time_trunc=day&geo_trunc=electric_system&geo_limit=canarias&geo_ids=8742',
+        expect.anything(),
+      );
+      expect(r).toMatchObject({
+        generacion_mwh: 13849.2,
+        renovable_pct: 14.6,
+        demanda_mwh: 13849.2,
+      });
+      expect(r.tecnologias[0]).toEqual({
+        tecnologia: 'Ciclo combinado',
+        renovable: false,
+        mwh: 11821.2,
+        pct: 85.4,
+      });
+      await expect(
+        generacion(fetchImpl, '2026-11-22', '2026-11-22', 'dia', 'nacional'),
+      ).rejects.toThrow('Pide hasta ayer (2026-11-21)');
+      // Un día pedido que no llega es un hueco, no un total más bajo.
+      await expect(
+        generacion(fetchImpl, '2026-11-20', '2026-11-21', 'dia', 'nacional'),
+      ).rejects.toThrow('de 1 de los 2 periodos');
+      await expect(
+        generacion(fetchImpl, '2026-10-01', '2026-11-05', 'dia', 'nacional'),
+      ).rejects.toThrow('el máximo es 31');
+      // Un año por meses se pide de trimestre en trimestre y vuelve como una sola serie.
+      const porTrimestre = vi.fn<typeof fetch>(async (url) => {
+        const path = url instanceof Request ? url.url : url.toString();
+        const [, d, h] = /start_date=(\d{4}-\d{2})-\d{2}.*end_date=(\d{4}-\d{2})/.exec(path)!;
+        const mesesDel = Number(h!.slice(5)) - Number(d!.slice(5)) + 1;
+        const vals = (v: number) =>
+          Array.from({ length: mesesDel }, (_, i) => ({
+            value: v,
+            datetime: `2025-${String(Number(d!.slice(5)) + i).padStart(2, '0')}-01T00:00:00.000+01:00`,
+          }));
+        return path.includes('demanda')
+          ? respuesta(serie('10297', 'Demanda', vals(90)))
+          : respuesta(
+              serie('10291', 'Eólica', vals(60), 'Renovable'),
+              serie('1454', 'Ciclo combinado', vals(40), 'No-Renovable'),
+              serie('10296', 'Generación total', vals(100), 'total'),
+            );
+      });
+      const anual = await generacion(porTrimestre, '2025-01-01', '2025-12-31', 'mes', 'nacional');
+      expect(porTrimestre).toHaveBeenCalledTimes(8);
+      expect(anual).toMatchObject({ generacion_mwh: 1200, renovable_pct: 60, demanda_mwh: 1080 });
+      // Sin la eólica, las tecnologías no suman el total: no se da un % renovable más bajo.
+      const sinEolica = vi.fn<typeof fetch>(async (url) =>
+        (url instanceof Request ? url.url : url.toString()).includes('demanda')
+          ? respuesta(serie('10297', 'Demanda', dia(13849.21)))
+          : respuesta(
+              serie('1454', 'Ciclo combinado', dia(11821.24), 'No-Renovable'),
+              serie('1458', 'Solar fotovoltaica', dia(875.33), 'Renovable'),
+              serie('10296', 'Generación total', dia(13849.21), 'total'),
+            ),
+      );
+      await expect(
+        generacion(sinEolica, '2026-11-21', '2026-11-21', 'dia', 'canarias'),
+      ).rejects.toThrow('no suma su generación total');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

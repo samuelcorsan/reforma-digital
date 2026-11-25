@@ -11,6 +11,6 @@
   "dependencies": {
     "@reforma-digital/mcp": "workspace:*",
     "@reforma-digital/renfe": "workspace:*",
-    "zod": "^4.1.0"
+    "zod": "catalog:"
   }
 }

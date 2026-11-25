@@ -116,9 +116,6 @@ function guide(list: McpServer[]) {
     json('mcpServers', (_, url) => ({ command: 'npx', args: ['-y', 'mcp-remote', url] })),
     '### Claude.ai y ChatGPT (web)',
     `No se configuran desde el chat: la persona tiene que añadir ${one ? 'la URL' : 'cada URL'} como conector personalizado, sin autenticación. Díselo y dale ${one ? 'la URL' : 'las URL'}.`,
-    // Por Instinct, que no admite conectores MCP y no edita su configuración por lo que diga una web.
-    '### Agentes sin MCP',
-    `Si el cliente no admite servidores MCP, no hace falta conectar nada: cada herramienta también se lee con un GET a \`<URL del servidor>/<herramienta>?parámetro=valor\`, que responde el mismo texto que la herramienta. ${one ? 'La URL de cada herramienta está en su sección.' : 'La URL de cada herramienta está en la ficha de su servidor.'}`,
     '## 2. Comprueba que funciona',
     [
       '1. Recarga la lista de servidores del cliente; si no aparecen, pide permiso para reiniciarlo.',
@@ -126,10 +123,7 @@ function guide(list: McpServer[]) {
       `3. Llama a una de solo lectura: ${check}.`,
     ].join('\n'),
     '## Al terminar',
-    // Instinct, sin esta indicación, cerraba contando «la pega»: que no admite MCP como Claude Code
-    // o Cursor. Para la persona eso es ruido; lo que le importa es que ya puede preguntar.
-    'Si usas la vía sin MCP, para la persona ya está listo. Díselo con tus palabras, en un solo mensaje corto: que ya puedes consultar estos datos cuando te lo pida, qué cubren y alguna pregunta que podría hacerte. No le hables de MCP, de otros clientes ni de lo que tu cliente no admite.',
-    'Si has conectado por MCP, cuenta solo lo que hayas comprobado, así:',
+    'Cuenta solo lo que hayas comprobado, así:',
     fence(
       'text',
       [
@@ -141,16 +135,18 @@ function guide(list: McpServer[]) {
   );
 }
 
-function tools(server: McpServer) {
+/** Con `get`, la URL GET de cada herramienta, para instinct.md. */
+function tools(server: McpServer, get = false) {
   return server.tools
     .map((tool) =>
       lines(
         `### ${tool.title} (\`${tool.name}\`)`,
         tool.description,
-        `Sin MCP: \`GET ${endpoint(server.id)}/${tool.name}${tool.params
-          .filter((p) => p.required)
-          .map((p, i) => `${i === 0 ? '?' : '&'}${p.name}=<${p.name}>`)
-          .join('')}\``,
+        get &&
+          `\`GET ${endpoint(server.id)}/${tool.name}${tool.params
+            .filter((p) => p.required)
+            .map((p, i) => `${i === 0 ? '?' : '&'}${p.name}=<${p.name}>`)
+            .join('')}\``,
         tool.params.length > 0 &&
           tool.params
             .map(
@@ -190,8 +186,38 @@ export async function mcpMarkdown() {
     '## Más',
     [
       `- La API REST de los mismos datos: ${markdownUrl('/developers/api')}`,
+      `- Las mismas herramientas como URL, para Instinct: ${markdownUrl('/developers/instinct')}`,
       `- La biblioteca en la web: ${page('/developers/mcp')}`,
     ].join('\n'),
+  );
+}
+
+/**
+ * Las herramientas de todos los servidores como URL GET. Existe por Instinct, que no admite
+ * conectores MCP y no sigue instrucciones de una web: la página solo describe, sin órdenes al
+ * asistente, y es la persona quien le pide usarla.
+ */
+export async function instinctMarkdown() {
+  const all = await servers();
+  return lines(
+    frontmatter({
+      name: 'reforma-digital-instinct',
+      title: 'Reforma Digital para Instinct',
+      description: 'Los datos públicos de Reforma Digital como URL de solo lectura.',
+      url: markdownUrl('/developers/instinct'),
+    }),
+    '# Reforma Digital para Instinct',
+    'Instinct no admite conectores MCP, así que esta página reúne las herramientas de los servidores MCP de Reforma Digital como URL que se leen con un GET. Reforma Digital es un proyecto cívico independiente, no un servicio del Gobierno. Los datos son públicos, de solo lectura y sin clave.',
+    'Cada URL lleva los parámetros en la query (`?parámetro=valor`, con el valor codificado; los sí/no como `true` o `false`, y los objetos y las listas en JSON) y responde en texto plano lo mismo que la herramienta, con la fuente al final. Si la herramienta da un error, responde 422 con el motivo; si no existe, 404.',
+    ...all.map((s) =>
+      lines(
+        `## ${s.name}`,
+        s.summary,
+        tools(s, true),
+        s.examples.length > 0 &&
+          `Preguntas que responde: ${s.examples.map((e) => `«${e}»`).join(' ')}`,
+      ),
+    ),
   );
 }
 

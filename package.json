@@ -45,15 +45,15 @@
   },
   "dependencies": {
     "@reforma-digital/design": "workspace:*",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
     "@types/chrome": "0.2.9",
     "@types/node": "26.5.0",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.7",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "6.1.1",
     "jsdom": "30.0.1",
     "knip": "6.45.1",
