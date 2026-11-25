@@ -675,7 +675,8 @@ export function InterviewPlayer({
                     setClosed(true);
                     pause();
                   }}
-                  className="absolute top-2 right-2 rounded-full"
+                  shape="pill"
+                  className="absolute top-2 right-2"
                 >
                   <Icon name="nunca" size={14} />
                 </Button>
@@ -1264,7 +1265,7 @@ export function InterviewPlayer({
             onClick={() => seek(time - 10)}
             aria-label="10 segundos atrás"
             tabIndex={inView ? 0 : -1}
-            className="max-sm:px-1.5"
+            className="max-sm:-mx-1"
           >
             −10 s
           </Button>
@@ -1277,7 +1278,8 @@ export function InterviewPlayer({
             }}
             aria-label={playing ? 'Pausa' : 'Reproducir'}
             tabIndex={inView ? 0 : -1}
-            className="shrink-0 rounded-full"
+            shape="pill"
+            className="shrink-0"
           >
             <Icon name={playing ? 'pausa' : 'reproducir'} size={16} />
           </Button>
@@ -1287,7 +1289,7 @@ export function InterviewPlayer({
             onClick={() => seek(time + 10)}
             aria-label="10 segundos adelante"
             tabIndex={inView ? 0 : -1}
-            className="max-sm:px-1.5"
+            className="max-sm:-mx-1"
           >
             +10 s
           </Button>
@@ -1325,7 +1327,8 @@ export function InterviewPlayer({
               ).map(([icon, name, on, off, flip]) => (
                 <Button
                   key={icon}
-                  variant="ghost"
+                  variant="quiet"
+                  shape="pill"
                   size="icon"
                   aria-label={name}
                   aria-pressed={on}
@@ -1333,15 +1336,11 @@ export function InterviewPlayer({
                   disabled={off}
                   tabIndex={inView ? 0 : -1}
                   onClick={flip}
-                  className={cn(
-                    'relative rounded-full',
-                    // Apagado: el icono tachado.
-                    on
-                      ? 'bg-muted text-foreground'
-                      : "text-muted-foreground after:absolute after:h-0.5 after:w-5 after:rotate-45 after:rounded-full after:bg-current after:content-['']",
-                  )}
+                  className="relative"
                 >
                   <Icon name={icon} size={16} />
+                  {/* Apagado: el icono tachado. */}
+                  {!on && <span className="absolute h-0.5 w-5 rotate-45 rounded-full bg-current" />}
                 </Button>
               ))}
             </span>
@@ -1349,7 +1348,8 @@ export function InterviewPlayer({
           <Button
             variant="outline"
             size="sm"
-            className="shrink-0 rounded-full max-sm:hidden"
+            shape="pill"
+            className="shrink-0 max-sm:hidden"
             tabIndex={inView ? 0 : -1}
             onClick={() => root.current?.scrollIntoView({ block: 'start' })}
           >

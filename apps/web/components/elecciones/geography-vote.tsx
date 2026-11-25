@@ -32,8 +32,6 @@ const people = (n: number) =>
   n >= 1e6 ? `${millions(n)} de habitantes` : `${thousands(n)} habitantes`;
 const signed = (n: number) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${percent(Math.abs(n), 0)}`;
 const others = '#8A8F98';
-// Los botones de elegir: el estado lo marca `VoteStory` con `aria-pressed`.
-const pressed = 'aria-pressed:bg-foreground aria-pressed:text-background';
 // El tono de cada eje en el mapa.
 const tones: Record<Axis, string> = {
   ciudad: '#4F7AA6',
@@ -298,10 +296,10 @@ export async function GeographyVote() {
             {percent(popOf(smallList) / total, 1)} de la población.
           </p>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Tamaño de los puntos">
-            <Button variant="outline" size="sm" data-size="mun" className={pressed}>
+            <Button variant="toggle" size="sm" data-size="mun">
               Por municipio
             </Button>
-            <Button variant="outline" size="sm" data-size="pob" className={pressed}>
+            <Button variant="toggle" size="sm" data-size="pob">
               Por habitantes
             </Button>
           </div>
@@ -495,13 +493,7 @@ export async function GeographyVote() {
           </p>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Territorio">
             {spainList.map((s) => (
-              <Button
-                key={s.key}
-                variant="outline"
-                size="sm"
-                data-spain={s.key}
-                className={pressed}
-              >
+              <Button key={s.key} variant="toggle" size="sm" data-spain={s.key}>
                 {s.title}
               </Button>
             ))}
