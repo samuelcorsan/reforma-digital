@@ -66,7 +66,6 @@ export function SeatsMap({
     <Tabs
       value={hemicycle ? 'hemiciclo' : 'mapa'}
       onValueChange={(value) => setHemicycle(value === 'hemiciclo')}
-      className="gap-4"
     >
       <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
         <div className="grid max-w-72 gap-2">

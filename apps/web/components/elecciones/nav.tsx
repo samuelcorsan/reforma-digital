@@ -37,10 +37,10 @@ export function ElectionsFrame({
   const previous = i > 0 ? electionOrder[i - 1] : undefined;
   const next = electionOrder[i + 1];
   return (
-    <SidebarProvider className="block min-h-0 min-[1100px]:grid min-[1100px]:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] min-[1100px]:items-start min-[1100px]:gap-x-10">
+    <SidebarProvider className="block min-h-0 min-[1100px]:grid min-[1100px]:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] min-[1100px]:items-start">
       <Sidebar
         collapsible="none"
-        className="sticky top-24 hidden max-h-[calc(100dvh-112px)] bg-transparent min-[1100px]:flex"
+        className="sticky top-24 hidden max-h-[calc(100dvh-112px)] min-[1100px]:flex"
       >
         <SidebarContent>
           <nav aria-label="Apartados de las elecciones">
@@ -48,7 +48,7 @@ export function ElectionsFrame({
           </nav>
         </SidebarContent>
       </Sidebar>
-      <div className="min-w-0">
+      <div className="min-w-0 min-[1100px]:ml-10">
         <Collapsible className="mb-8 rounded-xl ring-1 ring-border min-[1100px]:hidden">
           <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-3 px-4 text-left text-15 font-medium">
             <span className="flex items-center gap-3">

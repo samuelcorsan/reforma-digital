@@ -4,7 +4,7 @@ import { CopyButton } from './copy-button';
 
 export type Sample = { label: string; lang: BundledLanguage | 'text'; code: string };
 
-const frame = 'my-4 overflow-hidden rounded-2xl bg-foreground text-background';
+const frame = 'overflow-hidden rounded-2xl bg-foreground text-background';
 const bar =
   'border-b border-background/15 px-4 font-mono text-xs uppercase tracking-wider text-background/70';
 
@@ -36,27 +36,26 @@ export function CodeBlock({ samples }: { samples: Sample[] }) {
   const [first] = samples;
   if (samples.length === 1 && first)
     return (
-      <figure className={frame}>
+      <figure className={`my-4 ${frame}`}>
         <figcaption className={`${bar} py-3`}>{first.label}</figcaption>
         <Code {...first} />
       </figure>
     );
   return (
-    <Tabs defaultValue={first?.label} className={`${frame} gap-0`}>
-      <TabsList variant="line" className={`${bar} h-auto w-full justify-start gap-4 py-0`}>
+    // Las pestañas van fuera del marco en tinta: sobre él no se leerían sin retocarlas.
+    <Tabs defaultValue={first?.label} className="my-4">
+      <TabsList variant="line">
         {samples.map(({ label }) => (
-          <TabsTrigger
-            key={label}
-            value={label}
-            className="flex-none px-0 py-3 text-xs text-background/60 after:bg-background hover:text-background data-active:text-background"
-          >
+          <TabsTrigger key={label} value={label}>
             {label}
           </TabsTrigger>
         ))}
       </TabsList>
       {samples.map((sample) => (
         <TabsContent key={sample.label} value={sample.label}>
-          <Code {...sample} />
+          <div className={frame}>
+            <Code {...sample} />
+          </div>
         </TabsContent>
       ))}
     </Tabs>

@@ -34,17 +34,6 @@ const slopSelectors = [
   },
 ];
 
-const restyleAllow = ['layout', 'gap-*', 'font-sans', 'font-mono', 'tabular-nums'];
-const restyleAny = [
-  ...restyleAllow,
-  'spacing',
-  'typography',
-  'color',
-  'shape',
-  'effects',
-  'motion',
-];
-
 export default defineConfig({
   plugins: ['eslint', 'typescript', 'unicorn', 'react'],
   // Enable only the reviewed rules; do not inherit the full correctness or anti-slop presets.
@@ -116,31 +105,17 @@ export default defineConfig({
     'shadcn/no-arbitrary-values': ['error', { allow: ['layout', 'transition'] }],
     'shadcn/no-inline-styles': 'error',
     'shadcn/require-static-classes': 'error',
-    // Uses compose primitives: where they go, the gap between their children and numeric type.
-    // Colours, radii and sizes belong to the primitive's variants (DESIGN.md §8.5).
+    // A use places a primitive; how it looks belongs to its variants (DESIGN.md §8.5).
     'shadcn/no-restyle': [
       'error',
       {
-        allow: restyleAllow,
+        allow: ['layout'],
         contracts: [
           // Collapsible ships unstyled: each use dresses its own trigger and panel.
-          { pattern: '^Collapsible', allow: restyleAny },
-          // A grid of options with no surface of its own.
-          { pattern: '^RadioGroup$', allow: [...restyleAllow, 'spacing'] },
-          // Cells hold content: each table sets its density, its type and a muted tone, and may
-          // drop the rules between rows.
           {
-            pattern: '^Table',
-            allow: [...restyleAllow, 'spacing', 'typography', 'text-muted-foreground', 'border-0'],
+            pattern: '^Collapsible',
+            allow: ['layout', 'spacing', 'typography', 'color', 'shape', 'effects', 'motion'],
           },
-          // The sidebar is a frame: each use sets its density and type, and may drop its
-          // surface and the rule beside a submenu.
-          {
-            pattern: '^Sidebar',
-            allow: [...restyleAllow, 'spacing', 'typography', 'bg-transparent', 'border-0'],
-          },
-          // Not migrated yet. Empty this list one family per PR; never add to it.
-          { pattern: '^Card', allow: restyleAny },
         ],
       },
     ],
@@ -159,23 +134,6 @@ export default defineConfig({
       // The lab form imitates an official portal, whose class names are not Tailwind's.
       files: ['apps/playground/src/main.tsx'],
       rules: { 'shadcn/no-unknown-classes': 'off', 'shadcn/no-restyle': 'off' },
-    },
-    {
-      // One-off surfaces, each a single use: the full-screen menu on the sun gradient, the pill
-      // that asks the MCP library and the code samples on ink. A variant would have one consumer.
-      files: [
-        'apps/web/components/brand/mobile-menu.tsx',
-        'apps/web/components/mcp/preguntar.tsx',
-        'apps/web/components/code-block.tsx',
-      ],
-      rules: { 'shadcn/no-restyle': 'off' },
-    },
-    {
-      // The header, a one-off: its glass pills (links and the menu trigger) share one string
-      // built on buttonVariants(), which the linter cannot read across files, and its menu panel
-      // sets its own padding and radius.
-      files: ['apps/web/components/brand/header.tsx'],
-      rules: { 'shadcn/no-restyle': 'off', 'shadcn/require-static-classes': 'off' },
     },
     {
       // Existing debt: these files predate the limit. Split them before adding to them; never add to this list.

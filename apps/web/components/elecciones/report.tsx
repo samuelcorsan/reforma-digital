@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { buttonVariants } from '@reforma-digital/design/ui/button';
-import { Card } from '@reforma-digital/design/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@reforma-digital/design/ui/card';
 import { Icon } from '../brand/icon';
 
 // Piezas del informe visual de /elecciones: tarjetas separadas, cifras con su explicación y
@@ -32,15 +32,17 @@ export function Cell({
   children: ReactNode;
 }) {
   return (
-    <Card
-      className={cn(
-        'col-span-12 min-w-0 gap-6 p-6 text-base md:col-span-(--span) lg:p-8 max-sm:p-5',
-        className,
+    // `relative`: un enlace del contenido puede extenderse a toda la tarjeta (`after:inset-0`).
+    <Card className="relative col-span-12 min-w-0 md:col-span-(--span)" style={{ '--span': span }}>
+      {label && (
+        <CardHeader>
+          <CardTitle>{label}</CardTitle>
+        </CardHeader>
       )}
-      style={{ '--span': span }}
-    >
-      {label && <Label>{label}</Label>}
-      {children}
+      {/* El contenido es de quien usa la celda: `className` lo coloca, no viste la tarjeta. */}
+      <CardContent className="flex grow flex-col">
+        <div className={cn('flex grow flex-col gap-6', className)}>{children}</div>
+      </CardContent>
     </Card>
   );
 }
@@ -177,13 +179,15 @@ export function PageCard({
   return (
     <Card
       render={<Link href={href} />}
-      className="col-span-12 row-span-4 grid min-w-0 grid-rows-subgrid gap-4 p-6 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 md:col-span-(--span) lg:p-8 max-sm:p-5"
+      className="col-span-12 row-span-4 grid min-w-0 grid-rows-subgrid md:col-span-(--span)"
       style={{ '--span': span }}
     >
-      <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{title}</h3>
-      <p className="m-0 max-w-[48ch] leading-snug text-muted-foreground">{text}</p>
-      <div className="grid content-start gap-4">{children}</div>
-      <CardCta>{cta}</CardCta>
+      <CardContent className="row-span-4 grid grid-rows-subgrid">
+        <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{title}</h3>
+        <p className="m-0 max-w-[48ch] leading-snug text-muted-foreground">{text}</p>
+        <div className="grid content-start gap-4">{children}</div>
+        <CardCta>{cta}</CardCta>
+      </CardContent>
     </Card>
   );
 }
@@ -277,21 +281,22 @@ export function ReportIntro({ title, children }: { title: string; children?: Rea
 
 export function ReportStats({ items }: { items: [number | string, string][] }) {
   return (
-    <dl className="mb-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,190px),1fr))] gap-4">
+    <div className="mb-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,190px),1fr))] gap-4">
       {items.map(([value, label]) => (
-        <Card
-          key={label}
-          className="flex-col-reverse justify-end gap-2 bg-muted p-6 ring-0 max-sm:p-5"
-        >
-          <dt className="text-base leading-snug text-(--text-secondary)">{label}</dt>
-          <dd className="m-0 font-heading text-40 leading-none tabular-nums">
-            {typeof value === 'number'
-              ? String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-              : value}
-          </dd>
+        <Card key={label}>
+          <CardContent>
+            <dl className="m-0 flex flex-col-reverse justify-end gap-2">
+              <dt className="text-base leading-snug text-(--text-secondary)">{label}</dt>
+              <dd className="m-0 font-heading text-40 leading-none tabular-nums">
+                {typeof value === 'number'
+                  ? String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+                  : value}
+              </dd>
+            </dl>
+          </CardContent>
         </Card>
       ))}
-    </dl>
+    </div>
   );
 }
 

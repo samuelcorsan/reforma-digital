@@ -205,12 +205,8 @@ export async function Election({ id }: { id: string }) {
                         {siglas}
                       </span>
                     </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {thousands(v)}
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {percent(v / e.validos)}
-                    </TableCell>
+                    <TableCell className="text-right">{thousands(v)}</TableCell>
+                    <TableCell className="text-right">{percent(v / e.validos)}</TableCell>
                     <TableCell>
                       <span className="block h-2.5 rounded-full bg-muted">
                         <i
@@ -222,12 +218,10 @@ export async function Election({ id }: { id: string }) {
                         />
                       </span>
                     </TableCell>
-                    <TableCell className="text-right font-mono font-medium tabular-nums">
-                      {s}
-                    </TableCell>
+                    <TableCell className="text-right">{s}</TableCell>
                     {previous && (
                       <TableCell
-                        className="text-right font-mono tabular-nums"
+                        className="text-right"
                         title={
                           then
                             ? undefined

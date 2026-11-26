@@ -3,18 +3,13 @@
 import * as React from 'react';
 import { cn } from '../lib/utils';
 
-// `interactive={false}`: una tabla que solo se lee, sin resalte al pasar por las filas.
-function Table({
-  className,
-  interactive = true,
-  ...props
-}: React.ComponentProps<'table'> & { interactive?: boolean }) {
+function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
     <div data-slot="table-container" className="relative w-full overflow-x-auto">
       <table
         data-slot="table"
-        data-interactive={interactive}
-        className={cn('group/table w-full caption-bottom text-sm', className)}
+        // Respecto a shadcn: `tabular-nums`, porque casi todas las tablas son de cifras.
+        className={cn('w-full caption-bottom text-sm tabular-nums', className)}
         {...props}
       />
     </div>
@@ -50,7 +45,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
     <tr
       data-slot="table-row"
       className={cn(
-        'border-b transition-colors hover:bg-muted/50 group-data-[interactive=false]/table:hover:bg-transparent has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted',
+        'border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted',
         className,
       )}
       {...props}

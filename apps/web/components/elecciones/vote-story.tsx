@@ -2,9 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { z } from 'zod';
-import { cn } from '@reforma-digital/design/lib/utils';
 import { Button } from '@reforma-digital/design/ui/button';
-import { Card } from '@reforma-digital/design/ui/card';
+import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import {
   mapSchema,
   municipalitiesSchema,
@@ -249,13 +248,10 @@ export function VoteStory({
         <div className="order-2 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-40vh pb-30vh lg:order-1">
           {steps.map((s, i) => (
             <section key={s.id} data-step={i} className="scroll-mt-28">
-              <Card
-                className={cn(
-                  'gap-4 p-6 text-base transition-shadow lg:p-8',
-                  i === active && 'ring-foreground/30',
-                )}
-              >
-                {card(s)}
+              <Card>
+                <CardContent>
+                  <div className="flex flex-col gap-4">{card(s)}</div>
+                </CardContent>
               </Card>
             </section>
           ))}

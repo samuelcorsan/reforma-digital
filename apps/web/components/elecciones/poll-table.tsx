@@ -120,14 +120,14 @@ export function PollTable({
                     </span>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">{field(p.start, p.end)}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">
+                  <TableCell className="text-right">
                     {p.sample === null ? '–' : thousands(p.sample)}
                   </TableCell>
                   {parties.map((x) => {
                     const v = p.votes[x.id];
                     const e = p.seats[x.id];
                     return (
-                      <TableCell key={x.id} className="text-right font-mono tabular-nums">
+                      <TableCell key={x.id} className="text-right">
                         {v === undefined ? (
                           '–'
                         ) : (

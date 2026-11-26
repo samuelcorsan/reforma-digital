@@ -34,7 +34,7 @@ export function MobileMenu({ links }: { links: readonly MenuLink[] }) {
         <SheetContent
           side="top"
           showCloseButton={false}
-          className="data-[side=top]:inset-2 data-[side=top]:h-[calc(100dvh-16px)] bg-(image:--menu-gradient) bg-brand-yellow p-0 text-foreground motion-reduce:transition-none"
+          className="data-[side=top]:inset-2 data-[side=top]:h-[calc(100dvh-16px)]"
         >
           <SheetTitle className="sr-only">Menú</SheetTitle>
           <div className="flex min-h-20 items-center justify-between px-(--page-gutter) py-4">

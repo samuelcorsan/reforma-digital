@@ -21,6 +21,7 @@ import {
 } from '@reforma-digital/design/ui/collapsible';
 import { Input } from '@reforma-digital/design/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
+import { Toggle } from '@reforma-digital/design/ui/toggle';
 import { minute } from '../../lib/elecciones/format';
 import type { Interview, Mark, Minute } from '../../lib/elecciones/interviews';
 import { Icon } from '../brand/icon';
@@ -675,7 +676,6 @@ export function InterviewPlayer({
                     setClosed(true);
                     pause();
                   }}
-                  shape="pill"
                   className="absolute top-2 right-2"
                 >
                   <Icon name="nunca" size={14} />
@@ -792,12 +792,12 @@ export function InterviewPlayer({
       </div>
 
       <div className="col-span-12 grid rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-5 lg:p-8 max-sm:p-5">
-        <Tabs defaultValue="transcripcion" className="gap-4">
+        <Tabs defaultValue="transcripcion">
           <TabsList aria-label="Qué ver">
             <TabsTrigger value="transcripcion">Transcripción</TabsTrigger>
             <TabsTrigger value="momentos">Momentos ({marks.length})</TabsTrigger>
           </TabsList>
-          <TabsContent value="transcripcion" className="grid gap-3">
+          <TabsContent value="transcripcion" className="grid">
             <Input
               type="search"
               aria-label="Buscar en la transcripción"
@@ -1273,7 +1273,6 @@ export function InterviewPlayer({
             }}
             aria-label={playing ? 'Pausa' : 'Reproducir'}
             tabIndex={inView ? 0 : -1}
-            shape="pill"
             className="shrink-0"
           >
             <Icon name={playing ? 'pausa' : 'reproducir'} size={16} />
@@ -1320,30 +1319,26 @@ export function InterviewPlayer({
                   ],
                 ] as const
               ).map(([icon, name, on, off, flip]) => (
-                <Button
+                <Toggle
                   key={icon}
-                  variant="quiet"
-                  shape="pill"
-                  size="icon"
                   aria-label={name}
-                  aria-pressed={on}
+                  pressed={on}
                   title={`${name}: ${on ? 'activado' : 'desactivado'}`}
                   disabled={off}
                   tabIndex={inView ? 0 : -1}
-                  onClick={flip}
+                  onPressedChange={flip}
                   className="relative"
                 >
                   <Icon name={icon} size={16} />
                   {/* Apagado: el icono tachado. */}
                   {!on && <span className="absolute h-0.5 w-5 rotate-45 rounded-full bg-current" />}
-                </Button>
+                </Toggle>
               ))}
             </span>
           )}
           <Button
             variant="outline"
             size="sm"
-            shape="pill"
             className="shrink-0 max-sm:hidden"
             tabIndex={inView ? 0 : -1}
             onClick={() => root.current?.scrollIntoView({ block: 'start' })}
