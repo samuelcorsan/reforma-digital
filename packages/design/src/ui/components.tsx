@@ -3,7 +3,7 @@ import { cn } from '../../lib/utils';
 import { Input } from '../../ui/input';
 import { Button } from '../../ui/button';
 import { Badge } from '../../ui/badge';
-import { Card } from '../../ui/card';
+import { Card, CardContent } from '../../ui/card';
 import { useId, type ReactNode } from 'react';
 
 /**
@@ -134,19 +134,23 @@ export function Panel({
 }) {
   const titleId = useId();
   return (
-    <Card render={<section />} aria-labelledby={titleId} className="my-4 p-4 sm:p-6">
-      {/* h2 en el HTML (la web oficial ya tiene su h1); tamaño visual de h1. */}
-      <h2
-        id={titleId}
-        className={
-          'text-28 leading-1.2 font-medium text-ink tracking-titular [@media(max-width:_639px)]:text-2xl'
-        }
-      >
-        {title}
-      </h2>
-      {lead && <div className={'text-17 leading-1.6 text-ink-muted mt-2 max-w-[70ch]'}>{lead}</div>}
-      {progress}
-      <div className="mt-6 space-y-6">{children}</div>
+    <Card render={<section />} aria-labelledby={titleId} className="my-4">
+      <CardContent>
+        {/* h2 en el HTML (la web oficial ya tiene su h1); tamaño visual de h1. */}
+        <h2
+          id={titleId}
+          className={
+            'text-28 leading-1.2 font-medium text-ink tracking-titular [@media(max-width:_639px)]:text-2xl'
+          }
+        >
+          {title}
+        </h2>
+        {lead && (
+          <div className={'text-17 leading-1.6 text-ink-muted mt-2 max-w-[70ch]'}>{lead}</div>
+        )}
+        {progress}
+        <div className="mt-6 space-y-6">{children}</div>
+      </CardContent>
     </Card>
   );
 }

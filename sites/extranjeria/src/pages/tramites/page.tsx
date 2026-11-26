@@ -195,7 +195,6 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
           placeholder="Ej.: huellas, NIE, certificado, arraigo…"
         />
         <RadioGroup
-          className="space-y-5 pt-1"
           name="bg-tramite"
           value={selected ? `${selected.index}:${selected.field.value}` : ''}
           onValueChange={(value) => {

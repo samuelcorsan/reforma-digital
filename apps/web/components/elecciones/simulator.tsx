@@ -575,7 +575,7 @@ export function ProvinceSelect({
     .map((p) => ({ value: p.code, label: p.name }));
   return (
     <Select value={value} onValueChange={onChange} items={items}>
-      <SelectTrigger aria-label="Provincia" className="w-full max-w-xs font-sans">
+      <SelectTrigger aria-label="Provincia" className="w-full max-w-xs">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

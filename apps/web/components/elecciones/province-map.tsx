@@ -300,7 +300,7 @@ export function ProvinceMap({
           <Tabs value={mode} onValueChange={(v) => isMode(v) && setMode(v)}>
             <TabsList aria-label="Qué se pinta">
               {modes.map(([m, text]) => (
-                <TabsTrigger key={m} value={m} className="px-3">
+                <TabsTrigger key={m} value={m}>
                   {text}
                 </TabsTrigger>
               ))}

@@ -241,15 +241,9 @@ function Calendar({
         <div className="max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <Tabs value={mode} onValueChange={(value) => isMode(value) && setMode(value)}>
             <TabsList aria-label="Dato representado">
-              <TabsTrigger value="votes" className="px-3">
-                Votaciones
-              </TabsTrigger>
-              <TabsTrigger value="laws" className="px-3">
-                Leyes y decretos-leyes
-              </TabsTrigger>
-              <TabsTrigger value="questions" className="px-3">
-                Preguntas registradas
-              </TabsTrigger>
+              <TabsTrigger value="votes">Votaciones</TabsTrigger>
+              <TabsTrigger value="laws">Leyes y decretos-leyes</TabsTrigger>
+              <TabsTrigger value="questions">Preguntas registradas</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>

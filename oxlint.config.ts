@@ -34,17 +34,6 @@ const slopSelectors = [
   },
 ];
 
-const restyleAllow = ['layout', 'gap-*', 'font-sans', 'font-mono', 'tabular-nums'];
-const restyleAny = [
-  ...restyleAllow,
-  'spacing',
-  'typography',
-  'color',
-  'shape',
-  'effects',
-  'motion',
-];
-
 export default defineConfig({
   plugins: ['eslint', 'typescript', 'unicorn', 'react'],
   // Enable only the reviewed rules; do not inherit the full correctness or anti-slop presets.
@@ -115,19 +104,18 @@ export default defineConfig({
     // `transition`: a list of properties to animate is not a design value.
     'shadcn/no-arbitrary-values': ['error', { allow: ['layout', 'transition'] }],
     'shadcn/no-inline-styles': 'error',
-    // Uses compose primitives: where they go, the gap between their children and numeric type.
-    // Colours, radii and sizes belong to the primitive's variants (DESIGN.md §8.5).
+    'shadcn/require-static-classes': 'error',
+    // A use places a primitive; how it looks belongs to its variants (DESIGN.md §8.5).
     'shadcn/no-restyle': [
       'error',
       {
-        allow: restyleAllow,
+        allow: ['layout'],
         contracts: [
           // Collapsible ships unstyled: each use dresses its own trigger and panel.
-          { pattern: '^Collapsible', allow: restyleAny },
-          // A grid of options with no surface of its own.
-          { pattern: '^RadioGroup$', allow: [...restyleAllow, 'spacing'] },
-          // Not migrated yet. Empty this list one family per PR; never add to it.
-          { pattern: '^(Card|Table|Tabs|NavigationMenu|Sidebar)', allow: restyleAny },
+          {
+            pattern: '^Collapsible',
+            allow: ['layout', 'spacing', 'typography', 'color', 'shape', 'effects', 'motion'],
+          },
         ],
       },
     ],
@@ -136,18 +124,16 @@ export default defineConfig({
     {
       // Vendored shadcn primitives keep upstream's values.
       files: ['packages/design/ui/**'],
-      rules: { 'shadcn/no-arbitrary-values': 'off', 'shadcn/no-restyle': 'off' },
+      rules: {
+        'shadcn/no-arbitrary-values': 'off',
+        'shadcn/no-restyle': 'off',
+        'shadcn/require-static-classes': 'off',
+      },
     },
     {
       // The lab form imitates an official portal, whose class names are not Tailwind's.
       files: ['apps/playground/src/main.tsx'],
       rules: { 'shadcn/no-unknown-classes': 'off', 'shadcn/no-restyle': 'off' },
-    },
-    {
-      // One-off brand surfaces, each a single use: the full-screen menu on the sun gradient and
-      // the pill that asks the MCP library. A variant would have one consumer.
-      files: ['apps/web/components/brand/mobile-menu.tsx', 'apps/web/components/mcp/preguntar.tsx'],
-      rules: { 'shadcn/no-restyle': 'off' },
     },
     {
       // Existing debt: these files predate the limit. Split them before adding to them; never add to this list.

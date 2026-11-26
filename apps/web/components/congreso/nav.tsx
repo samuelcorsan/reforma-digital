@@ -76,9 +76,7 @@ export function CongressNav() {
               </span>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <Card render={<ul />} className={'bg-background ring-0 shadow-(--shadow-overlay)'}>
-                {links(section.pages)}
-              </Card>
+              <Card render={<ul />}>{links(section.pages)}</Card>
             </CollapsibleContent>
           </Collapsible>
         ))}

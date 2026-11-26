@@ -102,12 +102,8 @@ export function YourVote({
         </Heading>
         <Tabs value={mode} onValueChange={(value) => setMode(value === 'lost' ? 'lost' : 'price')}>
           <TabsList aria-label="Qué se pinta">
-            <TabsTrigger value="price" className="px-3">
-              Votos por escaño
-            </TabsTrigger>
-            <TabsTrigger value="lost" className="px-3">
-              Votos sin representación
-            </TabsTrigger>
+            <TabsTrigger value="price">Votos por escaño</TabsTrigger>
+            <TabsTrigger value="lost">Votos sin representación</TabsTrigger>
           </TabsList>
         </Tabs>
         <div

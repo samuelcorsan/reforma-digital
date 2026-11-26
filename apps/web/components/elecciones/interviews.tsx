@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { Badge } from '@reforma-digital/design/ui/badge';
 import { buttonVariants } from '@reforma-digital/design/ui/button';
-import { Card } from '@reforma-digital/design/ui/card';
+import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
@@ -202,8 +202,10 @@ function MarkLabel({
 
 export function Notice({ children }: { children: ReactNode }) {
   return (
-    <Card className="mb-8 bg-muted p-5 text-base ring-0" role="note">
-      <p className="m-0">{children}</p>
+    <Card className="mb-8" role="note">
+      <CardContent>
+        <p className="m-0">{children}</p>
+      </CardContent>
     </Card>
   );
 }
@@ -285,43 +287,43 @@ export function InterviewsHome() {
               <Card
                 key={c.slug}
                 render={latest ? <Link href={interviewsHref(latest.id)} /> : undefined}
-                className={cn(
-                  'group group/candidato col-span-6 gap-4 p-3 text-base no-underline outline-none md:col-span-3',
-                  latest &&
-                    'transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50',
-                )}
+                className="group group/candidato col-span-6 md:col-span-3"
               >
-                <div className="overflow-hidden rounded-xl">
-                  <Portrait
-                    candidate={c}
-                    sizes="(min-width: 768px) 360px, 60vw"
-                    hoverColor
-                    className="transition-transform duration-500 ease-(--ease-brand) motion-safe:group-hover:scale-[1.04]"
-                  />
-                </div>
-                <div className="grid gap-1 px-2 pb-2 max-sm:px-1">
-                  <h3 className="m-0 font-heading text-2xl leading-tight font-normal max-sm:text-xl">
-                    {c.name}
-                  </h3>
-                  <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
-                    <Dot color={c.color} />
-                    {c.party}
-                  </p>
-                  <p className="m-0 mt-2 flex items-center justify-between gap-2 text-sm">
-                    {latest
-                      ? `${decimal(latest.nota.global)} sobre 10${latest.pending ? ', provisional' : ''}`
-                      : next
-                        ? `Pendiente · ${shortDay(next.date)}`
-                        : cancelled
-                          ? `Cancelada · ${cancelled.title}`
-                          : 'Sin entrevistas'}
-                    {latest && (
-                      <span className="transition-transform duration-300 ease-(--ease-brand) motion-safe:group-hover:translate-x-1">
-                        <Icon name="derecha" size={16} />
-                      </span>
-                    )}
-                  </p>
-                </div>
+                <CardContent>
+                  <div className="overflow-hidden rounded-xl">
+                    <Portrait
+                      candidate={c}
+                      sizes="(min-width: 768px) 360px, 60vw"
+                      hoverColor
+                      className="transition-transform duration-500 ease-(--ease-brand) motion-safe:group-hover:scale-[1.04]"
+                    />
+                  </div>
+                </CardContent>
+                <CardContent className="grid">
+                  <div className="grid gap-1">
+                    <h3 className="m-0 font-heading text-2xl leading-tight font-normal max-sm:text-xl">
+                      {c.name}
+                    </h3>
+                    <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
+                      <Dot color={c.color} />
+                      {c.party}
+                    </p>
+                    <p className="m-0 mt-2 flex items-center justify-between gap-2 text-sm">
+                      {latest
+                        ? `${decimal(latest.nota.global)} sobre 10${latest.pending ? ', provisional' : ''}`
+                        : next
+                          ? `Pendiente · ${shortDay(next.date)}`
+                          : cancelled
+                            ? `Cancelada · ${cancelled.title}`
+                            : 'Sin entrevistas'}
+                      {latest && (
+                        <span className="transition-transform duration-300 ease-(--ease-brand) motion-safe:group-hover:translate-x-1">
+                          <Icon name="derecha" size={16} />
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </CardContent>
               </Card>
             );
           })}
@@ -371,10 +373,10 @@ function VerificationCard({
   const candidate = getCandidate(a.candidato);
   const color = verdicts[r.veredicto].color;
   return (
-    <Cell className="gap-0 overflow-hidden p-0 lg:p-0 max-sm:p-0">
+    <Cell className="gap-0">
       {/* La calificación, en una franja con su color: se distingue de un vistazo en la lista. */}
       <p
-        className="m-0 flex flex-wrap items-center gap-x-3 gap-y-2 px-6 py-3.5 max-sm:px-5 fondo-tinte-12"
+        className="m-0 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg px-3 py-3.5 fondo-tinte-12"
         style={{ '--tinte': color }}
       >
         <Verdict id={r.veredicto} />
@@ -383,7 +385,7 @@ function VerificationCard({
           <Jump interview={a} second={r.segundo} />
         </span>
       </p>
-      <div className="grid flex-1 content-start gap-4 p-6 max-sm:p-5">
+      <div className="grid flex-1 content-start gap-4 py-4">
         {named && (
           <div className="flex items-center gap-3">
             {candidate && (
@@ -422,7 +424,7 @@ function VerificationCard({
           </p>
         )}
       </div>
-      <div className="grid gap-3 border-t border-border px-6 py-4 max-sm:px-5">
+      <div className="grid gap-3 border-t border-border pt-4">
         <Sources items={r.fuentes} />
         <Link
           href={interviewsHref(`${a.id}/${r.id}`)}
@@ -798,7 +800,7 @@ function ReportSections({
                 </li>
               ))}
           </ul>
-          <Cell className="gap-0 py-2 lg:py-2">
+          <Cell className="gap-0">
             <ul className="m-0 grid list-none p-0">
               {questions.groups.map(([topic, list]) => (
                 <li key={topic} className="border-b border-border py-2 last:border-0">
@@ -1095,7 +1097,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
       </ul>
     </>
   );
-  const tile = 'gap-4 p-5 lg:p-6';
+  const tile = 'gap-4';
   const views = availableViews(a).filter((v) => v !== 'resumen');
   const blurb: Record<ReportView, string> = {
     resumen: '',

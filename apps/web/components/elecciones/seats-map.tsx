@@ -66,7 +66,6 @@ export function SeatsMap({
     <Tabs
       value={hemicycle ? 'hemiciclo' : 'mapa'}
       onValueChange={(value) => setHemicycle(value === 'hemiciclo')}
-      className="gap-4"
     >
       <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
         <div className="grid max-w-72 gap-2">
@@ -77,12 +76,8 @@ export function SeatsMap({
           <p className="m-0 text-sm text-muted-foreground">{note}</p>
         </div>
         <TabsList aria-label="Vista">
-          <TabsTrigger value="mapa" className="px-3">
-            Mapa
-          </TabsTrigger>
-          <TabsTrigger value="hemiciclo" className="px-3">
-            Hemiciclo
-          </TabsTrigger>
+          <TabsTrigger value="mapa">Mapa</TabsTrigger>
+          <TabsTrigger value="hemiciclo">Hemiciclo</TabsTrigger>
         </TabsList>
       </div>
       {/* Los escaños no entran en el orden de tabulación: cada diputado está en las listas de su provincia y de su grupo. */}

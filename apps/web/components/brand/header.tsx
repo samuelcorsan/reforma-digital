@@ -66,7 +66,7 @@ export function Header({ current }: { current?: string }) {
       <nav aria-label="Navegación principal">
         {links.map((link) =>
           link.children ? (
-            <Desarrolladores key={link.href} current={link.current} />
+            <Desarrolladores key={link.href} />
           ) : (
             <Link
               key={link.href}
@@ -117,21 +117,13 @@ const columnas = [
   },
 ];
 
-function Desarrolladores({ current }: { current: boolean }) {
+function Desarrolladores() {
   return (
     <NavigationMenu align="end" className="max-w-none flex-none">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger
-            className={cn(
-              pieza,
-              'gap-0.5 font-normal data-popup-open:bg-secondary/60 data-popup-open:inset-ring-40 data-popup-open:inset-ring-black/6',
-              current && 'inset-ring-40 inset-ring-black/6',
-            )}
-          >
-            Desarrolladores
-          </NavigationMenuTrigger>
-          <NavigationMenuContent className="p-0">
+          <NavigationMenuTrigger>Desarrolladores</NavigationMenuTrigger>
+          <NavigationMenuContent>
             <div className="grid w-[min(640px,calc(100vw-48px))] grid-cols-2 divide-x divide-border">
               {columnas.map(({ titulo, items }) => (
                 <div key={titulo} className="grid content-start gap-1 p-3">
@@ -140,7 +132,7 @@ function Desarrolladores({ current }: { current: boolean }) {
                     <NavigationMenuLink
                       key={item.href}
                       render={<Link href={item.href} />}
-                      className="flex-col items-start gap-0 rounded-xl px-3 py-2"
+                      className="flex-col items-start"
                     >
                       <span className="text-15 font-medium">{item.label}</span>
                       <span className="line-clamp-1 text-muted-foreground">{item.text}</span>

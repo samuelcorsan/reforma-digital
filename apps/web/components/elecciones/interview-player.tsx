@@ -21,6 +21,7 @@ import {
 } from '@reforma-digital/design/ui/collapsible';
 import { Input } from '@reforma-digital/design/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
+import { Toggle } from '@reforma-digital/design/ui/toggle';
 import { minute } from '../../lib/elecciones/format';
 import type { Interview, Mark, Minute } from '../../lib/elecciones/interviews';
 import { Icon } from '../brand/icon';
@@ -675,7 +676,6 @@ export function InterviewPlayer({
                     setClosed(true);
                     pause();
                   }}
-                  shape="pill"
                   className="absolute top-2 right-2"
                 >
                   <Icon name="nunca" size={14} />
@@ -791,78 +791,73 @@ export function InterviewPlayer({
         </div>
       </div>
 
-      <Tabs
-        defaultValue="transcripcion"
-        className="col-span-12 gap-4 rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-5 lg:p-8 max-sm:p-5"
-      >
-        <TabsList aria-label="Qué ver">
-          <TabsTrigger value="transcripcion" className="px-3">
-            Transcripción
-          </TabsTrigger>
-          <TabsTrigger value="momentos" className="px-3">
-            Momentos ({marks.length})
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="transcripcion" className="grid gap-3">
-          <Input
-            type="search"
-            aria-label="Buscar en la transcripción"
-            placeholder="Buscar en la transcripción: vivienda, Puente…"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-          {found && (
-            <p aria-live="polite" className="m-0 text-sm text-muted-foreground">
-              {found.length
-                ? `${found.length} ${found.length === 1 ? 'resultado' : 'resultados'}`
-                : 'Sin resultados en la transcripción'}
-            </p>
-          )}
-          <ol className="relative m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
-            {found
-              ? found.map((s) => (
-                  <li key={s.inicio}>
-                    <button
-                      type="button"
-                      onClick={() => seek(s.inicio)}
-                      className="grid w-full gap-1.5 rounded-lg p-3 text-left transition-colors hover:bg-background/60 motion-reduce:transition-none"
-                    >
-                      <span className="flex items-center gap-2 text-sm">
-                        <span className={cn(s.hablante === 'candidato' && 'font-medium')}>
-                          {speakers[s.hablante]}
+      <div className="col-span-12 grid rounded-xl p-6 ring-1 ring-foreground/10 lg:col-span-5 lg:p-8 max-sm:p-5">
+        <Tabs defaultValue="transcripcion">
+          <TabsList aria-label="Qué ver">
+            <TabsTrigger value="transcripcion">Transcripción</TabsTrigger>
+            <TabsTrigger value="momentos">Momentos ({marks.length})</TabsTrigger>
+          </TabsList>
+          <TabsContent value="transcripcion" className="grid">
+            <Input
+              type="search"
+              aria-label="Buscar en la transcripción"
+              placeholder="Buscar en la transcripción: vivienda, Puente…"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            {found && (
+              <p aria-live="polite" className="m-0 text-sm text-muted-foreground">
+                {found.length
+                  ? `${found.length} ${found.length === 1 ? 'resultado' : 'resultados'}`
+                  : 'Sin resultados en la transcripción'}
+              </p>
+            )}
+            <ol className="relative m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
+              {found
+                ? found.map((s) => (
+                    <li key={s.inicio}>
+                      <button
+                        type="button"
+                        onClick={() => seek(s.inicio)}
+                        className="grid w-full gap-1.5 rounded-lg p-3 text-left transition-colors hover:bg-background/60 motion-reduce:transition-none"
+                      >
+                        <span className="flex items-center gap-2 text-sm">
+                          <span className={cn(s.hablante === 'candidato' && 'font-medium')}>
+                            {speakers[s.hablante]}
+                          </span>
+                          <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                            {minute(s.inicio)}
+                          </span>
                         </span>
-                        <span className="font-mono text-xs text-muted-foreground tabular-nums">
-                          {minute(s.inicio)}
-                        </span>
-                      </span>
-                      <span className="leading-relaxed">{marked(s.texto)}</span>
-                    </button>
-                  </li>
-                ))
-              : transcript}
-          </ol>
-        </TabsContent>
-        <TabsContent value="momentos">
-          <ol className="m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
-            {marks.map((m) => (
-              <li key={m.id}>
-                <button
-                  type="button"
-                  onClick={() => pick(m)}
-                  className="grid w-full gap-1 rounded-lg p-3 text-left transition-colors hover:bg-background motion-reduce:transition-none"
-                >
-                  <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-                    <MarkIcon kind={m.kind} color={m.color} className="size-6" />
-                    {minute(m.second)} · {m.label}
-                  </span>
-                  <span>{m.text}</span>
-                  {m.detail && <span className="text-sm text-muted-foreground">{m.detail}</span>}
-                </button>
-              </li>
-            ))}
-          </ol>
-        </TabsContent>
-      </Tabs>
+                        <span className="leading-relaxed">{marked(s.texto)}</span>
+                      </button>
+                    </li>
+                  ))
+                : transcript}
+            </ol>
+          </TabsContent>
+          <TabsContent value="momentos">
+            <ol className="m-0 grid max-h-[520px] list-none gap-1 overflow-y-auto rounded-xl bg-muted p-2">
+              {marks.map((m) => (
+                <li key={m.id}>
+                  <button
+                    type="button"
+                    onClick={() => pick(m)}
+                    className="grid w-full gap-1 rounded-lg p-3 text-left transition-colors hover:bg-background motion-reduce:transition-none"
+                  >
+                    <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                      <MarkIcon kind={m.kind} color={m.color} className="size-6" />
+                      {minute(m.second)} · {m.label}
+                    </span>
+                    <span>{m.text}</span>
+                    {m.detail && <span className="text-sm text-muted-foreground">{m.detail}</span>}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </TabsContent>
+        </Tabs>
+      </div>
 
       <div className="col-span-12 grid gap-4 rounded-xl p-6 ring-1 ring-foreground/10 lg:p-8 max-sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -882,7 +877,7 @@ export function InterviewPlayer({
           >
             <TabsList aria-label="Zoom">
               {zooms.map(([value, name]) => (
-                <TabsTrigger key={name} value={String(value)} className="px-3">
+                <TabsTrigger key={name} value={String(value)}>
                   {name}
                 </TabsTrigger>
               ))}
@@ -1278,7 +1273,6 @@ export function InterviewPlayer({
             }}
             aria-label={playing ? 'Pausa' : 'Reproducir'}
             tabIndex={inView ? 0 : -1}
-            shape="pill"
             className="shrink-0"
           >
             <Icon name={playing ? 'pausa' : 'reproducir'} size={16} />
@@ -1325,30 +1319,26 @@ export function InterviewPlayer({
                   ],
                 ] as const
               ).map(([icon, name, on, off, flip]) => (
-                <Button
+                <Toggle
                   key={icon}
-                  variant="quiet"
-                  shape="pill"
-                  size="icon"
                   aria-label={name}
-                  aria-pressed={on}
+                  pressed={on}
                   title={`${name}: ${on ? 'activado' : 'desactivado'}`}
                   disabled={off}
                   tabIndex={inView ? 0 : -1}
-                  onClick={flip}
+                  onPressedChange={flip}
                   className="relative"
                 >
                   <Icon name={icon} size={16} />
                   {/* Apagado: el icono tachado. */}
                   {!on && <span className="absolute h-0.5 w-5 rotate-45 rounded-full bg-current" />}
-                </Button>
+                </Toggle>
               ))}
             </span>
           )}
           <Button
             variant="outline"
             size="sm"
-            shape="pill"
             className="shrink-0 max-sm:hidden"
             tabIndex={inView ? 0 : -1}
             onClick={() => root.current?.scrollIntoView({ block: 'start' })}

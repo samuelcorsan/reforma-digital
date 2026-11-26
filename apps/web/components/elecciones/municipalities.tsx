@@ -89,12 +89,10 @@ export async function Municipalities({ query, page }: { query: string; page: num
             <TableBody>
               {votes.rows.map(([code, name, row]) => (
                 <TableRow key={code}>
-                  <TableCell className="font-medium">{name}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">
-                    {percent(turnout(row) ?? 0)}
-                  </TableCell>
+                  <TableCell>{name}</TableCell>
+                  <TableCell className="text-right">{percent(turnout(row) ?? 0)}</TableCell>
                   {shown.map((g) => (
-                    <TableCell key={g.id} className="text-right font-mono tabular-nums">
+                    <TableCell key={g.id} className="text-right">
                       {percent(voteShare(row, votes.orden, g.families) ?? 0)}
                     </TableCell>
                   ))}
@@ -102,7 +100,7 @@ export async function Municipalities({ query, page }: { query: string; page: num
               ))}
               {!votes.rows.length && (
                 <TableRow>
-                  <TableCell colSpan={shown.length + 2} className="text-muted-foreground">
+                  <TableCell colSpan={shown.length + 2}>
                     Ningún municipio coincide con la búsqueda.
                   </TableCell>
                 </TableRow>

@@ -100,12 +100,7 @@ export function CompareBoard({
     >
       <TabsList aria-label={side === 0 ? 'Primer candidato' : 'Segundo candidato'}>
         {present.map(({ candidate: c }) => (
-          <TabsTrigger
-            key={c.slug}
-            value={c.slug}
-            className="px-3"
-            disabled={pair[side === 0 ? 1 : 0] === c.slug}
-          >
+          <TabsTrigger key={c.slug} value={c.slug} disabled={pair[side === 0 ? 1 : 0] === c.slug}>
             {surname(c)}
           </TabsTrigger>
         ))}
@@ -245,7 +240,7 @@ export function CompareBoard({
               <Tabs value={topic} onValueChange={(value) => setTopic(String(value))}>
                 <TabsList aria-label="Tema">
                   {['Todos', ...topics].map((t) => (
-                    <TabsTrigger key={t} value={t} className="px-3">
+                    <TabsTrigger key={t} value={t}>
                       {t}
                     </TabsTrigger>
                   ))}
@@ -262,8 +257,8 @@ export function CompareBoard({
             </ul>
           </div>
           <Grid>
-            <Cell className="gap-0 p-0 lg:p-0 max-sm:p-0">
-              <div className="grid grid-cols-[minmax(0,1fr)_repeat(4,3.5rem)] items-end gap-2 border-b border-border px-6 pt-5 pb-3 max-sm:grid-cols-[minmax(0,1fr)_repeat(4,2.5rem)] max-sm:px-4">
+            <Cell className="gap-0">
+              <div className="grid grid-cols-[minmax(0,1fr)_repeat(4,3.5rem)] items-end gap-2 border-b border-border pb-3 max-sm:grid-cols-[minmax(0,1fr)_repeat(4,2.5rem)]">
                 <Label>Pregunta</Label>
                 {people.map(({ candidate: c }) => (
                   <span
@@ -284,7 +279,7 @@ export function CompareBoard({
                         type="button"
                         aria-expanded={open === q.id}
                         onClick={() => setOpen(open === q.id ? null : q.id)}
-                        className="grid w-full grid-cols-[minmax(0,1fr)_repeat(4,3.5rem)] items-center gap-2 px-6 py-4 text-left hover:bg-muted/60 max-sm:grid-cols-[minmax(0,1fr)_repeat(4,2.5rem)] max-sm:px-4"
+                        className="grid w-full grid-cols-[minmax(0,1fr)_repeat(4,3.5rem)] items-center gap-2 py-4 text-left hover:bg-muted/60 max-sm:grid-cols-[minmax(0,1fr)_repeat(4,2.5rem)]"
                       >
                         <span className="grid gap-1">
                           <Label>{q.topic}</Label>
@@ -315,7 +310,7 @@ export function CompareBoard({
                         })}
                       </button>
                       {open === q.id && (
-                        <ul className="m-0 grid list-none gap-4 bg-muted/50 px-6 py-5 max-sm:px-4">
+                        <ul className="m-0 grid list-none gap-4 rounded-lg bg-muted/50 p-4">
                           {people.map(({ candidate: c }) => {
                             const a = q.answers[c.slug];
                             return (
@@ -367,10 +362,8 @@ export function CompareBoard({
             onValueChange={(value) => setMode(value === 'duelo' ? 'duelo' : 'todos')}
           >
             <TabsList aria-label="Comparar">
-              <TabsTrigger value="todos" className="px-3">
-                Todos
-              </TabsTrigger>
-              <TabsTrigger value="duelo" className="px-3" disabled={present.length < 2}>
+              <TabsTrigger value="todos">Todos</TabsTrigger>
+              <TabsTrigger value="duelo" disabled={present.length < 2}>
                 Dos candidatos
               </TabsTrigger>
             </TabsList>
@@ -387,7 +380,7 @@ export function CompareBoard({
           <Tabs value={group} onValueChange={(value) => setGroup(String(value))}>
             <TabsList aria-label="Grupo de indicadores">
               {['Todo', ...groups].map((g) => (
-                <TabsTrigger key={g} value={g} className="px-3">
+                <TabsTrigger key={g} value={g}>
                   {g}
                 </TabsTrigger>
               ))}

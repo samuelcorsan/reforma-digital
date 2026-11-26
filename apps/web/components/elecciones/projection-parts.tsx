@@ -99,7 +99,7 @@ export function Majority({
         <Tabs value={chosen} onValueChange={(v) => typeof v === 'string' && setChosen(v)}>
           <TabsList aria-label="Bloque">
             {blocs.map((x) => (
-              <TabsTrigger key={x.name} value={x.name} className="px-3">
+              <TabsTrigger key={x.name} value={x.name}>
                 {x.name}
               </TabsTrigger>
             ))}
