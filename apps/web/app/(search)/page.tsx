@@ -214,7 +214,7 @@ export default function HomePage() {
             data-variant="secondary"
             className={cn(
               buttonVariants({ variant: 'secondary', size: 'xl' }),
-              'absolute inset-x-0 bottom-6 mx-auto w-fit rounded-full',
+              'absolute inset-x-0 bottom-6 mx-auto w-fit',
             )}
           >
             Conoce los proyectos <Icon name="abajo" size={16} />

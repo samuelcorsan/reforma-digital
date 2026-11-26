@@ -101,8 +101,7 @@ export default defineConfig({
     'anti-slop/no-unknown-type-aliases': 'error',
     'shadcn/no-raw-colors': 'error',
     'shadcn/no-unknown-classes': 'error',
-    // `transition`: a list of properties to animate is not a design value.
-    'shadcn/no-arbitrary-values': ['error', { allow: ['layout', 'transition'] }],
+    'shadcn/no-arbitrary-values': ['error', { allow: ['layout'] }],
     'shadcn/no-inline-styles': 'error',
     'shadcn/require-static-classes': 'error',
     // A use places a primitive; how it looks belongs to its variants (DESIGN.md §8.5).

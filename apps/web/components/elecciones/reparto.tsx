@@ -151,7 +151,7 @@ export function Reparto({
                     key={`${c}-${j}`}
                     r={seatRadius}
                     fill={colors[j] ?? '#8A8F98'}
-                    className="cursor-pointer stroke-background transition-[transform,opacity] duration-700 ease-(--ease-brand) motion-reduce:transition-none transform-(--transform) opacity-(--opacity)"
+                    className="cursor-pointer stroke-background transition duration-700 ease-(--ease-brand) motion-reduce:transition-none transform-(--transform) opacity-(--opacity)"
                     strokeWidth={0.8}
                     style={{
                       '--transform': `translate(${x}px, ${y}px)`,
