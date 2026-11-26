@@ -17,7 +17,7 @@ pnpm eval --mode preview --retrieval-only --limit 5
 PostgreSQL es opcional para guardar informes. La búsqueda y la generación no dependen de la base. Para configurar ese almacenamiento:
 
 ```sh
-docker compose up -d
+docker compose -p reforma-escano up -d   # el mismo Postgres que usa `pnpm dev:data`
 pnpm db:migrate
 ```
 
