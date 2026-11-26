@@ -84,7 +84,7 @@ export function OnboardButton({
       title={title}
       className={cn(
         // Mismo alto que los botones `xl` (36 px a la vista, 44 px de zona de clic).
-        'group relative inline-flex h-9 items-center gap-2.5 rounded-full border border-border bg-background pr-3.5 pl-1 text-15 font-medium transition-[background-color,scale] duration-150 after:absolute after:inset-x-0 after:-inset-y-1 hover:bg-muted active:scale-[0.97] motion-reduce:transition-none',
+        'group relative inline-flex h-9 items-center gap-2.5 rounded-full border border-border bg-background pr-3.5 pl-1 text-15 font-medium transition duration-150 after:absolute after:inset-x-0 after:-inset-y-1 hover:bg-muted active:scale-[0.97] motion-reduce:transition-none',
         'outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-foreground',
         className,
       )}
@@ -94,7 +94,7 @@ export function OnboardButton({
           <span
             key={name}
             className={cn(
-              '-ml-1.5 grid size-7 place-items-center rounded-full border border-border bg-background text-muted-foreground transition-[scale,background-color,border-color,color] duration-300 first:ml-0 group-data-copiado:scale-110 motion-reduce:transition-none motion-reduce:group-data-copiado:scale-100',
+              '-ml-1.5 grid size-7 place-items-center rounded-full border border-border bg-background text-muted-foreground transition duration-300 first:ml-0 group-data-copiado:scale-110 motion-reduce:transition-none motion-reduce:group-data-copiado:scale-100',
               muelle,
               tinte,
               retrasos[i],
@@ -107,20 +107,20 @@ export function OnboardButton({
         ))}
       </span>
       <span className="grid overflow-hidden py-0.5 text-left" aria-hidden="true">
-        <span className="[grid-area:1/1] transition-[translate,opacity] duration-300 ease-(--ease-brand) group-data-copiado:-translate-y-full group-data-copiado:opacity-0 motion-reduce:transition-none">
+        <span className="[grid-area:1/1] transition duration-300 ease-(--ease-brand) group-data-copiado:-translate-y-full group-data-copiado:opacity-0 motion-reduce:transition-none">
           {label}
         </span>
-        <span className="[grid-area:1/1] translate-y-full opacity-0 transition-[translate,opacity] duration-300 ease-(--ease-brand) group-data-copiado:translate-y-0 group-data-copiado:opacity-100 motion-reduce:transition-none">
+        <span className="[grid-area:1/1] translate-y-full opacity-0 transition duration-300 ease-(--ease-brand) group-data-copiado:translate-y-0 group-data-copiado:opacity-100 motion-reduce:transition-none">
           ¡Copiado!
         </span>
       </span>
       <span className="grid text-muted-foreground" aria-hidden="true">
-        <span className="[grid-area:1/1] transition-[rotate,scale,opacity] duration-200 group-data-copiado:scale-50 group-data-copiado:-rotate-90 group-data-copiado:opacity-0 motion-reduce:transition-none">
+        <span className="[grid-area:1/1] transition duration-200 group-data-copiado:scale-50 group-data-copiado:-rotate-90 group-data-copiado:opacity-0 motion-reduce:transition-none">
           <Icon name="copiar" size={16} />
         </span>
         <span
           className={cn(
-            '[grid-area:1/1] scale-50 rotate-90 text-foreground opacity-0 transition-[rotate,scale,opacity] duration-300 group-data-copiado:scale-100 group-data-copiado:rotate-0 group-data-copiado:opacity-100 motion-reduce:transition-none',
+            '[grid-area:1/1] scale-50 rotate-90 text-foreground opacity-0 transition duration-300 group-data-copiado:scale-100 group-data-copiado:rotate-0 group-data-copiado:opacity-100 motion-reduce:transition-none',
             muelle,
           )}
         >

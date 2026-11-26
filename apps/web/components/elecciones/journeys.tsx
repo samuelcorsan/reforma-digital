@@ -313,7 +313,7 @@ function Path({
                   key={l.exp}
                   r={dot * 0.42}
                   fill={l.color}
-                  className="cursor-pointer transition-[transform,opacity] duration-500 ease-(--ease-brand) motion-reduce:transition-none transform-(--transform) opacity-(--opacity)"
+                  className="cursor-pointer transition duration-500 ease-(--ease-brand) motion-reduce:transition-none transform-(--transform) opacity-(--opacity)"
                   style={{
                     '--transform': `translate(${s.x}px, ${s.y}px)`,
                     '--opacity': s.o * (dim ? 0.12 : 1),
@@ -605,7 +605,7 @@ function Flows({
                     key={`${link.a.id}-${link.b.id}`}
                     d={link.d}
                     fill={link.color}
-                    className="cursor-pointer transition-[fill-opacity] duration-200 hover:[fill-opacity:0.55]"
+                    className="cursor-pointer transition-all duration-200 hover:[fill-opacity:0.55] motion-reduce:transition-none"
                     fillOpacity={picked ? 0.09 : 0.32}
                     onClick={() => pick(link.pick)}
                     {...tip(`${link.a.name} → ${link.b.name}`, link.n)}

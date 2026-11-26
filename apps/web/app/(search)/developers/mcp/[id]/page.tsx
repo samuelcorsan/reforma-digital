@@ -151,7 +151,7 @@ function Connect({ server }: { server: McpServer }) {
       code: JSON.stringify({ servers: { [name]: { type: 'http', url } } }, null, 2),
     },
   ];
-  const appButton = cn(buttonVariants({ variant: 'outline', size: 'xl' }), 'rounded-full');
+  const appButton = buttonVariants({ variant: 'outline', size: 'xl' });
   const via = 'mb-4 font-medium';
 
   // Dos vías separadas: la frase de «Conecta tu agente» apunta a la guía en Markdown, y quien la
