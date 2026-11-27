@@ -39,7 +39,12 @@ const monthNames = [
 // Un color de datos sobre el fondo apagado: t = 0, apenas se ve; t = 1, el color entero.
 const ramp = (hex: string, t: number) =>
   `color-mix(in oklab, ${hex} ${Math.round(32 + 68 * Math.max(0, Math.min(1, t)))}%, var(--muted))`;
-const colors = { votes: '#4F7AA6', law: '#2E7D5B', decree: '#7152A8', questions: '#C9873E' };
+const colors = {
+  votes: '#4F7AA6',
+  law: 'var(--dato-ley)',
+  decree: 'var(--dato-decreto-ley)',
+  questions: '#C9873E',
+};
 
 export function Figures({
   from,
@@ -216,7 +221,7 @@ function Calendar({
             <dt className="text-sm leading-snug text-muted-foreground">{label}</dt>
             <dd
               className={cn(
-                'm-0 font-heading text-[40px] leading-none tabular-nums',
+                'm-0 font-heading text-40 leading-none tabular-nums',
                 alert && 'text-brand',
               )}
             >
@@ -236,15 +241,9 @@ function Calendar({
         <div className="max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <Tabs value={mode} onValueChange={(value) => isMode(value) && setMode(value)}>
             <TabsList aria-label="Dato representado">
-              <TabsTrigger value="votes" className="px-3">
-                Votaciones
-              </TabsTrigger>
-              <TabsTrigger value="laws" className="px-3">
-                Leyes y decretos-leyes
-              </TabsTrigger>
-              <TabsTrigger value="questions" className="px-3">
-                Preguntas registradas
-              </TabsTrigger>
+              <TabsTrigger value="votes">Votaciones</TabsTrigger>
+              <TabsTrigger value="laws">Leyes y decretos-leyes</TabsTrigger>
+              <TabsTrigger value="questions">Preguntas registradas</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -266,8 +265,8 @@ function Calendar({
                   key={year}
                   x={0}
                   y={i * blockH + 20 + 4 * cell}
-                  className="fill-foreground font-mono font-medium"
-                  style={{ fontSize: 12 * k }}
+                  className="fill-foreground font-mono font-medium text-(length:--size)"
+                  style={{ '--size': `${12 * k}px` }}
                 >
                   {year}
                 </text>
@@ -277,8 +276,8 @@ function Calendar({
                   key={`${m.year}-${m.name}`}
                   x={place(m.at).x}
                   y={years.indexOf(m.year) * blockH + 12}
-                  className="fill-muted-foreground font-mono"
-                  style={{ fontSize: 12 * k }}
+                  className="fill-muted-foreground font-mono text-(length:--size)"
+                  style={{ '--size': `${12 * k}px` }}
                 >
                   {m.name}
                 </text>
@@ -307,8 +306,9 @@ function Calendar({
                     className={cn(
                       'transition-opacity duration-150 hover:stroke-foreground hover:[stroke-width:1.5]',
                       first && 'cursor-pointer',
+                      'opacity-(--opacity)',
                     )}
-                    style={{ opacity: i > cursor ? 0.12 : color ? 1 : 0.55 }}
+                    style={{ '--opacity': i > cursor ? 0.12 : color ? 1 : 0.55 }}
                     data-tip={longDate.format(asDate(iso))}
                     data-tip-text={`${parts.length ? parts.join(' · ') : 'Sin actividad registrada'}${first ? '. Pulsa para ver sus votaciones' : ''}`}
                     onClick={() => first && router.push(`${voteHref}/${first}`)}
@@ -323,11 +323,11 @@ function Calendar({
         {mode === 'laws' ? (
           <>
             <span className="inline-flex items-center gap-1.5">
-              <i className="block size-2.5 rounded-xs" style={{ background: colors.law }} />
+              <i className="block size-2.5 rounded-xs bg-(--dato-ley)" />
               Publicación de una ley
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <i className="block size-2.5 rounded-xs" style={{ background: colors.decree }} />
+              <i className="block size-2.5 rounded-xs bg-(--dato-decreto-ley)" />
               Publicación de un decreto-ley
             </span>
           </>
@@ -335,9 +335,9 @@ function Calendar({
           <>
             Menos
             <span
-              className="block h-2.5 w-28 rounded-full"
+              className="block h-2.5 w-28 rounded-full bg-(image:--bg)"
               style={{
-                background: `linear-gradient(90deg, ${ramp(mode === 'votes' ? colors.votes : colors.questions, 0)}, ${ramp(mode === 'votes' ? colors.votes : colors.questions, 1)})`,
+                '--bg': `linear-gradient(90deg, ${ramp(mode === 'votes' ? colors.votes : colors.questions, 0)}, ${ramp(mode === 'votes' ? colors.votes : colors.questions, 1)})`,
               }}
             />
             {mode === 'votes'
@@ -449,7 +449,10 @@ function Margins({ votes, voteHref }: { votes: Vote[]; voteHref: string }) {
                 dragging.current = false;
               }}
             >
-              <g className="fill-muted-foreground font-mono" style={{ fontSize: 12 * k }}>
+              <g
+                className="fill-muted-foreground font-mono text-(length:--size)"
+                style={{ '--size': `${12 * k}px` }}
+              >
                 {[0, 0.5, 1].map((f) => (
                   <text key={f} x={m.l - 6} y={y(top * f) + 4} textAnchor="end">
                     {thousands(Math.round(top * f))}
@@ -480,8 +483,8 @@ function Margins({ votes, voteHref }: { votes: Vote[]; voteHref: string }) {
                   height={H - m.b - y(list.length)}
                   rx={1.5}
                   fill={binColor(b)}
-                  className="cursor-pointer transition-opacity duration-150"
-                  style={{ opacity: inside(b) ? 1 : 0.35 }}
+                  className="cursor-pointer transition-opacity duration-150 opacity-(--opacity)"
+                  style={{ '--opacity': inside(b) ? 1 : 0.35 }}
                   data-tip={binLabel(b)}
                   data-tip-text={`${thousands(list.length)} ${list.length === 1 ? 'votación' : 'votaciones'}`}
                   data-tip-color={binColor(b)}
@@ -494,7 +497,10 @@ function Margins({ votes, voteHref }: { votes: Vote[]; voteHref: string }) {
                 y2={H - m.b}
                 className="stroke-border"
               />
-              <g className="fill-muted-foreground font-medium" style={{ fontSize: 12 * k }}>
+              <g
+                className="fill-muted-foreground font-medium text-(length:--size)"
+                style={{ '--size': `${12 * k}px` }}
+              >
                 <text x={x(0) + bw / 2 - 6} y={m.t - 18} textAnchor="end">
                   ← rechazadas
                 </text>

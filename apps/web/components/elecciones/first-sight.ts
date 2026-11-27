@@ -3,8 +3,11 @@
 import { useEffect, useRef } from 'react';
 
 // Hace `run` la primera vez que el elemento se ve en buena parte (para las animaciones de entrada).
-export function useFirstSight(run: () => void, threshold: number) {
-  const ref = useRef<HTMLDivElement>(null);
+export function useFirstSight<T extends Element = HTMLDivElement>(
+  run: () => void,
+  threshold: number,
+) {
+  const ref = useRef<T>(null);
   const latest = useRef(run);
   latest.current = run;
   useEffect(() => {

@@ -106,7 +106,7 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
   if (name === 'mas') {
     return (
       <svg
-        className={'icono shrink-0'}
+        className={'shrink-0'}
         width={size}
         height={size}
         viewBox="0 0 15 15"
@@ -121,7 +121,7 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
   if (isGlyph(name)) {
     return (
       <svg
-        className={'icono shrink-0'}
+        className={'shrink-0'}
         width={size}
         height={size}
         viewBox="0 0 16 16"
@@ -136,7 +136,7 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
   if (isPixel(name)) {
     return (
       <svg
-        className={'icono shrink-0'}
+        className={'shrink-0'}
         width={size}
         height={size}
         viewBox="0 0 16 16"
@@ -152,5 +152,5 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
     );
   }
   const Componente: Svg = iconos[name];
-  return <Componente size={size} className="icono" aria-hidden />;
+  return <Componente size={size} aria-hidden />;
 }

@@ -8,7 +8,7 @@ export function Texto({ text }: { text: string }): ReactNode {
   return text.split(/(`[^`]+`|\*\*[^*]+\*\*)/).map((part, i) => {
     if (part.startsWith('`') && part.endsWith('`'))
       return (
-        <code key={i} className="font-mono text-[0.9em]">
+        <code key={i} className="font-mono text-em-90">
           {part.slice(1, -1)}
         </code>
       );

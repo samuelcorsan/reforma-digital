@@ -96,8 +96,8 @@ export async function Accuracy() {
                       <th className="pr-3 text-left font-medium whitespace-nowrap">
                         <span className="inline-flex items-center gap-2">
                           <i
-                            className="block size-2.5 rounded-full"
-                            style={{ background: color[id] }}
+                            className="block size-2.5 rounded-full bg-(--bg)"
+                            style={{ '--bg': color[id] }}
                           />
                           {id === 'IZQ' ? 'Izquierda (Sumar, Podemos, IU)' : name(id)}
                         </span>
@@ -107,8 +107,8 @@ export async function Accuracy() {
                         return (
                           <td
                             key={e.id}
-                            className="rounded-md py-2 text-center font-mono tabular-nums"
-                            style={{ background: d === undefined ? 'var(--muted)' : heat(d) }}
+                            className="rounded-md py-2 text-center font-mono tabular-nums bg-(--bg)"
+                            style={{ '--bg': d === undefined ? 'var(--muted)' : heat(d) }}
                             title={
                               d === undefined
                                 ? 'No se presentó o no llegó al 2,5 %'
@@ -125,9 +125,9 @@ export async function Accuracy() {
               </table>
             </div>
             <p className="m-0 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-              <i className="block size-3 rounded-xs" style={{ background: heat(4) }} />
+              <i className="block size-3 rounded-xs bg-(--bg)" style={{ '--bg': heat(4) }} />
               Sobrestimado
-              <i className="ml-3 block size-3 rounded-xs" style={{ background: heat(-4) }} />
+              <i className="ml-3 block size-3 rounded-xs bg-(--bg)" style={{ '--bg': heat(-4) }} />
               Infravalorado
             </p>
           </Cell>
@@ -174,8 +174,8 @@ export async function Accuracy() {
                                 className="inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 font-mono tabular-nums"
                               >
                                 <i
-                                  className="block size-2 rounded-full"
-                                  style={{ background: grade(x.mae) }}
+                                  className="block size-2 rounded-full bg-(--bg)"
+                                  style={{ '--bg': grade(x.mae) }}
                                 />
                                 {E.find((e) => e.id === x.id)?.nombre ?? x.id} {decimal(x.mae)}
                               </span>
@@ -235,7 +235,7 @@ export async function Accuracy() {
                               <span
                                 className={
                                   d > 0
-                                    ? 'text-[#2E7D5B]'
+                                    ? 'text-sube'
                                     : d < 0
                                       ? 'text-brand'
                                       : 'text-muted-foreground'

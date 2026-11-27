@@ -2,8 +2,8 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { Badge } from '@reforma-digital/design/ui/badge';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
-import { Card } from '@reforma-digital/design/ui/card';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
+import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
@@ -129,8 +129,8 @@ export function Dot({ color }: { color: string }) {
   return (
     <i
       aria-hidden="true"
-      className="block size-2.5 shrink-0 rounded-full"
-      style={{ background: color }}
+      className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+      style={{ '--bg': color }}
     />
   );
 }
@@ -175,8 +175,8 @@ function ReviewBar({ review }: { review: Interview['review'] }) {
       className="block h-1.5 w-12 shrink-0 overflow-hidden rounded-full bg-muted"
     >
       <span
-        className="block h-full origin-left rounded-full bg-foreground"
-        style={{ transform: `scaleX(${review.total ? review.reviewed / review.total : 1})` }}
+        className="block h-full origin-left rounded-full bg-foreground transform-(--transform)"
+        style={{ '--transform': `scaleX(${review.total ? review.reviewed / review.total : 1})` }}
       />
     </span>
   );
@@ -202,8 +202,10 @@ function MarkLabel({
 
 export function Notice({ children }: { children: ReactNode }) {
   return (
-    <Card className="mb-8 bg-muted p-5 text-base ring-0" role="note">
-      <p className="m-0">{children}</p>
+    <Card className="mb-8" role="note">
+      <CardContent>
+        <p className="m-0">{children}</p>
+      </CardContent>
     </Card>
   );
 }
@@ -246,7 +248,7 @@ export function InterviewsHome() {
         <div className="col-span-12 flex flex-col items-center gap-10 pt-4 pb-12 text-center lg:pt-8 lg:pb-16">
           <div className="grid justify-items-center gap-4">
             {status && <Badge>{status}</Badge>}
-            <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-[1.08] font-normal lg:text-[56px]">
+            <h1 className="m-0 max-w-[18ch] font-heading text-4xl leading-1.08 font-normal lg:text-56">
               {electionPages.entrevistas.title}
             </h1>
             <p className="m-0 max-w-[52ch] text-lg leading-relaxed text-muted-foreground">
@@ -254,23 +256,21 @@ export function InterviewsHome() {
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link
-              href={interviewsHref(complete ? 'comparar' : 'ejemplo')}
-              data-slot="button"
-              data-variant="sunset"
-              className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
+            <ButtonLink
+              render={<Link href={interviewsHref(complete ? 'comparar' : 'ejemplo')} />}
+              variant="sunset"
+              size="xl"
             >
               {complete ? 'Comparar las entrevistas' : 'Ver un ejemplo'}{' '}
               <Icon name="derecha" size={16} />
-            </Link>
-            <Link
-              href={interviewsHref('metodologia')}
-              data-slot="button"
-              data-variant="outline"
-              className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+            </ButtonLink>
+            <ButtonLink
+              render={<Link href={interviewsHref('metodologia')} />}
+              variant="outline"
+              size="xl"
             >
               Cómo se revisa <Icon name="derecha" size={16} />
-            </Link>
+            </ButtonLink>
           </div>
         </div>
       </Grid>
@@ -285,43 +285,43 @@ export function InterviewsHome() {
               <Card
                 key={c.slug}
                 render={latest ? <Link href={interviewsHref(latest.id)} /> : undefined}
-                className={cn(
-                  'group group/candidato col-span-6 gap-4 p-3 text-base no-underline outline-none md:col-span-3',
-                  latest &&
-                    'transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50',
-                )}
+                className="group group/candidato col-span-6 md:col-span-3"
               >
-                <div className="overflow-hidden rounded-xl">
-                  <Portrait
-                    candidate={c}
-                    sizes="(min-width: 768px) 360px, 60vw"
-                    hoverColor
-                    className="transition-transform duration-500 ease-(--ease-brand) motion-safe:group-hover:scale-[1.04]"
-                  />
-                </div>
-                <div className="grid gap-1 px-2 pb-2 max-sm:px-1">
-                  <h3 className="m-0 font-heading text-2xl leading-tight font-normal max-sm:text-xl">
-                    {c.name}
-                  </h3>
-                  <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
-                    <Dot color={c.color} />
-                    {c.party}
-                  </p>
-                  <p className="m-0 mt-2 flex items-center justify-between gap-2 text-sm">
-                    {latest
-                      ? `${decimal(latest.nota.global)} sobre 10${latest.pending ? ', provisional' : ''}`
-                      : next
-                        ? `Pendiente · ${shortDay(next.date)}`
-                        : cancelled
-                          ? `Cancelada · ${cancelled.title}`
-                          : 'Sin entrevistas'}
-                    {latest && (
-                      <span className="transition-transform duration-300 ease-(--ease-brand) motion-safe:group-hover:translate-x-1">
-                        <Icon name="derecha" size={16} />
-                      </span>
-                    )}
-                  </p>
-                </div>
+                <CardContent>
+                  <div className="overflow-hidden rounded-xl">
+                    <Portrait
+                      candidate={c}
+                      sizes="(min-width: 768px) 360px, 60vw"
+                      hoverColor
+                      className="transition-transform duration-500 ease-(--ease-brand) motion-safe:group-hover:scale-[1.04]"
+                    />
+                  </div>
+                </CardContent>
+                <CardContent className="grid">
+                  <div className="grid gap-1">
+                    <h3 className="m-0 font-heading text-2xl leading-tight font-normal max-sm:text-xl">
+                      {c.name}
+                    </h3>
+                    <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
+                      <Dot color={c.color} />
+                      {c.party}
+                    </p>
+                    <p className="m-0 mt-2 flex items-center justify-between gap-2 text-sm">
+                      {latest
+                        ? `${decimal(latest.nota.global)} sobre 10${latest.pending ? ', provisional' : ''}`
+                        : next
+                          ? `Pendiente · ${shortDay(next.date)}`
+                          : cancelled
+                            ? `Cancelada · ${cancelled.title}`
+                            : 'Sin entrevistas'}
+                      {latest && (
+                        <span className="transition-transform duration-300 ease-(--ease-brand) motion-safe:group-hover:translate-x-1">
+                          <Icon name="derecha" size={16} />
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </CardContent>
               </Card>
             );
           })}
@@ -371,11 +371,11 @@ function VerificationCard({
   const candidate = getCandidate(a.candidato);
   const color = verdicts[r.veredicto].color;
   return (
-    <Cell className="gap-0 overflow-hidden p-0 lg:p-0 max-sm:p-0">
+    <Cell className="gap-0">
       {/* La calificación, en una franja con su color: se distingue de un vistazo en la lista. */}
       <p
-        className="m-0 flex flex-wrap items-center gap-x-3 gap-y-2 px-6 py-3.5 max-sm:px-5"
-        style={{ background: `color-mix(in oklab, ${color} 12%, var(--background))` }}
+        className="m-0 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg px-3 py-3.5 fondo-tinte-12"
+        style={{ '--tinte': color }}
       >
         <Verdict id={r.veredicto} />
         <Unreviewed estado={r.estado} />
@@ -383,7 +383,7 @@ function VerificationCard({
           <Jump interview={a} second={r.segundo} />
         </span>
       </p>
-      <div className="grid flex-1 content-start gap-4 p-6 max-sm:p-5">
+      <div className="grid flex-1 content-start gap-4 py-4">
         {named && (
           <div className="flex items-center gap-3">
             {candidate && (
@@ -403,8 +403,8 @@ function VerificationCard({
           </div>
         )}
         <blockquote
-          className="m-0 border-l-2 pl-4 font-heading text-xl leading-snug"
-          style={{ borderColor: color }}
+          className="m-0 border-l-2 pl-4 font-heading text-xl leading-snug border-(--border-color)"
+          style={{ '--border-color': color }}
         >
           «{r.cita}»
         </blockquote>
@@ -422,7 +422,7 @@ function VerificationCard({
           </p>
         )}
       </div>
-      <div className="grid gap-3 border-t border-border px-6 py-4 max-sm:px-5">
+      <div className="grid gap-3 border-t border-border pt-4">
         <Sources items={r.fuentes} />
         <Link
           href={interviewsHref(`${a.id}/${r.id}`)}
@@ -798,7 +798,7 @@ function ReportSections({
                 </li>
               ))}
           </ul>
-          <Cell className="gap-0 py-2 lg:py-2">
+          <Cell className="gap-0">
             <ul className="m-0 grid list-none p-0">
               {questions.groups.map(([topic, list]) => (
                 <li key={topic} className="border-b border-border py-2 last:border-0">
@@ -816,8 +816,8 @@ function ReportSections({
                           {list.map((q) => (
                             <i
                               key={q.key}
-                              className="block size-3 rounded-[3px]"
-                              style={{ background: q.mark.color }}
+                              className="block size-3 rounded-3 bg-(--bg)"
+                              style={{ '--bg': q.mark.color }}
                             />
                           ))}
                         </span>
@@ -884,8 +884,8 @@ function Profile({ interview: a }: { interview: Interview }) {
           </div>
           <span aria-hidden="true" className="relative h-1.5 rounded-full bg-muted">
             <i
-              className="absolute inset-y-0 left-0 rounded-full bg-foreground"
-              style={{ width: `${Math.min(1, (value ?? 0) / scale) * 100}%` }}
+              className="absolute inset-y-0 left-0 rounded-full bg-foreground w-(--w)"
+              style={{ '--w': `${Math.min(1, (value ?? 0) / scale) * 100}%` }}
             />
           </span>
         </div>
@@ -1077,7 +1077,11 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
     <>
       <span aria-hidden="true" className="flex h-2.5 gap-0.5 overflow-hidden rounded-full">
         {parts.map((p) => (
-          <i key={p.key} className="block h-full" style={{ flex: p.n, background: p.color }} />
+          <i
+            key={p.key}
+            className="block h-full flex-(--flex) bg-(--bg)"
+            style={{ '--flex': p.n, '--bg': p.color }}
+          />
         ))}
       </span>
       <ul className="m-0 flex list-none flex-wrap gap-x-4 gap-y-1.5 p-0 text-sm">
@@ -1091,7 +1095,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
       </ul>
     </>
   );
-  const tile = 'gap-4 p-5 lg:p-6';
+  const tile = 'gap-4';
   const views = availableViews(a).filter((v) => v !== 'resumen');
   const blurb: Record<ReportView, string> = {
     resumen: '',
@@ -1110,7 +1114,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
         <Grid className="grid-flow-dense">
           {c && (
             <Cell span={6} label="Conclusiones" className={tile}>
-              <p className="m-0 max-w-[48ch] font-heading text-2xl leading-snug lg:text-[28px]">
+              <p className="m-0 max-w-[48ch] font-heading text-2xl leading-snug lg:text-28">
                 {c.titular}
               </p>
             </Cell>
@@ -1137,15 +1141,15 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
             )}
             <span aria-hidden="true" className="flex h-2.5 gap-0.5 overflow-hidden rounded-full">
               <i
-                className="block h-full"
+                className="block h-full flex-(--flex) bg-(--bg)"
                 style={{
-                  flex: speakingShare(a, 'candidato'),
-                  background: candidate?.color ?? 'var(--foreground)',
+                  '--flex': speakingShare(a, 'candidato'),
+                  '--bg': candidate?.color ?? 'var(--foreground)',
                 }}
               />
               <i
-                className="block h-full bg-muted-foreground/30"
-                style={{ flex: speakingShare(a, 'jordi') }}
+                className="block h-full bg-muted-foreground/30 flex-(--flex)"
+                style={{ '--flex': speakingShare(a, 'jordi') }}
               />
             </span>
           </Cell>
@@ -1185,8 +1189,8 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
                         </span>
                         <span aria-hidden="true" className="h-1.5 rounded-full bg-muted">
                           <i
-                            className="block h-full rounded-full bg-foreground"
-                            style={{ width: `${value * 10}%` }}
+                            className="block h-full rounded-full bg-foreground w-(--w)"
+                            style={{ '--w': `${value * 10}%` }}
                           />
                         </span>
                         <span className="text-right font-mono tabular-nums">{decimal(value)}</span>
@@ -1262,7 +1266,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
         <h2
           id="detalle"
           data-section-title
-          className="m-0 mb-6 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]"
+          className="m-0 mb-6 scroll-mt-40 font-heading text-32 leading-tight font-normal lg:text-36"
         >
           Ver en detalle
         </h2>
@@ -1271,7 +1275,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
             <li key={view}>
               <Link
                 href={reportHref(a.id, view)}
-                className="group flex h-full min-h-28 flex-col gap-2 rounded-[20px] p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
+                className="group flex h-full min-h-28 flex-col gap-2 rounded-20 p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
               >
                 <span className="flex items-center justify-between gap-3 text-lg font-medium">
                   {viewName(a, view)}
@@ -1287,7 +1291,7 @@ function ReportSummary({ interview: a }: { interview: Interview }) {
             <li>
               <Link
                 href={interviewsHref(`${a.id}/${communicationPath}`)}
-                className="group flex h-full min-h-28 flex-col gap-2 rounded-[20px] p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
+                className="group flex h-full min-h-28 flex-col gap-2 rounded-20 p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
               >
                 <span className="flex items-center justify-between gap-3 text-lg font-medium">
                   Análisis de comunicación
@@ -1409,7 +1413,7 @@ export function InterviewReport({
                   .filter(Boolean)
                   .join(' · ')}
               </p>
-              <h1 className="m-0 font-heading text-4xl leading-[1.05] font-normal lg:text-[56px]">
+              <h1 className="m-0 font-heading text-4xl leading-1.05 font-normal lg:text-56">
                 {candidate && <span className="text-muted-foreground">Entrevista a </span>}
                 {interviewName(a)}
               </h1>
@@ -1420,18 +1424,17 @@ export function InterviewReport({
               )}
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {video ? (
-                  <a
+                  <ButtonLink
                     href={video}
                     target="_blank"
                     rel="noopener noreferrer"
-                    data-slot="button"
-                    data-variant="outline"
-                    className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    variant="outline"
+                    size="xl"
                   >
                     Ver la entrevista original
                     <span aria-hidden="true"> ↗</span>
                     <span className="sr-only"> (se abre en una pestaña nueva)</span>
-                  </a>
+                  </ButtonLink>
                 ) : (
                   <p className="m-0 text-sm text-muted-foreground">
                     {a.ficticio
@@ -1453,7 +1456,7 @@ export function InterviewReport({
           >
             <Icon name="izquierda" size={14} /> Entrevista a {interviewName(a)}
           </Link>
-          <h1 className="m-0 font-heading text-4xl leading-[1.08] font-normal lg:text-[52px]">
+          <h1 className="m-0 font-heading text-4xl leading-1.08 font-normal lg:text-52">
             {viewName(a, view)}
           </h1>
         </header>
@@ -1609,7 +1612,7 @@ export function VerificationPage({
           ) : (
             <p className="m-0 font-medium">{interviewName(a)}</p>
           )}
-          <blockquote className="m-0 font-heading text-[32px] leading-[1.15] lg:text-[44px]">
+          <blockquote className="m-0 font-heading text-32 leading-1.15 lg:text-44">
             «{r.cita}»
           </blockquote>
           <p className="m-0 max-w-[65ch] text-lg leading-relaxed text-muted-foreground">
@@ -1894,12 +1897,17 @@ export function VerificationsIndex({
                   className="mt-10 flex flex-wrap items-center justify-center gap-2"
                 >
                   {current > 1 && (
-                    <Link
-                      href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current - 1) })}#lista`}
-                      className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    <ButtonLink
+                      render={
+                        <Link
+                          href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current - 1) })}#lista`}
+                        />
+                      }
+                      variant="outline"
+                      size="xl"
                     >
                       <Icon name="izquierda" size={16} /> Anterior
-                    </Link>
+                    </ButtonLink>
                   )}
                   {Array.from({ length: pages }, (_, n) => n + 1).map((n) => (
                     <Link
@@ -1917,12 +1925,17 @@ export function VerificationsIndex({
                     </Link>
                   ))}
                   {current < pages && (
-                    <Link
-                      href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current + 1) })}#lista`}
-                      className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    <ButtonLink
+                      render={
+                        <Link
+                          href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current + 1) })}#lista`}
+                        />
+                      }
+                      variant="outline"
+                      size="xl"
                     >
                       Siguiente <Icon name="derecha" size={16} />
-                    </Link>
+                    </ButtonLink>
                   )}
                 </nav>
               )}
