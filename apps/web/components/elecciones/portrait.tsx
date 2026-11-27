@@ -44,10 +44,6 @@ function place(c: Candidate, photo: StaticImageData, f: (typeof frames)[keyof ty
   };
 }
 
-// El retrato se funde por abajo, a la misma altura en los cuatro: la máscara va en una capa del
-// tamaño del marco, no en la foto, que puede ser más alta que él (o acabar en un corte recto).
-const fade = 'linear-gradient(to bottom, #000 72%, transparent 98%)';
-
 // La foto es más ancha que su caja (la cara manda), así que `sizes` tiene que pedir de más.
 export function Portrait({
   candidate,
@@ -65,6 +61,7 @@ export function Portrait({
 }) {
   const photo = photos[candidate.slug];
   const frame = frames[kind];
+  const { width, left, top } = place(candidate, photo, frame);
   return (
     <div
       className={cn(
@@ -74,17 +71,19 @@ export function Portrait({
         className,
       )}
     >
+      {/* El retrato se funde por abajo, a la misma altura en los cuatro: la máscara va en una capa
+          del tamaño del marco, no en la foto, que puede ser más alta que él (o acabar en un corte
+          recto). */}
       <div
-        className="absolute inset-0"
-        style={kind === 'portrait' ? { maskImage: fade, WebkitMaskImage: fade } : undefined}
+        className={cn('absolute inset-0', kind === 'portrait' && 'mask-b-from-72% mask-b-to-98%')}
+        style={{ '--w': width, '--left': left, '--top': top }}
       >
         <Image
           src={photo}
           alt=""
           sizes={sizes}
           draggable={false}
-          className="pointer-events-none absolute h-auto max-w-none select-none"
-          style={place(candidate, photo, frame)}
+          className="pointer-events-none absolute top-(--top) left-(--left) h-auto w-(--w) max-w-none select-none"
         />
         {hoverColor && (
           <Image
@@ -92,8 +91,7 @@ export function Portrait({
             alt=""
             sizes={sizes}
             draggable={false}
-            className="pointer-events-none absolute h-auto max-w-none opacity-0 transition-opacity duration-500 ease-(--ease-brand) select-none group-hover/candidato:opacity-100 motion-reduce:transition-none"
-            style={place(candidate, photo, frame)}
+            className="pointer-events-none absolute top-(--top) left-(--left) h-auto w-(--w) max-w-none opacity-0 transition-opacity duration-500 ease-(--ease-brand) select-none group-hover/candidato:opacity-100 motion-reduce:transition-none"
           />
         )}
       </div>

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { capturar } from '../../../lib/posthog';
 import { siteUrl } from '../../../lib/site';
 
 /**
@@ -43,29 +44,9 @@ export async function POST(request: Request) {
   const e = eventoEsquema.safeParse(json);
   if (!e.success) return new Response(null, { status: 400 });
   const { evento, sesion, ruta } = e.data;
-  const res = await fetch('https://eu.i.posthog.com/i/v0/e/', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      api_key: clave,
-      event: evento,
-      distinct_id: sesion,
-      properties: {
-        $current_url: new URL(ruta, siteUrl).href,
-        $pathname: ruta,
-        $process_person_profile: false,
-        $geoip_disable: true,
-      },
-    }),
-    signal: AbortSignal.timeout(5000),
-  }).catch((error: unknown) => {
-    // Sin conexión o PostHog tarda más de 5 s: se responde 502.
-    if (
-      error instanceof TypeError ||
-      (error instanceof DOMException && error.name === 'TimeoutError')
-    )
-      return null;
-    throw error;
+  const aceptado = await capturar(clave, evento, sesion, {
+    $current_url: new URL(ruta, siteUrl).href,
+    $pathname: ruta,
   });
-  return new Response(null, { status: res?.ok ? 204 : 502 });
+  return new Response(null, { status: aceptado ? 204 : 502 });
 }

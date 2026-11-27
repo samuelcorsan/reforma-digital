@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/server": "catalog:",
+    "fast-xml-parser": "^5.12.1",
     "zod": "catalog:"
   }
 }

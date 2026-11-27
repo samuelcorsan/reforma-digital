@@ -376,8 +376,8 @@ function Favours({
                     Array.from({ length: -s }, (_, j) => (
                       <i
                         key={j}
-                        className="block size-2.5 shrink-0 rounded-xs border-[1.5px]"
-                        style={{ borderColor: familyColor(family) }}
+                        className="block size-2.5 shrink-0 rounded-xs border-1.5 border-(--border-color)"
+                        style={{ '--border-color': familyColor(family) }}
                       />
                     ))}
                 </span>
@@ -386,15 +386,15 @@ function Favours({
                     Array.from({ length: s }, (_, j) => (
                       <i
                         key={j}
-                        className="block size-2.5 shrink-0 rounded-xs"
-                        style={{ background: familyColor(family) }}
+                        className="block size-2.5 shrink-0 rounded-xs bg-(--bg)"
+                        style={{ '--bg': familyColor(family) }}
                       />
                     ))}
                 </span>
                 <span
                   className={cn(
                     'text-right font-mono tabular-nums',
-                    s > 0 ? 'text-[#2E7D5B]' : 'text-brand',
+                    s > 0 ? 'text-sube' : 'text-brand',
                   )}
                 >
                   {s > 0 ? '+' : '−'}

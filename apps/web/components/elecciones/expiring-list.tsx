@@ -153,7 +153,7 @@ export function ExpiringList({
             </Link>
             <span className="flex items-center gap-x-4 gap-y-1 text-sm whitespace-nowrap text-muted-foreground max-sm:col-start-2 max-sm:flex-wrap">
               <span className="inline-flex items-center gap-1.5">
-                <i className="block size-2 rounded-full" style={{ background: l.color }} />
+                <i className="block size-2 rounded-full bg-(--bg)" style={{ '--bg': l.color }} />
                 {l.presenterName}
               </span>
               <span className="w-20 text-right font-mono tabular-nums">

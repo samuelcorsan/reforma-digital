@@ -107,6 +107,13 @@ pnpm install --frozen-lockfile
 pnpm dev                     # Web en http://localhost:3000
 ```
 
+`/congreso` y casi todo `/elecciones` leen de Postgres. Para verlos en local con datos reales (necesita Docker y Python 3.12+; la primera vez descarga unos 120 MB y ocupa cerca de 1 GB en `.cache/`):
+
+```sh
+pnpm dev:data                # Postgres de compose.yaml con los datos del Congreso
+DATABASE_URL=postgres://gov:gov@127.0.0.1:5442/gov pnpm dev
+```
+
 El pipeline de búsqueda con IA (`packages/ai`) ya no tiene interfaz en la web; se ejecuta con las evaluaciones (`pnpm eval`). La extensión no depende de estos servicios. Configuración y evaluaciones en [docs/search.md](docs/search.md).
 
 Para trabajar en la extensión:

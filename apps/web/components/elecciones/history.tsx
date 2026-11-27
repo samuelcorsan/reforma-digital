@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { getGeography } from '../../lib/congreso/data';
 import { formatDate, percent, thousands } from '../../lib/elecciones/format';
 import { electionsHref, electionPages } from '../../lib/elecciones/pages';
@@ -97,12 +97,12 @@ export async function ElectionHistory({ election }: { election?: string }) {
                 <span className="font-medium break-words">{shortParty(s)}</span>
                 <span className="relative h-3 rounded-xs bg-muted">
                   <i
-                    className="absolute inset-y-0 left-0 block rounded-xs"
-                    style={{ width: `${(n / 350) * 100}%`, background: color(f) }}
+                    className="absolute inset-y-0 left-0 block rounded-xs w-(--w) bg-(--bg)"
+                    style={{ '--w': `${(n / 350) * 100}%`, '--bg': color(f) }}
                   />
                   <i
-                    className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground"
-                    style={{ left: `${(176 / 350) * 100}%` }}
+                    className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground left-(--left)"
+                    style={{ '--left': `${(176 / 350) * 100}%` }}
                   />
                 </span>
                 <b className="text-right font-mono font-medium tabular-nums">{n}</b>
@@ -115,20 +115,22 @@ export async function ElectionHistory({ election }: { election?: string }) {
               <span />
               <span className="relative h-5">
                 <span
-                  className="absolute -translate-x-1/2 font-mono text-sm whitespace-nowrap text-muted-foreground"
-                  style={{ left: `${(176 / 350) * 100}%` }}
+                  className="absolute -translate-x-1/2 font-mono text-sm whitespace-nowrap text-muted-foreground left-(--left)"
+                  style={{ '--left': `${(176 / 350) * 100}%` }}
                 >
                   176 · mayoría absoluta
                 </span>
               </span>
             </li>
           </ul>
-          <Link
-            href={electionsHref(e.id)}
-            className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'justify-self-start')}
+          <ButtonLink
+            render={<Link href={electionsHref(e.id)} />}
+            variant="outline"
+            size="lg"
+            className="justify-self-start"
           >
             Ficha de la elección <Icon name="derecha" size={16} />
-          </Link>
+          </ButtonLink>
         </Cell>
       </Grid>
 
@@ -170,22 +172,17 @@ export async function ElectionHistory({ election }: { election?: string }) {
                       <th className="w-36" />
                       {E.map((x, j) => (
                         <th key={x.id} className="p-0 font-normal">
-                          <Link
-                            href={yearHref(x)}
-                            scroll={false}
+                          <ButtonLink
+                            render={<Link href={yearHref(x)} scroll={false} />}
                             aria-current={j === k ? 'page' : undefined}
                             title={formatDate(x.fecha, { month: 'long', year: 'numeric' })}
-                            className={cn(
-                              buttonVariants({
-                                variant: j === k ? 'default' : 'ghost',
-                                size: 'xs',
-                              }),
-                              'w-full',
-                            )}
+                            variant={j === k ? 'default' : 'ghost'}
+                            size="xs"
+                            className="w-full"
                           >
                             ’{label(x).slice(2, 4)}
                             {label(x).length > 4 ? label(x)[5] : ''}
-                          </Link>
+                          </ButtonLink>
                         </th>
                       ))}
                     </tr>
@@ -221,8 +218,9 @@ export async function ElectionHistory({ election }: { election?: string }) {
                                   className={cn(
                                     'h-5 min-w-6 rounded-xs p-0',
                                     j === k && 'outline-1 outline-foreground',
+                                    'bg-(--bg)',
                                   )}
-                                  style={{ background: w?.color ?? 'transparent' }}
+                                  style={{ '--bg': w?.color ?? 'transparent' }}
                                   data-tip={w ? `${name(code)} · ${label(x)}` : undefined}
                                   data-tip-text={
                                     w && p
