@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import { seatRadius } from '../../lib/elecciones/seats';
+import { useFirstSight } from './first-sight';
 import { Stat } from './report';
 import { Tips } from './tips';
 
@@ -40,26 +41,10 @@ export function SeatsMap({
   note: string;
 }) {
   const [hemicycle, setHemicycle] = useState(false);
-  const svg = useRef<SVGSVGElement>(null);
-
-  useEffect(() => {
-    const element = svg.current;
-    if (!element || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.intersectionRatio > 0.6)) return;
-        observer.disconnect();
-        timer = setTimeout(() => setHemicycle(true), 700);
-      },
-      { threshold: [0.6] },
-    );
-    observer.observe(element);
-    return () => {
-      observer.disconnect();
-      clearTimeout(timer);
-    };
-  }, []);
+  const svg = useFirstSight<SVGSVGElement>(() => {
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+      setTimeout(() => setHemicycle(true), 700);
+  }, 0.6);
 
   const scale = hemicycleRadius / seatRadius;
   return (

@@ -1,9 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button, buttonVariants } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Sheet, SheetContent, SheetTitle } from '@reforma-digital/design/ui/sheet';
-import { cn } from '@reforma-digital/design/lib/utils';
 import { Icon } from './icon';
 import { Logo } from './logo';
 
@@ -87,16 +87,14 @@ export function MobileMenu({ links }: { links: readonly MenuLink[] }) {
               ),
             )}
           </nav>
-          <Link
-            href="/#participar"
+          <ButtonLink
+            render={<Link href="/#participar" />}
             onClick={close}
-            className={cn(
-              buttonVariants({ variant: 'sunset' }),
-              'mx-[var(--page-gutter)] mt-auto mb-[var(--page-gutter)] min-h-13',
-            )}
+            variant="sunset"
+            className="mx-[var(--page-gutter)] mt-auto mb-[var(--page-gutter)] min-h-13"
           >
             Participar <Icon name="derecha" size={16} />
-          </Link>
+          </ButtonLink>
         </SheetContent>
       </Sheet>
     </>

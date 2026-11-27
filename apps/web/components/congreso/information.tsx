@@ -1,5 +1,4 @@
-import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Icon } from '../brand/icon';
 
 import { Intro, Section, Source } from './common';
@@ -89,29 +88,18 @@ export function Information({ section, title }: { section: string; title: string
               atribución.
             </p>
             <div className={'flex flex-wrap items-center gap-3'}>
-              <a
-                href="/api/congreso"
-                data-slot="button"
-                data-variant="sunset"
-                className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
-              >
+              <ButtonLink href="/api/congreso" variant="sunset" size="xl">
                 Consultar la API
-              </a>
-              <a
-                href="/api/congreso/descarga"
-                data-slot="button"
-                data-variant="outline"
-                className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
-              >
+              </ButtonLink>
+              <ButtonLink href="/api/congreso/descarga" variant="outline" size="xl">
                 Descargar el histórico
-              </a>
-              <a
+              </ButtonLink>
+              <ButtonLink
                 href="https://github.com/jorgegarcelan/escano-abierto"
                 target="_blank"
                 rel="noopener noreferrer"
-                data-slot="button"
-                data-variant="ghost"
-                className={cn(buttonVariants({ variant: 'ghost', size: 'xl' }))}
+                variant="ghost"
+                size="xl"
               >
                 Código de origen <Icon name="externo" size={16} />
                 <span
@@ -122,7 +110,7 @@ export function Information({ section, title }: { section: string; title: string
                   {' '}
                   (se abre en otra pestaña)
                 </span>
-              </a>
+              </ButtonLink>
             </div>
           </Section>
         </>

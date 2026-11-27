@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { fichaPath } from '../../lib/mcp/rutas';
@@ -71,11 +71,11 @@ export function Biblioteca({
   const [respuesta, setRespuesta] = useState<Respuesta>();
 
   // El orden vive en la URL para poder compartirlo, sin volver a pedir la página.
-  useEffect(() => {
-    const search = order === 'destacados' ? '' : `?orden=${order}`;
-    if (search !== window.location.search)
-      window.history.replaceState(null, '', `${window.location.pathname}${search}`);
-  }, [order]);
+  const sort = (next: Order) => {
+    setOrder(next);
+    const search = next === 'destacados' ? '' : `?orden=${next}`;
+    window.history.replaceState(null, '', `${window.location.pathname}${search}`);
+  };
 
   const shown = respuesta ? servers.filter((s) => s.id === respuesta.servidor) : [...servers];
   if (order === 'az') shown.sort((a, b) => a.name.localeCompare(b.name, 'es'));
@@ -94,7 +94,7 @@ export function Biblioteca({
               key={key}
               type="button"
               aria-pressed={order === key}
-              onClick={() => setOrder(key)}
+              onClick={() => sort(key)}
               className={cn(
                 'relative -mb-px border-b-2 border-transparent py-2.5 text-sm whitespace-nowrap text-muted-foreground transition-colors duration-150 hover:text-foreground aria-pressed:border-foreground aria-pressed:text-foreground motion-reduce:transition-none',
                 focus,

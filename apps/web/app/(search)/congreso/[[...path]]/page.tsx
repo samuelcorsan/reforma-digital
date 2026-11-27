@@ -1,5 +1,5 @@
-import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants, Button } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Card } from '@reforma-digital/design/ui/card';
 
 import { FilterSelect } from '../../../../components/congreso/common';
@@ -88,14 +88,9 @@ export default async function Page({ params, searchParams }: Props) {
             Cada pleno resumido, cada votación con el voto de cada diputado y cada ley, desde que
             entra hasta que se publica. Con datos oficiales, en lenguaje claro y con código abierto.
           </p>
-          <a
-            href="#lo-ultimo"
-            data-slot="button"
-            data-variant="outline"
-            className={cn(buttonVariants({ variant: 'outline' }))}
-          >
+          <ButtonLink href="#lo-ultimo" variant="outline">
             Lo último del Congreso ↓
-          </a>
+          </ButtonLink>
         </section>
       )}
       <div

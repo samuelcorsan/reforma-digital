@@ -1,4 +1,4 @@
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 
 import {
   NavigationMenu,
@@ -54,27 +54,20 @@ export function Header({ current }: { current?: string }) {
           link.children ? (
             <Desarrolladores key={link.href} />
           ) : (
-            <Link
+            <ButtonLink
               key={link.href}
-              href={link.href}
+              render={<Link href={link.href} />}
               aria-current={link.current ? 'page' : undefined}
-              data-slot="button"
-              data-variant={link.current ? 'default' : 'outline'}
               // Opacas: la cabecera no tiene barra detrás y el contenido pasa por debajo.
-              className={buttonVariants({ variant: link.current ? 'default' : 'outline' })}
+              variant={link.current ? 'default' : 'outline'}
             >
               {link.text}
-            </Link>
+            </ButtonLink>
           ),
         )}
-        <Link
-          href="/#participar"
-          data-slot="button"
-          data-variant="outline"
-          className={buttonVariants({ variant: 'outline' })}
-        >
+        <ButtonLink render={<Link href="/#participar" />} variant="outline">
           Participar <Icon name="derecha" size={16} />
-        </Link>
+        </ButtonLink>
       </nav>
       <MobileMenu links={links} />
     </header>

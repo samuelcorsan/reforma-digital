@@ -1,8 +1,7 @@
 'use client';
 import { Card } from '@reforma-digital/design/ui/card';
-import { cn } from '@reforma-digital/design/lib/utils';
 
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -39,15 +38,13 @@ export function CongressNav() {
       const current = path === view;
       return (
         <li key={path}>
-          <Link
-            href={href}
+          <ButtonLink
+            render={<Link href={href} />}
             aria-current={current ? 'page' : undefined}
-            data-slot="button"
-            data-variant="ghost"
-            className={cn(buttonVariants({ variant: 'ghost' }))}
+            variant="ghost"
           >
             {title}
-          </Link>
+          </ButtonLink>
         </li>
       );
     });

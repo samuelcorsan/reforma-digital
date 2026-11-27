@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Card, CardContent, CardHeader } from '@reforma-digital/design/ui/card';
 import {
   Table,
@@ -793,28 +793,26 @@ export function CommunicationReport({
               </h1>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {video && (
-                  <a
+                  <ButtonLink
                     href={video}
                     target="_blank"
                     rel="noopener noreferrer"
-                    data-slot="button"
-                    data-variant="outline"
-                    className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    variant="outline"
+                    size="xl"
                   >
                     Ver el vídeo original
                     <span aria-hidden="true"> ↗</span>
                     <span className="sr-only"> (se abre en una pestaña nueva)</span>
-                  </a>
+                  </ButtonLink>
                 )}
                 {c.datos.length > 0 && (
-                  <Link
-                    href={`${commHref(a.id, 'metodologia')}#anexo`}
-                    data-slot="button"
-                    data-variant="outline"
-                    className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                  <ButtonLink
+                    render={<Link href={`${commHref(a.id, 'metodologia')}#anexo`} />}
+                    variant="outline"
+                    size="xl"
                   >
                     <Icon name="descargar" size={18} /> Descargar los datos
-                  </Link>
+                  </ButtonLink>
                 )}
                 <ShareButton title={`${name}: análisis de comunicación`} />
               </div>
