@@ -561,7 +561,8 @@ function distanciaKm(a: Posicion, b: Posicion): number {
 }
 
 /**
- * Las incidencias activas cuyo punto de inicio cae dentro del radio, con el borde incluido. Una
+ * Las incidencias activas cuyo punto de inicio cae dentro del radio, con el borde incluido, de la
+ * más cercana a la más lejana: con el límite, las que quedan fuera son las más lejanas. Una
  * incidencia sin coordenadas no puede situarse y cuenta como «sin ubicación».
  */
 export function cercanas(
@@ -570,7 +571,7 @@ export function cercanas(
   radioKm: number,
   limite: number,
 ): Resultado {
-  const encontradas: Incidencia[] = [];
+  const encontradas: (Incidencia & { distancia_km: number })[] = [];
   let sinUbicacion = 0;
 
   for (const incidencia of incidencias) {
@@ -580,8 +581,11 @@ export function cercanas(
       sinUbicacion++;
       continue;
     }
-    if (distanciaKm(centro, punto) <= radioKm) encontradas.push(incidencia);
+    const distancia = distanciaKm(centro, punto);
+    if (distancia <= radioKm)
+      encontradas.push({ ...incidencia, distancia_km: Math.round(distancia * 10) / 10 });
   }
+  encontradas.sort((a, b) => a.distancia_km - b.distancia_km);
 
   return { incidencias: encontradas.slice(0, limite), total: encontradas.length, sinUbicacion };
 }

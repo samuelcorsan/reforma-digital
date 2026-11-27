@@ -213,7 +213,7 @@ describe('Tráfico DGT', () => {
     });
     // Radio 0 en las coordenadas exactas la incluye: el borde cuenta.
     expect(cercanas([enElPunto], { lat: 41.705166, lon: -0.025548847 }, 0, 10)).toEqual({
-      incidencias: [enElPunto],
+      incidencias: [{ ...enElPunto, distancia_km: 0 }],
       total: 1,
       sinUbicacion: 0,
     });
@@ -235,6 +235,18 @@ describe('Tráfico DGT', () => {
       total: 0,
       sinUbicacion: 1,
     });
+  });
+
+  it('returns the nearest incidents first, with their distance, when the limit cuts the list', () => {
+    const centro = { lat: 41.705166, lon: -0.025548847 };
+    const a = (id: string, lat: number) =>
+      incidencia({
+        id,
+        ubicacion: { inicio: { lat, lon: centro.lon }, fin: null, provincia: '', municipio: '' },
+      });
+    const { incidencias, total } = cercanas([a('lejos', 41.75), a('cerca', 41.71)], centro, 10, 1);
+    expect(total).toBe(2);
+    expect(incidencias).toEqual([expect.objectContaining({ id: 'cerca', distancia_km: 0.5 })]);
   });
 
   it('caches the download for the TTL and fetches again once it is over', async () => {
