@@ -10,6 +10,7 @@ import { POST as catastro } from '../../app/mcp/catastro/route';
 import { POST as contratacion } from '../../app/mcp/contratacion/route';
 import { POST as subvenciones } from '../../app/mcp/subvenciones/route';
 import { POST as municipios } from '../../app/mcp/municipios/route';
+import { POST as trafico } from '../../app/mcp/trafico/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -24,6 +25,7 @@ import catastroEscena from './escenas/catastro.png';
 import contratacionEscena from './escenas/contratacion.png';
 import subvencionesEscena from './escenas/subvenciones.png';
 import municipiosEscena from './escenas/municipios.png';
+import traficoEscena from './escenas/trafico.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -211,6 +213,21 @@ const servidores: Servidor[] = [
       '¿Qué ayudas a la contratación puede pedir una pyme en Gipuzkoa?',
     ],
   },
+  {
+    id: 'trafico',
+    name: 'Tráfico',
+    category: 'transporte',
+    // Sin logo propio: un cono de tráfico (Lucide).
+    logo: { src: '/mcp/trafico.svg' },
+    escena: traficoEscena,
+    summary:
+      'Las incidencias de tráfico activas que publica la DGT cada minuto, por carretera y tramo de puntos kilométricos, por provincia o cerca de unas coordenadas. La DGT solo publica la severidad de una parte de las incidencias, y el feed no incluye lo gestionado por la SCT ni por el Gobierno Vasco: la nota viaja con cada respuesta.',
+    examples: [
+      '¿Hay algo en la AP-7 entre el PK 680 y el 700?',
+      '¿Qué retenciones hay ahora mismo en la provincia de Valencia?',
+      '¿Hay alguna incidencia cerca de las coordenadas 41.3874, 2.1686?',
+    ],
+  },
 ];
 
 type Param = {
@@ -246,6 +263,7 @@ const handlers: Record<string, Entry['handler']> = {
   alsa,
   contratacion,
   subvenciones,
+  trafico,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];

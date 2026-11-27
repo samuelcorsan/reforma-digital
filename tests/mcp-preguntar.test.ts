@@ -57,6 +57,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'alsa',
       'contratacion',
       'subvenciones',
+      'trafico',
       'ninguno',
     ]);
   });
