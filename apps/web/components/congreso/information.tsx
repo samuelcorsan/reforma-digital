@@ -1,5 +1,4 @@
-import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Icon } from '../brand/icon';
 
 import { Intro, Section, Source } from './common';
@@ -29,7 +28,7 @@ export function Information({ section, title }: { section: string; title: string
       {section === 'glosario' ? (
         <dl
           className={
-            'cg-glossary [&_div]:[padding:24px_0] [&_div]:[border-bottom:1px_solid_var(--border)] [&_dt]:[font-size:20px] [&_dt]:font-semibold [&_dd]:[margin:8px_0_0] [&_dd]:[max-width:70ch]'
+            '[&_div]:py-6 [&_div]:px-0 [&_div]:border-b [&_div]:border-b-border [&_dt]:text-20 [&_dt]:font-semibold [&_dd]:[margin:8px_0_0] [&_dd]:[max-width:70ch]'
           }
         >
           {terms.map(([term, definition]) => (
@@ -43,7 +42,7 @@ export function Information({ section, title }: { section: string; title: string
         <>
           <ol
             className={
-              'cg-timeline list-none p-0 [&_li]:[padding:0_0_24px_24px] [&_li]:[border-left:2px_solid_var(--border)] [&_h3]:[margin:8px_0] [&_h3]:text-lg'
+              'list-none p-0 [&_li]:pt-0 [&_li]:pr-0 [&_li]:pb-6 [&_li]:pl-6 [&_li]:border-l-2 [&_li]:border-l-border [&_h3]:[margin:8px_0] [&_h3]:text-lg'
             }
           >
             {[
@@ -89,29 +88,18 @@ export function Information({ section, title }: { section: string; title: string
               atribución.
             </p>
             <div className={'flex flex-wrap items-center gap-3'}>
-              <a
-                href="/api/congreso"
-                data-slot="button"
-                data-variant="sunset"
-                className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
-              >
+              <ButtonLink href="/api/congreso" variant="sunset" size="xl">
                 Consultar la API
-              </a>
-              <a
-                href="/api/congreso/descarga"
-                data-slot="button"
-                data-variant="outline"
-                className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
-              >
+              </ButtonLink>
+              <ButtonLink href="/api/congreso/descarga" variant="outline" size="xl">
                 Descargar el histórico
-              </a>
-              <a
+              </ButtonLink>
+              <ButtonLink
                 href="https://github.com/jorgegarcelan/escano-abierto"
                 target="_blank"
                 rel="noopener noreferrer"
-                data-slot="button"
-                data-variant="ghost"
-                className={cn(buttonVariants({ variant: 'ghost', size: 'xl' }))}
+                variant="ghost"
+                size="xl"
               >
                 Código de origen <Icon name="externo" size={16} />
                 <span
@@ -122,7 +110,7 @@ export function Information({ section, title }: { section: string; title: string
                   {' '}
                   (se abre en otra pestaña)
                 </span>
-              </a>
+              </ButtonLink>
             </div>
           </Section>
         </>

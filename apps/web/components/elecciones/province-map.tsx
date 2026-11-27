@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { Button, buttonVariants } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Tabs, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import { percent, ramp, thousands } from '../../lib/elecciones/format';
 import { Icon } from '../brand/icon';
@@ -178,15 +179,15 @@ export function ProvinceMap({
               >
                 <span className="inline-flex items-center gap-2 font-medium">
                   <i
-                    className="block size-2.5 shrink-0 rounded-full"
-                    style={{ background: brandColor[b] }}
+                    className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+                    style={{ '--bg': brandColor[b] }}
                   />
                   {b}
                 </span>
                 <span className="h-2.5">
                   <i
-                    className="block h-full rounded-xs"
-                    style={{ width: `${(n / most) * 100}%`, background: brandColor[b] }}
+                    className="block h-full rounded-xs w-(--w) bg-(--bg)"
+                    style={{ '--w': `${(n / most) * 100}%`, '--bg': brandColor[b] }}
                   />
                 </span>
                 <b className="text-right font-mono font-medium tabular-nums">{n}</b>
@@ -213,13 +214,13 @@ export function ProvinceMap({
                     <b className="font-medium">{p.name}</b>
                     <span className="inline-flex items-center gap-1.5 text-muted-foreground">
                       <i
-                        className="block size-2 rounded-full"
-                        style={{ background: p.before?.color }}
+                        className="block size-2 rounded-full bg-(--bg)"
+                        style={{ '--bg': p.before?.color }}
                       />
                       {p.before?.brand} →
                       <i
-                        className="block size-2 rounded-full"
-                        style={{ background: p.winner?.color }}
+                        className="block size-2 rounded-full bg-(--bg)"
+                        style={{ '--bg': p.winner?.color }}
                       />
                       {p.winner?.brand}
                     </span>
@@ -235,10 +236,7 @@ export function ProvinceMap({
       <>
         <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
           Margen estrecho
-          <span
-            className="block h-2.5 w-28 rounded-full"
-            style={{ background: 'linear-gradient(90deg, var(--muted), var(--foreground))' }}
-          />
+          <span className="block h-2.5 w-28 rounded-full bg-linear-to-r from-muted to-foreground" />
           amplio
         </p>
         {previous && (
@@ -278,8 +276,8 @@ export function ProvinceMap({
         <p className="m-0 flex items-center gap-2 text-sm text-muted-foreground">
           {format[mode](low)}
           <span
-            className="block h-2.5 w-28 rounded-full"
-            style={{ background: `linear-gradient(90deg, ${from}, ${to})` }}
+            className="block h-2.5 w-28 rounded-full bg-(image:--bg)"
+            style={{ '--bg': `linear-gradient(90deg, ${from}, ${to})` }}
           />
           {format[mode](high)}
         </p>
@@ -303,7 +301,7 @@ export function ProvinceMap({
           <Tabs value={mode} onValueChange={(v) => isMode(v) && setMode(v)}>
             <TabsList aria-label="Qué se pinta">
               {modes.map(([m, text]) => (
-                <TabsTrigger key={m} value={m} className="px-3">
+                <TabsTrigger key={m} value={m}>
                   {text}
                 </TabsTrigger>
               ))}
@@ -320,7 +318,7 @@ export function ProvinceMap({
                 aria-pressed={x.id === party}
                 onClick={() => setParty(x.id)}
               >
-                <i className="block size-2 rounded-full" style={{ background: x.color }} />
+                <i className="block size-2 rounded-full bg-(--bg)" style={{ '--bg': x.color }} />
                 {x.name}
               </Button>
             ))}
@@ -353,12 +351,10 @@ export function ProvinceMap({
                     y={y}
                     dy=".35em"
                     textAnchor="middle"
-                    className="fill-foreground font-mono font-medium"
+                    className="fill-foreground font-mono font-medium text-(length:--size) stroke-background stroke-(length:--stroke-width) [paint-order:stroke]"
                     style={{
-                      fontSize: (12 * mapWidth) / width,
-                      paintOrder: 'stroke',
-                      stroke: 'var(--background)',
-                      strokeWidth: (3 * mapWidth) / width,
+                      '--size': `${(12 * mapWidth) / width}px`,
+                      '--stroke-width': `${(3 * mapWidth) / width}px`,
                     }}
                   >
                     {p.seats}
@@ -378,7 +374,7 @@ export function ProvinceMap({
                 <Label>
                   {year} · {chosen.seats} {chosen.seats === 1 ? 'escaño' : 'escaños'}
                 </Label>
-                <h3 className="m-0 font-heading text-[28px] leading-tight font-normal">
+                <h3 className="m-0 font-heading text-28 leading-tight font-normal">
                   {chosen.name}
                 </h3>
               </div>
@@ -402,10 +398,10 @@ export function ProvinceMap({
                   <span className="font-medium break-words">{n}</span>
                   <span className="h-2.5">
                     <i
-                      className="block h-full rounded-xs"
+                      className="block h-full rounded-xs w-(--w) bg-(--bg)"
                       style={{
-                        width: `${(share / (chosen.rows[0]?.[2] || 1)) * 100}%`,
-                        background: c,
+                        '--w': `${(share / (chosen.rows[0]?.[2] || 1)) * 100}%`,
+                        '--bg': c,
                       }}
                     />
                   </span>
@@ -438,21 +434,21 @@ export function ProvinceMap({
                     className={cn(
                       'h-5 rounded-xs',
                       years[j] === year && 'outline-2 outline-offset-1 outline-foreground',
+                      'bg-(--bg)',
                     )}
-                    style={{ background: b ? brandColor[b] : 'var(--muted)' }}
+                    style={{ '--bg': b ? brandColor[b] : 'var(--muted)' }}
                   />
                 ))}
               </ol>
             </div>
-            <Link
-              href={chosen.href}
-              className={cn(
-                buttonVariants({ variant: 'outline', size: 'lg' }),
-                'justify-self-start',
-              )}
+            <ButtonLink
+              render={<Link href={chosen.href} />}
+              variant="outline"
+              size="lg"
+              className="justify-self-start"
             >
               Ficha de {chosen.name} <Icon name="derecha" size={16} />
-            </Link>
+            </ButtonLink>
           </div>
         ) : (
           <div className="grid content-start gap-6">{summary}</div>

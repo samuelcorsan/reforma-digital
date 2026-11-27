@@ -62,7 +62,7 @@ export function Interventions({
   return interventions.length ? (
     <div
       className={
-        'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
+        'grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
       }
     >
       {interventions.map((iv, i) => (
@@ -70,22 +70,22 @@ export function Interventions({
           key={`${iv.s}-${i}`}
           render={
             <article
+              data-part="cg-card"
               className={
-                'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
+                '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
               }
             />
           }
         >
           <CardContent>
             <span
-              className={
-                't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
-              }
+              data-part="t-etiqueta"
+              className={'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase'}
             >
               {iv.g} · {iv.tono}
             </span>
             <h3>{iv.orador}</h3>
-            <p className={'cg-muted [color:var(--muted-foreground)] text-sm'}>{iv.item}</p>
+            <p className={'text-muted-foreground text-sm'}>{iv.item}</p>
             <AI>
               <p>{iv.frase || iv.resumen || 'El resumen está en la ficha de la sesión.'}</p>
             </AI>
@@ -121,7 +121,7 @@ function Laws({ laws, legislature }: { laws: LawCard[]; legislature: string }) {
   return laws.length ? (
     <div
       className={
-        'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
+        'grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
       }
     >
       {laws.map((law) => (
@@ -129,17 +129,17 @@ function Laws({ laws, legislature }: { laws: LawCard[]; legislature: string }) {
           key={law.exp}
           render={
             <article
+              data-part="cg-card"
               className={
-                'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
+                '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
               }
             />
           }
         >
           <CardContent>
             <span
-              className={
-                't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
-              }
+              data-part="t-etiqueta"
+              className={'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase'}
             >
               {law.tipo} · {law.estado}
             </span>
@@ -195,7 +195,7 @@ export async function Activity({
         <Filters action={href('preguntas')} query={query} />
         <div
           className={
-            'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
+            'grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
           }
         >
           {questions.map(({ content: question }) => (
@@ -203,16 +203,18 @@ export async function Activity({
               key={question.exp}
               render={
                 <article
+                  data-part="cg-card"
                   className={
-                    'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
+                    '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                   }
                 />
               }
             >
               <CardContent>
                 <span
+                  data-part="t-etiqueta"
                   className={
-                    't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
+                    'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase'
                   }
                 >
                   {question.estado} · {date(question.presentada)}
@@ -251,7 +253,7 @@ export async function Activity({
         <Section title="Tramitación">
           <ol
             className={
-              'cg-timeline list-none p-0 [&_li]:[padding:0_0_24px_24px] [&_li]:[border-left:2px_solid_var(--border)] [&_h3]:[margin:8px_0] [&_h3]:text-lg'
+              'list-none p-0 [&_li]:pt-0 [&_li]:pr-0 [&_li]:pb-6 [&_li]:pl-6 [&_li]:border-l-2 [&_li]:border-l-border [&_h3]:[margin:8px_0] [&_h3]:text-lg'
             }
           >
             {law.fases.map(([organ, phase, from, to], i) => (
@@ -335,7 +337,7 @@ export async function Activity({
         <Section title="Leyes publicadas">
           <div
             className={
-              'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
+              'grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
             }
           >
             {approved.map((law, i) => (
@@ -343,8 +345,9 @@ export async function Activity({
                 key={`${law.pdf}-${i}`}
                 render={
                   <article
+                    data-part="cg-card"
                     className={
-                      'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
+                      '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                     }
                   />
                 }
@@ -366,7 +369,7 @@ export async function Activity({
       <>
         <div
           className={
-            'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
+            'grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
           }
         >
           {(await topics()).map((topic) => (
@@ -375,8 +378,9 @@ export async function Activity({
               render={
                 <Link
                   href={href(`tema/${topic.id}`)}
+                  data-part="cg-card"
                   className={
-                    'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
+                    '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                   }
                 />
               }
@@ -438,7 +442,7 @@ export async function Activity({
         <Section title="El voto de cada diputado">
           <div
             className={
-              'cg-table overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:[border-bottom:1px_solid_var(--border)] [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:[border-bottom:1px_solid_var(--border)] [&_td]:[vertical-align:top] [&_th]:text-sm'
+              'overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:border-b [&_th]:border-b-border [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:border-b [&_td]:border-b-border [&_td]:[vertical-align:top] [&_th]:text-sm'
             }
           >
             <Table>
@@ -494,7 +498,7 @@ export async function Activity({
         <Section title="Orden del día">
           <ol
             className={
-              'cg-timeline list-none p-0 [&_li]:[padding:0_0_24px_24px] [&_li]:[border-left:2px_solid_var(--border)] [&_h3]:[margin:8px_0] [&_h3]:text-lg'
+              'list-none p-0 [&_li]:pt-0 [&_li]:pr-0 [&_li]:pb-6 [&_li]:pl-6 [&_li]:border-l-2 [&_li]:border-l-border [&_h3]:[margin:8px_0] [&_h3]:text-lg'
             }
           >
             {session.puntos.map((p, i) => (
@@ -519,7 +523,7 @@ export async function Activity({
             {raw.intervenciones.map((iv, i) => (
               <Collapsible
                 className={
-                  'cg-transcript [padding:16px_0] [border-bottom:1px_solid_var(--border)] [&_summary]:cursor-pointer [&_summary]:font-medium [&_p]:[max-width:80ch] [&_p]:[white-space:pre-line]'
+                  'py-4 px-0 border-b border-b-border [&_summary]:cursor-pointer [&_summary]:font-medium [&_p]:[max-width:80ch] [&_p]:[white-space:pre-line]'
                 }
                 key={i}
               >
