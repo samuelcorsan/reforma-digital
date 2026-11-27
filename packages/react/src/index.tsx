@@ -71,9 +71,7 @@ export function BoundField({
       {!checkable ? (
         <label
           id={`${id}-label`}
-          className={
-            'bg-label block [font-size:15px] [line-height:1.4] font-semibold [color:rgb(var(--bg-ink))] [margin-bottom:6px]'
-          }
+          className={'block text-15 leading-1.4 font-semibold text-ink [margin-bottom:6px]'}
           htmlFor={id}
         >
           {spec.label}
@@ -174,10 +172,7 @@ export function BoundField({
         />
       )}
       {spec.help ? (
-        <p
-          id={`${id}-help`}
-          className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-1.5'}
-        >
+        <p id={`${id}-help`} className={'text-sm leading-normal text-ink-muted mt-1.5'}>
           {spec.help}
         </p>
       ) : null}

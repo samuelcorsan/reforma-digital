@@ -7,7 +7,6 @@
 /apps/ingestion/ @jorgegarcelan
 /apps/web/app/(search)/congreso/ @jorgegarcelan
 /apps/web/app/api/congreso/ @jorgegarcelan
-/apps/web/app/mcp/congreso/ @jorgegarcelan
 /apps/web/components/congreso/ @jorgegarcelan
 /apps/web/lib/congreso/ @jorgegarcelan
 /apps/web/public/congreso/ @jorgegarcelan

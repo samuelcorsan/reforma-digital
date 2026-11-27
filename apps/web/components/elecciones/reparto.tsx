@@ -39,8 +39,10 @@ export function Reparto({
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
     if (!playing) return;
-    if (k >= elections.length - 1) return setPlaying(false);
-    const timer = setTimeout(() => setK(k + 1), 1700);
+    const timer = setTimeout(() => {
+      setK(k + 1);
+      if (k + 1 >= elections.length - 1) setPlaying(false);
+    }, 1700);
     return () => clearTimeout(timer);
   }, [playing, k, elections.length]);
 
@@ -151,9 +153,12 @@ export function Reparto({
                     key={`${c}-${j}`}
                     r={seatRadius}
                     fill={colors[j] ?? '#8A8F98'}
-                    className="cursor-pointer stroke-background transition-[transform,opacity] duration-700 ease-(--ease-brand) motion-reduce:transition-none"
+                    className="cursor-pointer stroke-background transition duration-700 ease-(--ease-brand) motion-reduce:transition-none transform-(--transform) opacity-(--opacity)"
                     strokeWidth={0.8}
-                    style={{ transform: `translate(${x}px, ${y}px)`, opacity: j < seats ? 1 : 0 }}
+                    style={{
+                      '--transform': `translate(${x}px, ${y}px)`,
+                      '--opacity': j < seats ? 1 : 0,
+                    }}
                     data-tip={name(c)}
                     data-tip-text={`${seats} escaños en ${e.short}${tip ? `: ${tip}` : ''}`}
                     onClick={() => router.push(provinces[c]?.href ?? '#')}

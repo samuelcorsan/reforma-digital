@@ -76,7 +76,10 @@ export async function Municipalities({ query, page }: { query: string; page: num
                 {shown.map((g) => (
                   <TableHead key={g.id} className="text-right">
                     <span className="inline-flex items-center gap-1.5">
-                      <i className="block size-2 rounded-full" style={{ background: g.color }} />
+                      <i
+                        className="block size-2 rounded-full bg-(--bg)"
+                        style={{ '--bg': g.color }}
+                      />
                       {g.name}
                     </span>
                   </TableHead>
@@ -86,12 +89,10 @@ export async function Municipalities({ query, page }: { query: string; page: num
             <TableBody>
               {votes.rows.map(([code, name, row]) => (
                 <TableRow key={code}>
-                  <TableCell className="font-medium">{name}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">
-                    {percent(turnout(row) ?? 0)}
-                  </TableCell>
+                  <TableCell>{name}</TableCell>
+                  <TableCell className="text-right">{percent(turnout(row) ?? 0)}</TableCell>
                   {shown.map((g) => (
-                    <TableCell key={g.id} className="text-right font-mono tabular-nums">
+                    <TableCell key={g.id} className="text-right">
                       {percent(voteShare(row, votes.orden, g.families) ?? 0)}
                     </TableCell>
                   ))}
@@ -99,7 +100,7 @@ export async function Municipalities({ query, page }: { query: string; page: num
               ))}
               {!votes.rows.length && (
                 <TableRow>
-                  <TableCell colSpan={shown.length + 2} className="text-muted-foreground">
+                  <TableCell colSpan={shown.length + 2}>
                     Ningún municipio coincide con la búsqueda.
                   </TableCell>
                 </TableRow>

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { PortalContainerContext } from '../lib/portal';
 import { Dialog as SheetPrimitive } from '@base-ui/react/dialog';
-import { cn } from 'cn';
+import { cn } from '../lib/utils';
 
 import { Button } from './button';
 import { XIcon } from 'lucide-react';

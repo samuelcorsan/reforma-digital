@@ -170,8 +170,8 @@ export async function Projection() {
                   x={hemicycle.label.x}
                   y={hemicycle.label.y}
                   textAnchor="middle"
-                  className="fill-foreground font-heading"
-                  style={{ fontSize: hemicycle.label.size }}
+                  className="fill-foreground font-heading text-(length:--size)"
+                  style={{ '--size': `${hemicycle.label.size}px` }}
                 >
                   350
                 </text>
@@ -190,7 +190,7 @@ export async function Projection() {
                   className="grid grid-cols-[8.5rem_minmax(0,1fr)] items-center gap-x-4 gap-y-1"
                 >
                   {/* El título, a la altura de la cifra; la explicación, debajo. */}
-                  <b className="font-heading text-[40px] leading-none font-normal whitespace-nowrap tabular-nums">
+                  <b className="font-heading text-40 leading-none font-normal whitespace-nowrap tabular-nums">
                     {q.value}
                   </b>
                   <span className="font-medium">{q.title}</span>
@@ -227,8 +227,8 @@ export async function Projection() {
                     >
                       <span className="inline-flex items-center gap-2 font-medium">
                         <i
-                          className="block size-2.5 shrink-0 rounded-full"
-                          style={{ background: color(id) }}
+                          className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+                          style={{ '--bg': color(id) }}
                         />
                         {name(id)}
                       </span>
@@ -236,26 +236,26 @@ export async function Projection() {
                         {ticks.map((t) => (
                           <i
                             key={t}
-                            className="absolute inset-y-0 block w-px bg-border"
-                            style={{ left: `${position(t)}%` }}
+                            className="absolute inset-y-0 block w-px bg-border left-(--left)"
+                            style={{ '--left': `${position(t)}%` }}
                           />
                         ))}
                         <i
-                          className="absolute top-1/2 block h-3 min-w-1.5 -translate-y-1/2 rounded-full"
+                          className="absolute top-1/2 block h-3 min-w-1.5 -translate-y-1/2 rounded-full left-(--left) w-(--w) bg-(--bg)/35"
                           style={{
-                            left: `${position(p.p05)}%`,
-                            width: `${position(p.p95) - position(p.p05)}%`,
-                            background: `color-mix(in oklab, ${color(id)} 35%, transparent)`,
+                            '--left': `${position(p.p05)}%`,
+                            '--w': `${position(p.p95) - position(p.p05)}%`,
+                            '--bg': color(id),
                           }}
                         />
                         <i
-                          className="absolute top-1/2 block h-5 w-[3px] -translate-1/2 rounded-full"
-                          style={{ left: `${position(p.med)}%`, background: color(id) }}
+                          className="absolute top-1/2 block h-5 w-[3px] -translate-1/2 rounded-full left-(--left) bg-(--bg)"
+                          style={{ '--left': `${position(p.med)}%`, '--bg': color(id) }}
                         />
                         {b !== null && (
                           <i
-                            className="absolute top-1/2 block size-2.5 -translate-1/2 rotate-45 border-2 border-foreground bg-background"
-                            style={{ left: `${position(b)}%` }}
+                            className="absolute top-1/2 block size-2.5 -translate-1/2 rotate-45 border-2 border-foreground bg-background left-(--left)"
+                            style={{ '--left': `${position(b)}%` }}
                           />
                         )}
                       </span>
@@ -279,8 +279,8 @@ export async function Projection() {
                 {ticks.map((t) => (
                   <span
                     key={t}
-                    className="absolute -translate-x-1/2"
-                    style={{ left: `${position(t)}%` }}
+                    className="absolute -translate-x-1/2 left-(--left)"
+                    style={{ '--left': `${position(t)}%` }}
                   >
                     {t}
                   </span>

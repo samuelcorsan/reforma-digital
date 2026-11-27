@@ -1,5 +1,5 @@
-import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants, Button } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Card } from '@reforma-digital/design/ui/card';
 
 import { FilterSelect } from '../../../../components/congreso/common';
@@ -72,14 +72,14 @@ export default async function Page({ params, searchParams }: Props) {
     <main id="main" tabIndex={-1}>
       {section === '' && (
         <section
+          data-part="cg-hero"
           className={
-            "cg-hero [--celda:8px] relative isolate overflow-hidden [margin:0_8px] [padding:96px_var(--page-gutter)_calc(32_*_var(--celda)_+_24px)] [border-radius:28px] [box-shadow:inset_0_0_0_1px_var(--border)] text-center [&::after]:[content:''] [&::after]:absolute [&::after]:[z-index:-1] [&::after]:[inset:auto_0_0] [&::after]:[height:calc(32_*_var(--celda))] [&::after]:[background:url('/congreso/sol-horizonte.png')_50%_100%_/_calc(360_*_var(--celda))_100%_no-repeat] [&::after]:[image-rendering:pixelated] [&::after]:pointer-events-none [&_h1]:[font-size:clamp(36px,_5vw,_72px)] [&_h1]:[line-height:1.08] [&_h1]:[max-width:25ch] [&_h1]:[margin:24px_auto] [&_p]:[max-width:62ch] [&_p]:[margin:0_auto] [&_p]:[color:var(--text-secondary)] [&_p]:text-lg [&_[data-slot=button][data-variant=outline]]:absolute [&_[data-slot=button][data-variant=outline]]:[inset:auto_0_24px] [&_[data-slot=button][data-variant=outline]]:[width:fit-content] [&_[data-slot=button][data-variant=outline]]:[margin-inline:auto] [@media(max-width:_560px)]:[--celda:6px] [@media(max-width:_560px)]:pt-16 [@media(max-width:_560px)]:[&_p]:text-base"
+            "[--celda:8px] [--hueco-sol:calc(32_*_var(--celda)_+_24px)] relative isolate overflow-hidden [margin:0_8px] pt-24 px-(--page-gutter) pb-(--hueco-sol) rounded-28 inset-ring inset-ring-border text-center [&::after]:[content:''] [&::after]:absolute [&::after]:[z-index:-1] [&::after]:[inset:auto_0_0] [&::after]:[height:calc(32_*_var(--celda))] [&::after]:sol-horizonte [&::after]:[image-rendering:pixelated] [&::after]:pointer-events-none [&_h1]:text-fluid-36-72-suave [&_h1]:leading-1.08 [&_h1]:[max-width:25ch] [&_h1]:[margin:24px_auto] [&_p]:[max-width:62ch] [&_p]:[margin:0_auto] [&_p]:text-(--text-secondary) [&_p]:text-lg [&_[data-slot=button][data-variant=outline]]:absolute [&_[data-slot=button][data-variant=outline]]:[inset:auto_0_24px] [&_[data-slot=button][data-variant=outline]]:[width:fit-content] [&_[data-slot=button][data-variant=outline]]:[margin-inline:auto] [@media(max-width:_560px)]:[--celda:6px] [@media(max-width:_560px)]:pt-16 [@media(max-width:_560px)]:[&_p]:text-base"
           }
         >
           <span
-            className={
-              't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase'
-            }
+            data-part="t-etiqueta"
+            className={'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase'}
           >
             Un proyecto de Reforma Digital
           </span>
@@ -88,19 +88,15 @@ export default async function Page({ params, searchParams }: Props) {
             Cada pleno resumido, cada votación con el voto de cada diputado y cada ley, desde que
             entra hasta que se publica. Con datos oficiales, en lenguaje claro y con código abierto.
           </p>
-          <a
-            href="#lo-ultimo"
-            data-slot="button"
-            data-variant="outline"
-            className={cn(buttonVariants({ variant: 'outline' }))}
-          >
+          <ButtonLink href="#lo-ultimo" variant="outline">
             Lo último del Congreso ↓
-          </a>
+          </ButtonLink>
         </section>
       )}
       <div
+        data-part="cg-body"
         className={
-          'cg-body [max-width:var(--container-content)] [margin:auto] [padding:32px_var(--page-gutter)_80px] [&_.sol-tabs]:mb-6 [container-type:inline-size] [&_a:not([data-slot=button][data-variant=default],_[data-slot=button][data-variant=sunset],_[data-slot=button][data-variant=outline],_[data-slot=button][data-variant=ghost],_[data-slot=button][data-size=icon],_[data-slot=button][data-size=icon-lg],_.cg-card):hover]:[text-decoration:underline] [&_a:not([data-slot=button][data-variant=default],_[data-slot=button][data-variant=sunset],_[data-slot=button][data-variant=outline],_[data-slot=button][data-variant=ghost],_[data-slot=button][data-size=icon],_[data-slot=button][data-size=icon-lg],_.cg-card):hover]:[text-underline-offset:3px]'
+          '[max-width:var(--container-content)] [margin:auto] pt-8 px-(--page-gutter) pb-20 [&_.sol-tabs]:mb-6 [container-type:inline-size] [&_a:not([data-slot=button][data-variant=default],_[data-slot=button][data-variant=sunset],_[data-slot=button][data-variant=outline],_[data-slot=button][data-variant=ghost],_[data-slot=button][data-size=icon],_[data-slot=button][data-size=icon-lg],_[data-part=cg-card]):hover]:underline [&_a:not([data-slot=button][data-variant=default],_[data-slot=button][data-variant=sunset],_[data-slot=button][data-variant=outline],_[data-slot=button][data-variant=ghost],_[data-slot=button][data-size=icon],_[data-slot=button][data-size=icon-lg],_[data-part=cg-card]):hover]:underline-offset-3'
         }
       >
         {information ? (
@@ -225,7 +221,7 @@ async function Data({
           {index.agenda.plenos.length ? (
             <div
               className={
-                'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
+                'grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
               }
             >
               {index.agenda.plenos.map((pleno) => (
@@ -233,8 +229,9 @@ async function Data({
                   key={pleno.fecha}
                   render={
                     <article
+                      data-part="cg-card"
                       className={
-                        'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
+                        '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                       }
                     />
                   }
@@ -260,7 +257,7 @@ async function Data({
       {['', 'dias', 'votaciones', 'diputado', 'grupos', 'oradores'].includes(section) && (
         <form
           className={
-            'cg-period flex items-center flex-wrap gap-3 pb-6 [&_.campo]:w-auto [@media(max-width:_560px)]:[&_.campo]:[max-width:190px]'
+            'flex items-center flex-wrap gap-3 pb-6 [&_.campo]:w-auto [@media(max-width:_560px)]:[&_.campo]:[max-width:190px]'
           }
           action={`${congressBase}/${section}${detail ? `/${detail}` : ''}`}
         >
@@ -285,11 +282,7 @@ async function Data({
         </form>
       )}
       {content}
-      <p
-        className={
-          'cg-provenance [color:var(--muted-foreground)] text-sm mt-16 pt-6 [border-top:1px_solid_var(--border)]'
-        }
-      >
+      <p className={'text-muted-foreground text-sm mt-16 pt-6 border-t border-t-border'}>
         Snapshot generado el {date(index.meta.generado)}. Los distintos conjuntos pueden tener
         fechas de actualización diferentes. <Link href={href('metodo')}>Método y fuentes</Link>.
       </p>

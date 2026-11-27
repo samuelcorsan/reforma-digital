@@ -9,7 +9,7 @@ import {
   presenterName,
   stage,
 } from '../../lib/elecciones/laws';
-import { Card } from '@reforma-digital/design/ui/card';
+import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import { Icon } from '../brand/icon';
 import { date, href } from '../congreso/common';
 import { ExpiringList, type ExpiringLaw } from './expiring-list';
@@ -176,7 +176,10 @@ export async function Expiring() {
                 </Link>
                 <span className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
                   <span className="inline-flex items-center gap-1.5">
-                    <i className="block size-2 rounded-full" style={{ background: l.color }} />
+                    <i
+                      className="block size-2 rounded-full bg-(--bg)"
+                      style={{ '--bg': l.color }}
+                    />
                     {l.presenterName}
                   </span>
                   <span className="font-mono tabular-nums">{thousands(l.days)} días</span>
@@ -206,7 +209,10 @@ export async function Expiring() {
                     {l.title}
                   </Link>
                   <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <i className="block size-2 rounded-full" style={{ background: l.color }} />
+                    <i
+                      className="block size-2 rounded-full bg-(--bg)"
+                      style={{ '--bg': l.color }}
+                    />
                     {l.presenterName}
                   </span>
                 </span>
@@ -229,28 +235,29 @@ export async function Expiring() {
           <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2">
             {convalidar.map((d) => (
               <li key={d.numero} className="grid">
-                <Card
-                  render={<a href={d.pdf} target="_blank" rel="noopener noreferrer" />}
-                  className="gap-3 p-6 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 max-sm:p-5"
-                >
-                  <span className="text-xs font-medium text-muted-foreground">
-                    RDL {d.numero} · BOE {date(d.fecha)}
-                  </span>
-                  <span className="leading-snug">
-                    {d.titulo
-                      .replace(/^Real Decreto-ley \d+\/\d{4}, de \d+ de \p{L}+, /u, '')
-                      .replace(/^./, (c) => c.toUpperCase())}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    Plazo de convalidación: hasta el {date(d.limite_aprox)}, aproximadamente.
-                  </span>
-                  <span className="mt-auto flex items-center justify-end gap-2 pt-2 text-sm text-muted-foreground">
-                    Consultar el texto oficial
-                    <span className="text-foreground">
-                      <Icon name="externo" size={16} />
-                    </span>
-                    <span className="sr-only">(se abre en una pestaña nueva)</span>
-                  </span>
+                <Card render={<a href={d.pdf} target="_blank" rel="noopener noreferrer" />}>
+                  <CardContent className="flex grow flex-col">
+                    <div className="flex grow flex-col gap-3">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        RDL {d.numero} · BOE {date(d.fecha)}
+                      </span>
+                      <span className="leading-snug">
+                        {d.titulo
+                          .replace(/^Real Decreto-ley \d+\/\d{4}, de \d+ de \p{L}+, /u, '')
+                          .replace(/^./, (c) => c.toUpperCase())}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        Plazo de convalidación: hasta el {date(d.limite_aprox)}, aproximadamente.
+                      </span>
+                      <span className="mt-auto flex items-center justify-end gap-2 pt-2 text-sm text-muted-foreground">
+                        Consultar el texto oficial
+                        <span className="text-foreground">
+                          <Icon name="externo" size={16} />
+                        </span>
+                        <span className="sr-only">(se abre en una pestaña nueva)</span>
+                      </span>
+                    </div>
+                  </CardContent>
                 </Card>
               </li>
             ))}

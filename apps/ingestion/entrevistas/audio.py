@@ -48,7 +48,7 @@ def descargar(url: str, carpeta: Path) -> Video:
         viejo.unlink()
     subprocess.run(
         [
-            # El yt-dlp del entorno del pipeline (requirements.txt), no el del sistema, que puede estar desfasado
+            # El yt-dlp del entorno del pipeline (uv.lock), no el del sistema, que puede estar desfasado
             sys.executable,
             "-m",
             "yt_dlp",

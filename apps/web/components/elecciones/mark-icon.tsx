@@ -79,16 +79,9 @@ export function IconChip({
         'grid size-7 shrink-0 place-items-center rounded-full',
         !color && 'bg-background text-foreground ring-1 ring-foreground/15',
         className,
+        color && 'fondo-tinte-16 texto-tinte inset-ring inset-ring-(--tinte)/40',
       )}
-      style={
-        color
-          ? {
-              background: `color-mix(in oklab, ${color} 16%, var(--background))`,
-              color: `color-mix(in oklab, ${color} 78%, black)`,
-              boxShadow: `inset 0 0 0 1px color-mix(in oklab, ${color} 40%, transparent)`,
-            }
-          : undefined
-      }
+      style={{ '--tinte': color }}
     >
       <Icon name={name} size={15} />
     </span>

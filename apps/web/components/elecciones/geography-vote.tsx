@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@reforma-digital/design/ui/button';
+import { Toggle } from '@reforma-digital/design/ui/toggle';
 import type { ReactNode } from 'react';
 import { getGeography, getHistory, read } from '../../lib/congreso/data';
 import {
@@ -32,8 +32,9 @@ const people = (n: number) =>
   n >= 1e6 ? `${millions(n)} de habitantes` : `${thousands(n)} habitantes`;
 const signed = (n: number) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${percent(Math.abs(n), 0)}`;
 const others = '#8A8F98';
-// Los botones de elegir: el estado lo marca `VoteStory` con `aria-pressed`.
-const pressed = 'aria-pressed:bg-foreground aria-pressed:text-background';
+// vote-story.tsx marca el botón elegido con `aria-pressed`, fuera de React: `pressed` fijo para
+// que el Toggle no lleve su propio estado y lo pise.
+const choice = { variant: 'outline', size: 'sm', pressed: false } as const;
 // El tono de cada eje en el mapa.
 const tones: Record<Axis, string> = {
   ciudad: '#4F7AA6',
@@ -132,7 +133,11 @@ export async function GeographyVote() {
     >
       {blocs.map(([k]) =>
         r[k] ? (
-          <i key={k} className="block h-full" style={{ flex: r[k], background: blocColor(k) }} />
+          <i
+            key={k}
+            className="block h-full flex-(--flex) bg-(--bg)"
+            style={{ '--flex': r[k], '--bg': blocColor(k) }}
+          />
         ) : null,
       )}
     </span>
@@ -141,7 +146,7 @@ export async function GeographyVote() {
     <p className="m-0 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
       {blocs.map(([k, t]) => (
         <span key={k} className="inline-flex items-center gap-1.5">
-          <i className="block size-2.5 rounded-full" style={{ background: blocColor(k) }} />
+          <i className="block size-2.5 rounded-full bg-(--bg)" style={{ '--bg': blocColor(k) }} />
           {t}
         </span>
       ))}
@@ -162,8 +167,8 @@ export async function GeographyVote() {
               className="grid cursor-pointer grid-cols-[0.75rem_minmax(0,1fr)] gap-x-3 gap-y-1 rounded-lg p-2 transition-colors outline-none hover:bg-muted focus-visible:bg-muted data-[on]:bg-muted"
             >
               <i
-                className="mt-1.5 block size-3 rounded-xs"
-                style={{ background: tone(axis, b.tone) }}
+                className="mt-1.5 block size-3 rounded-xs bg-(--bg)"
+                style={{ '--bg': tone(axis, b.tone) }}
               />
               <span className="grid gap-1">
                 <span className="flex flex-wrap items-baseline justify-between gap-x-3">
@@ -294,12 +299,12 @@ export async function GeographyVote() {
             {percent(popOf(smallList) / total, 1)} de la población.
           </p>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Tamaño de los puntos">
-            <Button variant="outline" size="sm" data-size="mun" className={pressed}>
+            <Toggle {...choice} data-size="mun">
               Por municipio
-            </Button>
-            <Button variant="outline" size="sm" data-size="pob" className={pressed}>
+            </Toggle>
+            <Toggle {...choice} data-size="pob">
               Por habitantes
-            </Button>
+            </Toggle>
           </div>
         </>
       ),
@@ -395,11 +400,11 @@ export async function GeographyVote() {
                       return (
                         <i
                           key={k}
-                          className="flex items-center justify-center font-mono text-xs not-italic"
+                          className="flex items-center justify-center font-mono text-xs not-italic w-(--w) bg-(--bg) text-(--color)"
                           style={{
-                            width: `${v}%`,
-                            background: blocColor(k),
-                            color: ink(blocColor(k)),
+                            '--w': `${v}%`,
+                            '--bg': blocColor(k),
+                            '--color': ink(blocColor(k)),
                           }}
                         >
                           {v >= 9 ? Math.round(v) : ''}
@@ -414,7 +419,10 @@ export async function GeographyVote() {
           <p className="m-0 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
             {ageParties.map(([k, t]) => (
               <span key={k} className="inline-flex items-center gap-1.5">
-                <i className="block size-2.5 rounded-full" style={{ background: blocColor(k) }} />
+                <i
+                  className="block size-2.5 rounded-full bg-(--bg)"
+                  style={{ '--bg': blocColor(k) }}
+                />
                 {t}
               </span>
             ))}
@@ -431,9 +439,9 @@ export async function GeographyVote() {
                 <span className="font-mono text-muted-foreground">{ageLabel(e)}</span>
                 <span className="h-2 rounded-full bg-muted">
                   <i
-                    className="block h-full rounded-full bg-muted-foreground"
+                    className="block h-full rounded-full bg-muted-foreground w-(--w)"
                     style={{
-                      width: `${((age.no_voto[j] ?? 0) / Math.max(...age.no_voto)) * 100}%`,
+                      '--w': `${((age.no_voto[j] ?? 0) / Math.max(...age.no_voto)) * 100}%`,
                     }}
                   />
                 </span>
@@ -488,15 +496,9 @@ export async function GeographyVote() {
           </p>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Territorio">
             {spainList.map((s) => (
-              <Button
-                key={s.key}
-                variant="outline"
-                size="sm"
-                data-spain={s.key}
-                className={pressed}
-              >
+              <Toggle key={s.key} {...choice} data-spain={s.key}>
                 {s.title}
-              </Button>
+              </Toggle>
             ))}
           </div>
           {spainList.map((s) => (

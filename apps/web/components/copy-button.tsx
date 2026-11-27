@@ -22,7 +22,7 @@ export function CopyButton({ label, code }: { label: string; code: string }) {
     <Button
       variant="ghost"
       size="icon"
-      className="m-2 shrink-0 text-background/70 hover:bg-background/15 hover:text-background"
+      className="m-2 shrink-0"
       onClick={() => void copy()}
       aria-label={copied ? 'Copiado' : `Copiar ${label}`}
     >

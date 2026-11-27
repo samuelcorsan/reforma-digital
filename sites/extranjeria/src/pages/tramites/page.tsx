@@ -138,19 +138,11 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
       </Callout>
 
       <div>
-        <label
-          htmlFor={officeId}
-          className={
-            'bg-h2 [font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))] mb-1 block'
-          }
-        >
+        <label htmlFor={officeId} className={'text-20 leading-1.3 font-650 text-ink mb-1 block'}>
           Oficina
         </label>
         {bindings.officeHint && (
-          <p
-            id={officeHintId}
-            className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mb-3'}
-          >
+          <p id={officeHintId} className={'text-sm leading-normal text-ink-muted mb-3'}>
             Según la web oficial: {bindings.officeHint}
           </p>
         )}
@@ -182,21 +174,17 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
             ))}
           </SelectContent>
         </Select>
-        <p className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] mt-2'}>
+        <p className={'text-sm leading-normal text-ink-muted mt-2'}>
           Al cambiar de oficina, la web oficial recarga la página y puede mostrar trámites
           distintos.
         </p>
       </div>
 
       <fieldset className="space-y-3">
-        <legend
-          className={
-            'bg-h2 [font-size:20px] [line-height:1.3] [font-weight:650] [color:rgb(var(--bg-ink))]'
-          }
-        >
+        <legend className={'text-20 leading-1.3 font-650 text-ink'}>
           Trámite <span className="font-normal text-ink-subtle">({total} disponibles)</span>
         </legend>
-        <p className={'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))]'}>
+        <p className={'text-sm leading-normal text-ink-muted'}>
           Agrupados por el organismo que los atiende, igual que en la web oficial.
         </p>
         <SearchField
@@ -207,7 +195,6 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
           placeholder="Ej.: huellas, NIE, certificado, arraigo…"
         />
         <RadioGroup
-          className="space-y-5 pt-1"
           name="bg-tramite"
           value={selected ? `${selected.index}:${selected.field.value}` : ''}
           onValueChange={(value) => {
@@ -222,7 +209,7 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
               <div key={g.select.id} role="group" aria-label={g.label}>
                 <h4
                   className={
-                    'bg-eyebrow text-xs [line-height:1.4] font-semibold [letter-spacing:0.06em] uppercase [color:rgb(var(--bg-ink-subtle))] mb-2'
+                    'text-xs leading-1.4 font-semibold tracking-eyebrow uppercase text-ink-subtle mb-2'
                   }
                 >
                   {g.label} · {options.length}
@@ -234,11 +221,7 @@ function Tramites({ bindings, restore }: { bindings: TramitesBindings; restore: 
                     </li>
                   ))}
                   {options.length === 0 && (
-                    <li
-                      className={
-                        'bg-hint text-sm [line-height:1.5] [color:rgb(var(--bg-ink-muted))] px-1'
-                      }
-                    >
+                    <li className={'text-sm leading-normal text-ink-muted px-1'}>
                       {query
                         ? 'Ningún trámite de este grupo coincide con la búsqueda.'
                         : 'Este grupo no tiene trámites disponibles.'}

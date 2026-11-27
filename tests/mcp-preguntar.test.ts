@@ -50,12 +50,15 @@ describe('preguntar a la biblioteca MCP', () => {
       'boe',
       'ine',
       'eustat',
-      'idescat',
       'catastro',
+      'municipios',
       'carburantes',
       'red-electrica',
       'alsa',
       'contratacion',
+      'subvenciones',
+      'trafico',
+      'idescat',
       'ninguno',
     ]);
   });
