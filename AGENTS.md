@@ -40,7 +40,7 @@
 - Select verification proportional to the change. Documentation-only changes do not need new tests or a full application build.
 - Use the existing commands: `pnpm lint` for semantic and anti-slop checks, `pnpm check` for repository checks (including lint), `pnpm test:e2e` for relevant browser behavior, and `pnpm exec prettier --check <files>` for formatting. Use focused checks while iterating; format only files belonging to the change.
 - Fix the cause of lint findings. Do not add casts, wrappers, renames, or disable comments to evade a rule. Lint configuration and scope changes must belong to the authorized objective.
-- For visible UI changes, provide screenshots or recordings when they help verify the result. Report commands actually run, their results, and any expected verification left pending.
+- For visible UI changes, open the page and provide screenshots or recordings. `/congreso` and most of `/elecciones` read from Postgres: `pnpm dev:data` loads real data locally (README, «Desarrollo»). Report commands actually run, their results, and any expected verification left pending.
 - Do not keep changes to test harnesses, E2E runners, fixtures, environment defaults, build configuration, package manifests, lockfiles, or logging merely to make local verification pass.
 - Remove temporary verification and debugging changes before finishing. State what was temporarily changed and that it was removed. Never commit or push local-only workarounds without explicit authorization.
 - Do not relax rules, timeouts, assertions, exclusions, or baselines to admit your implementation. Tooling changes must belong to the authorized objective. If a local workaround appears necessary as a permanent production change, explain it and ask before keeping it.
