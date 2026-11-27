@@ -3,7 +3,7 @@
 La web, la extensión y los paneles de trámites usan shadcn/ui con Base UI (`base-nova`). La configuración del monorrepo está en `components.json` y las primitivas en `packages/design/ui`.
 
 - Reutiliza `@reforma-digital/design/ui/<componente>` y `cn` de `@reforma-digital/design/lib/utils`.
-- Para enlaces con apariencia de botón: `<Link className={cn(buttonVariants({variant: 'outline'}))}>…</Link>`.
+- Para enlaces con apariencia de botón: `<ButtonLink variant="outline" render={<Link href="…" />}>…</ButtonLink>`, o con `href` si no es `next/link`.
 - Conserva los estilos del preset en las primitivas y usa sus variantes. No añadas colores, radios o tamaños por costumbre.
 - Usa Tailwind para la composición y `packages/design/styles/theme.css` para tokens compartidos. No añadas otra implementación de botones, campos o menús.
 - Esta carpeta conserva fuentes, iconos y elementos de marca.

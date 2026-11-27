@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Card, CardContent, CardHeader, CardTitle } from '@reforma-digital/design/ui/card';
 import { Icon } from '../brand/icon';
 
@@ -144,15 +144,9 @@ export function Explore({ links }: { links: { href: string; text: string }[] }) 
   return (
     <div className="mt-auto flex flex-wrap gap-2">
       {links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          data-slot="button"
-          data-variant="outline"
-          className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
-        >
+        <ButtonLink key={link.href} render={<Link href={link.href} />} variant="outline" size="xl">
           {link.text} <Icon name="derecha" size={16} />
-        </Link>
+        </ButtonLink>
       ))}
     </div>
   );

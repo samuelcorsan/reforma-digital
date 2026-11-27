@@ -1,4 +1,3 @@
-import { cn } from '@reforma-digital/design/lib/utils';
 import {
   Select,
   SelectTrigger,
@@ -9,7 +8,8 @@ import {
 } from '@reforma-digital/design/ui/select';
 import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import { Input } from '@reforma-digital/design/ui/input';
-import { Button, buttonVariants } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
@@ -483,14 +483,9 @@ export function Filters({
         Buscar <Icon name="buscar" size={16} />
       </Button>
       {reset && (
-        <Link
-          href={reset}
-          data-slot="button"
-          data-variant="ghost"
-          className={cn(buttonVariants({ variant: 'ghost' }))}
-        >
+        <ButtonLink render={<Link href={reset} />} variant="ghost">
           Limpiar filtros
-        </Link>
+        </ButtonLink>
       )}
     </form>
   );
@@ -513,29 +508,19 @@ export function Pagination({
         aria-label="Paginación"
       >
         {page > 1 && (
-          <Link
-            href={url(page - 1)}
-            data-slot="button"
-            data-variant="outline"
-            className={cn(buttonVariants({ variant: 'outline' }))}
-          >
+          <ButtonLink render={<Link href={url(page - 1)} />} variant="outline">
             <Icon name="izquierda" size={16} />
             Anterior
-          </Link>
+          </ButtonLink>
         )}
         <span>
           Página {page} de {pages}
         </span>
         {page < pages && (
-          <Link
-            href={url(page + 1)}
-            data-slot="button"
-            data-variant="outline"
-            className={cn(buttonVariants({ variant: 'outline' }))}
-          >
+          <ButtonLink render={<Link href={url(page + 1)} />} variant="outline">
             Siguiente
             <Icon name="derecha" size={16} />
-          </Link>
+          </ButtonLink>
         )}
       </nav>
     )

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
 import { Badge } from '@reforma-digital/design/ui/badge';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import {
   Collapsible,
@@ -256,23 +256,21 @@ export function InterviewsHome() {
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link
-              href={interviewsHref(complete ? 'comparar' : 'ejemplo')}
-              data-slot="button"
-              data-variant="sunset"
-              className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
+            <ButtonLink
+              render={<Link href={interviewsHref(complete ? 'comparar' : 'ejemplo')} />}
+              variant="sunset"
+              size="xl"
             >
               {complete ? 'Comparar las entrevistas' : 'Ver un ejemplo'}{' '}
               <Icon name="derecha" size={16} />
-            </Link>
-            <Link
-              href={interviewsHref('metodologia')}
-              data-slot="button"
-              data-variant="outline"
-              className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+            </ButtonLink>
+            <ButtonLink
+              render={<Link href={interviewsHref('metodologia')} />}
+              variant="outline"
+              size="xl"
             >
               Cómo se revisa <Icon name="derecha" size={16} />
-            </Link>
+            </ButtonLink>
           </div>
         </div>
       </Grid>
@@ -1426,18 +1424,17 @@ export function InterviewReport({
               )}
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {video ? (
-                  <a
+                  <ButtonLink
                     href={video}
                     target="_blank"
                     rel="noopener noreferrer"
-                    data-slot="button"
-                    data-variant="outline"
-                    className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    variant="outline"
+                    size="xl"
                   >
                     Ver la entrevista original
                     <span aria-hidden="true"> ↗</span>
                     <span className="sr-only"> (se abre en una pestaña nueva)</span>
-                  </a>
+                  </ButtonLink>
                 ) : (
                   <p className="m-0 text-sm text-muted-foreground">
                     {a.ficticio
@@ -1900,12 +1897,17 @@ export function VerificationsIndex({
                   className="mt-10 flex flex-wrap items-center justify-center gap-2"
                 >
                   {current > 1 && (
-                    <Link
-                      href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current - 1) })}#lista`}
-                      className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    <ButtonLink
+                      render={
+                        <Link
+                          href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current - 1) })}#lista`}
+                        />
+                      }
+                      variant="outline"
+                      size="xl"
                     >
                       <Icon name="izquierda" size={16} /> Anterior
-                    </Link>
+                    </ButtonLink>
                   )}
                   {Array.from({ length: pages }, (_, n) => n + 1).map((n) => (
                     <Link
@@ -1923,12 +1925,17 @@ export function VerificationsIndex({
                     </Link>
                   ))}
                   {current < pages && (
-                    <Link
-                      href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current + 1) })}#lista`}
-                      className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    <ButtonLink
+                      render={
+                        <Link
+                          href={`${href({ calificacion: verdict, candidato: candidate, tema: topic, pagina: String(current + 1) })}#lista`}
+                        />
+                      }
+                      variant="outline"
+                      size="xl"
                     >
                       Siguiente <Icon name="derecha" size={16} />
-                    </Link>
+                    </ButtonLink>
                   )}
                 </nav>
               )}

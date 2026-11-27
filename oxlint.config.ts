@@ -33,6 +33,15 @@ const slopSelectors = [
       'This .catch only returns a default and hides the error. Let it reject, narrow what you catch, or return the error.',
   },
 ];
+// Effects synchronize with something outside React; most uses are state that could be derived
+// while rendering or work that belongs in the event handler (react.dev, «You Might Not Need an Effect»).
+const effectSelector = {
+  // The import under another name would hide the call.
+  selector:
+    'CallExpression:matches([callee.name=/^use(Layout|Insertion)?Effect$/], [callee.property.name=/^use(Layout|Insertion)?Effect$/]), ImportSpecifier[imported.name=/^use(Layout|Insertion)?Effect$/]:not([local.name=/^use(Layout|Insertion)?Effect$/])',
+  message:
+    'No new effects. Derive the value while rendering, do the work in the event handler, or subscribe with useSyncExternalStore. A hook that really wraps an external system joins the effects list in oxlint.config.ts.',
+};
 
 export default defineConfig({
   plugins: ['eslint', 'typescript', 'unicorn', 'react'],
@@ -59,11 +68,17 @@ export default defineConfig({
     'eslint/no-empty': 'error',
     'eslint/no-useless-catch': 'error',
     'eslint/max-lines': ['error', { max: 800, skipBlankLines: true, skipComments: true }],
-    'eslint-js/no-restricted-syntax': ['error', ...slopSelectors],
+    'eslint-js/no-restricted-syntax': ['error', ...slopSelectors, effectSelector],
     'eslint/no-restricted-imports': [
       'error',
       {
         paths: [
+          {
+            name: '@reforma-digital/design/ui/button',
+            importNames: ['buttonVariants'],
+            message:
+              'Use ButtonLink from @reforma-digital/design/ui/button-link: shadcn/no-restyle checks its classes, and cannot see what is added to buttonVariants().',
+          },
           {
             name: 'cn',
             message:
@@ -143,6 +158,40 @@ export default defineConfig({
         'apps/web/components/elecciones/interviews.tsx',
       ],
       rules: { 'eslint/max-lines': 'off' },
+    },
+    {
+      // Existing debt: files that already had effects. Remove a file when its last effect goes;
+      // add one only for a hook that wraps an external system (an observer, a media element, a timer).
+      files: [
+        'apps/extension/src/popup.tsx',
+        'apps/web/components/brand/logo-puzle.tsx',
+        'apps/web/components/elecciones/could-be.tsx',
+        'apps/web/components/elecciones/figures.tsx',
+        'apps/web/components/elecciones/first-sight.ts',
+        'apps/web/components/elecciones/interview-player.tsx',
+        'apps/web/components/elecciones/journeys.tsx',
+        'apps/web/components/elecciones/municipal-map.tsx',
+        'apps/web/components/elecciones/projection-parts.tsx',
+        'apps/web/components/elecciones/province-map.tsx',
+        'apps/web/components/elecciones/reparto.tsx',
+        'apps/web/components/elecciones/seats-map.tsx',
+        'apps/web/components/elecciones/section-nav.tsx',
+        'apps/web/components/elecciones/simulator.tsx',
+        'apps/web/components/elecciones/tips.tsx',
+        'apps/web/components/elecciones/use-width.ts',
+        'apps/web/components/elecciones/video-dock.tsx',
+        'apps/web/components/elecciones/vote-story.tsx',
+        'apps/web/components/elecciones/years.tsx',
+        'apps/web/components/elecciones/your-vote.tsx',
+        'apps/web/components/estadisticas.tsx',
+        'apps/web/components/mcp/biblioteca.tsx',
+        'apps/web/components/mcp/preguntar.tsx',
+        'apps/web/components/prompt-composer.tsx',
+        'apps/web/components/route-focus.tsx',
+        'packages/design/ui/sidebar.tsx',
+        'packages/react/src/index.tsx',
+      ],
+      rules: { 'eslint-js/no-restricted-syntax': ['error', ...slopSelectors] },
     },
     {
       // No tsconfig includes tests/*.ts yet, so they get a default one without strict or

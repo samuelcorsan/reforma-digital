@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
-import { cn } from '@reforma-digital/design/lib/utils';
-import { Button, buttonVariants } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Tabs, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import { Icon } from '../brand/icon';
 import { Cell, Label } from './report';
@@ -405,15 +405,14 @@ export function ProjectionMap({
                 {name(chosen.last.segundo)}, a {decimal(chosen.last.falta)} puntos.
               </p>
             )}
-            <Link
-              href={chosen.href}
-              className={cn(
-                buttonVariants({ variant: 'outline', size: 'lg' }),
-                'justify-self-start',
-              )}
+            <ButtonLink
+              render={<Link href={chosen.href} />}
+              variant="outline"
+              size="lg"
+              className="justify-self-start"
             >
               Historial electoral <Icon name="derecha" size={16} />
-            </Link>
+            </ButtonLink>
           </div>
         ) : (
           <div className="grid gap-2">

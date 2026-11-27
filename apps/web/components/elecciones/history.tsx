@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { getGeography } from '../../lib/congreso/data';
 import { formatDate, percent, thousands } from '../../lib/elecciones/format';
 import { electionsHref, electionPages } from '../../lib/elecciones/pages';
@@ -123,12 +123,14 @@ export async function ElectionHistory({ election }: { election?: string }) {
               </span>
             </li>
           </ul>
-          <Link
-            href={electionsHref(e.id)}
-            className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'justify-self-start')}
+          <ButtonLink
+            render={<Link href={electionsHref(e.id)} />}
+            variant="outline"
+            size="lg"
+            className="justify-self-start"
           >
             Ficha de la elección <Icon name="derecha" size={16} />
-          </Link>
+          </ButtonLink>
         </Cell>
       </Grid>
 
@@ -170,22 +172,17 @@ export async function ElectionHistory({ election }: { election?: string }) {
                       <th className="w-36" />
                       {E.map((x, j) => (
                         <th key={x.id} className="p-0 font-normal">
-                          <Link
-                            href={yearHref(x)}
-                            scroll={false}
+                          <ButtonLink
+                            render={<Link href={yearHref(x)} scroll={false} />}
                             aria-current={j === k ? 'page' : undefined}
                             title={formatDate(x.fecha, { month: 'long', year: 'numeric' })}
-                            className={cn(
-                              buttonVariants({
-                                variant: j === k ? 'default' : 'ghost',
-                                size: 'xs',
-                              }),
-                              'w-full',
-                            )}
+                            variant={j === k ? 'default' : 'ghost'}
+                            size="xs"
+                            className="w-full"
                           >
                             ’{label(x).slice(2, 4)}
                             {label(x).length > 4 ? label(x)[5] : ''}
-                          </Link>
+                          </ButtonLink>
                         </th>
                       ))}
                     </tr>
