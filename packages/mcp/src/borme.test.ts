@@ -53,7 +53,7 @@ describe('BORME', () => {
                 nombre: 'SECCIÓN SEGUNDA. Anuncios y avisos legales',
                 apartado: {
                   nombre: 'CONVOCATORIAS DE JUNTAS',
-                  item: item('BORME-C-2026-1', 'TALLERES EJEMPLO & HIJOS, S.L.'),
+                  item: item('BORME-C-2026-1', 'TALLERES EJEMPLO & HIJOS, SOCIEDAD LIMITADA'),
                 },
               },
             ],

@@ -342,6 +342,30 @@ async function leer(fetchImpl: Fetch, item: Item) {
 /** Las palabras de un nombre de empresa, sin puntos ni comas: «S.L.» es «SL». */
 const nombreEmpresa = (text: string) => text.replace(/[.,]/g, '');
 
+// El BORME escribe la forma jurídica de varias maneras («SL», «SOCIEDAD LIMITADA»): buscarla daría
+// cero resultados que parecen reales, así que la búsqueda va sin ella.
+const FORMAS = new Set([
+  'sl',
+  'slu',
+  'sll',
+  'slp',
+  'sa',
+  'sau',
+  'sociedad',
+  'limitada',
+  'anonima',
+  'unipersonal',
+]);
+function filtroEmpresa(text: string | undefined) {
+  const q = filtro(text === undefined ? undefined : nombreEmpresa(text), 'El nombre de la empresa');
+  const sinForma = q.filter((w) => !FORMAS.has(w));
+  if (text !== undefined && !sinForma.some((w) => w.length >= 3))
+    throw new SourceError(
+      'El nombre de la empresa necesita al menos una palabra de tres letras o más, sin contar la forma jurídica.',
+    );
+  return sinForma;
+}
+
 export async function actosProvincia(
   fetchImpl: Fetch,
   fecha: string,
@@ -367,10 +391,7 @@ export async function actosProvincia(
       inscripciones: [],
       nota: `El BORME del ${fecha} no publica actos inscritos de ${p.nombre}.`,
     };
-  const empresa = filtro(
-    filtros.empresa === undefined ? undefined : nombreEmpresa(filtros.empresa),
-    'El nombre de la empresa',
-  );
+  const empresa = filtroEmpresa(filtros.empresa);
   const todas = (await leer(fetchImpl, item)).filter(
     (i) =>
       matches(nombreEmpresa(i.empresa), empresa) &&
@@ -413,7 +434,7 @@ export async function buscarEmpresa(
   hasta = hoy(),
 ) {
   const p = provincia(nombreProvincia);
-  const q = filtro(nombreEmpresa(nombre), 'El nombre de la empresa');
+  const q = filtroEmpresa(nombre);
   // Un día futuro saldría como día sin BORME.
   if (hasta > hoy())
     throw new SourceError(`${hasta} es una fecha futura: busca hasta hoy como mucho.`);
