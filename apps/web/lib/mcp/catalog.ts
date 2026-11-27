@@ -8,6 +8,9 @@ import { POST as eustat } from '../../app/mcp/eustat/route';
 import { POST as redElectrica } from '../../app/mcp/red-electrica/route';
 import { POST as catastro } from '../../app/mcp/catastro/route';
 import { POST as contratacion } from '../../app/mcp/contratacion/route';
+import { POST as subvenciones } from '../../app/mcp/subvenciones/route';
+import { POST as municipios } from '../../app/mcp/municipios/route';
+import { POST as trafico } from '../../app/mcp/trafico/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import { mensajeRpc } from './rpc';
@@ -21,6 +24,9 @@ import eustatEscena from './escenas/eustat.png';
 import redElectricaEscena from './escenas/red-electrica.png';
 import catastroEscena from './escenas/catastro.png';
 import contratacionEscena from './escenas/contratacion.png';
+import subvencionesEscena from './escenas/subvenciones.png';
+import municipiosEscena from './escenas/municipios.png';
+import traficoEscena from './escenas/trafico.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -122,6 +128,21 @@ const servidores: Servidor[] = [
     ],
   },
   {
+    id: 'municipios',
+    name: 'Ayuntamientos',
+    category: 'administracion-local',
+    // Sin organismo único: un edificio público (Lucide).
+    logo: { src: '/mcp/municipios.svg' },
+    escena: municipiosEscena,
+    summary:
+      'Deuda, pago a proveedores, cuentas, impuestos, contratos, subvenciones y sueldos de cada ayuntamiento de España, comparados con los de su tamaño.',
+    examples: [
+      '¿Cuánto debe mi ayuntamiento por vecino y cuánto tarda en pagar a sus proveedores?',
+      '¿Cuánto cobra el alcalde de Badalona y cuál es el tope legal?',
+      '¿Qué ayuntamientos de Huelva de más de 20.000 habitantes gestionan peor su dinero?',
+    ],
+  },
+  {
     id: 'carburantes',
     name: 'Precios de carburantes',
     category: 'consumo',
@@ -179,6 +200,35 @@ const servidores: Servidor[] = [
       '¿Qué obras se han adjudicado estos días en Bizkaia, a quién y por cuánto?',
     ],
   },
+  {
+    id: 'subvenciones',
+    name: 'Subvenciones públicas',
+    category: 'ayudas',
+    logo: { src: '/organismos/igae.png' },
+    escena: subvencionesEscena,
+    summary:
+      'Las convocatorias de subvenciones y ayudas de todas las administraciones, con su plazo de solicitud, y las concesiones a entidades.',
+    examples: [
+      '¿Qué ayudas para rehabilitar viviendas hay abiertas en Euskadi?',
+      '¿Qué subvenciones de eficiencia energética ha convocado el Estado este año?',
+      '¿Qué ayudas a la contratación puede pedir una pyme en Gipuzkoa?',
+    ],
+  },
+  {
+    id: 'trafico',
+    name: 'Tráfico',
+    category: 'transporte',
+    // Sin logo propio: un cono de tráfico (Lucide).
+    logo: { src: '/mcp/trafico.svg' },
+    escena: traficoEscena,
+    summary:
+      'Las incidencias de tráfico activas que publica la DGT cada minuto, por carretera y tramo de puntos kilométricos, por provincia o cerca de unas coordenadas. La DGT solo publica la severidad de una parte de las incidencias, y el feed no incluye lo gestionado por la SCT ni por el Gobierno Vasco: la nota viaja con cada respuesta.',
+    examples: [
+      '¿Hay algo en la AP-7 entre el PK 680 y el 700?',
+      '¿Qué retenciones hay ahora mismo en la provincia de Valencia?',
+      '¿Hay alguna incidencia cerca de las coordenadas 41.3874, 2.1686?',
+    ],
+  },
 ];
 
 type Param = {
@@ -208,10 +258,13 @@ const handlers: Record<string, Entry['handler']> = {
   ine,
   eustat,
   catastro,
+  municipios,
   carburantes,
   'red-electrica': redElectrica,
   alsa,
   contratacion,
+  subvenciones,
+  trafico,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];
