@@ -58,7 +58,9 @@ export default function Privacy() {
         <li>
           <strong>Estadísticas de uso.</strong> Contamos las páginas vistas en PostHog, en la UE. Le
           llegan desde nuestro servidor, sin tu IP, con la ruta de la página y un identificador
-          aleatorio que solo vive en la pestaña y se pierde al recargarla.
+          aleatorio que solo vive en la pestaña y se pierde al recargarla. De los servidores MCP
+          contamos cada consulta a una herramienta: cuál, si falló y cuánto tardó, nunca lo que se
+          pregunta.
         </li>
         <li>
           <strong>Fotos del equipo.</strong> Vienen de GitHub, pero nuestro servidor las descarga y
