@@ -16,6 +16,7 @@ import subvencionesEscena from './escenas/subvenciones.png';
 import municipiosEscena from './escenas/municipios.png';
 import traficoEscena from './escenas/trafico.png';
 import idescatEscena from './escenas/idescat.png';
+import bormeEscena from './escenas/borme.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -245,6 +246,22 @@ const servidores: Servidor[] = [
       '¿Cuántos habitantes tiene Girona?',
       '¿Cuál es la tasa de paro en Cataluña?',
       '¿Cuántos afiliados a la Seguridad Social viven en el Baix Llobregat?',
+    ],
+  },
+  {
+    id: 'borme',
+    name: 'BORME',
+    category: 'empresas',
+    ambito: { tipo: 'estatal' },
+    // Lo publica la Agencia Estatal BOE, con el mismo sello.
+    logo: { src: '/organismos/boe-sello.png' },
+    escena: bormeEscena,
+    summary:
+      'Los actos que inscriben cada día los registros mercantiles: constituciones, nombramientos, ceses, cambios de domicilio, disoluciones y concursos de empresas.',
+    examples: [
+      '¿Qué empresas se constituyeron ayer en Gipuzkoa?',
+      '¿Qué empresas de Madrid han entrado en concurso esta semana?',
+      '¿Qué ha publicado el BORME este mes sobre una empresa de Bizkaia?',
     ],
   },
 ];

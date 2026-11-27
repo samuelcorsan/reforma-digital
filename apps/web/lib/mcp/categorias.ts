@@ -8,6 +8,7 @@ export const categories = {
   ayudas: { name: 'Ayudas públicas' },
   vivienda: { name: 'Vivienda' },
   contratacion: { name: 'Contratación pública' },
+  empresas: { name: 'Empresas' },
 } satisfies Record<string, { name: string }>;
 export type Category = keyof typeof categories;
 

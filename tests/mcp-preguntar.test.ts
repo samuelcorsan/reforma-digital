@@ -59,6 +59,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'subvenciones',
       'trafico',
       'idescat',
+      'borme',
       'ninguno',
     ]);
   });
