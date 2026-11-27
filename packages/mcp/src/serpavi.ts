@@ -11,6 +11,7 @@ const INSTRUCTIONS = `Alquiler de vivienda por municipio en España, del CSV abi
 - Busca el municipio con buscar_municipio y usa su código INE de 5 dígitos (28079 es Madrid) en alquiler_municipio o comparar_municipios. ranking_provincia ordena los municipios de una provincia.
 - renta_eur_mes es la renta mensual en euros (€/mes), no €/m². superficie_m2 va en m². eur_m2_derivado no lo publica el Ministerio: es la renta mediana entre la superficie mediana, con 2 decimales; dilo así al usarlo.
 - Vivienda colectiva son pisos; unifamiliar, casas.
+- viviendas es cuántas viviendas en alquiler tienen datos ese año (la muestra del Ministerio), no cuántas viviendas tiene el municipio.
 - Si un municipio solo trae el recuento de viviendas, no hay renta publicada: dilo y no la estimes.
 - Cita el origen de los datos y la fecha de actualización del CSV. Si la respuesta trae un aviso, cuéntalo: los datos son de una copia anterior.
 ${SOURCE}`;
@@ -402,7 +403,7 @@ function rankingProvincia(
     con_dato: ordenados.length,
     municipios_en_csv: lista.length,
     ranking: ordenados.slice(0, limite).map(({ fila }) => fila),
-    nota: 'Solo entran los municipios con renta publicada ese año; del resto no se estima nada.',
+    nota: 'Solo entran los municipios con renta publicada ese año; del resto no se estima nada. Un municipio con pocas viviendas con datos (mira `viviendas`) tiene una mediana mucho más volátil que uno con miles: dilo al comparar.',
   };
 }
 
@@ -462,7 +463,7 @@ export function createSerpaviMcp(fetchImpl: Fetch = fetch) {
         {
           title: 'Alquiler de un municipio',
           description:
-            'Renta mensual (€/mes) mediana y percentiles 25 y 75, superficie (m²), €/m² derivado y número de viviendas de un municipio en un año, por tipo de vivienda.',
+            'Renta mensual (€/mes) mediana y percentiles 25 y 75, superficie (m²), €/m² derivado y número de viviendas en alquiler con datos de un municipio en un año, por tipo de vivienda.',
           inputSchema: z.object({ codigo, anio, tipo_vivienda: tipoVivienda }),
           annotations: READ_ONLY_EXTERNAL,
         },
