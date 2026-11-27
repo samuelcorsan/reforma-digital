@@ -56,6 +56,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'red-electrica',
       'alsa',
       'contratacion',
+      'subvenciones',
       'ninguno',
     ]);
   });

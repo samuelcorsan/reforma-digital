@@ -8,6 +8,7 @@ import { POST as eustat } from '../../app/mcp/eustat/route';
 import { POST as redElectrica } from '../../app/mcp/red-electrica/route';
 import { POST as catastro } from '../../app/mcp/catastro/route';
 import { POST as contratacion } from '../../app/mcp/contratacion/route';
+import { POST as subvenciones } from '../../app/mcp/subvenciones/route';
 import { POST as municipios } from '../../app/mcp/municipios/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
@@ -21,6 +22,7 @@ import eustatEscena from './escenas/eustat.png';
 import redElectricaEscena from './escenas/red-electrica.png';
 import catastroEscena from './escenas/catastro.png';
 import contratacionEscena from './escenas/contratacion.png';
+import subvencionesEscena from './escenas/subvenciones.png';
 import municipiosEscena from './escenas/municipios.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
@@ -195,6 +197,20 @@ const servidores: Servidor[] = [
       '¿Qué obras se han adjudicado estos días en Bizkaia, a quién y por cuánto?',
     ],
   },
+  {
+    id: 'subvenciones',
+    name: 'Subvenciones públicas',
+    category: 'ayudas',
+    logo: { src: '/organismos/igae.png' },
+    escena: subvencionesEscena,
+    summary:
+      'Las convocatorias de subvenciones y ayudas de todas las administraciones, con su plazo de solicitud, y las concesiones a entidades.',
+    examples: [
+      '¿Qué ayudas para rehabilitar viviendas hay abiertas en Euskadi?',
+      '¿Qué subvenciones de eficiencia energética ha convocado el Estado este año?',
+      '¿Qué ayudas a la contratación puede pedir una pyme en Gipuzkoa?',
+    ],
+  },
 ];
 
 type Param = {
@@ -229,6 +245,7 @@ const handlers: Record<string, Entry['handler']> = {
   'red-electrica': redElectrica,
   alsa,
   contratacion,
+  subvenciones,
 };
 const entries: Entry[] = servidores.map((s) => {
   const handler = handlers[s.id];
