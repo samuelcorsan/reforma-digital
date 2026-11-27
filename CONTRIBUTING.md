@@ -82,7 +82,7 @@ npm run test:e2e
 
 `npm run lint` ejecuta Oxlint con diez reglas básicas y dos reglas anti-slop: `no-chained-type-assertions` y `no-widen-then-assert`. Prettier sigue siendo el formateador y TypeScript comprueba los tipos. `npm run check` incluye el lint, por lo que el CI existente también lo exige.
 
-La configuración está en `oxlint.config.ts`. Solo carga el plugin anti-slop de Ultracite; no hereda sus presets completos. Las reglas de hooks se aplican a JSX/TSX, para no confundir el callback `use` de las fixtures de Playwright con un hook. Si añades hooks en archivos `.ts` o `.js`, amplía ese alcance al código React correspondiente. Oxlint y Ultracite tienen versiones exactas; comprueba el lint del repositorio completo al actualizarlas.
+La configuración está en `oxlint.config.ts`. Solo carga el plugin anti-slop de Ultracite; no hereda sus presets completos. Las reglas de hooks se aplican a JSX/TSX, para no confundir el callback `use` de las fixtures de Playwright con un hook. Si añades hooks en archivos `.ts` o `.js`, amplía ese alcance al código React correspondiente. Oxlint y Ultracite tienen versiones exactas; comprueba el lint del repositorio completo al actualizarlas. Dependabot propone las actualizaciones cada semana (`.github/dependabot.yml`): las menores y los parches agrupados, cada mayor por separado.
 
 Corrige la causa de cada diagnóstico. No añadas casts, wrappers, renombres ni comentarios de desactivación para esquivar una regla. Un cambio de reglas o alcance debe formar parte del objetivo autorizado de la PR.
 

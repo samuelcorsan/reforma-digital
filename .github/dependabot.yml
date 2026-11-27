@@ -1,0 +1,39 @@
+version: 2
+# En los tres casos: las menores y los parches, en una sola PR a la semana; cada mayor, en la suya.
+updates:
+  # pnpm rechaza las versiones con menos de 7 días (`minimumReleaseAge` en pnpm-workspace.yaml).
+  # La espera de 8 deja pasar ese plazo para la dependencia que se propone. No cubre las
+  # transitivas ni los avisos de seguridad: si uno urge, `minimumReleaseAgeExclude`.
+  # Con `/` basta: desde ahí se leen los workspaces, el catálogo y el lockfile.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 8
+    groups:
+      npm:
+        applies-to: version-updates
+        update-types: [minor, patch]
+
+  - package-ecosystem: pip
+    directory: /apps/ingestion
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 8
+    groups:
+      python:
+        applies-to: version-updates
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 8
+    groups:
+      actions:
+        applies-to: version-updates
+        update-types: [minor, patch]
