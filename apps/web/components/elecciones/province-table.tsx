@@ -161,22 +161,20 @@ export function ProvinceTable({
                   <span className="inline-flex items-center gap-2">
                     <span className="h-1.5 w-16 rounded-full bg-muted">
                       <i
-                        className="block h-full rounded-full bg-muted-foreground"
-                        style={{ width: `${(r.turnout / most) * 100}%` }}
+                        className="block h-full rounded-full bg-muted-foreground w-(--w)"
+                        style={{ '--w': `${(r.turnout / most) * 100}%` }}
                       />
                     </span>
                     <span className="font-mono tabular-nums">{percent(r.turnout)}</span>
                   </span>
                 </TableCell>
-                <TableCell className="text-right font-mono tabular-nums">
-                  {thousands(r.price)}
-                </TableCell>
+                <TableCell className="text-right">{thousands(r.price)}</TableCell>
                 <TableCell>
                   {r.winner ? (
                     <span className="inline-flex items-center gap-2">
                       <i
-                        className="block size-2.5 rounded-full"
-                        style={{ background: r.winner.color }}
+                        className="block size-2.5 rounded-full bg-(--bg)"
+                        style={{ '--bg': r.winner.color }}
                       />
                       {r.winner.name}
                     </span>
@@ -184,16 +182,14 @@ export function ProvinceTable({
                     '–'
                   )}
                 </TableCell>
-                <TableCell className="text-right font-mono tabular-nums">
+                <TableCell className="text-right">
                   {r.margin === null ? '–' : `${thousands(r.margin)} votos`}
                 </TableCell>
               </TableRow>
             ))}
             {!shown.length && (
               <TableRow>
-                <TableCell colSpan={6} className="text-muted-foreground">
-                  Ninguna provincia coincide con la búsqueda.
-                </TableCell>
+                <TableCell colSpan={6}>Ninguna provincia coincide con la búsqueda.</TableCell>
               </TableRow>
             )}
           </TableBody>

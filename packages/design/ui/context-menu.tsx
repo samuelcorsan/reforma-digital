@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { PortalContainerContext } from '../lib/portal';
 import { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu';
-import { cn } from 'cn';
+import { cn } from '../lib/utils';
 
 const ContextMenu = ContextMenuPrimitive.Root;
 const ContextMenuTrigger = ContextMenuPrimitive.Trigger;

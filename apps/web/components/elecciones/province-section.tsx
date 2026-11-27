@@ -36,8 +36,8 @@ export function Hemicycle({
             x={hemicycle.label.x}
             y={hemicycle.label.y}
             textAnchor="middle"
-            className="fill-foreground font-heading"
-            style={{ fontSize: hemicycle.label.size }}
+            className="fill-foreground font-heading text-(length:--size)"
+            style={{ '--size': `${hemicycle.label.size}px` }}
           >
             {caption}
           </text>

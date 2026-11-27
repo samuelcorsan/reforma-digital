@@ -61,13 +61,16 @@ export async function Polls() {
               <Cell key={p.id} span={4} className="gap-3">
                 <Label>
                   <span className="inline-flex items-center gap-2">
-                    <i className="block size-2.5 rounded-full" style={{ background: p.color }} />
+                    <i
+                      className="block size-2.5 rounded-full bg-(--bg)"
+                      style={{ '--bg': p.color }}
+                    />
                     {p.nombre}
                   </span>
                 </Label>
                 <div className="flex items-end justify-between gap-4">
                   <p className="m-0 grid gap-1">
-                    <b className="font-heading text-[40px] leading-none font-normal tabular-nums">
+                    <b className="font-heading text-40 leading-none font-normal tabular-nums">
                       {percent(p.now)}
                     </b>
                     <span className="text-sm text-muted-foreground">
