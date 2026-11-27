@@ -61,6 +61,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'idescat',
       'borme',
       'presupuestos',
+      'serpavi',
       'ninguno',
     ]);
   });

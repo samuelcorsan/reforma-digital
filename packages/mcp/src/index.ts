@@ -150,3 +150,4 @@ export { createMunicipiosMcp } from './municipios';
 export { createIdescatMcp } from './idescat';
 export { createBormeMcp } from './borme';
 export { createPresupuestosMcp } from './presupuestos';
+export { createSerpaviMcp } from './serpavi';

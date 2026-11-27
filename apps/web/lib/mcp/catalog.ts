@@ -18,6 +18,7 @@ import traficoEscena from './escenas/trafico.png';
 import idescatEscena from './escenas/idescat.png';
 import bormeEscena from './escenas/borme.png';
 import presupuestosEscena from './escenas/presupuestos.png';
+import serpaviEscena from './escenas/serpavi.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -279,6 +280,22 @@ const servidores: Servidor[] = [
       '¿En qué gasta más dinero el Estado este año?',
       '¿Cuánto invierte el Estado en Málaga y en qué proyectos?',
       '¿Cuánto se ha gastado ya de lo presupuestado para becas?',
+    ],
+  },
+  {
+    id: 'serpavi',
+    name: 'Precio del alquiler',
+    category: 'vivienda',
+    ambito: { tipo: 'estatal' },
+    // El escudo del logotipo del Ministerio de Vivienda y Agenda Urbana.
+    logo: { src: '/organismos/mivau.svg' },
+    escena: serpaviEscena,
+    summary:
+      'La renta mensual del alquiler en cada municipio, con su superficie y cuántas viviendas tienen datos, según SERPAVI, el índice de referencia del Ministerio de Vivienda y Agenda Urbana.',
+    examples: [
+      '¿Cuánto cuesta alquilar un piso en Madrid?',
+      '¿Qué municipios de Barcelona tienen el alquiler más caro?',
+      'Compara el alquiler de Madrid y Móstoles en 2024.',
     ],
   },
 ];
