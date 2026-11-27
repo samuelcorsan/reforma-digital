@@ -15,6 +15,7 @@ import contratacionEscena from './escenas/contratacion.png';
 import subvencionesEscena from './escenas/subvenciones.png';
 import municipiosEscena from './escenas/municipios.png';
 import traficoEscena from './escenas/trafico.png';
+import idescatEscena from './escenas/idescat.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -229,6 +230,21 @@ const servidores: Servidor[] = [
       '¿Hay algo en la AP-7 entre el PK 680 y el 700?',
       '¿Qué retenciones hay ahora mismo en la provincia de Valencia?',
       '¿Hay alguna incidencia cerca de las coordenadas 41.3874, 2.1686?',
+    ],
+  },
+  {
+    id: 'idescat',
+    name: 'Idescat',
+    category: 'estadistica',
+    ambito: { tipo: 'autonomico', territorio: 'Cataluña' },
+    logo: { src: '/organismos/idescat.png' },
+    escena: idescatEscena,
+    summary:
+      'Las estadísticas oficiales de Cataluña, sus comarcas y municipios: población, empleo, afiliación, nacimientos y economía.',
+    examples: [
+      '¿Cuántos habitantes tiene Girona?',
+      '¿Cuál es la tasa de paro en Cataluña?',
+      '¿Cuántos afiliados a la Seguridad Social viven en el Baix Llobregat?',
     ],
   },
 ];

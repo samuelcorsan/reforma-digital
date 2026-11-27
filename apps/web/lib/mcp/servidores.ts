@@ -10,6 +10,7 @@ import {
   createRedElectricaMcp,
   createSubvencionesMcp,
   createTraficoMcp,
+  createIdescatMcp,
 } from '@reforma-digital/mcp';
 import { createRenfeMcp } from '@reforma-digital/renfe';
 import { congresoMcp } from '../congreso/mcp';
@@ -29,6 +30,7 @@ const mcps: Record<string, { fetch: (request: Request) => Promise<Response> }> =
   contratacion: createContratacionMcp(),
   subvenciones: createSubvencionesMcp(),
   trafico: createTraficoMcp(),
+  idescat: createIdescatMcp(),
 };
 
 /**

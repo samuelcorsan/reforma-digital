@@ -147,3 +147,4 @@ export { createRedElectricaMcp } from './red-electrica';
 export { createTraficoMcp } from './trafico';
 export { createSubvencionesMcp } from './subvenciones';
 export { createMunicipiosMcp } from './municipios';
+export { createIdescatMcp } from './idescat';
