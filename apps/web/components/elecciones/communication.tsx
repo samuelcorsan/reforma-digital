@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
-import { Card } from '@reforma-digital/design/ui/card';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
+import { Card, CardContent, CardHeader } from '@reforma-digital/design/ui/card';
 import {
   Table,
   TableBody,
@@ -122,7 +122,7 @@ function Rich({ text, id }: { text: string; id: string }) {
           key={match.index}
           href={videoHref(id, Number(minutes) * 60 + Number(seconds))}
           aria-label={`Ver en el vídeo, minuto ${whole}`}
-          className="font-mono text-[0.92em] tabular-nums underline decoration-dotted underline-offset-4"
+          className="font-mono text-em-92 tabular-nums underline decoration-dotted underline-offset-4"
         >
           {whole}
         </a>,
@@ -157,14 +157,14 @@ function DataTable({ block, id }: { block: Extract<Block, { tipo: 'tabla' }>; id
   const tinted = counts(block.filas);
   const top = Math.max(1, ...block.filas.flatMap((row) => row.slice(1).map((c) => count(c) ?? 0)));
   return (
-    <Table className="text-base">
+    <Table>
       <TableHeader>
-        <TableRow className="hover:bg-transparent">
+        <TableRow>
           {block.cabecera.map((head, j) => (
             <TableHead
               key={j}
               className={cn(
-                'h-auto py-2 align-bottom text-sm font-normal whitespace-normal text-muted-foreground first:pl-0 last:pr-0',
+                'h-auto align-bottom whitespace-normal',
                 tinted && j > 0 ? 'text-center' : numeric(block.filas, j) && 'text-right',
               )}
             >
@@ -175,32 +175,30 @@ function DataTable({ block, id }: { block: Extract<Block, { tipo: 'tabla' }>; id
       </TableHeader>
       <TableBody>
         {block.filas.map((row, j) => (
-          <TableRow key={j} className={cn('hover:bg-transparent', tinted && 'border-0')}>
+          <TableRow key={j}>
             {row.map((cell, k) => {
               const n = tinted && k > 0 ? (count(cell) ?? 0) : null;
               return n === null ? (
                 <TableCell
                   key={k}
                   className={cn(
-                    'py-2.5 align-top leading-snug whitespace-normal first:pl-0 last:pr-0',
-                    numeric(block.filas, k) &&
-                      'text-right font-mono tabular-nums sm:whitespace-nowrap max-sm:text-sm',
+                    'align-top whitespace-normal',
+                    numeric(block.filas, k) && 'text-right sm:whitespace-nowrap',
                     tinted && 'align-middle',
                   )}
                 >
                   <Rich text={cell} id={id} />
                 </TableCell>
               ) : (
-                <TableCell key={k} className="p-1">
+                <TableCell key={k}>
                   <span
                     className={cn(
                       'grid min-h-11 place-items-center rounded-lg px-2 text-center font-mono text-sm tabular-nums',
                       n / top > 0.5 && 'text-background',
                       !n && 'text-muted-foreground',
+                      'fondo-calor',
                     )}
-                    style={{
-                      background: `color-mix(in oklab, var(--foreground) ${Math.round((n / top) * 88)}%, var(--muted))`,
-                    }}
+                    style={{ '--calor': `${Math.round((n / top) * 88)}%` }}
                   >
                     {cell}
                   </span>
@@ -320,19 +318,21 @@ function Prose({ blocks, id }: { blocks: Block[]; id: string }) {
         'heading' in piece ? (
           <h3
             key={i}
-            className="m-0 pt-6 font-heading text-[28px] leading-tight font-normal [column-span:all]"
+            className="m-0 pt-6 font-heading text-28 leading-tight font-normal [column-span:all]"
           >
             {piece.heading}
           </h3>
         ) : (
-          <Cell key={i} className={cn('gap-4', piece.full && '[column-span:all]')}>
-            {piece.lead && (
-              <h3 className="m-0 font-heading text-2xl leading-tight font-normal">
-                <Rich text={piece.lead} id={id} />
-              </h3>
-            )}
-            <CardBody card={piece} id={id} />
-          </Cell>
+          <div key={i} className={cn(piece.full && '[column-span:all]')}>
+            <Cell className="gap-4">
+              {piece.lead && (
+                <h3 className="m-0 font-heading text-2xl leading-tight font-normal">
+                  <Rich text={piece.lead} id={id} />
+                </h3>
+              )}
+              <CardBody card={piece} id={id} />
+            </Cell>
+          </div>
         ),
       )}
     </div>
@@ -372,7 +372,7 @@ function QuestionSquares({ analysis: c }: { analysis: Communication }) {
                     key={i}
                     aria-hidden="true"
                     title={`${minute(q.segundo)} · ${replyNames[q.respuesta]} · ${q.texto}`}
-                    className={cn('block size-3.5 rounded-[3px]', replyStyles[q.respuesta])}
+                    className={cn('block size-3.5 rounded-3', replyStyles[q.respuesta])}
                   />
                 ))}
                 <span className="sr-only">
@@ -394,10 +394,7 @@ function QuestionSquares({ analysis: c }: { analysis: Communication }) {
           const n = c.preguntas.filter((q) => q.respuesta === reply).length;
           return n ? (
             <li key={reply} className="flex items-center gap-1.5">
-              <i
-                aria-hidden="true"
-                className={cn('block size-3 rounded-[3px]', replyStyles[reply])}
-              />
+              <i aria-hidden="true" className={cn('block size-3 rounded-3', replyStyles[reply])} />
               {replyNames[reply]}
             </li>
           ) : null;
@@ -429,7 +426,7 @@ function Visual({
       <Grid>
         <Cell span={5}>
           <p className="m-0 grid gap-2">
-            <b className="font-heading text-[56px] leading-none font-normal tabular-nums">
+            <b className="font-heading text-56 leading-none font-normal tabular-nums">
               {decimal(guest.parte)} %
             </b>
             <span className="text-muted-foreground">
@@ -438,8 +435,11 @@ function Visual({
             </span>
           </p>
           <span aria-hidden="true" className="flex h-4 overflow-hidden rounded-full">
-            <i className="block h-full" style={{ width: `${guest.parte}%`, background: color }} />
-            <i className="block h-full flex-1" style={{ background: grey }} />
+            <i
+              className="block h-full w-(--w) bg-(--bg)"
+              style={{ '--w': `${guest.parte}%`, '--bg': color }}
+            />
+            <i className="block h-full flex-1 bg-(--bg)" style={{ '--bg': grey }} />
           </span>
           <Legend
             small
@@ -575,36 +575,29 @@ function SideBySide({ current }: { current: Communication }) {
         />
       </Cell>
       <Cell label="Voz tras una pregunta dura frente al resto">
-        <Table className="text-base">
+        <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="h-auto py-2 pl-0 text-sm font-normal text-muted-foreground">
-                Candidato
-              </TableHead>
+            <TableRow>
+              <TableHead>Candidato</TableHead>
               {current.presion.medidas.map((m) => (
-                <TableHead
-                  key={m.nombre}
-                  className="h-auto py-2 text-sm font-normal whitespace-normal text-muted-foreground"
-                >
+                <TableHead key={m.nombre} className="h-auto whitespace-normal">
                   {m.nombre} ({m.unidad})
                 </TableHead>
               ))}
-              <TableHead className="h-auto py-2 pr-0 text-sm font-normal whitespace-normal text-muted-foreground">
-                Trabas por 100 palabras
-              </TableHead>
+              <TableHead className="h-auto whitespace-normal">Trabas por 100 palabras</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {all.map(({ c, candidate }) => (
-              <TableRow key={c.id} className="hover:bg-transparent">
-                <TableHead scope="row" className="h-auto py-2.5 pl-0 font-normal">
+              <TableRow key={c.id}>
+                <TableHead scope="row">
                   <span className="flex items-center gap-2">
                     <Dot color={candidate.color} />
                     {candidate.name}
                   </span>
                 </TableHead>
                 {c.presion.medidas.map((m) => (
-                  <TableCell key={m.nombre} className="py-2.5 whitespace-normal">
+                  <TableCell key={m.nombre} className="whitespace-normal">
                     <span className="font-mono tabular-nums">
                       {decimal(m.duras, m.unidad === 'palabras/min' ? 0 : 1)} /{' '}
                       {decimal(m.resto, m.unidad === 'palabras/min' ? 0 : 1)}
@@ -614,9 +607,11 @@ function SideBySide({ current }: { current: Communication }) {
                     </span>
                   </TableCell>
                 ))}
-                <TableCell className="py-2.5 pr-0 font-mono tabular-nums">
-                  {decimal(c.presion.trabasPor100.duras, 2)} /{' '}
-                  {decimal(c.presion.trabasPor100.resto, 2)}
+                <TableCell>
+                  <span className="font-mono tabular-nums">
+                    {decimal(c.presion.trabasPor100.duras, 2)} /{' '}
+                    {decimal(c.presion.trabasPor100.resto, 2)}
+                  </span>
                 </TableCell>
               </TableRow>
             ))}
@@ -793,33 +788,31 @@ export function CommunicationReport({
                   .filter(Boolean)
                   .join(' · ')}
               </p>
-              <h1 className="m-0 font-heading text-4xl leading-[1.05] font-normal lg:text-[56px]">
+              <h1 className="m-0 font-heading text-4xl leading-1.05 font-normal lg:text-56">
                 Análisis de comunicación
               </h1>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {video && (
-                  <a
+                  <ButtonLink
                     href={video}
                     target="_blank"
                     rel="noopener noreferrer"
-                    data-slot="button"
-                    data-variant="outline"
-                    className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    variant="outline"
+                    size="xl"
                   >
                     Ver el vídeo original
                     <span aria-hidden="true"> ↗</span>
                     <span className="sr-only"> (se abre en una pestaña nueva)</span>
-                  </a>
+                  </ButtonLink>
                 )}
                 {c.datos.length > 0 && (
-                  <Link
-                    href={`${commHref(a.id, 'metodologia')}#anexo`}
-                    data-slot="button"
-                    data-variant="outline"
-                    className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                  <ButtonLink
+                    render={<Link href={`${commHref(a.id, 'metodologia')}#anexo`} />}
+                    variant="outline"
+                    size="xl"
                   >
                     <Icon name="descargar" size={18} /> Descargar los datos
-                  </Link>
+                  </ButtonLink>
                 )}
                 <ShareButton title={`${name}: análisis de comunicación`} />
               </div>
@@ -839,7 +832,7 @@ export function CommunicationReport({
           >
             <Icon name="izquierda" size={14} /> Análisis de comunicación · {name}
           </Link>
-          <h1 className="m-0 font-heading text-4xl leading-[1.08] font-normal lg:text-[52px]">
+          <h1 className="m-0 font-heading text-4xl leading-1.08 font-normal lg:text-52">
             {commViews[view]}
           </h1>
         </header>
@@ -854,16 +847,20 @@ export function CommunicationReport({
                 <Card
                   key={text}
                   render={<li />}
-                  className="col-span-12 gap-3 p-6 text-base md:col-span-6 lg:col-span-4 lg:last:nth-[3n+1]:col-span-12 max-sm:p-5"
+                  className="col-span-12 md:col-span-6 lg:col-span-4 lg:last:nth-[3n+1]:col-span-12"
                 >
                   {key.lead && (
-                    <h3 className="m-0 font-heading text-2xl leading-tight font-normal">
-                      <Rich text={key.lead} id={a.id} />
-                    </h3>
+                    <CardHeader>
+                      <h3 className="m-0 font-heading text-2xl leading-tight font-normal">
+                        <Rich text={key.lead} id={a.id} />
+                      </h3>
+                    </CardHeader>
                   )}
-                  <p className="m-0 leading-relaxed text-muted-foreground">
-                    <Rich text={key.body} id={a.id} />
-                  </p>
+                  <CardContent>
+                    <p className="m-0 leading-relaxed text-muted-foreground">
+                      <Rich text={key.body} id={a.id} />
+                    </p>
+                  </CardContent>
                 </Card>
               );
             })}
@@ -1038,7 +1035,7 @@ export function CommunicationReport({
           <h2
             id="detalle"
             data-section-title
-            className="m-0 mb-6 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]"
+            className="m-0 mb-6 scroll-mt-40 font-heading text-32 leading-tight font-normal lg:text-36"
           >
             Ver en detalle
           </h2>
@@ -1049,7 +1046,7 @@ export function CommunicationReport({
                 <li key={v}>
                   <Link
                     href={commHref(a.id, v)}
-                    className="group flex h-full min-h-28 flex-col gap-2 rounded-[20px] p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
+                    className="group flex h-full min-h-28 flex-col gap-2 rounded-20 p-5 no-underline ring-1 ring-border transition-colors hover:bg-muted/60 motion-reduce:transition-none"
                   >
                     <span className="flex items-center justify-between gap-3 text-lg font-medium">
                       {commViews[v]}

@@ -31,6 +31,10 @@ from .config import DATOS, USER_AGENT
 CARPETA = DATOS / "encuestas"
 WIKIPEDIA = ("https://en.wikipedia.org/w/api.php?action=parse&page=Opinion_polling_for_the_2026_Spanish_general_election"
              "&prop=text&format=json&formatversion=2&redirects=1")
+# Desde el 16-N, las encuestas de 2023 y 2024 (con el resultado de 2023) están en esta otra página.
+WIKIPEDIA_2023_2024 = ("https://en.wikipedia.org/w/api.php?action=parse"
+                       "&page=Nationwide_opinion_polling_for_the_2026_Spanish_general_election_(2023%E2%80%932024)"
+                       "&prop=text&format=json&formatversion=2&redirects=1")
 ELECCION = date(2026, 11, 29)
 VEDA = (date(2026, 11, 24), datetime(2026, 11, 29, 20, 0))   # del 24-N a las 20.00 del 29-N, hora peninsular
 
@@ -106,8 +110,10 @@ def _fechas(txt: str, anio: int) -> tuple[str | None, str | None]:
     d2, m2 = leer(partes[-1])
     if not m2:
         return None, None
-    d1, m1 = leer(partes[0], m2) if len(partes) > 1 else (d2, m2)
     fin = date(anio, m2, d2)
+    if len(partes) > 1 and partes[0] == "?":  # «?–17 Nov»: la empresa no publica el inicio del trabajo de campo
+        return None, fin.isoformat()
+    d1, m1 = leer(partes[0], m2) if len(partes) > 1 else (d2, m2)
     ini = date(anio - (1 if m1 > m2 else 0), m1, d1)
     return ini.isoformat(), fin.isoformat()
 
@@ -133,7 +139,8 @@ def leer_wikipedia(html: str) -> tuple[list[dict], dict | None]:
     from bs4 import BeautifulSoup   # aquí y no arriba: el build de Vercel solo copia los JSON y no instala bs4
     soup = BeautifulSoup(html, "html.parser")
     tablas = [t for t in soup.select("table.wikitable")
-              if (h := t.find_previous(["h2", "h3", "h4"])) and "Voting intention" in h.get_text()]
+              if (h := t.find_previous(["h2", "h3", "h4"])) and "Voting intention" in h.get_text()
+              or (h := t.find_previous("h2")) and h.get_text(strip=True) == "Polling"]  # la página de 2023–2024
     encuestas, resultado = [], None
     for k, tabla in enumerate(tablas):
         rej = _rejilla(tabla)
@@ -145,7 +152,7 @@ def leer_wikipedia(html: str) -> tuple[list[dict], dict | None]:
             cab.append((a.get("title") if a else None) or (img.get("alt") if img else None) or celda.get_text(strip=True))
         # Las fechas de cada fila no llevan año: es el del título de su tabla («2025», «2026 (with Broad Front)»; un año
         # puede tener más de una). Sin él, las tablas van de la más nueva hacia atrás, una por año.
-        titulo = tabla.find_previous("h5")
+        titulo = tabla.find_previous(["h3", "h5"])
         anio = int(m.group(1)) if titulo and (m := re.search(r"\b(20\d\d)\b", titulo.get_text())) else ELECCION.year - k
         for fila in rej[2:]:
             if len(fila) < 6 or any(c.get("colspan") and int(c.get("colspan")) > 3 for c in fila[:2]):
@@ -289,7 +296,7 @@ def en_veda(ahora: datetime | None = None) -> bool:
 
 def construir_datos(hoy: date | None = None) -> dict:
     hoy = hoy or date.today()
-    html = json.loads(_bajar(WIKIPEDIA))["parse"]["text"]
+    html = "".join(json.loads(_bajar(url))["parse"]["text"] for url in (WIKIPEDIA, WIKIPEDIA_2023_2024))
     encuestas, resultado = leer_wikipedia(html)
     return {
         "actualizado": hoy.isoformat(), "eleccion": ELECCION.isoformat(), "veda": [VEDA[0].isoformat(), VEDA[1].isoformat(timespec="minutes")],

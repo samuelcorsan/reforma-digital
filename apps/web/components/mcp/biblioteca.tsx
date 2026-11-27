@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { cn } from '@reforma-digital/design/lib/utils';
+import { Badge } from '@reforma-digital/design/ui/badge';
 import { fichaPath } from '../../lib/mcp/rutas';
 import type { McpServer } from '../../lib/mcp/catalog';
 import { ServerLogo } from './logo';
@@ -14,6 +15,7 @@ export type Summary = {
   name: string;
   summary: string;
   logo: McpServer['logo'];
+  ambito: McpServer['ambito'];
   tools: number;
 };
 
@@ -40,7 +42,13 @@ function Row({ server, position }: { server: Summary; position: number }) {
         <span className="font-mono text-sm text-muted-foreground tabular-nums">{position}</span>
         <ServerLogo logo={server.logo} />
         <span className="min-w-0">
-          <span className="block truncate font-medium">{server.name}</span>
+          <span className="flex items-center gap-2">
+            <span className="min-w-0 truncate font-medium">{server.name}</span>
+            {/* Solo los no estatales: la etiqueta dice dónde sirve. */}
+            {server.ambito.tipo !== 'estatal' && (
+              <Badge variant="secondary">{server.ambito.territorio}</Badge>
+            )}
+          </span>
           <span className="block truncate text-sm text-muted-foreground">{server.summary}</span>
         </span>
         <span className="font-mono text-sm text-muted-foreground tabular-nums">
@@ -71,11 +79,11 @@ export function Biblioteca({
   const [respuesta, setRespuesta] = useState<Respuesta>();
 
   // El orden vive en la URL para poder compartirlo, sin volver a pedir la página.
-  useEffect(() => {
-    const search = order === 'destacados' ? '' : `?orden=${order}`;
-    if (search !== window.location.search)
-      window.history.replaceState(null, '', `${window.location.pathname}${search}`);
-  }, [order]);
+  const sort = (next: Order) => {
+    setOrder(next);
+    const search = next === 'destacados' ? '' : `?orden=${next}`;
+    window.history.replaceState(null, '', `${window.location.pathname}${search}`);
+  };
 
   const shown = respuesta ? servers.filter((s) => s.id === respuesta.servidor) : [...servers];
   if (order === 'az') shown.sort((a, b) => a.name.localeCompare(b.name, 'es'));
@@ -94,7 +102,7 @@ export function Biblioteca({
               key={key}
               type="button"
               aria-pressed={order === key}
-              onClick={() => setOrder(key)}
+              onClick={() => sort(key)}
               className={cn(
                 'relative -mb-px border-b-2 border-transparent py-2.5 text-sm whitespace-nowrap text-muted-foreground transition-colors duration-150 hover:text-foreground aria-pressed:border-foreground aria-pressed:text-foreground motion-reduce:transition-none',
                 focus,

@@ -24,17 +24,17 @@ export default function Privacy() {
     <InfoPage narrow>
       <JsonLd graph={graph} />
       <span
+        data-part="t-etiqueta"
         className={
-          't-etiqueta [font-family:var(--font-brand-mono)] text-xs font-medium [line-height:1.3] [letter-spacing:0.08em] uppercase info-etiqueta block mb-4 [color:var(--text-secondary)]'
+          'font-mono text-xs font-medium leading-1.3 tracking-etiqueta uppercase block mb-4 text-(--text-secondary)'
         }
       >
         TUS DATOS, CON CUIDADO
       </span>
       <h1>Navega sin identificarte.</h1>
       <p
-        className={
-          'info-entradilla [max-width:65ch] mb-10 [color:var(--text-secondary)] text-lg [line-height:1.6]'
-        }
+        data-part="info-entradilla"
+        className={'[max-width:65ch] mb-10 text-(--text-secondary) text-lg leading-1.6'}
       >
         No necesitas una cuenta y no usamos cookies. Aquí explicamos qué datos tratan la web y la
         extensión, quién los recibe y cuánto tiempo se guardan.
@@ -58,7 +58,9 @@ export default function Privacy() {
         <li>
           <strong>Estadísticas de uso.</strong> Contamos las páginas vistas en PostHog, en la UE. Le
           llegan desde nuestro servidor, sin tu IP, con la ruta de la página y un identificador
-          aleatorio que solo vive en la pestaña y se pierde al recargarla.
+          aleatorio que solo vive en la pestaña y se pierde al recargarla. De los servidores MCP
+          contamos cada consulta a una herramienta: cuál, si falló y cuánto tardó, nunca lo que se
+          pregunta.
         </li>
         <li>
           <strong>Fotos del equipo.</strong> Vienen de GitHub, pero nuestro servidor las descarga y

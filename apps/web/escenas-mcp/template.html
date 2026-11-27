@@ -265,6 +265,21 @@
         font-size: 12px;
         text-align: center;
       }
+      /* Red Eléctrica: el PVPC de un día hora a hora, con la hora más barata marcada. */
+      .barras.horas {
+        grid-template-columns: repeat(24, 1fr);
+        gap: 3px;
+      }
+      .barras.horas i:last-child {
+        background: var(--linea);
+      }
+      .barras.horas i.barata {
+        background: var(--tinta);
+      }
+      .meses.horas {
+        display: flex;
+        justify-content: space-between;
+      }
     </style>
   </head>
   <body>
@@ -648,6 +663,450 @@
       </div>
     </div>
 
+    <div class="ventana" data-escena="subvenciones">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué ayudas para rehabilitar viviendas hay abiertas en Euskadi?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/igae.png" alt="" /></span
+            >buscar_convocatorias</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/igae.png" alt="" /></span>ver_convocatoria</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Rehabilitación de viviendas en Euskadi</span>
+            <span class="suave">Abiertas hoy</span>
+          </div>
+          <div class="tren">
+            <span>Ayuntamiento de Barrundia</span>
+            <span class="suave">hasta el 31 dic</span>
+            <span class="mono">2.000 €</span>
+          </div>
+          <div class="tren">
+            <span>SURBISA, Bilbao</span>
+            <span class="suave">sin plazo</span>
+            <span class="mono">2.345.000 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+    <div class="ventana" data-escena="red-electrica">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿A qué hora es más barata la luz hoy?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/red-electrica.png" alt="" /></span
+            >precio_luz</span
+          >
+        </div>
+        <div class="tarjeta">
+          <div class="fila">
+            <span class="titulo">PVPC, la hora más barata</span>
+            <span class="suave">Domingo 22 de noviembre</span>
+          </div>
+          <p class="cifra">09:00 <span class="suave" style="font-size: 20px">0,070 €/kWh</span></p>
+          <div class="barras horas">
+            <i style="height: 43%"></i><i style="height: 33%"></i><i style="height: 25%"></i
+            ><i style="height: 25%"></i><i style="height: 25%"></i><i style="height: 24%"></i
+            ><i style="height: 24%"></i><i style="height: 24%"></i><i style="height: 26%"></i
+            ><i class="barata" style="height: 21%"></i><i style="height: 22%"></i
+            ><i style="height: 21%"></i><i style="height: 21%"></i><i style="height: 22%"></i
+            ><i style="height: 22%"></i><i style="height: 21%"></i><i style="height: 30%"></i
+            ><i style="height: 73%"></i><i style="height: 89%"></i><i style="height: 100%"></i
+            ><i style="height: 98%"></i><i style="height: 92%"></i><i style="height: 90%"></i
+            ><i style="height: 86%"></i>
+          </div>
+          <div class="meses horas">
+            <span>00</span><span>06</span><span>12</span><span>18</span><span>23</span>
+          </div>
+          <div class="fila">
+            <span class="suave">Media del día</span><span class="mono">0,148 €/kWh</span>
+          </div>
+          <div class="fila">
+            <span class="suave">Más cara, 19:00</span><span class="mono">0,336 €/kWh</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <div class="ventana" data-escena="catastro">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Cuántos metros construidos tiene el Bernabéu según el Catastro?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/catastro.png" alt="" /></span
+            >buscar_direccion</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Av. de Concha Espina, 1 · Madrid</span>
+            <span class="suave">Deportivo</span>
+          </div>
+          <div class="tren">
+            <span>Superficie construida</span>
+            <span></span>
+            <span class="mono">114.105 m²</span>
+          </div>
+          <div class="tren">
+            <span>Superficie de la parcela</span>
+            <span></span>
+            <span class="mono">43.688 m²</span>
+          </div>
+          <div class="tren">
+            <span>Año de construcción</span>
+            <span></span>
+            <span class="mono">1947</span>
+          </div>
+          <div class="tren">
+            <span>Referencia catastral</span>
+            <span></span>
+            <span class="mono">1784401VK4718D</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <!-- Licitaciones: tres expedientes reales con CPV de carpintería (45421), leídos el 22-11-2026. -->
+    <div class="ventana" data-escena="contratacion">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué obras de carpintería se han licitado estos días?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/placsp.svg" alt="" /></span
+            >buscar_licitaciones</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Carpintería · CPV 45421</span>
+            <span class="suave">19 – 21 nov.</span>
+          </div>
+          <div class="tren">
+            <span>CEIP Unamunzaga, ventanas<span class="etiqueta">Álava</span></span>
+            <span class="suave">Pendiente</span>
+            <span class="mono">135.799 €</span>
+          </div>
+          <div class="tren">
+            <span>Aljafería, escalera<span class="etiqueta">Zaragoza</span></span>
+            <span class="suave">Resuelta</span>
+            <span class="mono">200.409 €</span>
+          </div>
+          <div class="tren">
+            <span>CEIP Moreno Nieto, huecos<span class="etiqueta">Badajoz</span></span>
+            <span class="suave">Adjudicada</span>
+            <span class="mono">89.129 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+    <div class="ventana" data-escena="municipios">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Cuánto debe Girona por vecino y cuánto tarda en pagar?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/mcp/municipios.svg" alt="" /></span>buscar_municipio</span
+          >
+          <span class="chip"
+            ><span><img src="../public/mcp/municipios.svg" alt="" /></span>ver_municipio</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Ayuntamiento de Girona</span>
+            <span class="suave">Nota 55 de 99</span>
+          </div>
+          <div class="tren">
+            <span>Deuda por vecino</span>
+            <span class="suave">31 dic 2025</span>
+            <span class="mono">523 €</span>
+          </div>
+          <div class="tren">
+            <span>Pago a proveedores</span>
+            <span class="suave">límite 30</span>
+            <span class="mono">23,1 días</span>
+          </div>
+          <div class="tren">
+            <span>Cuenta General 2024</span>
+            <span class="suave">plazo 15 oct</span>
+            <span class="mono">a tiempo</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+
+    <!-- Incidencias de la AP-7: «Desconocida» es la severidad que la DGT no publica. -->
+    <div class="ventana" data-escena="trafico">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Hay algo en la AP-7 entre el PK 680 y el 700?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/mcp/trafico.svg" alt="" /></span>buscar_incidencias</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">AP-7 · PK 680 – 700</span>
+            <span class="suave">Ahora</span>
+          </div>
+          <div class="tren">
+            <span>AP-7 · PK 688</span>
+            <span class="suave">Obras</span>
+            <span class="mono">Alta</span>
+          </div>
+          <div class="tren">
+            <span>AP-7 · PK 692</span>
+            <span class="suave">Accidente</span>
+            <span class="mono">Media</span>
+          </div>
+          <div class="tren">
+            <span>AP-7 · PK 699</span>
+            <span class="suave">Retención</span>
+            <span class="mono">Desconocida</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+    <div class="ventana" data-escena="idescat">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Cuántos habitantes tiene Girona?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/idescat.png" alt="" /></span>buscar_tabla</span
+          >
+          <span class="chip"
+            ><span><img src="../public/organismos/idescat.png" alt="" /></span>datos_tabla</span
+          >
+        </div>
+        <div class="tarjeta">
+          <div class="fila">
+            <span class="titulo">Población de Girona</span>
+            <span class="suave">Censo de 2025</span>
+          </div>
+          <p class="cifra">108.352</p>
+          <div class="barras" style="grid-template-columns: repeat(5, 1fr)">
+            <i style="height: 50%"></i><i style="height: 51%"></i><i style="height: 68%"></i
+            ><i style="height: 86%"></i><i style="height: 100%"></i>
+          </div>
+          <div class="meses" style="grid-template-columns: repeat(5, 1fr)">
+            <span>2021</span><span>2022</span><span>2023</span><span>2024</span><span>2025</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+    <div class="ventana" data-escena="borme">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué empresas se constituyeron el viernes en Gipuzkoa?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/boe-sello.png" alt="" /></span
+            >actos_provincia</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">19 constituciones en Gipuzkoa</span>
+            <span class="suave">BORME del 20 de noviembre</span>
+          </div>
+          <div class="tren">
+            <span>GABARRARI BERRI SL</span>
+            <span class="suave">Irun</span>
+            <span class="mono">62.000 €</span>
+          </div>
+          <div class="tren">
+            <span>LA TXIBERA 2026 SL</span>
+            <span class="suave">Azkoitia</span>
+            <span class="mono">40.000 €</span>
+          </div>
+          <div class="tren">
+            <span>ITXASGIZONA SL</span>
+            <span class="suave">Donostia</span>
+            <span class="mono">20.000 €</span>
+          </div>
+          <div class="tren">
+            <span class="mono suave" style="font-size: 12px">BORME-A-2026-223-20</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+    <!-- Licitaciones: tres expedientes reales con CPV de carpintería (45421), leídos el 22-11-2026. -->
+    <div class="ventana" data-escena="contratacion">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿Qué obras de carpintería se han licitado estos días?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/organismos/placsp.svg" alt="" /></span
+            >buscar_licitaciones</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Carpintería · CPV 45421</span>
+            <span class="suave">19 – 21 nov.</span>
+          </div>
+          <div class="tren">
+            <span>CEIP Unamunzaga, ventanas<span class="etiqueta">Álava</span></span>
+            <span class="suave">Pendiente</span>
+            <span class="mono">135.799 €</span>
+          </div>
+          <div class="tren">
+            <span>Aljafería, escalera<span class="etiqueta">Zaragoza</span></span>
+            <span class="suave">Resuelta</span>
+            <span class="mono">200.409 €</span>
+          </div>
+          <div class="tren">
+            <span>CEIP Moreno Nieto, huecos<span class="etiqueta">Badajoz</span></span>
+            <span class="suave">Adjudicada</span>
+            <span class="mono">89.129 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
+    <div class="ventana" data-escena="presupuestos">
+      <div class="semaforo">
+        <i style="background: #ff5f57"></i><i style="background: #febc2e"></i
+        ><i style="background: #28c840"></i>
+      </div>
+      <div class="chat">
+        <p class="pregunta">¿En qué gasta más dinero el Estado este año?</p>
+        <div class="usado">
+          <span class="suave">Ha usado</span>
+          <span class="chip"
+            ><span><img src="../public/mcp/presupuestos.svg" alt="" /></span
+            >resumen_presupuesto</span
+          >
+        </div>
+        <div class="tarjeta trenes">
+          <div class="fila">
+            <span class="titulo">Gasto por políticas</span>
+            <span class="suave">2026, prorrogado</span>
+          </div>
+          <div class="tren">
+            <span>Pensiones</span>
+            <span class="suave">33 %</span>
+            <span class="mono">190.687 M€</span>
+          </div>
+          <div class="tren">
+            <span>Deuda pública</span>
+            <span class="suave">22 %</span>
+            <span class="mono">128.797 M€</span>
+          </div>
+          <div class="tren">
+            <span>Transferencias a otras administraciones</span>
+            <span class="suave">11 %</span>
+            <span class="mono">66.274 M€</span>
+          </div>
+        </div>
+      </div>
+      <div class="compositor">
+        <p>Pregunta al asistente…</p>
+        <span class="enviar"
+          ><svg width="16" height="16"><use href="#enviar" /></svg
+        ></span>
+      </div>
+    </div>
     <!-- SERPAVI: Madrid, vivienda colectiva, 2024, del CSV VDP001. El €/m² es derivado (868,8 / 66). -->
     <div class="ventana" data-escena="serpavi">
       <div class="semaforo">

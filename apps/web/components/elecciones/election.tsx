@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import {
   Table,
   TableBody,
@@ -89,21 +89,23 @@ export async function Election({ id }: { id: string }) {
     <>
       <nav aria-label="Otras elecciones" className="mb-8 flex flex-wrap justify-between gap-3">
         {previous ? (
-          <Link
-            href={electionsHref(previous.id)}
-            className={buttonVariants({ variant: 'outline', size: 'lg' })}
+          <ButtonLink
+            render={<Link href={electionsHref(previous.id)} />}
+            variant="outline"
+            size="lg"
           >
             <Icon name="izquierda" size={16} /> {label(previous)}
-          </Link>
+          </ButtonLink>
         ) : (
           <span />
         )}
-        <Link
-          href={next ? electionsHref(next.id) : electionsHref()}
-          className={buttonVariants({ variant: 'outline', size: 'lg' })}
+        <ButtonLink
+          render={<Link href={next ? electionsHref(next.id) : electionsHref()} />}
+          variant="outline"
+          size="lg"
         >
           {next ? label(next) : '29N'} <Icon name="derecha" size={16} />
-        </Link>
+        </ButtonLink>
       </nav>
       <ReportIntro title={formatDate(e.fecha, { day: 'numeric', month: 'long', year: 'numeric' })}>
         <p>
@@ -157,15 +159,12 @@ export async function Election({ id }: { id: string }) {
           </dl>
           {isLast && (
             <div className="flex flex-wrap gap-2">
-              <Link
-                href={electionsHref('legislatura')}
-                className={buttonVariants({ variant: 'outline' })}
-              >
+              <ButtonLink render={<Link href={electionsHref('legislatura')} />} variant="outline">
                 Balance de la XV legislatura <Icon name="derecha" size={16} />
-              </Link>
-              <Link href={href('')} className={buttonVariants({ variant: 'outline' })}>
+              </ButtonLink>
+              <ButtonLink render={<Link href={href('')} />} variant="outline">
                 Actividad parlamentaria <Icon name="derecha" size={16} />
-              </Link>
+              </ButtonLink>
             </div>
           )}
         </Cell>
@@ -199,35 +198,29 @@ export async function Election({ id }: { id: string }) {
                     <TableCell title={full}>
                       <span className="inline-flex items-center gap-2 font-medium">
                         <i
-                          className="block size-2.5 shrink-0 rounded-full"
-                          style={{ background: color(f) }}
+                          className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+                          style={{ '--bg': color(f) }}
                         />
                         {siglas}
                       </span>
                     </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {thousands(v)}
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {percent(v / e.validos)}
-                    </TableCell>
+                    <TableCell className="text-right">{thousands(v)}</TableCell>
+                    <TableCell className="text-right">{percent(v / e.validos)}</TableCell>
                     <TableCell>
                       <span className="block h-2.5 rounded-full bg-muted">
                         <i
-                          className="block h-full rounded-full"
+                          className="block h-full rounded-full w-(--w) bg-(--bg)"
                           style={{
-                            width: `${(v / e.validos / most) * 100}%`,
-                            background: color(f),
+                            '--w': `${(v / e.validos / most) * 100}%`,
+                            '--bg': color(f),
                           }}
                         />
                       </span>
                     </TableCell>
-                    <TableCell className="text-right font-mono font-medium tabular-nums">
-                      {s}
-                    </TableCell>
+                    <TableCell className="text-right">{s}</TableCell>
                     {previous && (
                       <TableCell
-                        className="text-right font-mono tabular-nums"
+                        className="text-right"
                         title={
                           then
                             ? undefined
@@ -270,23 +263,23 @@ export async function Election({ id }: { id: string }) {
                     <span className="flex justify-end">
                       {d < 0 && (
                         <i
-                          className="block h-3 rounded-l-[3px]"
-                          style={{ width: `${(-d / biggest) * 100}%`, background: f.color }}
+                          className="block h-3 rounded-l-3 w-(--w) bg-(--bg)"
+                          style={{ '--w': `${(-d / biggest) * 100}%`, '--bg': f.color }}
                         />
                       )}
                     </span>
                     <span className="flex border-l border-border">
                       {d > 0 && (
                         <i
-                          className="block h-3 rounded-r-[3px]"
-                          style={{ width: `${(d / biggest) * 100}%`, background: f.color }}
+                          className="block h-3 rounded-r-3 w-(--w) bg-(--bg)"
+                          style={{ '--w': `${(d / biggest) * 100}%`, '--bg': f.color }}
                         />
                       )}
                     </span>
                     <span
                       className={cn(
                         'text-right font-mono tabular-nums',
-                        d > 0 ? 'text-[#2E7D5B]' : d < 0 ? 'text-brand' : 'text-muted-foreground',
+                        d > 0 ? 'text-sube' : d < 0 ? 'text-brand' : 'text-muted-foreground',
                       )}
                     >
                       {signed(d)}
@@ -319,20 +312,20 @@ export async function Election({ id }: { id: string }) {
                     <span className="relative h-4">
                       <i className="absolute inset-x-0 top-1/2 block h-px bg-border" />
                       <i
-                        className="absolute top-1/2 block h-0.5 -translate-y-1/2"
+                        className="absolute top-1/2 block h-0.5 -translate-y-1/2 left-(--left) w-(--w) bg-(--bg)"
                         style={{
-                          left: `${(from / top) * 100}%`,
-                          width: `${((to - from) / top) * 100}%`,
-                          background: p.color,
+                          '--left': `${(from / top) * 100}%`,
+                          '--w': `${((to - from) / top) * 100}%`,
+                          '--bg': p.color,
                         }}
                       />
                       <i
-                        className="absolute top-1/2 block size-3 -translate-1/2 rounded-full border-2 bg-card"
-                        style={{ left: `${(p.votes / top) * 100}%`, borderColor: p.color }}
+                        className="absolute top-1/2 block size-3 -translate-1/2 rounded-full border-2 bg-card left-(--left) border-(--border-color)"
+                        style={{ '--left': `${(p.votes / top) * 100}%`, '--border-color': p.color }}
                       />
                       <i
-                        className="absolute top-1/2 block size-3 -translate-1/2 rounded-full"
-                        style={{ left: `${(p.seats / top) * 100}%`, background: p.color }}
+                        className="absolute top-1/2 block size-3 -translate-1/2 rounded-full left-(--left) bg-(--bg)"
+                        style={{ '--left': `${(p.seats / top) * 100}%`, '--bg': p.color }}
                       />
                     </span>
                   </li>
@@ -349,8 +342,8 @@ export async function Election({ id }: { id: string }) {
               {Array.from({ length: Math.round(top * 10) + 1 }, (_, i) => i / 10).map((v) => (
                 <span
                   key={v}
-                  className="absolute -translate-x-1/2"
-                  style={{ left: `${(v / top) * 100}%` }}
+                  className="absolute -translate-x-1/2 left-(--left)"
+                  style={{ '--left': `${(v / top) * 100}%` }}
                 >
                   {Math.round(v * 100)} %
                 </span>

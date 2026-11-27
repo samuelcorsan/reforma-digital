@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,9 +17,9 @@ import { CodeBlock, type Sample } from '../../../../../components/code-block';
 import { JsonLd } from '../../../../../components/json-ld';
 import { ServerLogo } from '../../../../../components/mcp/logo';
 import { Texto } from '../../../../../components/developers/texto';
-import { OnboardButton } from '../../../../../components/mcp/onboard';
+import { InstinctButton, OnboardButton } from '../../../../../components/mcp/onboard';
 import { serverIds, servers, type McpServer, type Tool } from '../../../../../lib/mcp/catalog';
-import { agentPrompt, endpoint, fichaPath } from '../../../../../lib/mcp/rutas';
+import { agentPrompt, endpoint, fichaPath, instinctPrompt } from '../../../../../lib/mcp/rutas';
 import { pageMetadata, webPage } from '../../../../../lib/seo';
 
 type Props = { params: Promise<{ id: string }> };
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-const mono = 'font-mono text-[0.9em]';
+const mono = 'font-mono text-em-90';
 
 const focus =
   'outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-foreground';
@@ -151,7 +151,6 @@ function Connect({ server }: { server: McpServer }) {
       code: JSON.stringify({ servers: { [name]: { type: 'http', url } } }, null, 2),
     },
   ];
-  const appButton = cn(buttonVariants({ variant: 'outline', size: 'xl' }), 'rounded-full');
   const via = 'mb-4 font-medium';
 
   // Dos vías separadas: la frase de «Conecta tu agente» apunta a la guía en Markdown, y quien la
@@ -161,7 +160,7 @@ function Connect({ server }: { server: McpServer }) {
       <h2 id="conectar-titulo" className="sr-only">
         Conectar
       </h2>
-      <h3 className={via}>Claude Code, Codex, Cursor o VS Code</h3>
+      <h3 className={via}>Claude Code, Codex, Cursor, VS Code o Instinct</h3>
       <div className="flex flex-wrap gap-2">
         <OnboardButton
           prompt={agentPrompt(
@@ -169,12 +168,13 @@ function Connect({ server }: { server: McpServer }) {
             `el servidor MCP «${server.name}» de Reforma Digital`,
           )}
         />
-        <a href={cursor} className={appButton}>
+        <InstinctButton prompt={instinctPrompt()} />
+        <ButtonLink href={cursor} variant="outline" size="xl">
           Añadir a Cursor
-        </a>
-        <a href={vscode} className={appButton}>
+        </ButtonLink>
+        <ButtonLink href={vscode} variant="outline" size="xl">
           Añadir a VS Code
-        </a>
+        </ButtonLink>
       </div>
       <CodeBlock samples={samples} />
 
@@ -214,9 +214,7 @@ export default async function Page({ params }: Props) {
           </nav>
           <div className="flex items-center gap-4">
             <ServerLogo logo={server.logo} size="lg" />
-            <h1 className="min-w-0 font-heading text-[clamp(30px,4vw,44px)] leading-[1.1]">
-              {server.name}
-            </h1>
+            <h1 className="min-w-0 font-heading text-fluid-30-44 leading-1.1">{server.name}</h1>
           </div>
           <p className="mt-5 max-w-[65ch] text-lg leading-relaxed text-muted-foreground">
             {server.summary}

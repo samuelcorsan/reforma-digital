@@ -436,7 +436,7 @@ export function createSerpaviMcp(fetchImpl: Fetch = fetch) {
     });
 
   return server(
-    { name: 'reforma-digital-serpavi', title: 'Alquiler de vivienda (SERPAVI)' },
+    { name: 'reforma-digital-serpavi', title: 'Precio del alquiler (SERPAVI)' },
     INSTRUCTIONS,
     (s) => {
       s.registerTool(

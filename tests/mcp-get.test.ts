@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-// Los servidores guardan `fetch` al crearse, al importar las rutas: se sustituye antes.
+// Los servidores guardan `fetch` al crearse, al importar `lib/mcp/servidores`: se sustituye antes.
 const fetchMock = vi.hoisted(() => {
   const mock = vi.fn<typeof fetch>();
   globalThis.fetch = mock;
@@ -40,6 +40,35 @@ describe('GET /mcp/<servidor>/<herramienta> (para Instinct, sin MCP)', () => {
     expect(text).toContain('"rotulo": "A"');
     expect(text).not.toContain('"rotulo": "C"');
     expect(text).toContain('Fuente: Ministerio');
+  });
+
+  it('pasa los sí/no como booleano y los objetos como JSON', async () => {
+    // Renfe valida la fecha antes de salir a la red: el error es el de la fecha, no el del booleano.
+    const trenes = await get(
+      'renfe',
+      'search_trains',
+      'origin=Madrid&destination=Barcelona&date=2000-01-01&include_fares=true',
+    );
+    expect(await trenes.text()).toContain('date 2000-01-01 is in the past');
+    fetchMock.mockImplementation(async () =>
+      Response.json({
+        title: 'IPC',
+        variables: [{ code: 'índice', text: 'índice', values: ['10'], valueTexts: ['Índice'] }],
+      }),
+    );
+    const tabla = await get(
+      'eustat',
+      'datos_tabla',
+      `tabla=PX_INEIPC_fe_pc02cm.px&filtros=${encodeURIComponent('{"sexo":"mujeres"}')}`,
+    );
+    expect(await tabla.text()).toContain('La tabla no tiene la variable «sexo»');
+    const noBooleano = await get(
+      'renfe',
+      'search_trains',
+      'origin=Madrid&destination=Barcelona&include_fares=si',
+    );
+    expect(noBooleano.status).toBe(422);
+    expect(await noBooleano.text()).toContain('include_fares');
   });
 
   it('responde 422 con el motivo si los parámetros no valen', async () => {

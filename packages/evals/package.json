@@ -14,6 +14,6 @@
     "@reforma-digital/government": "workspace:*",
     "@reforma-digital/db": "workspace:*",
     "@reforma-digital/ai": "workspace:*",
-    "zod": "^4.1.0"
+    "zod": "catalog:"
   }
 }

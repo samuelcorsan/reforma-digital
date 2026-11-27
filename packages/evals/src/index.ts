@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { search } from '@reforma-digital/ai';
 import { defaultConfig, type SearchConfig } from '@reforma-digital/core';
-import { db, experiments } from '@reforma-digital/db';
 import { datasetSchema, type Dataset } from './schema';
 import { retrievalMetrics, deterministicAnswerMetrics, aggregate } from './metrics';
 import { judgeAnswer } from './judges';
@@ -15,7 +14,7 @@ export * from './metrics';
 export const repoRoot = path.resolve(fileURLToPath(new URL('../../../', import.meta.url)));
 export const runsDir = path.join(repoRoot, 'artifacts/runs');
 export type { Report } from './reports';
-import { compareReports, type Report } from './reports';
+import { compareReports, saveReport, type Report } from './reports';
 export { listReports, compareReports } from './reports';
 export async function loadDataset(selection = 'full'): Promise<Dataset> {
   if (!['full', 'golden', 'regressions'].includes(selection))
@@ -196,7 +195,7 @@ export async function runExperiment(options: {
   await mkdir(runsDir, { recursive: true });
   await writeFile(path.join(runsDir, report.id + '.json'), JSON.stringify(report, null, 2));
   await writeFile(path.join(runsDir, report.id + '.md'), formatReport(report));
-  if (process.env.DATABASE_URL) await db().insert(experiments).values({ id: report.id, report });
+  if (process.env.DATABASE_URL) await saveReport(report);
   return report;
 }
 

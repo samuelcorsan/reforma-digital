@@ -7,10 +7,12 @@
     "./comun": "./src/comun.ts"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "datos:presupuestos": "node scripts/presupuestos.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/server": "^2.4.0",
-    "zod": "^4.1.0"
+    "@modelcontextprotocol/server": "catalog:",
+    "fast-xml-parser": "^5.12.1",
+    "zod": "catalog:"
   }
 }

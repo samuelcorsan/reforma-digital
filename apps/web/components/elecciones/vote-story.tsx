@@ -2,9 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { z } from 'zod';
-import { cn } from '@reforma-digital/design/lib/utils';
 import { Button } from '@reforma-digital/design/ui/button';
-import { Card } from '@reforma-digital/design/ui/card';
+import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import {
   mapSchema,
   municipalitiesSchema,
@@ -221,7 +220,7 @@ export function VoteStory({
     );
   const card = (s: Step) => (
     <>
-      <h3 className="m-0 font-heading text-[28px] leading-tight font-normal">{s.title}</h3>
+      <h3 className="m-0 font-heading text-28 leading-tight font-normal">{s.title}</h3>
       <div className="grid gap-4 [&_p]:m-0">{s.body}</div>
     </>
   );
@@ -246,16 +245,13 @@ export function VoteStory({
         </Button>
       </div>
       <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-        <div className="order-2 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-[40vh] pb-[30vh] lg:order-1">
+        <div className="order-2 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-40vh pb-30vh lg:order-1">
           {steps.map((s, i) => (
             <section key={s.id} data-step={i} className="scroll-mt-28">
-              <Card
-                className={cn(
-                  'gap-4 p-6 text-base transition-shadow lg:p-8',
-                  i === active && 'ring-foreground/30',
-                )}
-              >
-                {card(s)}
+              <Card>
+                <CardContent>
+                  <div className="flex flex-col gap-4">{card(s)}</div>
+                </CardContent>
               </Card>
             </section>
           ))}
@@ -485,16 +481,16 @@ function DotMap({
         ref={canvas}
         role="img"
         aria-label="Mapa de los municipios de España"
-        className="block w-full text-border"
-        style={{ aspectRatio: `${map.ancho} / ${map.alto}` }}
+        className="block w-full text-border aspect-(--aspect)"
+        style={{ '--aspect': `${map.ancho} / ${map.alto}` }}
         onPointerMove={(event) => setTip(near(event.clientX, event.clientY))}
         onPointerLeave={() => setTip(null)}
       />
       {tip && d && (
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed z-50 w-max max-w-72 -translate-x-1/2 -translate-y-full rounded-xl bg-popover px-4 py-3 text-sm leading-snug text-popover-foreground shadow-md ring-1 ring-foreground/10"
-          style={{ left: tip.x, top: tip.y - 14 }}
+          className="pointer-events-none fixed z-50 w-max max-w-72 -translate-x-1/2 -translate-y-full rounded-xl bg-popover px-4 py-3 text-sm leading-snug text-popover-foreground shadow-md ring-1 ring-foreground/10 left-(--left) top-(--top)"
+          style={{ '--left': `${tip.x}px`, '--top': `${tip.y - 14}px` }}
         >
           <p className="m-0 font-medium">
             {d.name} · {data.map.provincias[d.code.slice(0, 2)]?.corto}

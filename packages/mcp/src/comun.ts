@@ -24,13 +24,14 @@ export type Fetch = typeof fetch;
 
 /**
  * GET con tiempo límite (o POST, si lleva un cuerpo JSON): la respuesta si es 2xx; si no, un
- * SourceError con el código.
+ * SourceError con el código. El límite también corta la lectura del cuerpo.
  */
 export async function get(
   fetchImpl: Fetch,
   url: string,
   accept = 'application/json',
   body?: unknown,
+  timeout = 20_000,
 ) {
   let response: Response;
   try {
@@ -42,7 +43,7 @@ export async function get(
             headers: { Accept: accept, 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
           }),
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(timeout),
     });
   } catch {
     throw new SourceError('La fuente no responde. Prueba más tarde.');
@@ -95,3 +96,18 @@ export const words = (q: string | undefined) =>
     .filter(Boolean);
 /** Si el texto contiene todas las palabras, en cualquier orden. */
 export const matches = (text: string, q: string[]) => q.every((w) => fold(text).includes(w));
+
+/** Las API del BOE devuelven un objeto cuando hay uno solo y una lista cuando hay varios. */
+export const list = <T>(value: T | T[] | undefined): T[] =>
+  value === undefined ? [] : Array.isArray(value) ? value : [value];
+
+const entities: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
+/** El texto de un XML del BOE sin sus entidades (`&amp;`, `&#211;`…). */
+export const decode = (text: string) =>
+  text.replace(/&(#x?[\da-f]+|\w+);/gi, (all, code: string) =>
+    code[0] === '#'
+      ? String.fromCodePoint(
+          Number.parseInt(code.slice(code[1] === 'x' ? 2 : 1), code[1] === 'x' ? 16 : 10),
+        )
+      : (entities[code] ?? all),
+  );

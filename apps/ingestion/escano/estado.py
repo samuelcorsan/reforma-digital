@@ -300,7 +300,8 @@ def construir(hoy: date | None = None) -> dict:
         if c["mandatos"] and all(m["hasta"] is not None for m in c["mandatos"]) and c["mandatos"][-1]["hasta"] >= hace(90):
             ultimo = c["mandatos"][-1]
             vacantes.append({"id": c["id"], "cargo": c["cargo"], "desde": ultimo["hasta"], "persona": ultimo["persona"],
-                             "boe": ultimo["boe_cese"]})
+                             # Un mandato cerrado por otro nombramiento o por un nuevo Gobierno no tiene cese en el BOE.
+                             "boe": ultimo.get("boe_cese")})
     salida = {
         "actualizado": datos["hasta"],
         "desde_serie": datos["eventos"][0]["fecha"] if datos["eventos"] else None,
