@@ -12,3 +12,5 @@ sites/dni/fixtures/real-*.html
 sites/hacienda/fixtures/*.html
 sites/registro-asociaciones/fixtures/*.html
 .astro
+# Foto de los presupuestos generada por packages/mcp/scripts/presupuestos.ts (22 MB en una línea por año)
+packages/mcp/data/presupuestos/

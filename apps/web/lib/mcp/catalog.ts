@@ -17,6 +17,7 @@ import municipiosEscena from './escenas/municipios.png';
 import traficoEscena from './escenas/trafico.png';
 import idescatEscena from './escenas/idescat.png';
 import bormeEscena from './escenas/borme.png';
+import presupuestosEscena from './escenas/presupuestos.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -262,6 +263,22 @@ const servidores: Servidor[] = [
       '¿Qué empresas se constituyeron ayer en Gipuzkoa?',
       '¿Qué empresas de Madrid han entrado en concurso esta semana?',
       '¿Qué ha publicado el BORME este mes sobre una empresa de Bizkaia?',
+    ],
+  },
+  {
+    id: 'presupuestos',
+    name: 'Presupuestos Generales del Estado',
+    category: 'cuentas',
+    ambito: { tipo: 'estatal' },
+    // Sin logo propio: un edificio público (Lucide).
+    logo: { src: '/mcp/presupuestos.svg' },
+    escena: presupuestosEscena,
+    summary:
+      'Los presupuestos de 2017 a 2026 hasta el último concepto, lo realmente gastado según la IGAE, las inversiones por provincia (Adif y AENA incluidas), los ingresos previstos y el personal.',
+    examples: [
+      '¿En qué gasta más dinero el Estado este año?',
+      '¿Cuánto invierte el Estado en Málaga y en qué proyectos?',
+      '¿Cuánto se ha gastado ya de lo presupuestado para becas?',
     ],
   },
 ];

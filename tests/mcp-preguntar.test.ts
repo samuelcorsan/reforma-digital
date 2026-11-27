@@ -60,6 +60,7 @@ describe('preguntar a la biblioteca MCP', () => {
       'trafico',
       'idescat',
       'borme',
+      'presupuestos',
       'ninguno',
     ]);
   });
