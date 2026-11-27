@@ -1,0 +1,27 @@
+[project]
+name = "reforma-digital-ingestion"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "requests==2.34.2",
+  "beautifulsoup4==4.15.0",
+  "vercel==0.11.6",
+  "psycopg[binary]==3.3.6",
+  "jsonschema==4.26.0",
+  "python-dotenv==1.2.4",
+  # Entrevistas (apps/ingestion/entrevistas). YouTube cambia a menudo: actualiza yt-dlp el día antes de usarlo.
+  "google-genai==2.33.0",
+  "pydantic==2.14.1",
+  "yt-dlp[default,curl-cffi]>=2026.10.21",
+]
+
+[dependency-groups]
+dev = ["pytest==9.1.1"]
+
+[tool.uv]
+package = false
+# Igual que minimumReleaseAge en pnpm: una versión recién publicada espera 7 días.
+exclude-newer = "7 days"
+# Salvo yt-dlp: YouTube rompe las versiones viejas y hay que actualizarlo el día antes de una entrevista.
+exclude-newer-package = { yt-dlp = false }
+required-version = ">=0.13"
