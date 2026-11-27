@@ -260,15 +260,18 @@ export function createIdescatMcp(fetchImpl: Fetch = fetch) {
             .string()
             .regex(/^[a-z]+$/)
             .describe('División territorial, de ver_tabla, como cat, com o mun.'),
+          // Sin palabras, el filtro casaría con todo y la respuesta parecería filtrada.
           lugar: z
             .string()
+            .trim()
+            .min(1)
             .max(100)
             .optional()
             .describe(
               "Nombre del territorio en catalán («Catalunya», «Lleida»). Los municipios llevan el artículo detrás («Hospitalet de Llobregat, l'»): búscalos sin él.",
             ),
           filtros: z
-            .record(z.string().max(40), z.string().max(100))
+            .record(z.string().max(40), z.string().trim().min(1).max(100))
             .optional()
             .describe('Id de la dimensión (como lo da ver_tabla) → palabras de los valores.'),
           ultimos: z
