@@ -238,7 +238,8 @@ export const pollsSchema = z.object({
     z.object({
       empresa: z.string(),
       medio: z.string(),
-      ini: date,
+      // Algunas empresas no publican el inicio del trabajo de campo.
+      ini: date.nullable(),
       fin: date,
       n: z.number().nullable(),
       part: z.number().nullable(),

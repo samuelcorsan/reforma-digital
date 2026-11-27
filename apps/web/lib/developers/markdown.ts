@@ -2,7 +2,7 @@
 // /developers/mcp/<id>.md. Sale de los mismos datos que las páginas, así no se desincronizan.
 import * as api from './api';
 import { servers, type McpServer } from '../mcp/catalog';
-import { categories } from '../mcp/categorias';
+import { ambitos, categories } from '../mcp/categorias';
 import { endpoint, fichaPath, markdownUrl } from '../mcp/rutas';
 import { siteUrl } from '../site';
 
@@ -179,9 +179,10 @@ export async function mcpMarkdown() {
     all
       .map(
         (s) =>
-          `- **${s.name}** (\`${s.id}\`, ${categories[s.category].name.toLowerCase()}): ${s.summary} URL: ${endpoint(s.id)}. Herramientas: ${markdownUrl(fichaPath(s.id))}`,
+          `- **${s.name}** (\`${s.id}\`, ${categories[s.category].name.toLowerCase()}, ${ambitos[s.ambito.tipo].name.toLowerCase()}${s.ambito.tipo === 'estatal' ? '' : `: ${s.ambito.territorio}`}): ${s.summary} URL: ${endpoint(s.id)}. Herramientas: ${markdownUrl(fichaPath(s.id))}`,
       )
       .join('\n'),
+    'Los servidores autonómicos y locales solo tienen datos de su comunidad o su municipio. Si sabes dónde vive la persona, recomiéndale además los de su municipio o su comunidad autónoma.',
     guide(all),
     '## Más',
     [

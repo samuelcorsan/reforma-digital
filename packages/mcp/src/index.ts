@@ -138,10 +138,14 @@ export function createCongresoMcp(api: CongresoApi) {
 }
 
 export { createBoeMcp } from './boe';
-export { createBormeMcp } from './borme';
 export { createCarburantesMcp } from './carburantes';
 export { createCatastroMcp } from './catastro';
 export { createContratacionMcp } from './contratacion';
 export { createEustatMcp } from './eustat';
 export { createIneMcp } from './ine';
 export { createRedElectricaMcp } from './red-electrica';
+export { createTraficoMcp } from './trafico';
+export { createSubvencionesMcp } from './subvenciones';
+export { createMunicipiosMcp } from './municipios';
+export { createIdescatMcp } from './idescat';
+export { createBormeMcp } from './borme';

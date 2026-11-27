@@ -40,8 +40,8 @@ busque en la web. Solo recibe vídeos públicos de entrevistas, nunca datos de n
 
 ## 1. Lo que necesitas
 
-- macOS o Linux con **Python 3.12 o más** (`python3 --version`). En macOS, si sale una versión vieja:
-  `brew install python@3.14`.
+- macOS o Linux con **[uv](https://docs.astral.sh/uv/)** (`brew install uv`). Instala Python 3.12 o más si no lo
+  tienes.
 - **ffmpeg**: `brew install ffmpeg` (en Linux, `apt install ffmpeg`).
 - **Node 24 y pnpm**, para ver el resultado en la web (`pnpm install` en la raíz, como para el resto del repo).
 - Una **clave de Gemini** con la facturación activa. Se crea en [Google AI Studio](https://aistudio.google.com/).
@@ -52,8 +52,7 @@ busque en la web. Solo recibe vídeos públicos de entrevistas, nunca datos de n
 Desde la raíz del repositorio:
 
 ```sh
-python3 -m venv .cache/congreso-python
-.cache/congreso-python/bin/python -m pip install -r apps/ingestion/requirements.txt
+UV_PROJECT_ENVIRONMENT="$PWD/.cache/congreso-python" uv sync --project apps/ingestion --locked
 ```
 
 Añade la clave al `.env` de la raíz (cópialo de `.env.example` si no lo tienes). El `.env` no se sube nunca: está
@@ -94,10 +93,12 @@ Un ensayo nunca se publica: todo se queda en `apps/ingestion/.cache/entrevistas/
 
 ## 5. El día de la ronda
 
-**El día antes**, actualiza yt-dlp: YouTube cambia a menudo y las versiones viejas reciben un error 403.
+**El día antes**, actualiza yt-dlp: YouTube cambia a menudo y las versiones viejas reciben un error 403. Sube el
+`uv.lock` que cambia en un PR.
 
 ```sh
-$PY -m pip install -U "yt-dlp[default,curl-cffi]"
+uv lock --upgrade-package yt-dlp
+UV_PROJECT_ENVIRONMENT="$PWD/../../.cache/congreso-python" uv sync --locked
 ```
 
 **Para cada entrevista:**

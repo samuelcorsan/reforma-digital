@@ -66,7 +66,7 @@ export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) 
       {p && (
         <div className="grid gap-8 border-t border-border pt-8">
           <div className="grid gap-2" aria-live="polite">
-            <h3 className="m-0 font-heading text-[32px] leading-tight font-normal">
+            <h3 className="m-0 font-heading text-32 leading-tight font-normal">
               {p.name} elige {p.seats} {p.seats === 1 ? 'diputado' : 'diputados'}
             </h3>
             <p className="m-0 text-base text-muted-foreground">{p.note}</p>
@@ -87,8 +87,8 @@ export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) 
                 Array.from({ length: x.seats }, (_, i) => (
                   <i
                     key={`${x.name}-${i}`}
-                    className="block size-5 rounded-full"
-                    style={{ background: x.color }}
+                    className="block size-5 rounded-full bg-(--bg)"
+                    style={{ '--bg': x.color }}
                   />
                 )),
               )}
@@ -107,7 +107,10 @@ export function ProvincePicker({ provinces }: { provinces: ProvinceSummary[] }) 
                     href={d.href}
                     className="inline-flex items-center gap-2 rounded-full bg-muted px-3.5 py-1.5 text-base no-underline hover:bg-muted/70"
                   >
-                    <i className="block size-2 rounded-full" style={{ background: d.color }} />
+                    <i
+                      className="block size-2 rounded-full bg-(--bg)"
+                      style={{ '--bg': d.color }}
+                    />
                     {d.name}
                   </Link>
                 ))}

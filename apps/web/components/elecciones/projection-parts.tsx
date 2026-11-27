@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
-import { cn } from '@reforma-digital/design/lib/utils';
-import { Button, buttonVariants } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Tabs, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import { Icon } from '../brand/icon';
 import { Cell, Label } from './report';
@@ -39,7 +39,7 @@ export function SeatSum({
               setOn((s) => (s.includes(p.id) ? s.filter((x) => x !== p.id) : [...s, p.id]))
             }
           >
-            <i className="block size-2 rounded-full" style={{ background: p.color }} />
+            <i className="block size-2 rounded-full bg-(--bg)" style={{ '--bg': p.color }} />
             {p.name} {p.seats}
           </Button>
         ))}
@@ -50,13 +50,13 @@ export function SeatSum({
           .map((p) => (
             <i
               key={p.id}
-              className="block h-full"
-              style={{ width: `${(p.seats / 350) * 100}%`, background: p.color }}
+              className="block h-full w-(--w) bg-(--bg)"
+              style={{ '--w': `${(p.seats / 350) * 100}%`, '--bg': p.color }}
             />
           ))}
         <i
-          className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground"
-          style={{ left: `${(176 / 350) * 100}%` }}
+          className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground left-(--left)"
+          style={{ '--left': `${(176 / 350) * 100}%` }}
         />
       </div>
       <p className="m-0" aria-live="polite">
@@ -99,7 +99,7 @@ export function Majority({
         <Tabs value={chosen} onValueChange={(v) => typeof v === 'string' && setChosen(v)}>
           <TabsList aria-label="Bloque">
             {blocs.map((x) => (
-              <TabsTrigger key={x.name} value={x.name} className="px-3">
+              <TabsTrigger key={x.name} value={x.name}>
                 {x.name}
               </TabsTrigger>
             ))}
@@ -352,7 +352,7 @@ export function ProjectionMap({
             <div className="flex items-start justify-between gap-3">
               <div className="grid gap-1">
                 <Label>{chosen.seats.reduce((t, [, n]) => t + n, 0)} escaños</Label>
-                <h3 className="m-0 font-heading text-[28px] leading-tight font-normal">
+                <h3 className="m-0 font-heading text-28 leading-tight font-normal">
                   {chosen.name}
                 </h3>
               </div>
@@ -377,8 +377,8 @@ export function ProjectionMap({
                   >
                     <span className="inline-flex items-center gap-2 font-medium">
                       <i
-                        className="block size-2.5 shrink-0 rounded-full"
-                        style={{ background: color(id) }}
+                        className="block size-2.5 shrink-0 rounded-full bg-(--bg)"
+                        style={{ '--bg': color(id) }}
                       />
                       {name(id)}
                     </span>
@@ -386,8 +386,8 @@ export function ProjectionMap({
                       {Array.from({ length: n }, (_, i) => (
                         <i
                           key={i}
-                          className="block size-3 rounded-xs"
-                          style={{ background: color(id) }}
+                          className="block size-3 rounded-xs bg-(--bg)"
+                          style={{ '--bg': color(id) }}
                         />
                       ))}
                       {!n && <span className="text-muted-foreground">sin escaño</span>}
@@ -405,15 +405,14 @@ export function ProjectionMap({
                 {name(chosen.last.segundo)}, a {decimal(chosen.last.falta)} puntos.
               </p>
             )}
-            <Link
-              href={chosen.href}
-              className={cn(
-                buttonVariants({ variant: 'outline', size: 'lg' }),
-                'justify-self-start',
-              )}
+            <ButtonLink
+              render={<Link href={chosen.href} />}
+              variant="outline"
+              size="lg"
+              className="justify-self-start"
             >
               Historial electoral <Icon name="derecha" size={16} />
-            </Link>
+            </ButtonLink>
           </div>
         ) : (
           <div className="grid gap-2">
@@ -436,13 +435,13 @@ export function ProjectionMap({
                       </span>
                       ·
                       <i
-                        className="block size-2 rounded-full"
-                        style={{ background: color(p.last?.gana ?? '') }}
+                        className="block size-2 rounded-full bg-(--bg)"
+                        style={{ '--bg': color(p.last?.gana ?? '') }}
                       />
                       {name(p.last?.gana ?? '')} →
                       <i
-                        className="block size-2 rounded-full"
-                        style={{ background: color(p.last?.segundo ?? '') }}
+                        className="block size-2 rounded-full bg-(--bg)"
+                        style={{ '--bg': color(p.last?.segundo ?? '') }}
                       />
                       {name(p.last?.segundo ?? '')}
                     </span>

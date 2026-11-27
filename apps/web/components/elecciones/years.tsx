@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, buttonVariants } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 
 // Las elecciones, una por botón; «Reproducir» las recorre de una en una desde la elegida.
 export function Years({
@@ -38,19 +39,16 @@ export function Years({
         {active ? 'Pausa' : 'Reproducir'}
       </Button>
       {items.map((x) => (
-        <Link
+        <ButtonLink
           key={x.id}
-          href={x.href}
+          render={<Link href={x.href} scroll={false} />}
           aria-current={x.id === current ? 'page' : undefined}
-          scroll={false}
           onClick={() => setPlaying(false)}
-          className={buttonVariants({
-            variant: x.id === current ? 'default' : 'ghost',
-            size: 'sm',
-          })}
+          variant={x.id === current ? 'default' : 'ghost'}
+          size="sm"
         >
           {x.label}
-        </Link>
+        </ButtonLink>
       ))}
     </nav>
   );

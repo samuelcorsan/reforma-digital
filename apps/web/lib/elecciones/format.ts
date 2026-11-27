@@ -54,6 +54,9 @@ export const longDate = (iso: string) => long.format(new Date(`${iso}T00:00:00Z`
 export const ramp = (mode: 'price' | 'lost', t: number) =>
   `color-mix(in oklab, ${mode === 'price' ? 'var(--foreground)' : 'var(--brand)'} ${Math.round(12 + 78 * Math.max(0, Math.min(1, t)))}%, var(--muted))`;
 
+// El gris de un partido que no trae color en los datos.
+export const noColor = '#8A8F98';
+
 // Texto oscuro o claro sobre un color de fondo (en `#rrggbb`): el de más contraste según WCAG.
 export const ink = (hex: string) => {
   const [r = 0, g = 0, b = 0] = [1, 3, 5].map((i) => {

@@ -44,6 +44,7 @@ export default async function Page({ searchParams }: Props) {
     name: server.name,
     summary: server.summary,
     logo: server.logo,
+    ambito: server.ambito,
     tools: server.tools.length,
   }));
 
@@ -56,7 +57,7 @@ export default async function Page({ searchParams }: Props) {
         initial={Object.hasOwn(orders, orden) ? (orden as Order) : 'destacados'}
         repo={links.repo}
       >
-        <h1 className="mx-auto max-w-[16ch] text-balance font-heading text-[clamp(40px,6vw,72px)] leading-[1.05]">
+        <h1 className="mx-auto max-w-[16ch] text-balance font-heading text-fluid-40-72 leading-1.05">
           Datos públicos para tu asistente
         </h1>
         <p className="mx-auto mt-6 max-w-[44ch] text-lg leading-relaxed text-balance text-muted-foreground">

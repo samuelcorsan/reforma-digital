@@ -1,22 +1,15 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
-import { Card } from '@reforma-digital/design/ui/card';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
+import { Card, CardContent, CardHeader, CardTitle } from '@reforma-digital/design/ui/card';
 import { Icon } from '../brand/icon';
 
 // Piezas del informe visual de /elecciones: tarjetas separadas, cifras con su explicación y
 // barras con su etiqueta. Escala de DESIGN.md §8.1.
 
-const spans = {
-  3: 'md:col-span-3',
-  4: 'md:col-span-4',
-  5: 'md:col-span-5',
-  6: 'md:col-span-6',
-  7: 'md:col-span-7',
-  8: 'md:col-span-8',
-  12: 'md:col-span-12',
-};
+// Columnas que ocupa una tarjeta desde `md`; por debajo, las doce.
+type Span = 3 | 4 | 5 | 6 | 7 | 8 | 12;
 
 // El título corto de una tarjeta o de un bloque, en minúsculas como el resto del texto.
 export function Label({ children }: { children: ReactNode }) {
@@ -33,21 +26,23 @@ export function Cell({
   className,
   children,
 }: {
-  span?: keyof typeof spans;
+  span?: Span;
   label?: ReactNode;
   className?: string;
   children: ReactNode;
 }) {
   return (
-    <Card
-      className={cn(
-        'col-span-12 min-w-0 gap-6 p-6 text-base lg:p-8 max-sm:p-5',
-        spans[span],
-        className,
+    // `relative`: un enlace del contenido puede extenderse a toda la tarjeta (`after:inset-0`).
+    <Card className="relative col-span-12 min-w-0 md:col-span-(--span)" style={{ '--span': span }}>
+      {label && (
+        <CardHeader>
+          <CardTitle>{label}</CardTitle>
+        </CardHeader>
       )}
-    >
-      {label && <Label>{label}</Label>}
-      {children}
+      {/* El contenido es de quien usa la celda: `className` lo coloca, no viste la tarjeta. */}
+      <CardContent className="flex grow flex-col">
+        <div className={cn('flex grow flex-col gap-6', className)}>{children}</div>
+      </CardContent>
     </Card>
   );
 }
@@ -55,7 +50,7 @@ export function Cell({
 export function Stat({ value, caption }: { value: ReactNode; caption: ReactNode }) {
   return (
     <p className="m-0 grid gap-2">
-      <b className="font-heading text-[40px] leading-none font-normal tabular-nums lg:text-5xl">
+      <b className="font-heading text-40 leading-none font-normal tabular-nums lg:text-5xl">
         {value}
       </b>
       <span className="max-w-[32ch] text-base leading-snug text-muted-foreground">{caption}</span>
@@ -100,17 +95,17 @@ export function Bars({
           )}
           <span className="relative h-4 rounded-full bg-muted">
             <i
-              className="block h-full rounded-full"
+              className="block h-full rounded-full w-(--w) bg-(--bg)"
               style={{
-                width: `${(row.value / top) * 100}%`,
-                background: row.color ?? 'var(--foreground)',
+                '--w': `${(row.value / top) * 100}%`,
+                '--bg': row.color ?? 'var(--foreground)',
               }}
             />
             {mark !== undefined && (
               <i
                 aria-hidden="true"
-                className="absolute -inset-y-1 w-0.5 bg-foreground"
-                style={{ left: `${(mark / top) * 100}%` }}
+                className="absolute -inset-y-1 w-0.5 bg-foreground left-(--left)"
+                style={{ '--left': `${(mark / top) * 100}%` }}
               />
             )}
           </span>
@@ -137,7 +132,7 @@ export function Legend({
     >
       {items.map((item) => (
         <li key={item.label} className="inline-flex items-center gap-2">
-          <i className="block size-2.5 rounded-full" style={{ background: item.color }} />
+          <i className="block size-2.5 rounded-full bg-(--bg)" style={{ '--bg': item.color }} />
           {item.label}
         </li>
       ))}
@@ -149,15 +144,9 @@ export function Explore({ links }: { links: { href: string; text: string }[] }) 
   return (
     <div className="mt-auto flex flex-wrap gap-2">
       {links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          data-slot="button"
-          data-variant="outline"
-          className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
-        >
+        <ButtonLink key={link.href} render={<Link href={link.href} />} variant="outline" size="xl">
           {link.text} <Icon name="derecha" size={16} />
-        </Link>
+        </ButtonLink>
       ))}
     </div>
   );
@@ -178,21 +167,21 @@ export function PageCard({
   title: string;
   text: string;
   cta: string;
-  span?: keyof typeof spans;
+  span?: Span;
   children?: ReactNode;
 }) {
   return (
     <Card
       render={<Link href={href} />}
-      className={cn(
-        'col-span-12 row-span-4 grid min-w-0 grid-rows-subgrid gap-4 p-6 text-base no-underline outline-none transition-colors hover:bg-muted/60 focus-visible:ring-3 focus-visible:ring-ring/50 lg:p-8 max-sm:p-5',
-        spans[span],
-      )}
+      className="col-span-12 row-span-4 grid min-w-0 grid-rows-subgrid md:col-span-(--span)"
+      style={{ '--span': span }}
     >
-      <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{title}</h3>
-      <p className="m-0 max-w-[48ch] leading-snug text-muted-foreground">{text}</p>
-      <div className="grid content-start gap-4">{children}</div>
-      <CardCta>{cta}</CardCta>
+      <CardContent className="row-span-4 grid grid-rows-subgrid">
+        <h3 className="m-0 font-heading text-2xl leading-tight font-normal">{title}</h3>
+        <p className="m-0 max-w-[48ch] leading-snug text-muted-foreground">{text}</p>
+        <div className="grid content-start gap-4">{children}</div>
+        <CardCta>{cta}</CardCta>
+      </CardContent>
     </Card>
   );
 }
@@ -215,7 +204,7 @@ export function Heading({ title, children }: { title: string; children?: ReactNo
     <div className="grid gap-2">
       <h2
         data-section-title
-        className="m-0 scroll-mt-40 font-heading text-[28px] leading-tight font-normal"
+        className="m-0 scroll-mt-40 font-heading text-28 leading-tight font-normal"
       >
         {title}
       </h2>
@@ -231,7 +220,7 @@ export function SectionHeading({ title, children }: { title: string; children?: 
     <div className="grid gap-2">
       <h2
         data-section-title
-        className="m-0 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]"
+        className="m-0 scroll-mt-40 font-heading text-32 leading-tight font-normal lg:text-36"
       >
         {title}
       </h2>
@@ -257,7 +246,7 @@ export function Chapter({
         <h2
           id={`${id}-titulo`}
           data-section-title
-          className="m-0 scroll-mt-40 font-heading text-[32px] leading-[1.1] font-normal lg:text-[44px]"
+          className="m-0 scroll-mt-40 font-heading text-32 leading-1.1 font-normal lg:text-44"
         >
           {title}
         </h2>
@@ -274,9 +263,7 @@ export function Chapter({
 export function ReportIntro({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <header className="mb-10 grid items-end gap-x-12 gap-y-4 md:grid-cols-2">
-      <h1 className="m-0 font-heading text-4xl leading-[1.1] font-normal lg:text-[52px]">
-        {title}
-      </h1>
+      <h1 className="m-0 font-heading text-4xl leading-1.1 font-normal lg:text-52">{title}</h1>
       {children && (
         <div className="max-w-[52ch] text-lg leading-relaxed text-muted-foreground [&_p]:m-0">
           {children}
@@ -288,21 +275,22 @@ export function ReportIntro({ title, children }: { title: string; children?: Rea
 
 export function ReportStats({ items }: { items: [number | string, string][] }) {
   return (
-    <dl className="mb-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,190px),1fr))] gap-4">
+    <div className="mb-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,190px),1fr))] gap-4">
       {items.map(([value, label]) => (
-        <Card
-          key={label}
-          className="flex-col-reverse justify-end gap-2 bg-muted p-6 ring-0 max-sm:p-5"
-        >
-          <dt className="text-base leading-snug text-(--text-secondary)">{label}</dt>
-          <dd className="m-0 font-heading text-[40px] leading-none tabular-nums">
-            {typeof value === 'number'
-              ? String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-              : value}
-          </dd>
+        <Card key={label}>
+          <CardContent>
+            <dl className="m-0 flex flex-col-reverse justify-end gap-2">
+              <dt className="text-base leading-snug text-(--text-secondary)">{label}</dt>
+              <dd className="m-0 font-heading text-40 leading-none tabular-nums">
+                {typeof value === 'number'
+                  ? String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+                  : value}
+              </dd>
+            </dl>
+          </CardContent>
         </Card>
       ))}
-    </dl>
+    </div>
   );
 }
 
@@ -327,7 +315,7 @@ export function ReportSection({
         <h2
           data-section-title
           className={cn(
-            'm-0 scroll-mt-40 font-heading text-[32px] leading-tight font-normal lg:text-[36px]',
+            'm-0 scroll-mt-40 font-heading text-32 leading-tight font-normal lg:text-36',
             quiet && 'sr-only',
           )}
         >

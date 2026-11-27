@@ -41,10 +41,10 @@ export type LocalNav = {
 
 type Section = { key: string; label: string; el: HTMLElement };
 
-const item = 'h-10 gap-3 px-3 text-[15px] [&_svg]:size-[18px]';
+const item = 'h-10 [&_svg]:size-[18px]';
 // Las secciones de la página y las partes del análisis: más pequeñas, y la actual marcada.
 const link =
-  'flex min-h-8 w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] leading-snug text-muted-foreground no-underline transition-colors hover:bg-sidebar-accent hover:text-foreground motion-reduce:transition-none';
+  'flex min-h-8 w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-13 leading-snug text-muted-foreground no-underline transition-colors hover:bg-sidebar-accent hover:text-foreground motion-reduce:transition-none';
 const active = 'bg-sidebar-accent font-medium text-foreground';
 
 // Los títulos de sección de la página (`data-section-title`). No se les pone `id`, para no tocar el
@@ -163,7 +163,7 @@ export function SectionNav({ current, local }: { current?: ElectionPage; local?:
       </ul>
     );
     return (
-      <SidebarGroup ref={root} className="p-0">
+      <SidebarGroup ref={root}>
         <Link
           href={local.back.href}
           className="mb-4 inline-flex min-h-9 items-center gap-1.5 self-start rounded-md px-3 text-sm text-muted-foreground no-underline hover:bg-sidebar-accent hover:text-foreground"
@@ -172,19 +172,19 @@ export function SectionNav({ current, local }: { current?: ElectionPage; local?:
           {local.back.label}
         </Link>
         <div className="mb-3 grid gap-0.5 px-3">
-          <span className="text-[15px] font-medium">{local.title}</span>
+          <span className="text-15 font-medium">{local.title}</span>
           {local.subtitle && (
-            <span className="text-[13px] leading-snug text-muted-foreground">{local.subtitle}</span>
+            <span className="text-13 leading-snug text-muted-foreground">{local.subtitle}</span>
           )}
         </div>
-        <SidebarMenu className="gap-0.5">
+        <SidebarMenu>
           {local.items.map((i) => (
             <SidebarMenuItem key={i.href}>
               <SidebarMenuButton
                 render={<Link href={i.href} />}
                 isActive={i.href === here}
                 aria-current={i.href === here ? 'page' : undefined}
-                className="h-9 text-sm"
+                className="h-9"
               >
                 <span>{i.label}</span>
               </SidebarMenuButton>
@@ -198,8 +198,8 @@ export function SectionNav({ current, local }: { current?: ElectionPage; local?:
   }
 
   return (
-    <SidebarGroup ref={root} className="p-0">
-      <SidebarMenu className="gap-0.5">
+    <SidebarGroup ref={root}>
+      <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton
             render={<Link href={electionsHref()} />}
@@ -225,14 +225,14 @@ export function SectionNav({ current, local }: { current?: ElectionPage; local?:
               </span>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <SidebarMenuSub className="mx-0 my-0.5 ml-5 border-0 px-0 pl-2">
+              <SidebarMenuSub>
                 {g.pages.map((id) => (
                   <SidebarMenuSubItem key={id}>
                     <SidebarMenuSubButton
                       render={<Link href={electionsHref(id)} />}
                       isActive={id === current}
                       aria-current={id === current ? 'page' : undefined}
-                      className="h-9 text-sm"
+                      className="h-9"
                     >
                       <span>{electionPages[id].short}</span>
                     </SidebarMenuSubButton>

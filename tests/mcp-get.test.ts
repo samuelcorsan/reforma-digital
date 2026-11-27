@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-// Los servidores guardan `fetch` al crearse, al importar las rutas: se sustituye antes.
+// Los servidores guardan `fetch` al crearse, al importar `lib/mcp/servidores`: se sustituye antes.
 const fetchMock = vi.hoisted(() => {
   const mock = vi.fn<typeof fetch>();
   globalThis.fetch = mock;

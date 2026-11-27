@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@reforma-digital/design/ui/select';
 import { dhondt, type Quotient } from '../../lib/elecciones/dhondt';
-import { ink, thousands } from '../../lib/elecciones/format';
+import { ink, noColor, thousands } from '../../lib/elecciones/format';
 import { useFirstSight } from './first-sight';
 import { Cell, Label } from './report';
 import { Icon } from '../brand/icon';
@@ -196,15 +196,22 @@ export function Simulator({
       <span className="mr-2 text-xs font-medium text-muted-foreground">
         Escaño {n + 1} de {province.seats}
       </span>
-      Cociente más alto: <b style={{ color: color[toca.party] }}>{toca.party}</b>,{' '}
-      {thousands(toca.value)}.
+      Cociente más alto:{' '}
+      <b className="text-(--color)" style={{ '--color': color[toca.party] }}>
+        {toca.party}
+      </b>
+      , {thousands(toca.value)}.
     </>
   ) : latest ? (
     <>
       <span className="mr-2 text-xs font-medium text-muted-foreground">
         Escaño {n} de {province.seats}
       </span>
-      Asignado a <b style={{ color: color[latest.party] }}>{latest.party}</b>. Siguiente cociente (÷
+      Asignado a{' '}
+      <b className="text-(--color)" style={{ '--color': color[latest.party] }}>
+        {latest.party}
+      </b>
+      . Siguiente cociente (÷
       {(now[latest.party] ?? 0) + 1}):{' '}
       {thousands((votes[latest.party] ?? 0) / ((now[latest.party] ?? 0) + 1))}.
     </>
@@ -218,7 +225,7 @@ export function Simulator({
         <div className="grid gap-2">
           <h2
             id="simulador"
-            className="m-0 flex scroll-mt-28 flex-wrap items-center gap-x-3 gap-y-2 font-heading text-[28px] leading-tight font-normal"
+            className="m-0 flex scroll-mt-28 flex-wrap items-center gap-x-3 gap-y-2 font-heading text-28 leading-tight font-normal"
           >
             Reparto D&apos;Hondt en{' '}
             <ProvinceSelect provinces={provinces} value={province.code} onChange={onProvince} />
@@ -235,10 +242,8 @@ export function Simulator({
               ref={shape}
               strokeWidth={1.5}
               vectorEffect="non-scaling-stroke"
-              style={{
-                stroke: leader ? color[leader] : 'var(--foreground)',
-                fill: `color-mix(in oklab, ${leader ? color[leader] : 'var(--foreground)'} 22%, transparent)`,
-              }}
+              className="fill-(--stroke)/22 stroke-(--stroke)"
+              style={{ '--stroke': leader ? color[leader] : 'var(--foreground)' }}
             />
           </svg>
           <figcaption className="mt-1 font-mono text-sm text-muted-foreground">
@@ -289,8 +294,8 @@ export function Simulator({
               <span className="relative h-5">
                 {last && (
                   <span
-                    className="absolute -translate-x-1/2 whitespace-nowrap"
-                    style={{ left: `${Math.min(80, Math.max(12, width(last.value)))}%` }}
+                    className="absolute -translate-x-1/2 whitespace-nowrap left-(--left)"
+                    style={{ '--left': `${Math.min(80, Math.max(12, width(last.value)))}%` }}
                   >
                     último escaño: {thousands(last.value)}
                   </span>
@@ -317,16 +322,16 @@ export function Simulator({
                     <span className="flex items-center gap-2">
                       <span className="relative h-3 flex-1">
                         <i
-                          className="absolute inset-0 block origin-left rounded-xs transition-transform duration-500 motion-reduce:transition-none"
+                          className="absolute inset-0 block origin-left rounded-xs transition-transform duration-500 motion-reduce:transition-none transform-(--transform) bg-(--bg)"
                           style={{
-                            transform: `scaleX(${width(passes ? v / d : v) / 100})`,
-                            background: passes ? color[name] : 'var(--muted)',
+                            '--transform': `scaleX(${width(passes ? v / d : v) / 100})`,
+                            '--bg': passes ? color[name] : 'var(--muted)',
                           }}
                         />
                         {last && (
                           <i
-                            className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground"
-                            style={{ left: `${width(last.value)}%` }}
+                            className="absolute -inset-y-1 block w-px border-l border-dashed border-foreground left-(--left)"
+                            style={{ '--left': `${width(last.value)}%` }}
                           />
                         )}
                       </span>
@@ -347,8 +352,8 @@ export function Simulator({
                     {Array.from({ length: Math.min(seats, 12) }, (_, j) => (
                       <i
                         key={j}
-                        className="block size-2 shrink-0 rounded-xs"
-                        style={{ background: color[name] }}
+                        className="block size-2 shrink-0 rounded-xs bg-(--bg)"
+                        style={{ '--bg': color[name] }}
                       />
                     ))}
                   </span>
@@ -380,7 +385,7 @@ export function Simulator({
             >
               {Array.from({ length: province.seats }, (_, i) => {
                 const q = i < n ? r.won[i] : undefined;
-                const c = q ? (color[q.party] ?? '#8A8F98') : undefined;
+                const c = q ? (color[q.party] ?? noColor) : undefined;
                 return (
                   <li
                     key={i}
@@ -395,8 +400,9 @@ export function Simulator({
                     className={cn(
                       'grid min-h-12 content-start gap-0.5 rounded-md p-1.5 font-mono text-xs leading-tight',
                       !q && 'border border-dashed border-border text-muted-foreground',
+                      c && 'bg-(--bg) text-(--color)',
                     )}
-                    style={c ? { background: c, color: ink(c) } : undefined}
+                    style={c ? { '--bg': c, '--color': ink(c) } : undefined}
                   >
                     <span className="opacity-80">{i + 1}.º</span>
                     {q && province.seats <= 12 && (
@@ -410,10 +416,7 @@ export function Simulator({
           <p className="m-0 flex min-h-6 flex-wrap gap-2 text-sm" aria-live="polite">
             {note && <span className="text-muted-foreground">{note}</span>}
             {changes.map(([name, d]) => (
-              <span
-                key={name}
-                className={cn('font-medium', d > 0 ? 'text-[#2E7D5B]' : 'text-brand')}
-              >
+              <span key={name} className={cn('font-medium', d > 0 ? 'text-sube' : 'text-brand')}>
                 {name} {d > 0 ? '+' : '−'}
                 {Math.abs(d)}
               </span>
@@ -443,7 +446,10 @@ export function Simulator({
                 )}
               >
                 <span className="inline-flex items-center gap-2 font-medium">
-                  <i className="block size-2.5 rounded-full" style={{ background: color[name] }} />
+                  <i
+                    className="block size-2.5 rounded-full bg-(--bg)"
+                    style={{ '--bg': color[name] }}
+                  />
                   {name}
                 </span>
                 <input
@@ -454,13 +460,13 @@ export function Simulator({
                   value={v}
                   aria-label={`Votos de ${name}`}
                   onChange={(event) => edit({ ...votes, [name]: Number(event.target.value) })}
-                  className="-my-3.5 h-11 w-full"
-                  style={{ accentColor: color[name] }}
+                  className="-my-3.5 h-11 w-full accent-(--accent-color)"
+                  style={{ '--accent-color': color[name] }}
                 />
                 <span className="text-right font-mono tabular-nums max-sm:text-left">
                   {thousands(v)}
                   {dv !== 0 && (
-                    <small className={cn('ml-1 text-sm', dv > 0 ? 'text-[#2E7D5B]' : 'text-brand')}>
+                    <small className={cn('ml-1 text-sm', dv > 0 ? 'text-sube' : 'text-brand')}>
                       {plus(dv)}
                     </small>
                   )}
@@ -511,15 +517,15 @@ export function Simulator({
                     <th className="py-1.5 pr-3 text-left font-sans text-sm font-medium whitespace-nowrap">
                       <span className="inline-flex items-center gap-2">
                         <i
-                          className="block size-2.5 rounded-full"
-                          style={{ background: color[name] }}
+                          className="block size-2.5 rounded-full bg-(--bg)"
+                          style={{ '--bg': color[name] }}
                         />
                         {name}
                       </span>
                     </th>
                     {Array.from({ length: columns }, (_, i) => {
                       const d = i + 1;
-                      const c = color[name] ?? '#8A8F98';
+                      const c = color[name] ?? noColor;
                       const taken = won.has(`${name}|${d}`);
                       return (
                         <td
@@ -531,8 +537,9 @@ export function Simulator({
                             is(out, name, d) &&
                               'outline-dashed outline-2 -outline-offset-2 outline-foreground',
                             is(toca, name, d) && 'outline-2 -outline-offset-2 outline-brand',
+                            taken && 'bg-(--bg) text-(--color)',
                           )}
-                          style={taken ? { background: c, color: ink(c) } : undefined}
+                          style={taken ? { '--bg': c, '--color': ink(c) } : undefined}
                         >
                           {thousands((votes[name] ?? 0) / d)}
                         </td>
@@ -568,7 +575,7 @@ export function ProvinceSelect({
     .map((p) => ({ value: p.code, label: p.name }));
   return (
     <Select value={value} onValueChange={onChange} items={items}>
-      <SelectTrigger aria-label="Provincia" className="w-full max-w-xs font-sans">
+      <SelectTrigger aria-label="Provincia" className="w-full max-w-xs">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

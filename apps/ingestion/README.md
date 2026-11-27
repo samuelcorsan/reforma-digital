@@ -24,11 +24,10 @@ Las primeras ejecuciones usan los análisis importados. `reanalyze` pide nuevos 
 
 ## Importación inicial
 
-Necesitas Python 3.12+, Node 24, pnpm y `pdftotext` (Poppler).
+Necesitas [uv](https://docs.astral.sh/uv/) (instala Python 3.12+ si no lo tienes), Node 24, pnpm y `pdftotext` (Poppler).
 
 ```sh
-python3 -m venv .cache/congreso-python
-.cache/congreso-python/bin/python -m pip install -r apps/ingestion/requirements.txt
+UV_PROJECT_ENVIRONMENT="$PWD/.cache/congreso-python" uv sync --project apps/ingestion --locked
 pnpm install --frozen-lockfile
 pnpm db:migrate
 .cache/congreso-python/bin/python apps/ingestion/run.py bootstrap

@@ -96,46 +96,46 @@ export function Preguntar({
       <label htmlFor="pregunta-mcp" className="sr-only">
         ¿Qué quieres saber? Te decimos qué servidor lo responde
       </label>
-      <InputGroup
-        className={cn('h-11 rounded-full bg-background pr-1.5 pl-1.5', cargando && 'comprobando')}
-      >
-        <InputGroupAddon>
-          <Icon name="chispa" size={16} />
-        </InputGroupAddon>
-        <InputGroupInput
-          ref={campo}
-          id="pregunta-mcp"
-          type="search"
-          enterKeyHint="search"
-          value={pregunta}
-          onChange={(e) => setPregunta(e.target.value)}
-          placeholder="Escribe qué quieres saber y te decimos qué servidor lo responde"
-          maxLength={300}
-          autoComplete="off"
-          aria-describedby={nota ? 'pregunta-mcp-nota' : undefined}
-          className="text-[15px] [&::-webkit-search-cancel-button]:hidden"
-        />
-        <InputGroupAddon align="inline-end">
-          {cargando ? (
-            <span className="pr-2 text-sm text-muted-foreground">Comprobando…</span>
-          ) : (
-            pregunta && (
-              <InputGroupButton
-                size="icon-xs"
-                aria-label="Borrar la pregunta"
-                onClick={() => {
-                  setPregunta('');
-                  // El botón desaparece al vaciar: el foco vuelve al campo, no al principio de la página.
-                  campo.current?.focus();
-                }}
-                className="rounded-full"
-              >
-                <Icon name="nunca" size={14} />
-              </InputGroupButton>
-            )
-          )}
-        </InputGroupAddon>
-      </InputGroup>
+      {/* La animación de carga va en un envoltorio: el campo no se retoca. */}
+      <div className={cn('relative rounded-lg', cargando && 'comprobando')}>
+        <InputGroup className="h-11">
+          <InputGroupAddon>
+            <Icon name="chispa" size={16} />
+          </InputGroupAddon>
+          <InputGroupInput
+            ref={campo}
+            id="pregunta-mcp"
+            type="search"
+            enterKeyHint="search"
+            value={pregunta}
+            onChange={(e) => setPregunta(e.target.value)}
+            placeholder="Escribe qué quieres saber y te decimos qué servidor lo responde"
+            maxLength={300}
+            autoComplete="off"
+            aria-describedby={nota ? 'pregunta-mcp-nota' : undefined}
+            className="[&::-webkit-search-cancel-button]:hidden"
+          />
+          <InputGroupAddon align="inline-end">
+            {cargando ? (
+              <span className="pr-2 text-sm text-muted-foreground">Comprobando…</span>
+            ) : (
+              pregunta && (
+                <InputGroupButton
+                  size="icon-xs"
+                  aria-label="Borrar la pregunta"
+                  onClick={() => {
+                    setPregunta('');
+                    // El botón desaparece al vaciar: el foco vuelve al campo, no al principio de la página.
+                    campo.current?.focus();
+                  }}
+                >
+                  <Icon name="nunca" size={14} />
+                </InputGroupButton>
+              )
+            )}
+          </InputGroupAddon>
+        </InputGroup>
+      </div>
       <p
         id="pregunta-mcp-nota"
         aria-live="polite"

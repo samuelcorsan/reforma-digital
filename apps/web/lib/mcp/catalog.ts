@@ -1,20 +1,10 @@
-import { POST as congreso } from '../../app/mcp/congreso/route';
-import { POST as renfe } from '../../app/mcp/renfe/route';
-import { POST as boe } from '../../app/mcp/boe/route';
-import { POST as borme } from '../../app/mcp/borme/route';
-import { POST as carburantes } from '../../app/mcp/carburantes/route';
-import { POST as ine } from '../../app/mcp/ine/route';
-import { POST as alsa } from '../../app/mcp/alsa/route';
-import { POST as eustat } from '../../app/mcp/eustat/route';
-import { POST as redElectrica } from '../../app/mcp/red-electrica/route';
-import { POST as catastro } from '../../app/mcp/catastro/route';
-import { POST as contratacion } from '../../app/mcp/contratacion/route';
 import type { StaticImageData } from 'next/image';
-import type { Category } from './categorias';
+import type { Ambito, Category } from './categorias';
+import { mensajeRpc } from './rpc';
+import { handlers } from './servidores';
 import congresoEscena from './escenas/congreso.png';
 import renfeEscena from './escenas/renfe.png';
 import boeEscena from './escenas/boe.png';
-import bormeEscena from './escenas/borme.png';
 import carburantesEscena from './escenas/carburantes.png';
 import ineEscena from './escenas/ine.png';
 import alsaEscena from './escenas/alsa.png';
@@ -22,12 +12,18 @@ import eustatEscena from './escenas/eustat.png';
 import redElectricaEscena from './escenas/red-electrica.png';
 import catastroEscena from './escenas/catastro.png';
 import contratacionEscena from './escenas/contratacion.png';
+import subvencionesEscena from './escenas/subvenciones.png';
+import municipiosEscena from './escenas/municipios.png';
+import traficoEscena from './escenas/trafico.png';
+import idescatEscena from './escenas/idescat.png';
+import bormeEscena from './escenas/borme.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
   id: string;
   name: string;
   category: Category;
+  ambito: Ambito;
   summary: string;
   /** Imagen de `public/`. */
   logo: { src: string };
@@ -41,6 +37,7 @@ const servidores: Servidor[] = [
     id: 'congreso',
     name: 'Congreso de los Diputados',
     category: 'parlamento',
+    ambito: { tipo: 'estatal' },
     // El hemiciclo de la portada, como un sol que sale.
     logo: { src: '/congreso/hemiciclo.svg' },
     escena: congresoEscena,
@@ -56,6 +53,7 @@ const servidores: Servidor[] = [
     id: 'renfe',
     name: 'RENFE',
     category: 'transporte',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/renfe.png' },
     escena: renfeEscena,
     summary:
@@ -70,6 +68,7 @@ const servidores: Servidor[] = [
     id: 'boe',
     name: 'BOE',
     category: 'normativa',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/boe-sello.png' },
     escena: boeEscena,
     summary:
@@ -81,24 +80,10 @@ const servidores: Servidor[] = [
     ],
   },
   {
-    id: 'borme',
-    name: 'BORME',
-    category: 'empresas',
-    // Lo publica la Agencia Estatal BOE, con el mismo sello.
-    logo: { src: '/organismos/boe-sello.png' },
-    escena: bormeEscena,
-    summary:
-      'Los actos que inscriben cada día los registros mercantiles: constituciones, nombramientos, ceses, cambios de domicilio, disoluciones y concursos de empresas.',
-    examples: [
-      '¿Qué empresas se constituyeron ayer en Gipuzkoa?',
-      '¿Qué empresas de Madrid han entrado en concurso esta semana?',
-      '¿Qué ha publicado el BORME este mes sobre una empresa de Bizkaia?',
-    ],
-  },
-  {
     id: 'ine',
     name: 'INE',
     category: 'estadistica',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/ine.svg' },
     escena: ineEscena,
     summary:
@@ -113,6 +98,7 @@ const servidores: Servidor[] = [
     id: 'eustat',
     name: 'Eustat',
     category: 'estadistica',
+    ambito: { tipo: 'autonomico', territorio: 'País Vasco' },
     logo: { src: '/organismos/eustat.png' },
     escena: eustatEscena,
     summary:
@@ -127,6 +113,7 @@ const servidores: Servidor[] = [
     id: 'catastro',
     name: 'Catastro',
     category: 'vivienda',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/catastro.png' },
     escena: catastroEscena,
     summary:
@@ -138,9 +125,26 @@ const servidores: Servidor[] = [
     ],
   },
   {
+    id: 'municipios',
+    name: 'Ayuntamientos',
+    category: 'administracion-local',
+    ambito: { tipo: 'estatal' },
+    // Sin organismo único: un edificio público (Lucide).
+    logo: { src: '/mcp/municipios.svg' },
+    escena: municipiosEscena,
+    summary:
+      'Deuda, pago a proveedores, cuentas, impuestos, contratos, subvenciones y sueldos de cada ayuntamiento de España, comparados con los de su tamaño.',
+    examples: [
+      '¿Cuánto debe mi ayuntamiento por vecino y cuánto tarda en pagar a sus proveedores?',
+      '¿Cuánto cobra el alcalde de Badalona y cuál es el tope legal?',
+      '¿Qué ayuntamientos de Huelva de más de 20.000 habitantes gestionan peor su dinero?',
+    ],
+  },
+  {
     id: 'carburantes',
     name: 'Precios de carburantes',
     category: 'consumo',
+    ambito: { tipo: 'estatal' },
     // Sin logo propio: un surtidor (Lucide).
     logo: { src: '/mcp/carburantes.svg' },
     escena: carburantesEscena,
@@ -156,6 +160,7 @@ const servidores: Servidor[] = [
     id: 'red-electrica',
     name: 'Red Eléctrica',
     category: 'consumo',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/red-electrica.png' },
     escena: redElectricaEscena,
     summary:
@@ -170,6 +175,7 @@ const servidores: Servidor[] = [
     id: 'alsa',
     name: 'ALSA',
     category: 'transporte',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/alsa.svg' },
     escena: alsaEscena,
     summary:
@@ -184,6 +190,7 @@ const servidores: Servidor[] = [
     id: 'contratacion',
     name: 'Licitaciones públicas',
     category: 'contratacion',
+    ambito: { tipo: 'estatal' },
     // El símbolo de la marca de la Plataforma de Contratación del Sector Público.
     logo: { src: '/organismos/placsp.svg' },
     escena: contratacionEscena,
@@ -193,6 +200,68 @@ const servidores: Servidor[] = [
       '¿Qué obras de carpintería han salido a licitación estos días en el País Vasco?',
       '¿Qué licitaciones de Gipuzkoa siguen en plazo?',
       '¿Qué obras se han adjudicado estos días en Bizkaia, a quién y por cuánto?',
+    ],
+  },
+  {
+    id: 'subvenciones',
+    name: 'Subvenciones públicas',
+    category: 'ayudas',
+    ambito: { tipo: 'estatal' },
+    logo: { src: '/organismos/igae.png' },
+    escena: subvencionesEscena,
+    summary:
+      'Las convocatorias de subvenciones y ayudas de todas las administraciones, con su plazo de solicitud, y las concesiones a entidades.',
+    examples: [
+      '¿Qué ayudas para rehabilitar viviendas hay abiertas en Euskadi?',
+      '¿Qué subvenciones de eficiencia energética ha convocado el Estado este año?',
+      '¿Qué ayudas a la contratación puede pedir una pyme en Gipuzkoa?',
+    ],
+  },
+  {
+    id: 'trafico',
+    name: 'Tráfico',
+    category: 'transporte',
+    ambito: { tipo: 'estatal' },
+    // Sin logo propio: un cono de tráfico (Lucide).
+    logo: { src: '/mcp/trafico.svg' },
+    escena: traficoEscena,
+    summary:
+      'Las incidencias de tráfico activas que publica la DGT cada minuto, por carretera y tramo de puntos kilométricos, por provincia o cerca de unas coordenadas. La DGT solo publica la severidad de una parte de las incidencias, y el feed no incluye lo gestionado por la SCT ni por el Gobierno Vasco: la nota viaja con cada respuesta.',
+    examples: [
+      '¿Hay algo en la AP-7 entre el PK 680 y el 700?',
+      '¿Qué retenciones hay ahora mismo en la provincia de Valencia?',
+      '¿Hay alguna incidencia cerca de las coordenadas 41.3874, 2.1686?',
+    ],
+  },
+  {
+    id: 'idescat',
+    name: 'Idescat',
+    category: 'estadistica',
+    ambito: { tipo: 'autonomico', territorio: 'Cataluña' },
+    logo: { src: '/organismos/idescat.png' },
+    escena: idescatEscena,
+    summary:
+      'Las estadísticas oficiales de Cataluña, sus comarcas y municipios: población, empleo, afiliación, nacimientos y economía.',
+    examples: [
+      '¿Cuántos habitantes tiene Girona?',
+      '¿Cuál es la tasa de paro en Cataluña?',
+      '¿Cuántos afiliados a la Seguridad Social viven en el Baix Llobregat?',
+    ],
+  },
+  {
+    id: 'borme',
+    name: 'BORME',
+    category: 'empresas',
+    ambito: { tipo: 'estatal' },
+    // Lo publica la Agencia Estatal BOE, con el mismo sello.
+    logo: { src: '/organismos/boe-sello.png' },
+    escena: bormeEscena,
+    summary:
+      'Los actos que inscriben cada día los registros mercantiles: constituciones, nombramientos, ceses, cambios de domicilio, disoluciones y concursos de empresas.',
+    examples: [
+      '¿Qué empresas se constituyeron ayer en Gipuzkoa?',
+      '¿Qué empresas de Madrid han entrado en concurso esta semana?',
+      '¿Qué ha publicado el BORME este mes sobre una empresa de Bizkaia?',
     ],
   },
 ];
@@ -217,24 +286,13 @@ export type McpServer = Servidor & { tools: Tool[] };
 type Entry = Servidor & { handler: (request: Request) => Promise<Response> };
 
 // Las herramientas se le piden al propio servidor (`servers()`), así la ficha no puede quedarse atrás.
-const handlers: Record<string, Entry['handler']> = {
-  congreso,
-  renfe,
-  boe,
-  borme,
-  ine,
-  eustat,
-  catastro,
-  carburantes,
-  'red-electrica': redElectrica,
-  alsa,
-  contratacion,
-};
 const entries: Entry[] = servidores.map((s) => {
-  const handler = handlers[s.id];
+  const handler = handlers.get(s.id);
   if (!handler) throw new Error(`Falta el handler del servidor MCP ${s.id}`);
   return { ...s, handler };
 });
+for (const id of handlers.keys())
+  if (!entries.some((e) => e.id === id)) throw new Error(`Falta la ficha del servidor MCP ${id}`);
 
 /** Ids de los servidores reales, para el sitemap y las rutas estáticas. */
 export const serverIds = entries.map(({ id }) => id);
@@ -255,12 +313,7 @@ async function rpc(
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
     }),
   );
-  const text = await response.text();
-  // Sin sesión el SDK puede responder como evento SSE: el JSON va en la línea `data:`.
-  const body = JSON.parse(/^data: (.*)$/m.exec(text)?.[1] ?? text) as {
-    result?: unknown;
-    error?: { message: string };
-  };
+  const body = mensajeRpc(await response.text());
   if (!response.ok || !body.result) throw new Error(`MCP ${method}: ${body.error?.message}`);
   return body.result;
 }

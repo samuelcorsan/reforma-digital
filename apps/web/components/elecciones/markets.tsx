@@ -95,7 +95,7 @@ export async function Markets() {
             return (
               <Cell key={m.tipo} span={4} className="content-start gap-3">
                 <p className="m-0 text-sm text-muted-foreground">{m.pregunta}</p>
-                <b className="font-heading text-[40px] leading-none font-normal tabular-nums">
+                <b className="font-heading text-40 leading-none font-normal tabular-nums">
                   {chance(o.p)}
                 </b>
                 <p className="m-0 font-medium">{headline[m.tipo](o.nombre)}</p>
@@ -154,8 +154,8 @@ export async function Markets() {
                       <span className="font-medium break-words">{r.name}</span>
                       <span className="h-3 rounded-xs bg-muted">
                         <i
-                          className="block h-full rounded-xs"
-                          style={{ width: `${r.p * 100}%`, background: r.color }}
+                          className="block h-full rounded-xs w-(--w) bg-(--bg)"
+                          style={{ '--w': `${r.p * 100}%`, '--bg': r.color }}
                         />
                       </span>
                       <b className="text-right font-mono font-medium tabular-nums">{chance(r.p)}</b>

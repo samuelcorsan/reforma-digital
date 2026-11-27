@@ -8,13 +8,3 @@
     min-height: 44px;
   }
 }
-
-/* Los enlaces de «Portales incluidos» ganan el área táctil sin cambiar la maqueta. */
-li > a.bg-link {
-  position: relative;
-}
-li > a.bg-link::after {
-  content: '';
-  position: absolute;
-  inset: -14px 0;
-}

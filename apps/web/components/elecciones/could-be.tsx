@@ -176,8 +176,8 @@ export function CouldBe({
             x={hemicycle.label.x}
             y={hemicycle.label.y}
             textAnchor="middle"
-            className="fill-foreground font-heading"
-            style={{ fontSize: hemicycle.label.size }}
+            className="fill-foreground font-heading text-(length:--size)"
+            style={{ '--size': `${hemicycle.label.size}px` }}
           >
             {hemicycle.points.length}
           </text>
@@ -207,13 +207,16 @@ export function CouldBe({
                     key={g.id}
                     className="grid grid-cols-[10px_minmax(0,1fr)_3rem_2.5rem] items-center gap-2"
                   >
-                    <i className="block size-2.5 rounded-full" style={{ background: g.color }} />
+                    <i
+                      className="block size-2.5 rounded-full bg-(--bg)"
+                      style={{ '--bg': g.color }}
+                    />
                     <span>{g.name}</span>
                     <b className="text-right font-mono font-medium tabular-nums">{g.seats + d}</b>
                     <small
                       className={cn(
                         'text-right font-mono text-sm',
-                        d > 0 ? 'text-[#2E7D5B]' : 'text-brand',
+                        d > 0 ? 'text-sube' : 'text-brand',
                       )}
                     >
                       {d ? `${d > 0 ? '+' : '−'}${Math.abs(d)}` : ''}
@@ -321,7 +324,7 @@ export function CouldBe({
               <line x1={m.l} x2={W - m.r} y1={y(0)} y2={y(0)} className="stroke-border" />
               <path d={steps} fill="none" className="stroke-muted-foreground/50" />
               {last && (
-                <g style={{ color: lastColor }}>
+                <g className="text-(--color)" style={{ '--color': lastColor }}>
                   <line
                     x1={m.l}
                     x2={x(last.missing)}
@@ -539,7 +542,7 @@ function Flows({
           textAnchor={side === 'left' ? 'end' : 'start'}
           className={cn('fill-foreground text-sm', selected === g && 'font-semibold')}
         >
-          {side === 'right' && <tspan className="fill-[#2E7D5B]">+{c} </tspan>}
+          {side === 'right' && <tspan className="fill-sube">+{c} </tspan>}
           {group[g]?.name}
           {side === 'left' && <tspan className="fill-brand"> −{c}</tspan>}
         </text>
@@ -608,8 +611,8 @@ function Flows({
           Solo{' '}
           <b className="inline-flex items-center gap-1.5 font-medium">
             <i
-              className="block size-2.5 rounded-full"
-              style={{ background: group[selected]?.color }}
+              className="block size-2.5 rounded-full bg-(--bg)"
+              style={{ '--bg': group[selected]?.color }}
             />
             {group[selected]?.name}
           </b>
@@ -636,14 +639,14 @@ function Flows({
                 <span className="grid grid-cols-[minmax(0,1fr)_2rem] items-center gap-2 font-medium">
                   <span className="inline-flex flex-wrap items-center gap-1.5">
                     <i
-                      className="block size-2.5 rounded-full"
-                      style={{ background: group[a]?.color }}
+                      className="block size-2.5 rounded-full bg-(--bg)"
+                      style={{ '--bg': group[a]?.color }}
                     />
                     {group[a]?.name}
                     <span className="text-muted-foreground">→</span>
                     <i
-                      className="block size-2.5 rounded-full"
-                      style={{ background: group[b]?.color }}
+                      className="block size-2.5 rounded-full bg-(--bg)"
+                      style={{ '--bg': group[b]?.color }}
                     />
                     {group[b]?.name}
                   </span>
