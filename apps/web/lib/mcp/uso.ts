@@ -12,8 +12,9 @@ const llamadaHerramienta = z.object({
  * El POST de un servidor MCP, que cuenta cada llamada a una herramienta en PostHog: el servidor,
  * la herramienta, si falló y cuánto tardó. Nunca los argumentos, que pueden llevar direcciones o
  * referencias catastrales. Cada evento lleva su propio identificador, así que no se enlaza con
- * nada. Por aquí pasan también las llamadas por URL (`/mcp/<id>/<herramienta>`). Los lotes
- * JSON-RPC, que la especificación ya no admite, no se cuentan.
+ * nada. Lo aplica `servidores.ts` a todos; por aquí pasan también las llamadas por URL
+ * (`/mcp/<id>/<herramienta>`). Los lotes JSON-RPC, que la especificación ya no admite, no se
+ * cuentan.
  */
 export function contarUso(
   id: string,

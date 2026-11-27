@@ -1,19 +1,7 @@
-import { POST as congreso } from '../../app/mcp/congreso/route';
-import { POST as renfe } from '../../app/mcp/renfe/route';
-import { POST as boe } from '../../app/mcp/boe/route';
-import { POST as carburantes } from '../../app/mcp/carburantes/route';
-import { POST as ine } from '../../app/mcp/ine/route';
-import { POST as alsa } from '../../app/mcp/alsa/route';
-import { POST as eustat } from '../../app/mcp/eustat/route';
-import { POST as redElectrica } from '../../app/mcp/red-electrica/route';
-import { POST as catastro } from '../../app/mcp/catastro/route';
-import { POST as contratacion } from '../../app/mcp/contratacion/route';
-import { POST as subvenciones } from '../../app/mcp/subvenciones/route';
-import { POST as municipios } from '../../app/mcp/municipios/route';
-import { POST as trafico } from '../../app/mcp/trafico/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import { mensajeRpc } from './rpc';
+import { handlers } from './servidores';
 import congresoEscena from './escenas/congreso.png';
 import renfeEscena from './escenas/renfe.png';
 import boeEscena from './escenas/boe.png';
@@ -251,26 +239,13 @@ export type McpServer = Servidor & { tools: Tool[] };
 type Entry = Servidor & { handler: (request: Request) => Promise<Response> };
 
 // Las herramientas se le piden al propio servidor (`servers()`), así la ficha no puede quedarse atrás.
-const handlers: Record<string, Entry['handler']> = {
-  congreso,
-  renfe,
-  boe,
-  ine,
-  eustat,
-  catastro,
-  municipios,
-  carburantes,
-  'red-electrica': redElectrica,
-  alsa,
-  contratacion,
-  subvenciones,
-  trafico,
-};
 const entries: Entry[] = servidores.map((s) => {
-  const handler = handlers[s.id];
+  const handler = handlers.get(s.id);
   if (!handler) throw new Error(`Falta el handler del servidor MCP ${s.id}`);
   return { ...s, handler };
 });
+for (const id of handlers.keys())
+  if (!entries.some((e) => e.id === id)) throw new Error(`Falta la ficha del servidor MCP ${id}`);
 
 /** Ids de los servidores reales, para el sitemap y las rutas estáticas. */
 export const serverIds = entries.map(({ id }) => id);
