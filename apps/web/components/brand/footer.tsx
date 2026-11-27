@@ -1,5 +1,4 @@
-import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import Link from 'next/link';
 
 import { links } from '../../lib/site';
@@ -32,22 +31,12 @@ export function Footer() {
             'flex flex-wrap gap-3 [@media(max-width:_720px)]:[&_:is([data-slot=button][data-variant=sunset],_[data-slot=button][data-variant=outline])]:w-full'
           }
         >
-          <a
-            href={links.contributing}
-            data-slot="button"
-            data-variant="sunset"
-            className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
-          >
+          <ButtonLink href={links.contributing} variant="sunset" size="xl">
             <Icon name="contacto" /> Cuéntanos dónde te atascaste
-          </a>
-          <a
-            href={links.repo}
-            data-slot="button"
-            data-variant="outline"
-            className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
-          >
+          </ButtonLink>
+          <ButtonLink href={links.repo} variant="outline" size="xl">
             Ver el código en GitHub <Icon name="externo" size={16} />
-          </a>
+          </ButtonLink>
         </div>
         <div
           className={

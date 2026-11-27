@@ -2,7 +2,7 @@ import { createElement, createRef } from 'react';
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
-import { buttonVariants } from './button';
+import { ButtonLink } from './button-link';
 import { Checkbox } from './checkbox';
 import { Select, SelectTrigger, SelectValue } from './select';
 
@@ -17,11 +17,11 @@ describe('controles shadcn/Base UI', () => {
       flushSync(() =>
         root.render(
           createElement(
-            'a',
+            ButtonLink,
             {
               href: '#destino',
               ref,
-              className: buttonVariants({ variant: 'outline' }),
+              variant: 'outline',
               onClick: () => {
                 clicks++;
               },
@@ -31,7 +31,9 @@ describe('controles shadcn/Base UI', () => {
         ),
       );
       expect(ref.current?.getAttribute('href')).toBe('#destino');
+      expect(ref.current?.tagName).toBe('A');
       expect(ref.current?.getAttribute('role')).toBeNull();
+      expect(ref.current?.dataset.variant).toBe('outline');
       ref.current?.click();
       expect(clicks).toBe(1);
     } finally {

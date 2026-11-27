@@ -143,12 +143,8 @@ export function River({
     <div ref={seen} className="grid gap-4">
       <Tabs value={mode} onValueChange={(v) => setMode(v === 'votes' ? 'votes' : 'seats')}>
         <TabsList aria-label="Qué se apila">
-          <TabsTrigger value="seats" className="px-3">
-            Escaños
-          </TabsTrigger>
-          <TabsTrigger value="votes" className="px-3">
-            Votos
-          </TabsTrigger>
+          <TabsTrigger value="seats">Escaños</TabsTrigger>
+          <TabsTrigger value="votes">Votos</TabsTrigger>
         </TabsList>
       </Tabs>
       <div ref={box}>

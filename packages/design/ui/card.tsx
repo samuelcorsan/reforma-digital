@@ -16,8 +16,10 @@ function Card({
     state: { slot: 'card', size },
     props: mergeProps<'div'>(
       {
+        // Respecto a shadcn: 24 px de espacio y texto de 16 px, que es como se usa casi siempre
+        // (las tarjetas de los informes), y una tarjeta que es un enlace responde como tal.
         className: cn(
-          'group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground ring-1 ring-foreground/10 [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl',
+          'group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-base text-card-foreground ring-1 ring-foreground/10 [--card-spacing:--spacing(6)] [a&]:no-underline [a&]:outline-none [a&]:transition-colors [a&]:hover:bg-muted/60 [a&]:focus-visible:ring-3 [a&]:focus-visible:ring-ring/50 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl',
           className,
         ),
       },

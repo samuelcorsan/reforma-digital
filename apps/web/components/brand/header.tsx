@@ -1,5 +1,4 @@
-import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 
 import {
   NavigationMenu,
@@ -16,19 +15,6 @@ import { Icon } from './icon';
 import { Logo } from './logo';
 import { LogoLink } from './logo-link';
 import { MobileMenu } from './mobile-menu';
-
-// Pastillas de cristal sin barra detrás. Sin borde, el canto lo marca solo el tono y es igual en
-// todas; el hover oscurece con una sombra interior (que sí se anima) y la zona de clic
-// crece hasta 40 px sin cambiar la pieza.
-const pieza = cn(
-  buttonVariants({ variant: 'secondary' }),
-  'relative h-8.5 border-0 px-3 bg-secondary/60 backdrop-blur-xl backdrop-saturate-150 hover:bg-secondary/60 hover:backdrop-blur-xl [@media(prefers-reduced-transparency:reduce)]:bg-secondary',
-  'inset-ring-40 inset-ring-black/0 hover:inset-ring-40 hover:inset-ring-black/6 aria-[current=page]:inset-ring-40 aria-[current=page]:inset-ring-black/6',
-  'transition-[box-shadow,scale] duration-150 ease-out active:scale-[0.96] active:not-aria-[haspopup]:translate-y-0 motion-reduce:transition-none',
-  'focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-foreground',
-  'before:absolute before:inset-x-0 before:-inset-y-[3px]',
-);
-const participar = cn(pieza, 'border border-border bg-background pr-2.5 hover:bg-background');
 
 // Al bajar los primeros 40 px, --pliegue va de 0 a 1 (animación ligada al scroll, sin JS): el
 // texto «Reforma Digital» se pliega y la R, sin encoger (36 px), queda centrada en un icono blanco
@@ -58,7 +44,7 @@ export function Header({ current }: { current?: string }) {
   return (
     <header
       data-part="in-nav"
-      className="pointer-events-none sticky top-0 z-40 flex items-center gap-4 min-h-20 py-4 px-gutter-wide [&_>_*]:pointer-events-auto [&_nav]:flex [&_nav]:items-center [&_nav]:gap-1 [@media(max-width:_800px)]:[&_nav]:hidden cabecera-pliegue"
+      className="pointer-events-none sticky top-0 z-40 flex items-center gap-4 min-h-20 py-4 px-gutter-wide [&_>_*]:pointer-events-auto [&_nav]:flex [&_nav]:items-center [&_nav]:gap-1 [@media(max-width:_800px)]:[&_nav]:hidden cabecera-pliegue [--ring:var(--foreground)]"
     >
       <LogoLink className={logo}>
         <Logo size={36} />
@@ -66,23 +52,22 @@ export function Header({ current }: { current?: string }) {
       <nav aria-label="Navegación principal">
         {links.map((link) =>
           link.children ? (
-            <Desarrolladores key={link.href} current={link.current} />
+            <Desarrolladores key={link.href} />
           ) : (
-            <Link
+            <ButtonLink
               key={link.href}
-              href={link.href}
+              render={<Link href={link.href} />}
               aria-current={link.current ? 'page' : undefined}
-              data-slot="button"
-              data-variant="secondary"
-              className={pieza}
+              // Opacas: la cabecera no tiene barra detrás y el contenido pasa por debajo.
+              variant={link.current ? 'default' : 'outline'}
             >
               {link.text}
-            </Link>
+            </ButtonLink>
           ),
         )}
-        <Link href="/#participar" data-slot="button" data-variant="outline" className={participar}>
+        <ButtonLink render={<Link href="/#participar" />} variant="outline">
           Participar <Icon name="derecha" size={16} />
-        </Link>
+        </ButtonLink>
       </nav>
       <MobileMenu links={links} />
     </header>
@@ -117,21 +102,13 @@ const columnas = [
   },
 ];
 
-function Desarrolladores({ current }: { current: boolean }) {
+function Desarrolladores() {
   return (
     <NavigationMenu align="end" className="max-w-none flex-none">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger
-            className={cn(
-              pieza,
-              'gap-0.5 font-normal data-popup-open:bg-secondary/60 data-popup-open:inset-ring-40 data-popup-open:inset-ring-black/6',
-              current && 'inset-ring-40 inset-ring-black/6',
-            )}
-          >
-            Desarrolladores
-          </NavigationMenuTrigger>
-          <NavigationMenuContent className="p-0">
+          <NavigationMenuTrigger>Desarrolladores</NavigationMenuTrigger>
+          <NavigationMenuContent>
             <div className="grid w-[min(640px,calc(100vw-48px))] grid-cols-2 divide-x divide-border">
               {columnas.map(({ titulo, items }) => (
                 <div key={titulo} className="grid content-start gap-1 p-3">
@@ -140,7 +117,7 @@ function Desarrolladores({ current }: { current: boolean }) {
                     <NavigationMenuLink
                       key={item.href}
                       render={<Link href={item.href} />}
-                      className="flex-col items-start gap-0 rounded-xl px-3 py-2"
+                      className="flex-col items-start"
                     >
                       <span className="text-15 font-medium">{item.label}</span>
                       <span className="line-clamp-1 text-muted-foreground">{item.text}</span>

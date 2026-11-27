@@ -174,7 +174,6 @@
   --footer-gradient:
     radial-gradient(80% 70% at 50% -12%, #ffe58f 0%, rgba(255, 229, 143, 0) 70%),
     linear-gradient(180deg, #ffd34d 0%, var(--brand-yellow) 46%, var(--brand-orange) 100%);
-  --menu-gradient: radial-gradient(120% 70% at 100% 0%, #ffd34d 0%, rgba(255, 211, 77, 0) 60%);
   --retrato-gradient-yellow: radial-gradient(
     100% 90% at 0% 100%,
     var(--brand-orange),

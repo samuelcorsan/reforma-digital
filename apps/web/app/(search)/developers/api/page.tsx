@@ -184,7 +184,7 @@ export default function Api() {
           {endpoints.map((endpoint) => (
             <Doc key={endpoint.id} id={endpoint.id} title={endpoint.title}>
               <p className="mb-4 flex flex-wrap items-center gap-3 rounded-xl bg-muted px-4 py-3">
-                <Badge className="font-mono">GET</Badge>
+                <Badge>GET</Badge>
                 <code className="font-mono text-sm break-all">/api/congreso{endpoint.path}</code>
               </p>
               <p className="text-muted-foreground">

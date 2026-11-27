@@ -1,5 +1,5 @@
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -208,17 +208,14 @@ export default function HomePage() {
             Herramientas gratuitas y de código abierto: una extensión que hace más fáciles de usar
             las webs oficiales, y la actividad del Congreso y las elecciones con datos oficiales.
           </p>
-          <a
+          <ButtonLink
             href="#proyectos"
-            data-slot="button"
-            data-variant="secondary"
-            className={cn(
-              buttonVariants({ variant: 'secondary', size: 'xl' }),
-              'absolute inset-x-0 bottom-6 mx-auto w-fit rounded-full',
-            )}
+            variant="secondary"
+            size="xl"
+            className="absolute inset-x-0 bottom-6 mx-auto w-fit"
           >
             Conoce los proyectos <Icon name="abajo" size={16} />
-          </a>
+          </ButtonLink>
         </section>
 
         <section id="proyectos" className={aire} aria-labelledby="in-proyectos-titulo">

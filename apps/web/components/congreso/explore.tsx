@@ -1,11 +1,11 @@
-import { cn } from '@reforma-digital/design/lib/utils';
 import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import {
   Collapsible,
   CollapsibleTrigger,
   CollapsibleContent,
 } from '@reforma-digital/design/ui/collapsible';
-import { buttonVariants, Button } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Input } from '@reforma-digital/design/ui/input';
 
 import { Icon } from '../brand/icon';
@@ -104,7 +104,7 @@ export async function Explore({
                     <Link
                       data-part="cg-card"
                       className={
-                        '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                        '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                       }
                       href={href(`semana/${w.id}`)}
                     />
@@ -145,7 +145,7 @@ export async function Explore({
                 <article
                   data-part="cg-card"
                   className={
-                    '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                    '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                   }
                 />
               }
@@ -206,7 +206,7 @@ export async function Explore({
                 <article
                   data-part="cg-card"
                   className={
-                    '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                    '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                   }
                 />
               }
@@ -267,7 +267,7 @@ export async function Explore({
                 <article
                   data-part="cg-card"
                   className={
-                    '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                    '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                   }
                 />
               }
@@ -338,7 +338,7 @@ export async function Explore({
                 <blockquote
                   data-part="cg-card"
                   className={
-                    '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                    '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                   }
                 />
               }
@@ -366,16 +366,14 @@ export async function Explore({
         className="flex flex-wrap items-center gap-3 mb-6 [&_[aria-current=page]]:bg-primary [&_[aria-current=page]]:text-primary-foreground"
       >
         {tabs.map(([id, name]) => (
-          <Link
+          <ButtonLink
             key={id}
-            href={`?vista=${id}`}
+            render={<Link href={`?vista=${id}`} />}
             aria-current={selected === id ? 'page' : undefined}
-            data-slot="button"
-            data-variant="ghost"
-            className={cn(buttonVariants({ variant: 'ghost' }))}
+            variant="ghost"
           >
             {name}
-          </Link>
+          </ButtonLink>
         ))}
       </nav>
       <form

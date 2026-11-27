@@ -6,8 +6,7 @@ import {
   TableBody,
   TableCell,
 } from '@reforma-digital/design/ui/table';
-import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import { mapSchema } from '../../lib/congreso/schema';
 import Link from 'next/link';
@@ -123,14 +122,9 @@ export async function Geography({
             El mapa enlaza a las mismas fichas que la lista. Los datos no describen la situación de
             cada persona.
           </p>
-          <Link
-            href={href('geografia/municipios')}
-            data-slot="button"
-            data-variant="outline"
-            className={cn(buttonVariants({ variant: 'outline' }))}
-          >
+          <ButtonLink render={<Link href={href('geografia/municipios')} />} variant="outline">
             Consultar los municipios
-          </Link>
+          </ButtonLink>
           <Source url="https://www.ine.es/">Instituto Nacional de Estadística</Source>
         </div>
       </div>
@@ -147,7 +141,7 @@ export async function Geography({
               <article
                 data-part="cg-card"
                 className={
-                  '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
+                  '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                 }
               />
             }

@@ -1,4 +1,3 @@
-import { cn } from '@reforma-digital/design/lib/utils';
 import {
   Select,
   SelectTrigger,
@@ -9,7 +8,8 @@ import {
 } from '@reforma-digital/design/ui/select';
 import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import { Input } from '@reforma-digital/design/ui/input';
-import { Button, buttonVariants } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
@@ -106,8 +106,8 @@ export function Empty({
   children?: ReactNode;
 }) {
   return (
-    <Card className="bg-muted ring-0" render={<p role="status" />}>
-      {children}
+    <Card role="status">
+      <CardContent>{children}</CardContent>
     </Card>
   );
 }
@@ -173,12 +173,7 @@ export function Votes({ votes }: { votes: VoteCard[] }) {
       }
     >
       {votes.map((vote) => (
-        <Card
-          key={vote.id}
-          render={
-            <article className={'[&_h3]:text-21 [&_h3]:leading-1.3 [&_h3]:[margin:16px_0_24px]'} />
-          }
-        >
+        <Card key={vote.id} render={<article className={'[&_h3]:[margin:16px_0_24px]'} />}>
           <CardContent>
             <div className={'flex flex-wrap gap-3 text-muted-foreground text-sm'}>
               <time dateTime={vote.fecha}>{date(vote.fecha)}</time>
@@ -288,13 +283,10 @@ export function Hemicycle({
       return ballot && ballot !== '-' ? [{ deputy, ballot }] : [];
     });
     return ballots.length ? (
-      <Card
-        className="bg-muted ring-0"
-        render={<div className={'[&_svg]:w-full [&_svg]:[max-height:360px]'} />}
-      >
-        <p>
+      <Card render={<div className={'[&_svg]:w-full [&_svg]:[max-height:360px]'} />}>
+        <CardContent>
           El voto de cada diputado. La posición de los puntos no representa su asiento histórico.
-        </p>
+        </CardContent>
         <svg
           viewBox="0 0 300 180"
           role="img"
@@ -318,10 +310,7 @@ export function Hemicycle({
     );
   }
   return (
-    <Card
-      className="bg-muted ring-0"
-      render={<div className={'[&_svg]:w-full [&_svg]:[max-height:360px]'} />}
-    >
+    <Card render={<div className={'[&_svg]:w-full [&_svg]:[max-height:360px]'} />}>
       <svg
         viewBox={`-8 -8 ${index.hemiciclo.ancho + 16} ${index.hemiciclo.alto + 16}`}
         role="img"
@@ -383,7 +372,7 @@ export function Deputies({
             <Link
               data-part="cg-card"
               className={
-                '[overflow-wrap:anywhere] [&_h2]:text-28 [&_h3]:text-lg [&_h3]:leading-1.3 [&_h3]:[margin:12px_0] [&_p]:text-(--text-secondary) [&_p]:[margin:12px_0] [&_[data-part=cg-stats]]:gap-5 [&_[data-part=cg-stats]_dd]:text-28 [&_[data-part=cg-stats]_dt]:[max-width:14ch] block'
+                '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch] block'
               }
               href={href(`diputado/${slug(deputy.nombre)}`)}
             />
@@ -494,14 +483,9 @@ export function Filters({
         Buscar <Icon name="buscar" size={16} />
       </Button>
       {reset && (
-        <Link
-          href={reset}
-          data-slot="button"
-          data-variant="ghost"
-          className={cn(buttonVariants({ variant: 'ghost' }))}
-        >
+        <ButtonLink render={<Link href={reset} />} variant="ghost">
           Limpiar filtros
-        </Link>
+        </ButtonLink>
       )}
     </form>
   );
@@ -524,29 +508,19 @@ export function Pagination({
         aria-label="Paginación"
       >
         {page > 1 && (
-          <Link
-            href={url(page - 1)}
-            data-slot="button"
-            data-variant="outline"
-            className={cn(buttonVariants({ variant: 'outline' }))}
-          >
+          <ButtonLink render={<Link href={url(page - 1)} />} variant="outline">
             <Icon name="izquierda" size={16} />
             Anterior
-          </Link>
+          </ButtonLink>
         )}
         <span>
           Página {page} de {pages}
         </span>
         {page < pages && (
-          <Link
-            href={url(page + 1)}
-            data-slot="button"
-            data-variant="outline"
-            className={cn(buttonVariants({ variant: 'outline' }))}
-          >
+          <ButtonLink render={<Link href={url(page + 1)} />} variant="outline">
             Siguiente
             <Icon name="derecha" size={16} />
-          </Link>
+          </ButtonLink>
         )}
       </nav>
     )

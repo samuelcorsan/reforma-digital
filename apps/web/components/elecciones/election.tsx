@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import {
   Table,
   TableBody,
@@ -89,21 +89,23 @@ export async function Election({ id }: { id: string }) {
     <>
       <nav aria-label="Otras elecciones" className="mb-8 flex flex-wrap justify-between gap-3">
         {previous ? (
-          <Link
-            href={electionsHref(previous.id)}
-            className={buttonVariants({ variant: 'outline', size: 'lg' })}
+          <ButtonLink
+            render={<Link href={electionsHref(previous.id)} />}
+            variant="outline"
+            size="lg"
           >
             <Icon name="izquierda" size={16} /> {label(previous)}
-          </Link>
+          </ButtonLink>
         ) : (
           <span />
         )}
-        <Link
-          href={next ? electionsHref(next.id) : electionsHref()}
-          className={buttonVariants({ variant: 'outline', size: 'lg' })}
+        <ButtonLink
+          render={<Link href={next ? electionsHref(next.id) : electionsHref()} />}
+          variant="outline"
+          size="lg"
         >
           {next ? label(next) : '29N'} <Icon name="derecha" size={16} />
-        </Link>
+        </ButtonLink>
       </nav>
       <ReportIntro title={formatDate(e.fecha, { day: 'numeric', month: 'long', year: 'numeric' })}>
         <p>
@@ -157,15 +159,12 @@ export async function Election({ id }: { id: string }) {
           </dl>
           {isLast && (
             <div className="flex flex-wrap gap-2">
-              <Link
-                href={electionsHref('legislatura')}
-                className={buttonVariants({ variant: 'outline' })}
-              >
+              <ButtonLink render={<Link href={electionsHref('legislatura')} />} variant="outline">
                 Balance de la XV legislatura <Icon name="derecha" size={16} />
-              </Link>
-              <Link href={href('')} className={buttonVariants({ variant: 'outline' })}>
+              </ButtonLink>
+              <ButtonLink render={<Link href={href('')} />} variant="outline">
                 Actividad parlamentaria <Icon name="derecha" size={16} />
-              </Link>
+              </ButtonLink>
             </div>
           )}
         </Cell>
@@ -205,12 +204,8 @@ export async function Election({ id }: { id: string }) {
                         {siglas}
                       </span>
                     </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {thousands(v)}
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {percent(v / e.validos)}
-                    </TableCell>
+                    <TableCell className="text-right">{thousands(v)}</TableCell>
+                    <TableCell className="text-right">{percent(v / e.validos)}</TableCell>
                     <TableCell>
                       <span className="block h-2.5 rounded-full bg-muted">
                         <i
@@ -222,12 +217,10 @@ export async function Election({ id }: { id: string }) {
                         />
                       </span>
                     </TableCell>
-                    <TableCell className="text-right font-mono font-medium tabular-nums">
-                      {s}
-                    </TableCell>
+                    <TableCell className="text-right">{s}</TableCell>
                     {previous && (
                       <TableCell
-                        className="text-right font-mono tabular-nums"
+                        className="text-right"
                         title={
                           then
                             ? undefined

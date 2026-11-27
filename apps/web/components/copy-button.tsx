@@ -20,7 +20,7 @@ export function CopyButton({ label, code }: { label: string; code: string }) {
 
   return (
     <Button
-      variant="inverse"
+      variant="ghost"
       size="icon"
       className="m-2 shrink-0"
       onClick={() => void copy()}

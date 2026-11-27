@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
 import { seatRadius } from '../../lib/elecciones/seats';
+import { useFirstSight } from './first-sight';
 import { Stat } from './report';
 import { Tips } from './tips';
 
@@ -40,33 +41,16 @@ export function SeatsMap({
   note: string;
 }) {
   const [hemicycle, setHemicycle] = useState(false);
-  const svg = useRef<SVGSVGElement>(null);
-
-  useEffect(() => {
-    const element = svg.current;
-    if (!element || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.intersectionRatio > 0.6)) return;
-        observer.disconnect();
-        timer = setTimeout(() => setHemicycle(true), 700);
-      },
-      { threshold: [0.6] },
-    );
-    observer.observe(element);
-    return () => {
-      observer.disconnect();
-      clearTimeout(timer);
-    };
-  }, []);
+  const svg = useFirstSight<SVGSVGElement>(() => {
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+      setTimeout(() => setHemicycle(true), 700);
+  }, 0.6);
 
   const scale = hemicycleRadius / seatRadius;
   return (
     <Tabs
       value={hemicycle ? 'hemiciclo' : 'mapa'}
       onValueChange={(value) => setHemicycle(value === 'hemiciclo')}
-      className="gap-4"
     >
       <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
         <div className="grid max-w-72 gap-2">
@@ -77,12 +61,8 @@ export function SeatsMap({
           <p className="m-0 text-sm text-muted-foreground">{note}</p>
         </div>
         <TabsList aria-label="Vista">
-          <TabsTrigger value="mapa" className="px-3">
-            Mapa
-          </TabsTrigger>
-          <TabsTrigger value="hemiciclo" className="px-3">
-            Hemiciclo
-          </TabsTrigger>
+          <TabsTrigger value="mapa">Mapa</TabsTrigger>
+          <TabsTrigger value="hemiciclo">Hemiciclo</TabsTrigger>
         </TabsList>
       </div>
       {/* Los escaños no entran en el orden de tabulación: cada diputado está en las listas de su provincia y de su grupo. */}

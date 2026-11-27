@@ -1,9 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button, buttonVariants } from '@reforma-digital/design/ui/button';
+import { Button } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Sheet, SheetContent, SheetTitle } from '@reforma-digital/design/ui/sheet';
-import { cn } from '@reforma-digital/design/lib/utils';
 import { Icon } from './icon';
 import { Logo } from './logo';
 
@@ -34,7 +34,7 @@ export function MobileMenu({ links }: { links: readonly MenuLink[] }) {
         <SheetContent
           side="top"
           showCloseButton={false}
-          className="data-[side=top]:inset-2 data-[side=top]:h-[calc(100dvh-16px)] bg-(image:--menu-gradient) bg-brand-yellow p-0 text-foreground motion-reduce:transition-none"
+          className="data-[side=top]:inset-2 data-[side=top]:h-[calc(100dvh-16px)]"
         >
           <SheetTitle className="sr-only">Menú</SheetTitle>
           <div className="flex min-h-20 items-center justify-between px-(--page-gutter) py-4">
@@ -87,16 +87,14 @@ export function MobileMenu({ links }: { links: readonly MenuLink[] }) {
               ),
             )}
           </nav>
-          <Link
-            href="/#participar"
+          <ButtonLink
+            render={<Link href="/#participar" />}
             onClick={close}
-            className={cn(
-              buttonVariants({ variant: 'sunset' }),
-              'mx-[var(--page-gutter)] mt-auto mb-[var(--page-gutter)] min-h-13',
-            )}
+            variant="sunset"
+            className="mx-[var(--page-gutter)] mt-auto mb-[var(--page-gutter)] min-h-13"
           >
             Participar <Icon name="derecha" size={16} />
-          </Link>
+          </ButtonLink>
         </SheetContent>
       </Sheet>
     </>

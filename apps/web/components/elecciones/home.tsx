@@ -577,7 +577,6 @@ export async function ElectionsHome() {
           index={index}
           map={map}
           span={7}
-          className="relative transition-colors hover:bg-muted/60"
           note={`Diputados de la ${index.meta.legislatura} legislatura, elegidos en ${formatDate(last.fecha, { month: 'long', year: 'numeric' })}.`}
           footer={
             <Link

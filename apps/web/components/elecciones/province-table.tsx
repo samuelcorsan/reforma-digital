@@ -168,9 +168,7 @@ export function ProvinceTable({
                     <span className="font-mono tabular-nums">{percent(r.turnout)}</span>
                   </span>
                 </TableCell>
-                <TableCell className="text-right font-mono tabular-nums">
-                  {thousands(r.price)}
-                </TableCell>
+                <TableCell className="text-right">{thousands(r.price)}</TableCell>
                 <TableCell>
                   {r.winner ? (
                     <span className="inline-flex items-center gap-2">
@@ -184,16 +182,14 @@ export function ProvinceTable({
                     '–'
                   )}
                 </TableCell>
-                <TableCell className="text-right font-mono tabular-nums">
+                <TableCell className="text-right">
                   {r.margin === null ? '–' : `${thousands(r.margin)} votos`}
                 </TableCell>
               </TableRow>
             ))}
             {!shown.length && (
               <TableRow>
-                <TableCell colSpan={6} className="text-muted-foreground">
-                  Ninguna provincia coincide con la búsqueda.
-                </TableCell>
+                <TableCell colSpan={6}>Ninguna provincia coincide con la búsqueda.</TableCell>
               </TableRow>
             )}
           </TableBody>

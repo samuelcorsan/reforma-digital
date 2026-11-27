@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import {
   Collapsible,
   CollapsibleContent,
@@ -151,7 +151,6 @@ function Connect({ server }: { server: McpServer }) {
       code: JSON.stringify({ servers: { [name]: { type: 'http', url } } }, null, 2),
     },
   ];
-  const appButton = cn(buttonVariants({ variant: 'outline', size: 'xl' }), 'rounded-full');
   const via = 'mb-4 font-medium';
 
   // Dos vías separadas: la frase de «Conecta tu agente» apunta a la guía en Markdown, y quien la
@@ -170,12 +169,12 @@ function Connect({ server }: { server: McpServer }) {
           )}
         />
         <InstinctButton prompt={instinctPrompt()} />
-        <a href={cursor} className={appButton}>
+        <ButtonLink href={cursor} variant="outline" size="xl">
           Añadir a Cursor
-        </a>
-        <a href={vscode} className={appButton}>
+        </ButtonLink>
+        <ButtonLink href={vscode} variant="outline" size="xl">
           Añadir a VS Code
-        </a>
+        </ButtonLink>
       </div>
       <CodeBlock samples={samples} />
 

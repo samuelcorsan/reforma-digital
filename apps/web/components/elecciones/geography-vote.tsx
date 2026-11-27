@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@reforma-digital/design/ui/button';
+import { Toggle } from '@reforma-digital/design/ui/toggle';
 import type { ReactNode } from 'react';
 import { getGeography, getHistory, read } from '../../lib/congreso/data';
 import {
@@ -32,6 +32,9 @@ const people = (n: number) =>
   n >= 1e6 ? `${millions(n)} de habitantes` : `${thousands(n)} habitantes`;
 const signed = (n: number) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${percent(Math.abs(n), 0)}`;
 const others = '#8A8F98';
+// vote-story.tsx marca el botón elegido con `aria-pressed`, fuera de React: `pressed` fijo para
+// que el Toggle no lleve su propio estado y lo pise.
+const choice = { variant: 'outline', size: 'sm', pressed: false } as const;
 // El tono de cada eje en el mapa.
 const tones: Record<Axis, string> = {
   ciudad: '#4F7AA6',
@@ -296,12 +299,12 @@ export async function GeographyVote() {
             {percent(popOf(smallList) / total, 1)} de la población.
           </p>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Tamaño de los puntos">
-            <Button variant="toggle" size="sm" data-size="mun">
+            <Toggle {...choice} data-size="mun">
               Por municipio
-            </Button>
-            <Button variant="toggle" size="sm" data-size="pob">
+            </Toggle>
+            <Toggle {...choice} data-size="pob">
               Por habitantes
-            </Button>
+            </Toggle>
           </div>
         </>
       ),
@@ -493,9 +496,9 @@ export async function GeographyVote() {
           </p>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Territorio">
             {spainList.map((s) => (
-              <Button key={s.key} variant="toggle" size="sm" data-spain={s.key}>
+              <Toggle key={s.key} {...choice} data-spain={s.key}>
                 {s.title}
-              </Button>
+              </Toggle>
             ))}
           </div>
           {spainList.map((s) => (

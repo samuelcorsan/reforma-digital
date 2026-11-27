@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import { Button } from '@reforma-digital/design/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@reforma-digital/design/ui/tabs';
+import { Toggle } from '@reforma-digital/design/ui/toggle';
 import { Tips } from './tips';
 import { useWidth } from './use-width';
 import { decimal, longDate, toDay } from '../../lib/elecciones/format';
@@ -250,7 +250,7 @@ export function PollChart({
         <Tabs value={range} onValueChange={(v) => isRange(v) && setRange(v)}>
           <TabsList aria-label="Periodo">
             {ranges.map(([r, text]) => (
-              <TabsTrigger key={r} value={r} className="px-3">
+              <TabsTrigger key={r} value={r}>
                 {text}
               </TabsTrigger>
             ))}
@@ -258,19 +258,19 @@ export function PollChart({
         </Tabs>
         <div className="flex flex-wrap gap-1.5" role="group" aria-label="Partidos">
           {parties.map((p) => (
-            <Button
+            <Toggle
               key={p.id}
               size="sm"
-              variant={on.has(p.id) ? 'outline' : 'quiet'}
-              aria-pressed={on.has(p.id)}
-              onClick={() => toggle(p.id)}
+              variant="outline"
+              pressed={on.has(p.id)}
+              onPressedChange={() => toggle(p.id)}
             >
               <i
                 className="block size-2 rounded-full bg-(--bg)"
                 style={{ '--bg': on.has(p.id) ? p.color : 'var(--muted-foreground)' }}
               />
               {p.name}
-            </Button>
+            </Toggle>
           ))}
         </div>
       </div>

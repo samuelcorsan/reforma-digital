@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
-import { Card } from '@reforma-digital/design/ui/card';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
+import { Card, CardContent, CardHeader } from '@reforma-digital/design/ui/card';
 import {
   Table,
   TableBody,
@@ -157,14 +157,14 @@ function DataTable({ block, id }: { block: Extract<Block, { tipo: 'tabla' }>; id
   const tinted = counts(block.filas);
   const top = Math.max(1, ...block.filas.flatMap((row) => row.slice(1).map((c) => count(c) ?? 0)));
   return (
-    <Table className="text-base">
+    <Table>
       <TableHeader>
-        <TableRow className="hover:bg-transparent">
+        <TableRow>
           {block.cabecera.map((head, j) => (
             <TableHead
               key={j}
               className={cn(
-                'h-auto py-2 align-bottom text-sm font-normal whitespace-normal text-muted-foreground first:pl-0 last:pr-0',
+                'h-auto align-bottom whitespace-normal',
                 tinted && j > 0 ? 'text-center' : numeric(block.filas, j) && 'text-right',
               )}
             >
@@ -175,23 +175,22 @@ function DataTable({ block, id }: { block: Extract<Block, { tipo: 'tabla' }>; id
       </TableHeader>
       <TableBody>
         {block.filas.map((row, j) => (
-          <TableRow key={j} className={cn('hover:bg-transparent', tinted && 'border-0')}>
+          <TableRow key={j}>
             {row.map((cell, k) => {
               const n = tinted && k > 0 ? (count(cell) ?? 0) : null;
               return n === null ? (
                 <TableCell
                   key={k}
                   className={cn(
-                    'py-2.5 align-top leading-snug whitespace-normal first:pl-0 last:pr-0',
-                    numeric(block.filas, k) &&
-                      'text-right font-mono tabular-nums sm:whitespace-nowrap max-sm:text-sm',
+                    'align-top whitespace-normal',
+                    numeric(block.filas, k) && 'text-right sm:whitespace-nowrap',
                     tinted && 'align-middle',
                   )}
                 >
                   <Rich text={cell} id={id} />
                 </TableCell>
               ) : (
-                <TableCell key={k} className="p-1">
+                <TableCell key={k}>
                   <span
                     className={cn(
                       'grid min-h-11 place-items-center rounded-lg px-2 text-center font-mono text-sm tabular-nums',
@@ -324,14 +323,16 @@ function Prose({ blocks, id }: { blocks: Block[]; id: string }) {
             {piece.heading}
           </h3>
         ) : (
-          <Cell key={i} className={cn('gap-4', piece.full && '[column-span:all]')}>
-            {piece.lead && (
-              <h3 className="m-0 font-heading text-2xl leading-tight font-normal">
-                <Rich text={piece.lead} id={id} />
-              </h3>
-            )}
-            <CardBody card={piece} id={id} />
-          </Cell>
+          <div key={i} className={cn(piece.full && '[column-span:all]')}>
+            <Cell className="gap-4">
+              {piece.lead && (
+                <h3 className="m-0 font-heading text-2xl leading-tight font-normal">
+                  <Rich text={piece.lead} id={id} />
+                </h3>
+              )}
+              <CardBody card={piece} id={id} />
+            </Cell>
+          </div>
         ),
       )}
     </div>
@@ -574,36 +575,29 @@ function SideBySide({ current }: { current: Communication }) {
         />
       </Cell>
       <Cell label="Voz tras una pregunta dura frente al resto">
-        <Table className="text-base">
+        <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="h-auto py-2 pl-0 text-sm font-normal text-muted-foreground">
-                Candidato
-              </TableHead>
+            <TableRow>
+              <TableHead>Candidato</TableHead>
               {current.presion.medidas.map((m) => (
-                <TableHead
-                  key={m.nombre}
-                  className="h-auto py-2 text-sm font-normal whitespace-normal text-muted-foreground"
-                >
+                <TableHead key={m.nombre} className="h-auto whitespace-normal">
                   {m.nombre} ({m.unidad})
                 </TableHead>
               ))}
-              <TableHead className="h-auto py-2 pr-0 text-sm font-normal whitespace-normal text-muted-foreground">
-                Trabas por 100 palabras
-              </TableHead>
+              <TableHead className="h-auto whitespace-normal">Trabas por 100 palabras</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {all.map(({ c, candidate }) => (
-              <TableRow key={c.id} className="hover:bg-transparent">
-                <TableHead scope="row" className="h-auto py-2.5 pl-0 font-normal">
+              <TableRow key={c.id}>
+                <TableHead scope="row">
                   <span className="flex items-center gap-2">
                     <Dot color={candidate.color} />
                     {candidate.name}
                   </span>
                 </TableHead>
                 {c.presion.medidas.map((m) => (
-                  <TableCell key={m.nombre} className="py-2.5 whitespace-normal">
+                  <TableCell key={m.nombre} className="whitespace-normal">
                     <span className="font-mono tabular-nums">
                       {decimal(m.duras, m.unidad === 'palabras/min' ? 0 : 1)} /{' '}
                       {decimal(m.resto, m.unidad === 'palabras/min' ? 0 : 1)}
@@ -613,9 +607,11 @@ function SideBySide({ current }: { current: Communication }) {
                     </span>
                   </TableCell>
                 ))}
-                <TableCell className="py-2.5 pr-0 font-mono tabular-nums">
-                  {decimal(c.presion.trabasPor100.duras, 2)} /{' '}
-                  {decimal(c.presion.trabasPor100.resto, 2)}
+                <TableCell>
+                  <span className="font-mono tabular-nums">
+                    {decimal(c.presion.trabasPor100.duras, 2)} /{' '}
+                    {decimal(c.presion.trabasPor100.resto, 2)}
+                  </span>
                 </TableCell>
               </TableRow>
             ))}
@@ -797,28 +793,26 @@ export function CommunicationReport({
               </h1>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {video && (
-                  <a
+                  <ButtonLink
                     href={video}
                     target="_blank"
                     rel="noopener noreferrer"
-                    data-slot="button"
-                    data-variant="outline"
-                    className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                    variant="outline"
+                    size="xl"
                   >
                     Ver el vídeo original
                     <span aria-hidden="true"> ↗</span>
                     <span className="sr-only"> (se abre en una pestaña nueva)</span>
-                  </a>
+                  </ButtonLink>
                 )}
                 {c.datos.length > 0 && (
-                  <Link
-                    href={`${commHref(a.id, 'metodologia')}#anexo`}
-                    data-slot="button"
-                    data-variant="outline"
-                    className={cn(buttonVariants({ variant: 'outline', size: 'xl' }))}
+                  <ButtonLink
+                    render={<Link href={`${commHref(a.id, 'metodologia')}#anexo`} />}
+                    variant="outline"
+                    size="xl"
                   >
                     <Icon name="descargar" size={18} /> Descargar los datos
-                  </Link>
+                  </ButtonLink>
                 )}
                 <ShareButton title={`${name}: análisis de comunicación`} />
               </div>
@@ -853,16 +847,20 @@ export function CommunicationReport({
                 <Card
                   key={text}
                   render={<li />}
-                  className="col-span-12 gap-3 p-6 text-base md:col-span-6 lg:col-span-4 lg:last:nth-[3n+1]:col-span-12 max-sm:p-5"
+                  className="col-span-12 md:col-span-6 lg:col-span-4 lg:last:nth-[3n+1]:col-span-12"
                 >
                   {key.lead && (
-                    <h3 className="m-0 font-heading text-2xl leading-tight font-normal">
-                      <Rich text={key.lead} id={a.id} />
-                    </h3>
+                    <CardHeader>
+                      <h3 className="m-0 font-heading text-2xl leading-tight font-normal">
+                        <Rich text={key.lead} id={a.id} />
+                      </h3>
+                    </CardHeader>
                   )}
-                  <p className="m-0 leading-relaxed text-muted-foreground">
-                    <Rich text={key.body} id={a.id} />
-                  </p>
+                  <CardContent>
+                    <p className="m-0 leading-relaxed text-muted-foreground">
+                      <Rich text={key.body} id={a.id} />
+                    </p>
+                  </CardContent>
                 </Card>
               );
             })}

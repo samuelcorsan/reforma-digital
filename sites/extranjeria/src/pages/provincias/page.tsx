@@ -105,24 +105,27 @@ function Provincias({ bindings, restore }: { bindings: ProvinciasBindings; resto
         <p className="sr-only" aria-live="polite">
           {filtered.length} provincias coinciden con la búsqueda
         </p>
-        <RadioGroup
-          name="bg-provincia"
-          value={typeof field.value === 'string' ? field.value : ''}
-          onValueChange={choose}
-          aria-labelledby={legendId}
-          className="grid max-h-[380px] grid-cols-2 gap-2 overflow-y-auto p-1 sm:grid-cols-3 lg:grid-cols-4"
-        >
-          {filtered.map((p) => (
-            <Choice key={p.value} value={p.value}>
-              {p.label}
-            </Choice>
-          ))}
-          {filtered.length === 0 && (
-            <p className={'text-sm leading-normal text-ink-muted col-span-full'}>
-              Ninguna provincia coincide con «{query}».
-            </p>
-          )}
-        </RadioGroup>
+        {/* El scroll y su margen van fuera del grupo: dentro, recortarían el anillo de foco. */}
+        <div className="max-h-[380px] overflow-y-auto p-1">
+          <RadioGroup
+            name="bg-provincia"
+            value={typeof field.value === 'string' ? field.value : ''}
+            onValueChange={choose}
+            aria-labelledby={legendId}
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
+          >
+            {filtered.map((p) => (
+              <Choice key={p.value} value={p.value}>
+                {p.label}
+              </Choice>
+            ))}
+            {filtered.length === 0 && (
+              <p className={'text-sm leading-normal text-ink-muted col-span-full'}>
+                Ninguna provincia coincide con «{query}».
+              </p>
+            )}
+          </RadioGroup>
+        </div>
       </fieldset>
 
       {officialErrors.length > 0 && (

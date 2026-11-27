@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { InfoPage } from '../components/brand/info-page';
 export const metadata: Metadata = { title: 'Página no encontrada · Reforma Digital' };
 export default function NotFound() {
@@ -22,14 +21,9 @@ export default function NotFound() {
       >
         No encontramos esta página. Vuelve a la portada para conocer los proyectos.
       </p>
-      <Link
-        className={cn(buttonVariants({ variant: 'sunset', size: 'xl' }))}
-        data-slot="button"
-        data-variant="sunset"
-        href="/"
-      >
+      <ButtonLink variant="sunset" size="xl" render={<Link href="/" />}>
         Ir a la portada
-      </Link>
+      </ButtonLink>
     </InfoPage>
   );
 }
