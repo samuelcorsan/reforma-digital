@@ -144,3 +144,4 @@ export { createContratacionMcp } from './contratacion';
 export { createEustatMcp } from './eustat';
 export { createIneMcp } from './ine';
 export { createRedElectricaMcp } from './red-electrica';
+export { createMunicipiosMcp } from './municipios';
