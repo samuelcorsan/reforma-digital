@@ -39,6 +39,8 @@ describe('Presupuestos', () => {
     );
     expect((await verSeccion('2026', 'Seguridad Social')).seccion.codigo).toBe('60');
     await expect(verSeccion('2026', 'ministerio')).rejects.toThrow(/Hay varias secciones/);
+    // Un código no se busca en los nombres: «20» no es también «…AGENDA 2030».
+    expect((await verSeccion('2026', '20')).seccion.codigo).toBe('20');
   });
 
   it('opens programmes with letter codes, which buscar_programa lists', async () => {
@@ -76,12 +78,16 @@ describe('Presupuestos', () => {
       vizcaya.total_euros,
     );
     expect(vizcaya.por_provincia).toHaveLength(1);
+    // «León» es la provincia, no las nueve de Castilla y León.
+    expect((await inversiones('2023', undefined, 'león', {}, false, 5)).por_provincia).toHaveLength(
+      1,
+    );
     expect(vizcaya.por_titular.map((t) => t.titular).join()).toMatch(/ADIF/);
     await expect(
       inversiones('2023', undefined, undefined, { economica: '620' }, false, 5),
     ).rejects.toThrow(/Ninguna fila coincide/);
     await expect(inversiones('2026', undefined, undefined, {}, false, 5)).rejects.toThrow(
-      'La prórroga de 2026 no publica anexo de inversiones: rige el de la ley de 2023. Pide anio=2023.',
+      'La prórroga de 2026 no publica anexo de inversiones. El último publicado es el de la ley de 2023, con importes de 2023: pide anio=2023 y preséntalos como cifras de 2023.',
     );
   });
 

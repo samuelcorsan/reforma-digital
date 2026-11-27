@@ -140,7 +140,7 @@ const nada = (que: string) =>
 
 const soloLey = (year: Anio, que: string) =>
   new SourceError(
-    `La prórroga de ${year} no publica ${que}: rige el de la ley de ${LEY[year]}. Pide anio=${LEY[year]}.`,
+    `La prórroga de ${year} no publica ${que}. El último publicado es el de la ley de ${LEY[year]}, con importes de ${LEY[year]}: pide anio=${LEY[year]} y preséntalos como cifras de ${LEY[year]}.`,
   );
 
 // Las transferencias del Estado a sus organismos y a la Seguridad Social (programa 000X) no son
@@ -251,9 +251,13 @@ export async function verSeccion(year: Anio, seccion: string) {
   // también el ministerio que la lleva en el nombre.
   const exacta = todas.filter(([, nombre]) => fold(nombre) === fold(seccion));
   const w = words(seccion);
-  const encontradas = exacta.length
-    ? exacta
-    : todas.filter(([c, nombre]) => c === seccion.padStart(2, '0') || matches(nombre, w));
+  // Un código solo se busca como código: «20» no es también «…AGENDA 2030».
+  const pedido = /^\d{1,2}$/.test(seccion.trim()) ? seccion.trim().padStart(2, '0') : undefined;
+  const encontradas = pedido
+    ? todas.filter(([c]) => c === pedido)
+    : exacta.length
+      ? exacta
+      : todas.filter(([, nombre]) => matches(nombre, w));
   if (encontradas.length !== 1) {
     const opciones = encontradas.length ? encontradas : todas;
     throw new SourceError(
@@ -369,6 +373,16 @@ export async function inversiones(
   if (!p.inversiones.length) throw soloLey(year, 'anexo de inversiones');
   const w = words(q);
   const t = words(territorio);
+  // «León» es la provincia, no también Castilla y León: el nombre entero (o una mitad de «A/B»)
+  // gana a las palabras sueltas, que solo se usan si ningún lugar se llama así.
+  const nombreEntero = (lugar: string) =>
+    territorio !== undefined && [fold(lugar), ...fold(lugar).split('/')].includes(fold(territorio));
+  const exacto = [
+    ...p.inversiones.flatMap((r) => [r[5], r[6]]),
+    ...p.empresas.flatMap((r) => [r[3], r[4]]),
+  ].some(nombreEntero);
+  const enTerritorio = (com: string, prov: string) =>
+    exacto ? nombreEntero(com) || nombreEntero(prov) : matches(`${com} ${prov}`, t);
   // Las empresas no tienen sección, órgano ni programa: un filtro por código las deja fuera.
   const conEmpresas = !soloAdministracion && !f.seccion && !f.organo && !f.programa && !f.economica;
   const filas: Inversion[] = [
@@ -377,7 +391,7 @@ export async function inversiones(
         ([org, prog, art, , nombre, com, prov]) =>
           pasa(f, org, prog, art) &&
           matches(`${nombre} ${p.organicas[org] ?? ''}`, w) &&
-          matches(`${com} ${prov}`, t),
+          enTerritorio(com, prov),
       )
       .map(
         ([org, programa, , proyecto, nombre, comunidad, provincia, inicio, fin, coste, euros]) => ({
@@ -396,7 +410,7 @@ export async function inversiones(
     ...(conEmpresas ? p.empresas : [])
       .filter(
         ([entidad, , nombre, com, prov]) =>
-          matches(`${entidad} ${nombre}`, w) && matches(`${com} ${prov}`, t),
+          matches(`${entidad} ${nombre}`, w) && enTerritorio(com, prov),
       )
       .map(([titular, proyecto, nombre, comunidad, provincia, inicio, fin, coste, euros]) => ({
         titular,
