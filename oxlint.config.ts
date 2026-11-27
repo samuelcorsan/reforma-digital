@@ -160,36 +160,44 @@ export default defineConfig({
       rules: { 'eslint/max-lines': 'off' },
     },
     {
-      // Existing debt: files that already had effects. Remove a file when its last effect goes;
-      // add one only for a hook that wraps an external system (an observer, a media element, a timer).
+      // Effects that do wrap something outside React: an observer, a listener, a timer or
+      // animation frame, a request, focus. Add a file only for one of those.
       files: [
         'apps/extension/src/popup.tsx',
         'apps/web/components/brand/logo-puzle.tsx',
         'apps/web/components/elecciones/could-be.tsx',
         'apps/web/components/elecciones/figures.tsx',
         'apps/web/components/elecciones/first-sight.ts',
-        'apps/web/components/elecciones/interview-player.tsx',
         'apps/web/components/elecciones/journeys.tsx',
         'apps/web/components/elecciones/municipal-map.tsx',
-        'apps/web/components/elecciones/projection-parts.tsx',
-        'apps/web/components/elecciones/province-map.tsx',
         'apps/web/components/elecciones/reparto.tsx',
-        'apps/web/components/elecciones/seats-map.tsx',
         'apps/web/components/elecciones/section-nav.tsx',
-        'apps/web/components/elecciones/simulator.tsx',
         'apps/web/components/elecciones/tips.tsx',
         'apps/web/components/elecciones/use-width.ts',
         'apps/web/components/elecciones/video-dock.tsx',
-        'apps/web/components/elecciones/vote-story.tsx',
         'apps/web/components/elecciones/years.tsx',
-        'apps/web/components/elecciones/your-vote.tsx',
         'apps/web/components/estadisticas.tsx',
-        'apps/web/components/mcp/biblioteca.tsx',
-        'apps/web/components/mcp/preguntar.tsx',
         'apps/web/components/prompt-composer.tsx',
         'apps/web/components/route-focus.tsx',
         'packages/design/ui/sidebar.tsx',
         'packages/react/src/index.tsx',
+      ],
+      rules: { 'eslint-js/no-restricted-syntax': ['error', ...slopSelectors] },
+    },
+    {
+      // Existing debt: effects that should not be effects. Never add to this list.
+      // - projection-parts, province-map, your-vote, simulator, vote-story: they repaint by hand a
+      //   map the server drew, because it arrives as children instead of as data.
+      // - interview-player: state that follows other state (stop at the end, next clip, pan, sound).
+      // - preguntar: the search on typing belongs in the input's handler.
+      files: [
+        'apps/web/components/elecciones/interview-player.tsx',
+        'apps/web/components/elecciones/projection-parts.tsx',
+        'apps/web/components/elecciones/province-map.tsx',
+        'apps/web/components/elecciones/simulator.tsx',
+        'apps/web/components/elecciones/vote-story.tsx',
+        'apps/web/components/elecciones/your-vote.tsx',
+        'apps/web/components/mcp/preguntar.tsx',
       ],
       rules: { 'eslint-js/no-restricted-syntax': ['error', ...slopSelectors] },
     },

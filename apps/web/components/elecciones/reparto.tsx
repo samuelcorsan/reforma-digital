@@ -39,8 +39,10 @@ export function Reparto({
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
     if (!playing) return;
-    if (k >= elections.length - 1) return setPlaying(false);
-    const timer = setTimeout(() => setK(k + 1), 1700);
+    const timer = setTimeout(() => {
+      setK(k + 1);
+      if (k + 1 >= elections.length - 1) setPlaying(false);
+    }, 1700);
     return () => clearTimeout(timer);
   }, [playing, k, elections.length]);
 
