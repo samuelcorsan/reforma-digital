@@ -68,14 +68,15 @@ export function Tips({ className, children }: { className?: string; children: Re
           className={cn(
             'pointer-events-none fixed z-50 w-max max-w-72 -translate-x-1/2 rounded-xl bg-popover px-4 py-3 text-sm leading-snug text-popover-foreground shadow-md ring-1 ring-foreground/10',
             !below && '-translate-y-full',
+            'left-(--left) top-(--top)',
           )}
-          style={{ left: tip.x, top: below ? tip.y + 20 : tip.y - 12 }}
+          style={{ '--left': `${tip.x}px`, '--top': `${below ? tip.y + 20 : tip.y - 12}px` }}
         >
           <p className="m-0 flex items-start gap-2 font-medium">
             {tip.color && (
               <i
-                className="mt-1 block size-2.5 shrink-0 rounded-full"
-                style={{ background: tip.color }}
+                className="mt-1 block size-2.5 shrink-0 rounded-full bg-(--bg)"
+                style={{ '--bg': tip.color }}
               />
             )}
             {tip.title}

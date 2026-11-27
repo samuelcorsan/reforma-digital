@@ -143,12 +143,8 @@ export function River({
     <div ref={seen} className="grid gap-4">
       <Tabs value={mode} onValueChange={(v) => setMode(v === 'votes' ? 'votes' : 'seats')}>
         <TabsList aria-label="Qué se apila">
-          <TabsTrigger value="seats" className="px-3">
-            Escaños
-          </TabsTrigger>
-          <TabsTrigger value="votes" className="px-3">
-            Votos
-          </TabsTrigger>
+          <TabsTrigger value="seats">Escaños</TabsTrigger>
+          <TabsTrigger value="votes">Votos</TabsTrigger>
         </TabsList>
       </Tabs>
       <div ref={box}>
@@ -191,8 +187,8 @@ export function River({
               );
             })}
             <g
-              className="origin-left transition-transform duration-[1400ms] ease-out motion-reduce:transition-none"
-              style={{ transform: drawn ? 'scaleX(1)' : 'scaleX(0)' }}
+              className="origin-left transition-transform duration-1400 ease-out motion-reduce:transition-none transform-(--transform)"
+              style={{ '--transform': drawn ? 'scaleX(1)' : 'scaleX(0)' }}
             >
               {E.map((e, j) =>
                 families.map((f) => {
@@ -207,8 +203,9 @@ export function River({
                       className={cn(
                         'transition-opacity duration-500',
                         j !== selected && j !== hover && 'opacity-60',
+                        '[y:var(--y)] h-(--h)',
                       )}
-                      style={{ y: g.y, height: Math.max(0, g.h) }}
+                      style={{ '--y': `${g.y}px`, '--h': `${Math.max(0, g.h)}px` }}
                     />
                   );
                 }),

@@ -145,3 +145,4 @@ export { createEustatMcp } from './eustat';
 export { createIneMcp } from './ine';
 export { createRedElectricaMcp } from './red-electrica';
 export { createSubvencionesMcp } from './subvenciones';
+export { createMunicipiosMcp } from './municipios';

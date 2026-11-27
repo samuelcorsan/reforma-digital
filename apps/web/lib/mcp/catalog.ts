@@ -9,6 +9,7 @@ import { POST as redElectrica } from '../../app/mcp/red-electrica/route';
 import { POST as catastro } from '../../app/mcp/catastro/route';
 import { POST as contratacion } from '../../app/mcp/contratacion/route';
 import { POST as subvenciones } from '../../app/mcp/subvenciones/route';
+import { POST as municipios } from '../../app/mcp/municipios/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
 import congresoEscena from './escenas/congreso.png';
@@ -22,6 +23,7 @@ import redElectricaEscena from './escenas/red-electrica.png';
 import catastroEscena from './escenas/catastro.png';
 import contratacionEscena from './escenas/contratacion.png';
 import subvencionesEscena from './escenas/subvenciones.png';
+import municipiosEscena from './escenas/municipios.png';
 
 /** Lo que el servidor no sabe de sí mismo; las herramientas se le preguntan a él (`servers()`). */
 type Servidor = {
@@ -120,6 +122,21 @@ const servidores: Servidor[] = [
       '¿Cuántos inmuebles tiene el edificio de la plaza de España 18 de Madrid y de qué año es?',
       '¿De qué año es el edificio de la referencia catastral 9872023VH5797S?',
       '¿Qué parcela hay en las coordenadas 40.4262, -3.7015?',
+    ],
+  },
+  {
+    id: 'municipios',
+    name: 'Ayuntamientos',
+    category: 'administracion-local',
+    // Sin organismo único: un edificio público (Lucide).
+    logo: { src: '/mcp/municipios.svg' },
+    escena: municipiosEscena,
+    summary:
+      'Deuda, pago a proveedores, cuentas, impuestos, contratos, subvenciones y sueldos de cada ayuntamiento de España, comparados con los de su tamaño.',
+    examples: [
+      '¿Cuánto debe mi ayuntamiento por vecino y cuánto tarda en pagar a sus proveedores?',
+      '¿Cuánto cobra el alcalde de Badalona y cuál es el tope legal?',
+      '¿Qué ayuntamientos de Huelva de más de 20.000 habitantes gestionan peor su dinero?',
     ],
   },
   {
@@ -223,6 +240,7 @@ const handlers: Record<string, Entry['handler']> = {
   ine,
   eustat,
   catastro,
+  municipios,
   carburantes,
   'red-electrica': redElectrica,
   alsa,

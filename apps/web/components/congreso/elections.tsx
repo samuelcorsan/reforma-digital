@@ -6,8 +6,7 @@ import {
   TableBody,
   TableCell,
 } from '@reforma-digital/design/ui/table';
-import { cn } from '@reforma-digital/design/lib/utils';
-import { buttonVariants } from '@reforma-digital/design/ui/button';
+import { ButtonLink } from '@reforma-digital/design/ui/button-link';
 import { Card, CardContent } from '@reforma-digital/design/ui/card';
 import { mapSchema } from '../../lib/congreso/schema';
 import Link from 'next/link';
@@ -54,7 +53,7 @@ export async function Geography({
         <Filters action={href('geografia/municipios')} query={query} />
         <div
           className={
-            'cg-table overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:[border-bottom:1px_solid_var(--border)] [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:[border-bottom:1px_solid_var(--border)] [&_td]:[vertical-align:top] [&_th]:text-sm'
+            'overflow-x-auto [&_table]:[border-collapse:collapse] [&_table]:w-full [&_table]:text-left [&_th]:p-3 [&_th]:border-b [&_th]:border-b-border [&_th]:[vertical-align:top] [&_td]:p-3 [&_td]:border-b [&_td]:border-b-border [&_td]:[vertical-align:top] [&_th]:text-sm'
           }
         >
           <Table>
@@ -96,7 +95,7 @@ export async function Geography({
       )}
       <div
         className={
-          'cg-geo-hero grid [grid-template-columns:1fr_1fr] items-center gap-12 [margin:32px_0] [&_>_svg]:w-full [&_>_svg]:[max-height:420px] [@media(max-width:_800px)]:[grid-template-columns:1fr]'
+          'grid [grid-template-columns:1fr_1fr] items-center gap-12 [margin:32px_0] [&_>_svg]:w-full [&_>_svg]:[max-height:420px] [@media(max-width:_800px)]:[grid-template-columns:1fr]'
         }
       >
         <svg
@@ -123,21 +122,16 @@ export async function Geography({
             El mapa enlaza a las mismas fichas que la lista. Los datos no describen la situación de
             cada persona.
           </p>
-          <Link
-            href={href('geografia/municipios')}
-            data-slot="button"
-            data-variant="outline"
-            className={cn(buttonVariants({ variant: 'outline' }))}
-          >
+          <ButtonLink render={<Link href={href('geografia/municipios')} />} variant="outline">
             Consultar los municipios
-          </Link>
+          </ButtonLink>
           <Source url="https://www.ine.es/">Instituto Nacional de Estadística</Source>
         </div>
       </div>
       <Filters action={href('geografia')} query={query} />
       <div
         className={
-          'cg-grid grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
+          'grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] gap-5 [@media(max-width:_800px)]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [@media(max-width:_560px)]:[grid-template-columns:1fr]'
         }
       >
         {provinces.map(([id, p]) => (
@@ -145,8 +139,9 @@ export async function Geography({
             key={id}
             render={
               <article
+                data-part="cg-card"
                 className={
-                  'cg-card [overflow-wrap:anywhere] [&_h2]:[font-size:28px] [&_h3]:text-lg [&_h3]:[line-height:1.3] [&_h3]:[margin:12px_0] [&_p]:[color:var(--text-secondary)] [&_p]:[margin:12px_0] [&_.cg-stats]:gap-5 [&_.cg-stats_dd]:[font-size:28px] [&_.cg-stats_dt]:[max-width:14ch]'
+                  '[overflow-wrap:anywhere] [&_h3]:[margin:12px_0] [&_p]:[margin:12px_0] [&_[data-part=cg-stats]_dt]:[max-width:14ch]'
                 }
               />
             }
@@ -168,7 +163,7 @@ export async function Geography({
           </Card>
         ))}
       </div>
-      <p className={'cg-muted [color:var(--muted-foreground)] text-sm'}>
+      <p className={'text-muted-foreground text-sm'}>
         Años de referencia:{' '}
         {Object.entries(geography.fuentes)
           .map(([name, year]) => `${name}: ${year}`)

@@ -24,7 +24,7 @@ import { SectionHeading } from './report';
 type Poll = {
   firm: string;
   outlet: string;
-  start: string;
+  start: string | null;
   end: string;
   sample: number | null;
   // El CIS y los agregadores no entran en la media.
@@ -35,7 +35,8 @@ type Poll = {
 
 const all = 'todas';
 const short = new Intl.DateTimeFormat('es-ES', { timeZone: 'UTC', day: 'numeric', month: 'short' });
-const field = (start: string, end: string) => {
+const field = (start: string | null, end: string) => {
+  if (start === null) return `?–${shortDate(end)}`;
   const a = new Date(`${start}T00:00:00Z`);
   return start === end ? shortDate(end) : `${short.format(a)}–${shortDate(end)}`;
 };
@@ -94,7 +95,10 @@ export function PollTable({
               {parties.map((p) => (
                 <TableHead key={p.id} className="text-right">
                   <span className="inline-flex items-center gap-1.5">
-                    <i className="block size-2 rounded-full" style={{ background: p.color }} />
+                    <i
+                      className="block size-2 rounded-full bg-(--bg)"
+                      style={{ '--bg': p.color }}
+                    />
                     {p.name}
                   </span>
                 </TableHead>
@@ -116,14 +120,14 @@ export function PollTable({
                     </span>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">{field(p.start, p.end)}</TableCell>
-                  <TableCell className="text-right font-mono tabular-nums">
+                  <TableCell className="text-right">
                     {p.sample === null ? '–' : thousands(p.sample)}
                   </TableCell>
                   {parties.map((x) => {
                     const v = p.votes[x.id];
                     const e = p.seats[x.id];
                     return (
-                      <TableCell key={x.id} className="text-right font-mono tabular-nums">
+                      <TableCell key={x.id} className="text-right">
                         {v === undefined ? (
                           '–'
                         ) : (

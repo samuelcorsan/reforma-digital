@@ -3,6 +3,7 @@ export const categories = {
   transporte: { name: 'Transporte' },
   normativa: { name: 'Normativa' },
   estadistica: { name: 'Estadística' },
+  'administracion-local': { name: 'Administración local' },
   consumo: { name: 'Consumo' },
   ayudas: { name: 'Ayudas públicas' },
   vivienda: { name: 'Vivienda' },
