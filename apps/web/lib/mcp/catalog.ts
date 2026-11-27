@@ -1,5 +1,5 @@
 import type { StaticImageData } from 'next/image';
-import type { Category } from './categorias';
+import type { Ambito, Category } from './categorias';
 import { mensajeRpc } from './rpc';
 import { handlers } from './servidores';
 import congresoEscena from './escenas/congreso.png';
@@ -21,6 +21,7 @@ type Servidor = {
   id: string;
   name: string;
   category: Category;
+  ambito: Ambito;
   summary: string;
   /** Imagen de `public/`. */
   logo: { src: string };
@@ -34,6 +35,7 @@ const servidores: Servidor[] = [
     id: 'congreso',
     name: 'Congreso de los Diputados',
     category: 'parlamento',
+    ambito: { tipo: 'estatal' },
     // El hemiciclo de la portada, como un sol que sale.
     logo: { src: '/congreso/hemiciclo.svg' },
     escena: congresoEscena,
@@ -49,6 +51,7 @@ const servidores: Servidor[] = [
     id: 'renfe',
     name: 'RENFE',
     category: 'transporte',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/renfe.png' },
     escena: renfeEscena,
     summary:
@@ -63,6 +66,7 @@ const servidores: Servidor[] = [
     id: 'boe',
     name: 'BOE',
     category: 'normativa',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/boe-sello.png' },
     escena: boeEscena,
     summary:
@@ -77,6 +81,7 @@ const servidores: Servidor[] = [
     id: 'ine',
     name: 'INE',
     category: 'estadistica',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/ine.svg' },
     escena: ineEscena,
     summary:
@@ -91,6 +96,7 @@ const servidores: Servidor[] = [
     id: 'eustat',
     name: 'Eustat',
     category: 'estadistica',
+    ambito: { tipo: 'autonomico', territorio: 'País Vasco' },
     logo: { src: '/organismos/eustat.png' },
     escena: eustatEscena,
     summary:
@@ -105,6 +111,7 @@ const servidores: Servidor[] = [
     id: 'catastro',
     name: 'Catastro',
     category: 'vivienda',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/catastro.png' },
     escena: catastroEscena,
     summary:
@@ -119,6 +126,7 @@ const servidores: Servidor[] = [
     id: 'municipios',
     name: 'Ayuntamientos',
     category: 'administracion-local',
+    ambito: { tipo: 'estatal' },
     // Sin organismo único: un edificio público (Lucide).
     logo: { src: '/mcp/municipios.svg' },
     escena: municipiosEscena,
@@ -134,6 +142,7 @@ const servidores: Servidor[] = [
     id: 'carburantes',
     name: 'Precios de carburantes',
     category: 'consumo',
+    ambito: { tipo: 'estatal' },
     // Sin logo propio: un surtidor (Lucide).
     logo: { src: '/mcp/carburantes.svg' },
     escena: carburantesEscena,
@@ -149,6 +158,7 @@ const servidores: Servidor[] = [
     id: 'red-electrica',
     name: 'Red Eléctrica',
     category: 'consumo',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/red-electrica.png' },
     escena: redElectricaEscena,
     summary:
@@ -163,6 +173,7 @@ const servidores: Servidor[] = [
     id: 'alsa',
     name: 'ALSA',
     category: 'transporte',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/alsa.svg' },
     escena: alsaEscena,
     summary:
@@ -177,6 +188,7 @@ const servidores: Servidor[] = [
     id: 'contratacion',
     name: 'Licitaciones públicas',
     category: 'contratacion',
+    ambito: { tipo: 'estatal' },
     // El símbolo de la marca de la Plataforma de Contratación del Sector Público.
     logo: { src: '/organismos/placsp.svg' },
     escena: contratacionEscena,
@@ -192,6 +204,7 @@ const servidores: Servidor[] = [
     id: 'subvenciones',
     name: 'Subvenciones públicas',
     category: 'ayudas',
+    ambito: { tipo: 'estatal' },
     logo: { src: '/organismos/igae.png' },
     escena: subvencionesEscena,
     summary:
@@ -206,6 +219,7 @@ const servidores: Servidor[] = [
     id: 'trafico',
     name: 'Tráfico',
     category: 'transporte',
+    ambito: { tipo: 'estatal' },
     // Sin logo propio: un cono de tráfico (Lucide).
     logo: { src: '/mcp/trafico.svg' },
     escena: traficoEscena,

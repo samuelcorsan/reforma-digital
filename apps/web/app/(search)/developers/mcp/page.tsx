@@ -44,6 +44,7 @@ export default async function Page({ searchParams }: Props) {
     name: server.name,
     summary: server.summary,
     logo: server.logo,
+    ambito: server.ambito,
     tools: server.tools.length,
   }));
 
