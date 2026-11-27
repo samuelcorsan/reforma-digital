@@ -10,6 +10,7 @@ import { POST as catastro } from '../../app/mcp/catastro/route';
 import { POST as contratacion } from '../../app/mcp/contratacion/route';
 import type { StaticImageData } from 'next/image';
 import type { Category } from './categorias';
+import { mensajeRpc } from './rpc';
 import congresoEscena from './escenas/congreso.png';
 import renfeEscena from './escenas/renfe.png';
 import boeEscena from './escenas/boe.png';
@@ -237,12 +238,7 @@ async function rpc(
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
     }),
   );
-  const text = await response.text();
-  // Sin sesión el SDK puede responder como evento SSE: el JSON va en la línea `data:`.
-  const body = JSON.parse(/^data: (.*)$/m.exec(text)?.[1] ?? text) as {
-    result?: unknown;
-    error?: { message: string };
-  };
+  const body = mensajeRpc(await response.text());
   if (!response.ok || !body.result) throw new Error(`MCP ${method}: ${body.error?.message}`);
   return body.result;
 }

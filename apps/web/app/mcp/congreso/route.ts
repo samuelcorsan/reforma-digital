@@ -1,6 +1,7 @@
 import { createCongresoMcp } from '@reforma-digital/mcp';
 import { GET as congreso } from '../../api/congreso/[[...path]]/route';
 import { openInBrowser } from '../../../lib/mcp/rutas';
+import { contarUso } from '../../../lib/mcp/uso';
 
 export const runtime = 'nodejs';
 
@@ -12,6 +13,6 @@ const mcp = createCongresoMcp((path, query) =>
   }),
 );
 
-export const POST = (request: Request) => mcp.fetch(request);
+export const POST = contarUso('congreso', (request) => mcp.fetch(request));
 // Sin sesiones, GET no sirve a los clientes MCP: un navegador va a la ficha y el resto recibe 405.
 export const GET = openInBrowser('congreso');

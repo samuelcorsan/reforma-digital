@@ -26,9 +26,9 @@ No es un dictamen jurídico: conviene que lo revise quien asesore al proyecto en
 
 ### 3. Estadísticas de uso
 
-- **Finalidad:** saber qué páginas de la web se visitan.
+- **Finalidad:** saber qué páginas de la web se visitan y qué herramientas de los servidores MCP se usan.
 - **Base jurídica:** interés legítimo (art. 6.1.f). Sin cookies ni almacenamiento en el dispositivo: el identificador vive en la memoria de la pestaña, así que no necesita consentimiento (art. 22.2 de la LSSI-CE).
-- **Personas y datos:** visitantes. Cada página vista, con su ruta sin query, y un identificador aleatorio de la pestaña. Sin IP: la petición a PostHog la hace el servidor (`apps/web/app/api/eventos`), y sin GeoIP ni perfiles de persona.
+- **Personas y datos:** visitantes. Cada página vista, con su ruta sin query, y un identificador aleatorio de la pestaña. Cada llamada a una herramienta MCP, con el servidor, la herramienta, si falló y cuánto tardó, sin sus argumentos y con un identificador aleatorio propio. Sin IP: la petición a PostHog la hace el servidor (`apps/web/app/api/eventos` y `apps/web/lib/mcp/uso.ts`), y sin GeoIP ni perfiles de persona.
 - **Destinatarios:** PostHog, como encargado, en su región de la UE.
 - **Plazo:** el de PostHog según el plan contratado.
 
