@@ -39,7 +39,8 @@ for (const project of projects) {
     assert.ok(allowed(project, target), `${project.pkg.name} cannot depend on ${dependency}`);
   }
   for (const file of await readdir(project.root, { recursive: true })) {
-    if (!/\.(ts|tsx)$/.test(file) || file.startsWith('node_modules/')) continue;
+    // readdir(recursive) une las rutas con path.sep: en Windows, node_modules llega con '\' y no se saltaba.
+    if (!/\.(ts|tsx)$/.test(file) || file.startsWith(`node_modules${path.sep}`)) continue;
     const absolute = path.join(project.root, file);
     const source = await readFile(absolute, 'utf8');
     for (const match of source.matchAll(/(?:\bfrom\s*|\bimport\s*\(?\s*)['"]([^'"]+)['"]/g)) {
